@@ -1027,7 +1027,7 @@
             "button": {
               "type": "button",
               "settings": {
-                "label": "Find my match →",
+                "label": "FIND MY MATCH →",
                 "link": "shopify://collections/all",
                 "style_class": "button-custom",
                 "custom_button_background": "#98a3de",
@@ -1785,7 +1785,7 @@
             "button": {
               "type": "button",
               "settings": {
-                "label": "Claim my 3 gifts →",
+                "label": "CLAIM MY 3 GIFTS →",
                 "link": "shopify://collections/all",
                 "style_class": "button-custom",
                 "custom_button_background": "#98a3de",
@@ -1978,7 +1978,7 @@
         "padding-block-start": 40,
         "padding-block-end": 40,
         "horizontal_alignment": "space-between",
-        "vertical_alignment": "center"
+        "vertical_alignment": "flex-start"
       },
       "blocks": {
         "intro": {
@@ -2446,7 +2446,7 @@
         "button": {
           "type": "button",
           "settings": {
-            "label": "Try Somna risk-free",
+            "label": "TRY SOMNA RISK-FREE",
             "link": "shopify://collections/all",
             "style_class": "button-custom",
             "custom_button_background": "#ffffff",
@@ -2477,7 +2477,7 @@
         "horizontal_alignment_flex_direction_column": "flex-end",
         "vertical_alignment_flex_direction_column": "center",
         "gap": 24,
-        "section_width": "full-width",
+        "section_width": "page-width",
         "section_height": "medium",
         "toggle_overlay": false,
         "padding-block-start": 40,
@@ -2491,7 +2491,7 @@
             "vertical_on_mobile": true,
             "gap": 24,
             "width": "custom",
-            "custom_width": 40,
+            "custom_width": 46,
             "width_mobile": "fill",
             "height": "fit",
             "border_radius": 0,
@@ -2525,7 +2525,7 @@
             "button": {
               "type": "button",
               "settings": {
-                "label": "Shop Somna",
+                "label": "SHOP SOMNA",
                 "link": "shopify://collections/all",
                 "style_class": "button-custom",
                 "custom_button_background": "#f3feee",
@@ -2601,7 +2601,7 @@
         "strip": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/somna-v2-ugc-strip.png",
+            "image": "shopify://shop_images/somna-v2-ugc-strip-cropped.png",
             "image_ratio": "adapt",
             "width": "fill",
             "border_radius": 0
@@ -2611,7 +2611,7 @@
         "button": {
           "type": "button",
           "settings": {
-            "label": "Follow us on Instagram",
+            "label": "FOLLOW US ON INSTAGRAM",
             "link": "https://www.instagram.com/",
             "style_class": "button-custom",
             "custom_button_background": "#afbdf8",
