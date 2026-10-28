@@ -1,0 +1,41 @@
+{
+ "sections": {
+  "routine": {
+   "type": "somna-routine",
+   "settings": {
+    "heading": "<h2>Your night routine, <em>stripped back.</em></h2>"
+   },
+   "blocks": {
+    "prep": {
+     "type": "step",
+     "settings": {
+      "title": "Prep",
+      "text": "Start with clean, dry skin."
+     }
+    },
+    "apply": {
+     "type": "step",
+     "settings": {
+      "title": "Apply",
+      "text": "Place your nasal strip and mouth tape as shown in the guide."
+     }
+    },
+    "unwind": {
+     "type": "step",
+     "settings": {
+      "title": "Unwind",
+      "text": "Lights down. Breathe easier. Better sleep ahead."
+     }
+    }
+   },
+   "block_order": [
+    "prep",
+    "apply",
+    "unwind"
+   ]
+  }
+ },
+ "order": [
+  "routine"
+ ]
+}

@@ -1,0 +1,68 @@
+{
+ "sections": {
+  "ugc": {
+   "type": "somna-media-strip",
+   "settings": {
+    "eyebrow": "On camera",
+    "heading": "Hear it from them",
+    "card_width": 208,
+    "background_color": "#f3feee"
+   },
+   "blocks": {
+    "card_1": {
+     "type": "card",
+     "settings": {
+      "image": "shopify://shop_images/somna-v2-ugc-1.png",
+      "caption": "My new bedtime habit"
+     }
+    },
+    "card_2": {
+     "type": "card",
+     "settings": {
+      "image": "shopify://shop_images/somna-v2-ugc-2.png",
+      "caption": "30 nights later"
+     }
+    },
+    "card_3": {
+     "type": "card",
+     "settings": {
+      "image": "shopify://shop_images/somna-v2-ugc-1.png",
+      "caption": "How I put it on"
+     }
+    },
+    "card_4": {
+     "type": "card",
+     "settings": {
+      "image": "shopify://shop_images/somna-v2-ugc-2.png",
+      "caption": "Why I switched"
+     }
+    },
+    "card_5": {
+     "type": "card",
+     "settings": {
+      "image": "shopify://shop_images/somna-v2-ugc-1.png",
+      "caption": ""
+     }
+    },
+    "card_6": {
+     "type": "card",
+     "settings": {
+      "image": "shopify://shop_images/somna-v2-ugc-2.png",
+      "caption": ""
+     }
+    }
+   },
+   "block_order": [
+    "card_1",
+    "card_2",
+    "card_3",
+    "card_4",
+    "card_5",
+    "card_6"
+   ]
+  }
+ },
+ "order": [
+  "ugc"
+ ]
+}
