@@ -37,6 +37,9 @@
     {%- endfor -%}
   </ul>
 </div>
+{%- if section.settings.wave_color != blank -%}
+  {%- render 'somna-wave', top: section.settings.background_color, bottom: section.settings.wave_color -%}
+{%- endif -%}
 
 {% stylesheet %}
   .somna-strip__head {
@@ -146,7 +149,9 @@
     { "type": "color", "id": "background_color", "label": "Background", "default": "#f3feee" },
     { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
-    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 }
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },
+    { "type": "header", "content": "Bottom wave" },
+    { "type": "color", "id": "wave_color", "label": "Colour below the wave", "info": "Draws a wave into the next section. Leave empty for a straight edge." }
   ],
   "blocks": [
     {

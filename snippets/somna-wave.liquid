@@ -1,0 +1,65 @@
+{%- doc -%}
+  Somna V2 — wave divider: a soft drippy edge between two colours. Pure SVG + CSS.
+  Used by the "Somna wave" section and at the bottom of the Somna sections ("Bottom wave" setting).
+  @param {string} top - colour above the wave
+  @param {string} bottom - colour below the wave
+  @param {boolean} [flip] - mirror horizontally
+  @param {boolean} [drops] - show the small drops (default true)
+  @param {number} [height] - desktop height in px (default 96)
+  @param {number} [height_mobile] - mobile height in px (default 40)
+{%- enddoc -%}
+{%- liquid
+  assign show_drops = true
+  if drops == false
+    assign show_drops = false
+  endif
+-%}
+<div
+  class="somna-wave{% if flip %} somna-wave--flip{% endif %}"
+  style="--somna-wave-top: {{ top }}; --somna-wave-bottom: {{ bottom }}; --somna-wave-h: {{ height | default: 96 }}px; --somna-wave-h-mobile: {{ height_mobile | default: 40 }}px;"
+  aria-hidden="true"
+>
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" focusable="false">
+    <rect width="1440" height="120" fill="var(--somna-wave-top)"/>
+    <path
+      fill="var(--somna-wave-bottom)"
+      d="M0 58C70 30 135 18 198 30C262 42 300 92 372 96C444 100 492 64 560 58C628 52 664 82 724 84C786 86 806 56 862 54C918 52 950 92 1010 94C1072 96 1104 58 1168 50C1236 42 1282 70 1338 56C1382 45 1410 30 1440 24V120H0Z"
+    />
+    {%- if show_drops -%}
+      <g fill="var(--somna-wave-bottom)">
+        <ellipse cx="300" cy="104" rx="9" ry="6" transform="rotate(-20 300 104)"/>
+        <ellipse cx="316" cy="99" rx="5" ry="4"/>
+        <ellipse cx="572" cy="70" rx="6" ry="4"/>
+        <ellipse cx="848" cy="68" rx="6" ry="4"/>
+        <ellipse cx="1092" cy="72" rx="9" ry="6" transform="rotate(20 1092 72)"/>
+        <ellipse cx="1108" cy="77" rx="5" ry="4"/>
+      </g>
+    {%- endif -%}
+  </svg>
+</div>
+
+{% stylesheet %}
+  .somna-wave {
+    display: block;
+    line-height: 0;
+    height: var(--somna-wave-h-mobile, 40px);
+    background: var(--somna-wave-top);
+    overflow: hidden;
+  }
+
+  .somna-wave svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .somna-wave--flip svg {
+    transform: scaleX(-1);
+  }
+
+  @media screen and (min-width: 750px) {
+    .somna-wave {
+      height: var(--somna-wave-h, 96px);
+    }
+  }
+{% endstylesheet %}
