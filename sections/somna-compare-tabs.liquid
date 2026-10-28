@@ -1,0 +1,362 @@
+{%- comment -%}
+  Somna V2 — "Built for bedtime" comparison with product tabs.
+  Blocks:
+  - Tab: name, image and label for the Somna column of that tab.
+  - Row: which tab it belongs to (1 or 2), the feature, and yes/no for each of the four columns.
+  Competitor column images/labels are section settings, shared by both tabs.
+  A tab with no rows is hidden, so the section works with one or two tabs.
+{%- endcomment -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  assign tab_blocks = section.blocks | where: 'type', 'tab'
+  assign row_blocks = section.blocks | where: 'type', 'row'
+  assign uid = section.id | replace: '_', '-'
+-%}
+
+{%- capture tabs_markup -%}
+  {%- assign active_set = false -%}
+  {%- for tab in tab_blocks -%}
+    {%- assign tab_index = forloop.index | append: '' -%}
+    {%- assign row_count = 0 -%}
+    {%- for row in row_blocks -%}{%- if row.settings.tab == tab_index -%}{%- assign row_count = row_count | plus: 1 -%}{%- endif -%}{%- endfor -%}
+    {%- if row_count > 0 -%}
+      <button
+        type="button"
+        role="tab"
+        class="somna-compare__tab"
+        id="{{ uid }}-tab-{{ forloop.index }}"
+        aria-controls="{{ uid }}-panel-{{ forloop.index }}"
+        aria-selected="{% if active_set == false %}true{% else %}false{% endif %}"
+        {% if active_set %}tabindex="-1"{% endif %}
+        {{ tab.shopify_attributes }}
+      >{{ tab.settings.name }}</button>
+      {%- assign active_set = true -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+<somna-compare-tabs
+  class="somna-compare"
+  style="background: {{ s.background_color }}; color: {{ s.text_color }}; --somna-panel: {{ s.panel_color }}; --somna-highlight: {{ s.highlight_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+>
+  <div class="somna-compare__inner somna-container">
+    <div class="somna-compare__intro">
+      {%- if s.eyebrow != blank -%}<p class="somna-compare__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
+      {%- if s.heading != blank -%}<h2 class="somna-compare__heading">{{ s.heading }}</h2>{%- endif -%}
+    </div>
+
+    <div class="somna-compare__body">
+      <div class="somna-compare__tabs" role="tablist" aria-label="{{ s.tabs_label | escape }}">{{ tabs_markup }}</div>
+
+      {%- assign first_panel = true -%}
+      {%- for tab in tab_blocks -%}
+        {%- assign tab_index = forloop.index | append: '' -%}
+        {%- assign row_count = 0 -%}
+        {%- for row in row_blocks -%}{%- if row.settings.tab == tab_index -%}{%- assign row_count = row_count | plus: 1 -%}{%- endif -%}{%- endfor -%}
+        {%- if row_count > 0 -%}
+          <div
+            class="somna-compare__panel"
+            role="tabpanel"
+            id="{{ uid }}-panel-{{ forloop.index }}"
+            aria-labelledby="{{ uid }}-tab-{{ forloop.index }}"
+            tabindex="0"
+            {% unless first_panel %}hidden{% endunless %}
+          >
+            <div class="somna-compare__scroll">
+              <table class="somna-compare__table">
+                <caption class="visually-hidden">{{ tab.settings.name }}: {{ s.caption }}</caption>
+                <thead>
+                  <tr>
+                    <td></td>
+                    <th scope="col" class="is-somna">
+                      {%- if tab.settings.image != blank -%}{{ tab.settings.image | image_url: width: 160 | image_tag: loading: 'lazy', alt: '', width: 57, height: 80 }}{%- endif -%}
+                      <span>{{ tab.settings.label }}</span>
+                    </th>
+                    {%- for n in (2..4) -%}
+                      {%- capture img_key -%}column_{{ n }}_image{%- endcapture -%}
+                      {%- capture label_key -%}column_{{ n }}_label{%- endcapture -%}
+                      <th scope="col">
+                        {%- if s[img_key] != blank -%}{{ s[img_key] | image_url: width: 180 | image_tag: loading: 'lazy', alt: '', width: 80, height: 80 }}{%- endif -%}
+                        <span class="visually-hidden">{{ s[label_key] }}</span>
+                      </th>
+                    {%- endfor -%}
+                  </tr>
+                </thead>
+                <tbody>
+                  {%- for row in row_blocks -%}
+                    {%- unless row.settings.tab == tab_index -%}{%- continue -%}{%- endunless -%}
+                    {%- assign r = row.settings -%}
+                    <tr {{ row.shopify_attributes }}>
+                      <th scope="row">{{ r.label }}</th>
+                      <td class="is-somna">{% render 'somna-mark', value: r.column_1 %}</td>
+                      <td>{% render 'somna-mark', value: r.column_2 %}</td>
+                      <td>{% render 'somna-mark', value: r.column_3 %}</td>
+                      <td>{% render 'somna-mark', value: r.column_4 %}</td>
+                    </tr>
+                  {%- endfor -%}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {%- assign first_panel = false -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</somna-compare-tabs>
+
+<script type="module">
+  if (!customElements.get('somna-compare-tabs')) {
+    customElements.define('somna-compare-tabs', class extends HTMLElement {
+      connectedCallback() {
+        this.tabs = [...this.querySelectorAll('[role="tab"]')];
+        this.addEventListener('click', this.onClick);
+        this.addEventListener('keydown', this.onKey);
+      }
+      disconnectedCallback() {
+        this.removeEventListener('click', this.onClick);
+        this.removeEventListener('keydown', this.onKey);
+      }
+      select(tab, focus) {
+        this.tabs.forEach((t) => {
+          const on = t === tab;
+          t.setAttribute('aria-selected', String(on));
+          t.tabIndex = on ? 0 : -1;
+          const panel = this.querySelector('#' + t.getAttribute('aria-controls'));
+          if (panel) panel.hidden = !on;
+        });
+        if (focus) tab.focus();
+      }
+      onClick = (e) => {
+        const tab = e.target.closest('[role="tab"]');
+        if (tab) this.select(tab, false);
+      };
+      onKey = (e) => {
+        const i = this.tabs.indexOf(document.activeElement);
+        if (i < 0) return;
+        let next = null;
+        if (e.key === 'ArrowRight') next = this.tabs[(i + 1) % this.tabs.length];
+        if (e.key === 'ArrowLeft') next = this.tabs[(i - 1 + this.tabs.length) % this.tabs.length];
+        if (e.key === 'Home') next = this.tabs[0];
+        if (e.key === 'End') next = this.tabs[this.tabs.length - 1];
+        if (next) { e.preventDefault(); this.select(next, true); }
+      };
+    });
+  }
+</script>
+
+{% stylesheet %}
+  .somna-compare__inner {
+    display: grid;
+    gap: 28px;
+  }
+
+  .somna-compare__eyebrow {
+    margin: 0 0 16px;
+    font-size: clamp(1rem, 1.4vw, 1.25rem);
+    letter-spacing: 0.15em;
+  }
+
+  .somna-compare__heading {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: clamp(3rem, 6.6vw, 6rem);
+    line-height: 1.05;
+    color: inherit;
+  }
+
+  .somna-compare__body {
+    display: grid;
+    justify-items: center;
+    gap: 18px;
+    min-width: 0;
+  }
+
+  .somna-compare__tabs {
+    display: inline-flex;
+    gap: 4px;
+    padding: 6px;
+    border-radius: 999px;
+    background: var(--somna-panel);
+  }
+
+  .somna-compare__tabs:not(:has(.somna-compare__tab + .somna-compare__tab)) {
+    display: none;
+  }
+
+  .somna-compare__tab {
+    min-height: 44px;
+    padding: 0 30px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #6f6f6f;
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  .somna-compare__tab[aria-selected='true'] {
+    background: #000;
+    color: #fff;
+  }
+
+  .somna-compare__tab:focus-visible,
+  .somna-compare__panel:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
+
+  .somna-compare__panel {
+    width: 100%;
+    padding: 16px 28px 32px;
+    border-radius: 20px;
+    background: var(--somna-panel);
+    color: #000;
+  }
+
+  .somna-compare__scroll {
+    overflow-x: auto;
+  }
+
+  .somna-compare__table {
+    width: 100%;
+    min-width: 520px;
+    border-collapse: collapse;
+    font-size: 1rem;
+  }
+
+  .somna-compare__table th,
+  .somna-compare__table td {
+    padding: 14px 8px;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .somna-compare__table thead th {
+    padding-block: 10px 12px;
+  }
+
+  .somna-compare__table thead img {
+    display: block;
+    width: auto;
+    max-width: 80px;
+    height: 80px;
+    margin-inline: auto;
+    object-fit: contain;
+  }
+
+  .somna-compare__table thead span {
+    display: block;
+    margin-top: 2px;
+    color: #0a3fa8;
+    font-weight: 800;
+    font-size: 0.9375rem;
+  }
+
+  .somna-compare__table tbody th {
+    width: 32%;
+    text-align: start;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .somna-compare__table tbody tr + tr > * {
+    border-top: 1px solid rgb(0 0 0 / 0.15);
+  }
+
+  .somna-compare__table tbody tr:first-child > * {
+    border-top: 1px solid rgb(0 0 0 / 0.15);
+  }
+
+  .somna-compare__table td + td {
+    border-left: 1px solid rgb(0 0 0 / 0.12);
+  }
+
+  .somna-compare__table .is-somna {
+    background: var(--somna-highlight);
+  }
+
+  .somna-compare__table .somna-check,
+  .somna-compare__table .somna-cross {
+    --somna-mark-size: 34px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .somna-compare__inner {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      align-items: start;
+      gap: 40px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna compare tabs",
+  "tag": "section",
+  "class": "section-somna-compare",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Made for your nights" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Built for Bedtime. Not the First-Aid Kit." },
+    { "type": "text", "id": "tabs_label", "label": "Tabs label (screen readers)", "default": "Compare products" },
+    { "type": "text", "id": "caption", "label": "Table caption (screen readers)", "default": "how Somna compares" },
+    { "type": "header", "content": "Comparison columns" },
+    { "type": "image_picker", "id": "column_2_image", "label": "Column 2 image" },
+    { "type": "text", "id": "column_2_label", "label": "Column 2 name", "default": "Medical tape" },
+    { "type": "image_picker", "id": "column_3_image", "label": "Column 3 image" },
+    { "type": "text", "id": "column_3_label", "label": "Column 3 name", "default": "Chin strap" },
+    { "type": "image_picker", "id": "column_4_image", "label": "Column 4 image" },
+    { "type": "text", "id": "column_4_label", "label": "Column 4 name", "default": "Mouth guard" },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#afbdf8" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },
+    { "type": "color", "id": "panel_color", "label": "Table and tabs background", "default": "#f3feee" },
+    { "type": "color", "id": "highlight_color", "label": "Somna column highlight", "default": "#cdd6ea" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "limit": 2,
+      "settings": [
+        { "type": "text", "id": "name", "label": "Tab name", "default": "Mouth Tape" },
+        { "type": "image_picker", "id": "image", "label": "Somna column image" },
+        { "type": "text", "id": "label", "label": "Somna column label", "default": "somna." }
+      ]
+    },
+    {
+      "type": "row",
+      "name": "Row",
+      "settings": [
+        {
+          "type": "select",
+          "id": "tab",
+          "label": "Tab",
+          "options": [
+            { "value": "1", "label": "First tab" },
+            { "value": "2", "label": "Second tab" }
+          ],
+          "default": "1"
+        },
+        { "type": "text", "id": "label", "label": "Feature", "default": "Drug-free" },
+        { "type": "checkbox", "id": "column_1", "label": "Somna", "default": true },
+        { "type": "checkbox", "id": "column_2", "label": "Column 2", "default": true },
+        { "type": "checkbox", "id": "column_3", "label": "Column 3", "default": true },
+        { "type": "checkbox", "id": "column_4", "label": "Column 4", "default": true }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Somna compare tabs",
+      "blocks": [{ "type": "tab" }, { "type": "row" }]
+    }
+  ]
+}
+{% endschema %}

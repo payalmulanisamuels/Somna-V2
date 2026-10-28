@@ -1,0 +1,183 @@
+{%- comment -%}
+  Somna V2 — icon block for groups.
+  Shows either a built-in line icon or an uploaded silhouette (PNG/SVG with transparency).
+  Uploaded silhouettes are drawn as a CSS mask, so they take the colour set here.
+  Optional backdrop: a circle, or a second silhouette (e.g. a gift box) drawn behind the icon.
+{%- endcomment -%}
+{%- liquid
+  assign s = block.settings
+  assign size = s.size
+  assign box = s.backdrop_size | default: size
+  if s.backdrop == 'none'
+    assign box = size
+  endif
+-%}
+<span
+  class="somna-icon somna-icon--{{ s.backdrop }}"
+  style="--somna-icon-size: {{ size }}px; --somna-icon-box: {{ box }}px; --somna-icon-color: {{ s.color | default: 'currentColor' }}; --somna-icon-backdrop: {{ s.backdrop_color | default: 'transparent' }};{% if s.backdrop == 'image' and s.backdrop_image != blank %} --somna-icon-backdrop-mask: url('{{ s.backdrop_image | image_url: width: 300 }}');{% endif %} --somna-icon-offset: {{ s.icon_offset }}px;"
+  {{ block.shopify_attributes }}
+>
+  {%- if s.image != blank -%}
+    <span
+      class="somna-icon__glyph somna-icon__glyph--mask"
+      style="--somna-icon-mask: url('{{ s.image | image_url: width: 200 }}');"
+      aria-hidden="true"
+    ></span>
+  {%- elsif s.icon != 'none' -%}
+    <svg class="somna-icon__glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      {%- case s.icon -%}
+        {%- when 'users' -%}
+          <circle cx="12" cy="8" r="3.2"/><path d="M5.5 20v-1.5A4.5 4.5 0 0 1 10 14h4a4.5 4.5 0 0 1 4.5 4.5V20"/><circle cx="5.3" cy="9.6" r="2.3"/><path d="M1.5 19v-1a3.3 3.3 0 0 1 3.3-3.3"/><circle cx="18.7" cy="9.6" r="2.3"/><path d="M22.5 19v-1a3.3 3.3 0 0 0-3.3-3.3"/>
+        {%- when 'star' -%}
+          <path d="M12 3.2l2.6 5.6 6.1.7-4.5 4.2 1.2 6.1L12 16.8l-5.4 3 1.2-6.1-4.5-4.2 6.1-.7z"/>
+        {%- when 'shield' -%}
+          <path d="M12 3l7.5 2.8v5.6c0 4.6-3.2 8.2-7.5 9.6-4.3-1.4-7.5-5-7.5-9.6V5.8z"/><path d="M8.6 12.1l2.3 2.3 4.6-4.6"/>
+        {%- when 'leaf' -%}
+          <path d="M5 19c8 0 14-5 14-14-9 0-14 5-14 14z"/><path d="M5 19l7-7"/>
+        {%- when 'moon' -%}
+          <path d="M19 14.5A7.5 7.5 0 1 1 9.5 5a6 6 0 0 0 9.5 9.5z"/>
+        {%- when 'refresh' -%}
+          <path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M18 3v4h-4M6 21v-4h4"/>
+        {%- when 'play' -%}
+          <path d="M8 5.5v13l10.5-6.5z" fill="currentColor" stroke="none"/>
+      {%- endcase -%}
+    </svg>
+  {%- endif -%}
+</span>
+
+{% stylesheet %}
+  .somna-icon {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: var(--somna-icon-box);
+    height: var(--somna-icon-box);
+    color: var(--somna-icon-color);
+  }
+
+  .somna-icon--circle {
+    border-radius: 50%;
+    background: var(--somna-icon-backdrop);
+  }
+
+  .somna-icon--image::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--somna-icon-backdrop);
+    -webkit-mask: var(--somna-icon-backdrop-mask) center / contain no-repeat;
+    mask: var(--somna-icon-backdrop-mask) center / contain no-repeat;
+  }
+
+  .somna-icon__glyph {
+    position: relative;
+    width: var(--somna-icon-size);
+    height: var(--somna-icon-size);
+    translate: 0 var(--somna-icon-offset, 0px);
+  }
+
+  .somna-icon__glyph--mask {
+    background: currentColor;
+    -webkit-mask: var(--somna-icon-mask) center / contain no-repeat;
+    mask: var(--somna-icon-mask) center / contain no-repeat;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna icon",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "Icon",
+      "options": [
+        { "value": "none", "label": "None (use image)" },
+        { "value": "users", "label": "People" },
+        { "value": "star", "label": "Star" },
+        { "value": "shield", "label": "Shield" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "moon", "label": "Moon" },
+        { "value": "refresh", "label": "Refresh" },
+        { "value": "play", "label": "Play" }
+      ],
+      "default": "star"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Custom icon",
+      "info": "A silhouette on a transparent background. It takes the icon colour below."
+    },
+    {
+      "type": "range",
+      "id": "size",
+      "label": "Icon size",
+      "min": 12,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "color",
+      "label": "Icon colour",
+      "default": "#000000"
+    },
+    {
+      "type": "select",
+      "id": "backdrop",
+      "label": "Backdrop",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "circle", "label": "Circle" },
+        { "value": "image", "label": "Custom shape" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "image_picker",
+      "id": "backdrop_image",
+      "label": "Backdrop shape",
+      "visible_if": "{{ block.settings.backdrop == 'image' }}"
+    },
+    {
+      "type": "color",
+      "id": "backdrop_color",
+      "label": "Backdrop colour",
+      "default": "#ffffff",
+      "visible_if": "{{ block.settings.backdrop != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "backdrop_size",
+      "label": "Backdrop size",
+      "min": 16,
+      "max": 200,
+      "step": 2,
+      "unit": "px",
+      "default": 56,
+      "visible_if": "{{ block.settings.backdrop != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "icon_offset",
+      "label": "Icon vertical offset",
+      "min": -40,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.backdrop != 'none' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Somna icon"
+    }
+  ]
+}
+{% endschema %}

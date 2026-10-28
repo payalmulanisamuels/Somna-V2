@@ -1,0 +1,645 @@
+{%- comment -%}
+  Somna V2 — featured product buy box with product tabs (e.g. Mouth Tape / Nasal Strips).
+  Each "Product" block is one tab. Pack cards are the product's real variants; the per-night
+  price uses the number in the variant name (e.g. "2 Bags") × "Nights per bag".
+  Subscribe uses the variant's first selling plan; one-time adds without a plan.
+  Add to cart goes through assets/somna-cart.js (theme cart drawer opens and refreshes).
+{%- endcomment -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  assign product_blocks = section.blocks | where: 'type', 'product'
+  assign question_blocks = section.blocks | where: 'type', 'question'
+-%}
+{%- capture data -%}
+  [
+  {%- for block in product_blocks -%}
+    {%- assign p = block.settings.product -%}
+    {%- if p == blank -%}{%- continue -%}{%- endif -%}
+    {
+      "tab": {{ block.settings.tab_label | default: p.title | json }},
+      "title": {{ block.settings.title | default: p.title | json }},
+      "rating": {{ block.settings.rating_text | json }},
+      "description": {{ block.settings.description | json }},
+      "points": {{ block.settings.points | newline_to_br | split: '<br />' | json }},
+      "popular": {{ block.settings.popular_label | json }},
+      "popularIndex": {{ block.settings.popular_position | minus: 1 }},
+      "nights": {{ block.settings.nights_per_bag | default: 0 }},
+      "media": [
+        {%- assign imgs = p.media | where: 'media_type', 'image' -%}
+        {%- for m in imgs limit: 6 -%}
+          { "src": {{ m | image_url: width: 1200 | json }}, "thumb": {{ m | image_url: width: 240 | json }}, "alt": {{ m.alt | default: p.title | json }} }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ],
+      "variants": [
+        {%- for v in p.variants -%}
+          {%- assign alloc = v.selling_plan_allocations | first -%}
+          { "id": {{ v.id }}, "title": {{ v.title | json }}, "available": {{ v.available | json }}, "once": {{ v.price }}, "onceCompare": {{ v.compare_at_price | default: 0 }}, "sub": {% if alloc %}{{ alloc.price }}{% else %}null{% endif %}, "plan": {% if alloc %}{{ alloc.selling_plan.id }}{% else %}null{% endif %} }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }{% unless forloop.last %},{% endunless %}
+  {%- endfor -%}
+  ]
+{%- endcapture -%}
+
+<somna-buy-box
+  class="somna-buy"
+  data-currency="{{ cart.currency.iso_code }}"
+  data-locale="{{ request.locale.iso_code }}"
+  data-mode="{{ s.default_mode }}"
+  style="background: {{ s.background_color }}; --somna-panel: {{ s.panel_color }}; --somna-mint: {{ s.mint_color }}; --somna-chip: {{ s.chip_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+>
+  <script type="application/json" data-products>{{ data | strip_newlines }}</script>
+  <div class="somna-buy__inner somna-container">
+    <div class="somna-buy__tabs" role="tablist" aria-label="{{ s.tabs_label | escape }}" data-tabs></div>
+
+    <div class="somna-buy__grid">
+      <div class="somna-buy__gallery">
+        <div class="somna-buy__main"><img data-main alt="" width="1200" height="1200" loading="lazy" decoding="async"></div>
+        <ul class="somna-buy__thumbs" role="list" data-thumbs></ul>
+      </div>
+
+      <div class="somna-buy__side">
+        <div class="somna-buy__panel" role="tabpanel" data-panel>
+          <h2 class="somna-buy__title"><span class="somna-buy__brand">{{ s.brand }}</span> <span data-title></span></h2>
+          <p class="somna-buy__rating" data-rating></p>
+          <p class="somna-buy__desc" data-desc></p>
+          <ul class="somna-buy__points" role="list" data-points></ul>
+
+          <fieldset class="somna-buy__packs">
+            <legend>{{ s.packs_label }}</legend>
+            <div class="somna-buy__pack-list" data-packs></div>
+          </fieldset>
+
+          <fieldset class="somna-buy__modes">
+            <legend class="visually-hidden">{{ s.mode_label }}</legend>
+            <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="sub" data-mode-input> <span class="somna-buy__mode-label">{{ s.sub_label }}</span> <span class="somna-buy__mode-price" data-price-sub></span></label>
+            <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="once" data-mode-input> <span class="somna-buy__mode-label">{{ s.once_label }}</span> <span class="somna-buy__mode-price" data-price-once></span></label>
+          </fieldset>
+
+          <button type="button" class="somna-buy__add" data-add><span data-add-label>{{ s.add_label }}</span></button>
+          <p class="somna-buy__status" role="status" data-status></p>
+          {%- if s.legal != blank -%}<div class="somna-buy__legal">{{ s.legal }}</div>{%- endif -%}
+        </div>
+
+        {%- if question_blocks.size > 0 -%}
+          <div class="somna-buy__faq">
+            {%- for block in question_blocks -%}
+              <details class="somna-buy__q" {{ block.shopify_attributes }}>
+                <summary>{{ block.settings.question }}<span aria-hidden="true"></span></summary>
+                <div class="somna-buy__a">{{ block.settings.answer }}</div>
+              </details>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</somna-buy-box>
+
+<script type="module">
+  import { somnaAddToCart, somnaMoney } from '{{ 'somna-cart.js' | asset_url }}';
+
+  if (!customElements.get('somna-buy-box')) {
+    customElements.define('somna-buy-box', class extends HTMLElement {
+      connectedCallback() {
+        try { this.products = JSON.parse(this.querySelector('[data-products]').textContent); } catch (e) { this.products = []; }
+        if (!this.products.length) return;
+        this.p = 0;
+        this.mode = this.dataset.mode === 'once' ? 'once' : 'sub';
+        this.v = this.products.map((p) => { const i = p.popularIndex >= 0 && p.variants[p.popularIndex]?.available ? p.popularIndex : p.variants.findIndex((x) => x.available); return Math.max(0, i); });
+        this.m = this.products.map(() => 0);
+        this.labels = { add: {{ s.add_label | json }}, added: {{ s.added_label | json }}, error: {{ s.error_label | json }}, soldOut: {{ s.sold_out_label | json }}, night: {{ s.night_label | json }} };
+        this.money = (c) => somnaMoney(c, this.dataset.currency, this.dataset.locale);
+        this.addEventListener('click', this.onClick);
+        this.addEventListener('change', this.onChange);
+        this.addEventListener('keydown', this.onKey);
+        this.render(true);
+      }
+      disconnectedCallback() {
+        this.removeEventListener('click', this.onClick);
+        this.removeEventListener('change', this.onChange);
+        this.removeEventListener('keydown', this.onKey);
+      }
+      esc(t) { const d = document.createElement('div'); d.textContent = t == null ? '' : String(t); return d.innerHTML; }
+      bags(v) { const n = parseInt(String(v.title).replace(/[^0-9]/g, ''), 10); return n > 0 ? n : 1; }
+      price(v, mode = this.mode) { const sub = mode === 'sub' && v.plan != null; return { price: sub ? v.sub : v.once, compare: sub ? (v.sub < v.once ? v.once : 0) : (v.onceCompare > v.once ? v.onceCompare : 0), plan: sub ? v.plan : null }; }
+      render(first) {
+        const p = this.products[this.p];
+        const v = p.variants[this.v[this.p]];
+        const q = (s) => this.querySelector(s);
+        q('[data-tabs]').innerHTML = this.products.length < 2 ? '' : this.products.map((x, i) => `<button type="button" role="tab" class="somna-buy__tab" aria-selected="${i === this.p}" tabindex="${i === this.p ? 0 : -1}" data-tab="${i}">${this.esc(x.tab)}</button>`).join('');
+        const media = p.media[this.m[this.p]] || p.media[0];
+        const main = q('[data-main]');
+        if (media) { main.src = media.src; main.alt = media.alt; }
+        q('[data-thumbs]').innerHTML = p.media.length < 2 ? '' : p.media.map((x, i) => `<li><button type="button" class="somna-buy__thumb" data-media="${i}" aria-label="${this.esc(x.alt)}" aria-current="${i === this.m[this.p]}"><img src="${x.thumb}" alt="" width="120" height="120" loading="lazy"></button></li>`).join('');
+        q('[data-title]').textContent = p.title;
+        q('[data-rating]').textContent = p.rating || '';
+        q('[data-desc]').textContent = p.description || '';
+        q('[data-points]').innerHTML = p.points.map((t) => t.trim()).filter(Boolean).map((t) => `<li><span class="somna-check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>${this.esc(t)}</li>`).join('');
+        q('[data-packs]').innerHTML = p.variants.map((x, i) => {
+          const pr = this.price(x);
+          const night = p.nights > 0 ? `<span class="somna-buy__pack-night">${this.money(Math.round(pr.price / (this.bags(x) * p.nights)))}${this.esc(this.labels.night)}</span>` : '';
+          const badge = i === p.popularIndex && p.popular ? `<span class="somna-buy__pack-badge">${this.esc(p.popular)}</span>` : '';
+          return `<label class="somna-buy__pack${x.available ? '' : ' is-sold-out'}">${badge}<input type="radio" name="${this.id || 'buy'}-pack-${this.p}" value="${i}" data-pack${i === this.v[this.p] ? ' checked' : ''}${x.available ? '' : ' disabled'}>
+            <span class="somna-buy__pack-name">${this.esc(x.title)}</span><span class="somna-buy__pack-price">${this.money(pr.price)}</span>${pr.compare ? `<s>${this.money(pr.compare)}</s>` : ''}${night}</label>`;
+        }).join('');
+        this.querySelectorAll('[data-mode-input]').forEach((r) => { r.checked = r.value === this.mode; r.disabled = r.value === 'sub' && v.plan == null; });
+        q('[data-price-sub]').textContent = v.plan != null ? this.money(v.sub) : '';
+        q('[data-price-once]').textContent = this.money(v.once);
+        const pr = this.price(v);
+        const add = q('[data-add]');
+        add.disabled = !v.available;
+        q('[data-add-label]').textContent = v.available ? `${this.labels.add} · ${this.money(pr.price)}` : this.labels.soldOut;
+      }
+      select(i, focus) {
+        this.p = i;
+        if (this.mode === 'sub' && this.products[i].variants[this.v[i]].plan == null) this.mode = 'once';
+        this.render();
+        if (focus) this.querySelector(`[data-tab="${i}"]`)?.focus();
+      }
+      onClick = (e) => {
+        const tab = e.target.closest('[data-tab]');
+        if (tab) { this.select(Number(tab.dataset.tab)); return; }
+        const thumb = e.target.closest('[data-media]');
+        if (thumb) { this.m[this.p] = Number(thumb.dataset.media); this.render(); return; }
+        if (e.target.closest('[data-add]')) this.add();
+      };
+      onChange = (e) => {
+        if (e.target.matches('[data-pack]')) { this.v[this.p] = Number(e.target.value); if (this.mode === 'sub' && this.products[this.p].variants[this.v[this.p]].plan == null) this.mode = 'once'; this.render(); this.querySelector(`[data-pack][value="${e.target.value}"]`)?.focus(); }
+        if (e.target.matches('[data-mode-input]')) { this.mode = e.target.value; this.render(); this.querySelector(`[data-mode-input][value="${this.mode}"]`)?.focus(); }
+      };
+      onKey = (e) => {
+        const tab = e.target.closest('[data-tab]');
+        if (!tab) return;
+        const n = this.products.length;
+        const i = Number(tab.dataset.tab);
+        const next = e.key === 'ArrowRight' ? (i + 1) % n : e.key === 'ArrowLeft' ? (i - 1 + n) % n : null;
+        if (next !== null) { e.preventDefault(); this.select(next, true); }
+      };
+      async add() {
+        if (this.busy) return;
+        const p = this.products[this.p];
+        const v = p.variants[this.v[this.p]];
+        if (!v.available) return;
+        const btn = this.querySelector('[data-add]');
+        const status = this.querySelector('[data-status]');
+        this.busy = true;
+        btn.setAttribute('aria-busy', 'true');
+        btn.disabled = true;
+        status.textContent = '';
+        try {
+          await somnaAddToCart(this, { id: v.id, quantity: 1, selling_plan: this.price(v).plan });
+          status.textContent = this.labels.added;
+        } catch (err) {
+          status.textContent = err && err.message ? err.message : this.labels.error;
+        } finally {
+          this.busy = false;
+          btn.removeAttribute('aria-busy');
+          btn.disabled = !v.available;
+        }
+      }
+    });
+  }
+</script>
+
+{% stylesheet %}
+  .somna-buy__inner {
+    display: grid;
+    justify-items: center;
+    gap: 36px;
+  }
+
+  .somna-buy__tabs {
+    display: inline-flex;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 999px;
+    background: #fff;
+  }
+
+  .somna-buy__tabs:empty {
+    display: none;
+  }
+
+  .somna-buy__tab {
+    min-height: 56px;
+    padding: 0 44px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #6f6f6f;
+    font: inherit;
+    font-size: clamp(1rem, 1.6vw, 1.5rem);
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .somna-buy__tab[aria-selected='true'] {
+    background: #000;
+    color: #fff;
+  }
+
+  .somna-buy__grid {
+    display: grid;
+    gap: 32px;
+    width: 100%;
+    align-items: start;
+  }
+
+  .somna-buy__main {
+    aspect-ratio: 622 / 504;
+    overflow: hidden;
+    background: #0b0f1d;
+  }
+
+  .somna-buy__main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .somna-buy__thumbs {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-buy__thumb {
+    display: block;
+    width: 100%;
+    aspect-ratio: 113 / 101;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    background: none;
+  }
+
+  .somna-buy__thumb[aria-current='true'] {
+    border-color: #000;
+  }
+
+  .somna-buy__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .somna-buy__panel {
+    padding: 28px clamp(16px, 3vw, 40px) 24px;
+    border-radius: 18px;
+    background: var(--somna-panel);
+    color: #fff;
+  }
+
+  .somna-buy__title {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: clamp(1.75rem, 2.6vw, 2.25rem);
+    line-height: 1;
+    text-transform: uppercase;
+    color: #fff;
+  }
+
+  .somna-buy__brand {
+    text-transform: none;
+  }
+
+  .somna-buy__rating {
+    margin: 10px 0 0;
+    font-size: 0.875rem;
+    opacity: 0.85;
+  }
+
+  .somna-buy__rating:empty,
+  .somna-buy__desc:empty {
+    display: none;
+  }
+
+  .somna-buy__desc {
+    margin: 8px 0 0;
+    font-size: 0.8125rem;
+  }
+
+  .somna-buy__points {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 24px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.8125rem;
+  }
+
+  .somna-buy__points li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .somna-buy__points .somna-check {
+    --somna-mark-size: 18px;
+  }
+
+  .somna-buy__packs,
+  .somna-buy__modes {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+
+  .somna-buy__packs legend {
+    margin: 22px 0 10px;
+    padding: 0;
+    font-weight: 600;
+  }
+
+  .somna-buy__pack-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 12px;
+  }
+
+  .somna-buy__pack {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    padding: 18px 8px 10px;
+    border: 1px solid rgb(255 255 255 / 0.3);
+    border-radius: 6px;
+    background: #2a2a2a;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .somna-buy__pack:has(input:checked) {
+    border-color: #fff;
+    background: var(--somna-chip);
+    color: #000;
+  }
+
+  .somna-buy__pack:has(input:focus-visible) {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  .somna-buy__pack input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .somna-buy__pack.is-sold-out {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .somna-buy__pack-badge {
+    position: absolute;
+    top: -10px;
+    padding: 2px 10px;
+    border-radius: 2px;
+    background: var(--somna-mint);
+    color: #000;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .somna-buy__pack-name {
+    font-size: 0.8125rem;
+  }
+
+  .somna-buy__pack-price {
+    font-size: 1.375rem;
+    font-weight: 700;
+  }
+
+  .somna-buy__pack s,
+  .somna-buy__pack-night {
+    font-size: 0.75rem;
+  }
+
+  .somna-buy__modes {
+    display: grid;
+    gap: 10px;
+    margin-top: 24px;
+    padding: 16px 20px;
+    border-radius: 14px;
+    background: var(--somna-mint);
+    color: #000;
+  }
+
+  .somna-buy__mode {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+
+  .somna-buy__mode:has(input:disabled) {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .somna-buy__mode input {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: #000;
+  }
+
+  .somna-buy__mode-price {
+    margin-left: auto;
+  }
+
+  .somna-buy__add {
+    width: 100%;
+    min-height: 72px;
+    margin-top: 24px;
+    border: 0;
+    border-radius: 18px;
+    background: var(--somna-chip);
+    color: #000;
+    font: inherit;
+    font-size: clamp(1.125rem, 1.8vw, 1.5rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 0 24px rgb(175 189 248 / 0.4);
+  }
+
+  .somna-buy__add[aria-busy='true'] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .somna-buy__add:focus-visible,
+  .somna-buy__tab:focus-visible,
+  .somna-buy__thumb:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 3px;
+  }
+
+  .somna-buy__status {
+    min-height: 1.2em;
+    margin: 8px 0 0;
+    font-size: 0.8125rem;
+    text-align: center;
+  }
+
+  .somna-buy__legal {
+    font-size: 0.8125rem;
+    text-align: center;
+    opacity: 0.85;
+  }
+
+  .somna-buy__legal p {
+    margin: 0;
+  }
+
+  .somna-buy__faq {
+    margin-top: 20px;
+  }
+
+  .somna-buy__q {
+    border-bottom: 1px solid rgb(0 0 0 / 0.35);
+  }
+
+  .somna-buy__q summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .somna-buy__q summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .somna-buy__q summary span {
+    position: relative;
+    flex: none;
+    width: 20px;
+    height: 20px;
+  }
+
+  .somna-buy__q summary span::before,
+  .somna-buy__q summary span::after {
+    content: '';
+    position: absolute;
+    inset: 9px 0 auto;
+    height: 1.5px;
+    background: currentColor;
+  }
+
+  .somna-buy__q summary span::after {
+    rotate: 90deg;
+    transition: rotate 0.2s;
+  }
+
+  .somna-buy__q[open] summary span::after {
+    rotate: 0deg;
+  }
+
+  .somna-buy__a {
+    padding: 0 0 14px;
+    font-size: 0.875rem;
+  }
+
+  .somna-buy__a p {
+    margin: 0;
+  }
+
+  @media screen and (min-width: 990px) {
+    .somna-buy__grid {
+      grid-template-columns: minmax(0, 622px) minmax(0, 596px);
+      justify-content: space-between;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna buy box",
+  "tag": "section",
+  "class": "section-somna-buy",
+  "settings": [
+    { "type": "text", "id": "tabs_label", "label": "Tabs label (screen readers)", "default": "Choose a product" },
+    { "type": "text", "id": "brand", "label": "Brand before the title", "default": "somna." },
+    { "type": "text", "id": "packs_label", "label": "Pack label", "default": "Choose Your Pack" },
+    { "type": "text", "id": "night_label", "label": "Per-night suffix", "default": "/night" },
+    { "type": "text", "id": "mode_label", "label": "Purchase option label (screen readers)", "default": "Purchase option" },
+    { "type": "text", "id": "sub_label", "label": "Subscribe label", "default": "Subscribe & Save" },
+    { "type": "text", "id": "once_label", "label": "One-time label", "default": "One-time purchase" },
+    {
+      "type": "select",
+      "id": "default_mode",
+      "label": "Selected by default",
+      "options": [
+        { "value": "sub", "label": "Subscribe" },
+        { "value": "once", "label": "One-time" }
+      ],
+      "default": "sub"
+    },
+    { "type": "text", "id": "add_label", "label": "Add to cart label", "default": "Add to cart" },
+    { "type": "text", "id": "added_label", "label": "Added message", "default": "Added to your cart." },
+    { "type": "text", "id": "error_label", "label": "Error message", "default": "Couldn’t add to cart. Please try again." },
+    { "type": "text", "id": "sold_out_label", "label": "Sold out label", "default": "Sold out" },
+    { "type": "richtext", "id": "legal", "label": "Text under the button" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#afbdf8" },
+    { "type": "color", "id": "panel_color", "label": "Panel background", "default": "#000000" },
+    { "type": "color", "id": "mint_color", "label": "Option box background", "default": "#f3feee" },
+    { "type": "color", "id": "chip_color", "label": "Selected / button colour", "default": "#afbdf8" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "limit": 3,
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "text", "id": "tab_label", "label": "Tab label" },
+        { "type": "text", "id": "title", "label": "Title", "info": "Defaults to the product name." },
+        { "type": "text", "id": "rating_text", "label": "Rating text" },
+        { "type": "textarea", "id": "description", "label": "Description" },
+        { "type": "textarea", "id": "points", "label": "Points", "info": "One per line." },
+        { "type": "range", "id": "popular_position", "label": "Highlighted pack (position)", "min": 1, "max": 6, "step": 1, "default": 2 },
+        { "type": "text", "id": "popular_label", "label": "Highlighted pack badge", "default": "Most popular" },
+        { "type": "number", "id": "nights_per_bag", "label": "Nights per bag", "info": "Used for the per-night price. Leave empty to hide it.", "default": 30 }
+      ]
+    },
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "Will it irritate my skin?" },
+        { "type": "richtext", "id": "answer", "label": "Answer" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Somna buy box",
+      "blocks": [{ "type": "product" }]
+    }
+  ]
+}
+{% endschema %}

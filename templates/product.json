@@ -465,10 +465,17 @@
         "padding-block-start": 48,
         "padding-block-end": 48
       }
+    },
+    "somna_recently_viewed_record": {
+      "type": "somna-recently-viewed",
+      "settings": {
+        "mode": "record"
+      }
     }
   },
   "order": [
     "main",
-    "product_recommendations_qggXJq"
+    "product_recommendations_qggXJq",
+    "somna_recently_viewed_record"
   ]
 }

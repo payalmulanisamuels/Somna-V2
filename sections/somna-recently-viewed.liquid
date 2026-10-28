@@ -1,0 +1,337 @@
+{%- comment -%}
+  Somna V2 — "Still thinking about it?" (recently viewed products).
+  Two modes:
+  - Record only (put it on the product template): saves the product handle in this browser.
+  - Show list (homepage or any page): appears once the visitor has viewed at least
+    "Minimum products viewed" different products. Hidden otherwise.
+  Views are kept only in the visitor's browser (localStorage, max 12 handles), and only when
+  Shopify's customer privacy API allows preference storage (or no consent banner is in use).
+{%- endcomment -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  assign key = 'somna:recently-viewed'
+-%}
+
+{%- if s.mode == 'record' -%}
+  {%- if product -%}
+    <script>
+      (function () {
+        try {
+          var cp = window.Shopify && window.Shopify.customerPrivacy;
+          if (cp && typeof cp.preferencesProcessingAllowed === 'function' && !cp.preferencesProcessingAllowed()) return;
+          var key = {{ key | json }}, h = {{ product.handle | json }};
+          var list = JSON.parse(localStorage.getItem(key) || '[]').filter(function (x) { return x !== h; });
+          list.unshift(h);
+          localStorage.setItem(key, JSON.stringify(list.slice(0, 12)));
+        } catch (e) {}
+      })();
+    </script>
+  {%- endif -%}
+{%- else -%}
+  <div
+    class="somna-rv"
+    id="SomnaRV-{{ section.id }}"
+    hidden
+    style="--somna-rv-bg: {{ s.background_color }}; --somna-rv-card: {{ s.card_color }}; --somna-rv-button: {{ s.button_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+  >
+    <div class="somna-rv__inner somna-container">
+      {%- if s.eyebrow != blank -%}<p class="somna-rv__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
+      {%- if s.heading != blank -%}<h2 class="somna-rv__heading">{{ s.heading }}</h2>{%- endif -%}
+      <ul class="somna-rv__list" role="list" data-list></ul>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var root = document.getElementById('SomnaRV-{{ section.id }}');
+      if (!root) return;
+      var key = {{ key | json }};
+      var threshold = {{ s.threshold }};
+      var max = {{ s.max_products }};
+      var current = {{ product.handle | default: '' | json }};
+      var list = [];
+      try { list = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) {}
+      list = list.filter(function (h) { return h && h !== current; });
+      if (list.length < threshold) return;
+      list = list.slice(0, max);
+
+      var ul = root.querySelector('[data-list]');
+      var labels = { from: {{ s.price_prefix | json }}, sub: {{ s.subscribe_label | json }}, cta: {{ s.button_label | json }} };
+      // Reserve the space before the request finishes so nothing below jumps.
+      ul.innerHTML = list.map(function () { return '<li class="somna-rv__card is-loading" aria-hidden="true"><span class="somna-rv__media"></span></li>'; }).join('');
+      root.hidden = false;
+
+      var money = function (cents) {
+        var cur = (window.Shopify && Shopify.currency && Shopify.currency.active) || {{ cart.currency.iso_code | json }};
+        try { return new Intl.NumberFormat(document.documentElement.lang || 'en', { style: 'currency', currency: cur }).format(cents / 100); }
+        catch (e) { return (cents / 100).toFixed(2); }
+      };
+      var esc = function (t) { var d = document.createElement('div'); d.textContent = t == null ? '' : String(t); return d.innerHTML; };
+      var root_url = {{ routes.root_url | json }};
+      var base = root_url === '/' ? '' : root_url;
+
+      Promise.all(list.map(function (h) {
+        return fetch(base + '/products/' + encodeURIComponent(h) + '.js', { headers: { Accept: 'application/json' } })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .catch(function () { return null; });
+      })).then(function (products) {
+        products = products.filter(function (p) { return p && p.available !== undefined; });
+        if (products.length < threshold) { root.hidden = true; return; }
+        ul.innerHTML = products.map(function (p) {
+          var img = p.featured_image ? p.featured_image.replace(/^\/\//, 'https://') : '';
+          var src = img ? img + (img.indexOf('?') > -1 ? '&' : '?') + 'width=600' : '';
+          var sub = p.selling_plan_groups && p.selling_plan_groups.length ? '<span class="somna-rv__sub">' + esc(labels.sub) + '</span>' : '';
+          return '<li class="somna-rv__card">' +
+            '<a class="somna-rv__media" href="' + esc(p.url) + '" tabindex="-1" aria-hidden="true">' +
+              (src ? '<img src="' + esc(src) + '" alt="" width="600" height="468" loading="lazy" decoding="async">' : '') +
+            '</a>' +
+            '<h3 class="somna-rv__title"><a href="' + esc(p.url) + '">' + esc(p.title) + '</a></h3>' +
+            '<p class="somna-rv__price">' + esc(labels.from) + ' ' + money(p.price_min) + sub + '</p>' +
+            '<a class="somna-rv__button" href="' + esc(p.url) + '">' + esc(labels.cta) + '<span class="visually-hidden">: ' + esc(p.title) + '</span></a>' +
+          '</li>';
+        }).join('');
+      });
+    })();
+  </script>
+{%- endif -%}
+
+{% stylesheet %}
+  .somna-rv {
+    background: var(--somna-rv-bg);
+    color: #f3feee;
+    overflow: hidden;
+  }
+
+  .somna-rv[hidden] {
+    display: none;
+  }
+
+  .somna-rv__eyebrow {
+    margin: 0 0 8px;
+    font-size: 0.875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .somna-rv__heading {
+    margin: 0 0 20px;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: clamp(2rem, 3.4vw, 3rem);
+    line-height: 1.05;
+    color: inherit;
+  }
+
+  .somna-rv__list {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(240px, 326px);
+    gap: 30px;
+    margin: 0;
+    padding: 0 0 8px;
+    list-style: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .somna-rv__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .somna-rv__card {
+    display: flex;
+    flex-direction: column;
+    scroll-snap-align: start;
+    min-height: 365px;
+    padding: 17px 10px 10px;
+    border-radius: 14px;
+    background: var(--somna-rv-card);
+    color: #0b0f1d;
+    box-shadow: 0 0 0 3px rgb(255 255 255 / 0.2);
+  }
+
+  .somna-rv__media {
+    display: block;
+    aspect-ratio: 282 / 220;
+    margin: 0 13px 18px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: rgb(11 15 29 / 0.08);
+  }
+
+  .somna-rv__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .somna-rv__title {
+    margin: 0 9px;
+    font-family: var(--font-body--family);
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .somna-rv__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .somna-rv__price {
+    display: flex;
+    gap: 12px;
+    margin: 4px 9px 12px;
+    font-size: 0.75rem;
+  }
+
+  .somna-rv__button {
+    display: grid;
+    place-items: center;
+    min-height: 43px;
+    margin-top: auto;
+    border-radius: 8px;
+    background: var(--somna-rv-button);
+    color: #000;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .somna-rv__button:focus-visible,
+  .somna-rv__title a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  .somna-rv__card.is-loading .somna-rv__media {
+    animation: somna-rv-pulse 1.2s ease-in-out infinite alternate;
+  }
+
+  @keyframes somna-rv-pulse {
+    to { opacity: 0.5; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-rv__card.is-loading .somna-rv__media {
+      animation: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna recently viewed",
+  "tag": "section",
+  "class": "section-somna-rv",
+  "settings": [
+    {
+      "type": "select",
+      "id": "mode",
+      "label": "Mode",
+      "options": [
+        { "value": "show", "label": "Show list" },
+        { "value": "record", "label": "Record views only (product page)" }
+      ],
+      "default": "show"
+    },
+    {
+      "type": "range",
+      "id": "threshold",
+      "label": "Minimum products viewed",
+      "info": "Different products. The list stays hidden until the visitor has viewed this many.",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "visible_if": "{{ section.settings.mode == 'show' }}"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Maximum products shown",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 8,
+      "visible_if": "{{ section.settings.mode == 'show' }}"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Recently viewed"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Still thinking about it?"
+    },
+    {
+      "type": "text",
+      "id": "price_prefix",
+      "label": "Price prefix",
+      "default": "From"
+    },
+    {
+      "type": "text",
+      "id": "subscribe_label",
+      "label": "Subscription label",
+      "info": "Shown when the product can be bought as a subscription.",
+      "default": "Subscribe & Save"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop now"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#0b0f1d"
+    },
+    {
+      "type": "color",
+      "id": "card_color",
+      "label": "Card background",
+      "default": "#f3feee"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button background",
+      "default": "#afbdf8"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "Somna recently viewed"
+    }
+  ]
+}
+{% endschema %}
