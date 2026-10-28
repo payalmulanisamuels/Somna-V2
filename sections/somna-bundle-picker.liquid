@@ -121,6 +121,9 @@
     {%- endif -%}
   </div>
 </somna-bundle-picker>
+{%- if section.settings.wave_color != blank -%}
+  {%- render 'somna-wave', top: section.settings.background_color, bottom: section.settings.wave_color -%}
+{%- endif -%}
 
 <script type="module">
   import { somnaAddToCart, somnaMoney } from '{{ 'somna-cart.js' | asset_url }}';
@@ -647,7 +650,9 @@
     { "type": "color", "id": "chip_color", "label": "Highlight (toggle, perks, button)", "default": "#afbdf8" },
     { "type": "color", "id": "button_color", "label": "Button background", "default": "#afbdf8" },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
-    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 }
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },
+    { "type": "header", "content": "Bottom wave" },
+    { "type": "color", "id": "wave_color", "label": "Colour below the wave", "info": "Draws a wave into the next section. Leave empty for a straight edge." }
   ],
   "blocks": [
     {

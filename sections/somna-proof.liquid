@@ -68,6 +68,9 @@
     {%- endif -%}
   </div>
 </somna-proof>
+{%- if section.settings.wave_color != blank -%}
+  {%- render 'somna-wave', top: section.settings.background_color, bottom: section.settings.wave_color -%}
+{%- endif -%}
 
 <script type="module">
   if (!customElements.get('somna-proof')) {
@@ -345,7 +348,9 @@
     { "type": "color", "id": "ring_color", "label": "Ring colour", "default": "#98a3de" },
     { "type": "color", "id": "card_color", "label": "Review card background", "default": "#f3feee" },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
-    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 }
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },
+    { "type": "header", "content": "Bottom wave" },
+    { "type": "color", "id": "wave_color", "label": "Colour below the wave", "info": "Draws a wave into the next section. Leave empty for a straight edge." }
   ],
   "blocks": [
     {
