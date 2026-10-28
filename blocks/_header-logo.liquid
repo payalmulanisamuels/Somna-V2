@@ -21,7 +21,33 @@
   endif
 
   assign alt_text_fallback = 'accessibility.home_logo_alt' | t: store_name: shop.name
+
+  # Somna V2: text logo options, used only when no logo image is set in Theme settings
+  assign logo_text = block_settings.logo_text | strip | default: shop.name
+  assign logo_text_weight = block_settings.logo_text_weight | default: '600'
 %}
+
+{%- if settings.logo == blank and settings.logo_inverse == blank -%}
+  {%- comment -%}
+    The body font file only includes the weights the theme already loads. For any other weight,
+    add that one face so the logo renders in its real weight instead of the nearest one.
+  {%- endcomment -%}
+  {%- assign loaded_weights = settings.type_body_font.weight
+    | append: ','
+    | append: settings.type_subheading_font.weight
+    | append: ','
+    | append: settings.type_heading_font.weight
+    | split: ','
+  -%}
+  {%- unless loaded_weights contains logo_text_weight -%}
+    {%- assign logo_font = settings.type_body_font | font_modify: 'weight', logo_text_weight -%}
+    {%- if logo_font -%}
+      <style>
+        {{ logo_font | font_face: font_display: 'swap' }}
+      </style>
+    {%- endif -%}
+  {%- endunless -%}
+{%- endif -%}
 
 {% comment %}
   Output all logo variants, use CSS to hide/show the appropriate one
@@ -38,7 +64,10 @@
     {% render 'spacing-style', settings: block_settings %}
     --font-family: var(--font-body--family);
     --font-style: var(--font-body--style);
-    --font-weight: 600;
+    --font-weight: {{ logo_text_weight }};
+    {% if block_settings.logo_text_size > 0 %}--header-logo-text-size: {{ block_settings.logo_text_size }}px;{% endif %}
+    {% if block_settings.logo_text_size_mobile > 0 %}--header-logo-text-size-mobile: {{ block_settings.logo_text_size_mobile }}px;{% endif %}
+    {% if block_settings.logo_text_color != blank %}--header-logo-text-color: {{ block_settings.logo_text_color }};{% endif %}
   "
   {{ block.shopify_attributes }}
 >
@@ -62,7 +91,7 @@
       class: 'header-logo__image',
       height: settings.logo_height,
       alt_text_fallback: alt_text_fallback,
-      text_fallback: shop.name,
+      text_fallback: logo_text,
       style: logo_style
     %}
   </span>
@@ -77,7 +106,7 @@
         class: 'header-logo__image',
         height: settings.logo_height,
         alt_text_fallback: alt_text_fallback,
-        text_fallback: shop.name,
+        text_fallback: logo_text,
         style: inverse_logo_style
       %}
     </span>
@@ -88,14 +117,20 @@
   .header-logo {
     display: flex;
     height: 100%;
-    font-size: var(--font-size--md);
+    font-size: var(--header-logo-text-size-mobile, var(--header-logo-text-size, var(--font-size--md)));
     font-family: var(--font-family);
     font-weight: var(--font-weight);
     font-style: var(--font-style);
-    color: var(--color-foreground);
+    color: var(--header-logo-text-color, var(--color-foreground));
     justify-content: center;
     align-items: center;
     text-decoration: none;
+    line-height: 1;
+    white-space: nowrap;
+
+    @media screen and (min-width: 750px) {
+      font-size: var(--header-logo-text-size, var(--font-size--md));
+    }
 
     &[data-hidden-on-home-page] {
       display: none;
@@ -151,6 +186,62 @@
     {
       "type": "paragraph",
       "content": "t:content.edit_logo_in_theme_settings"
+    },
+    {
+      "type": "header",
+      "content": "Text logo"
+    },
+    {
+      "type": "paragraph",
+      "content": "Shown when no logo image is set in Theme settings."
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Text",
+      "info": "Leave blank to use the store name."
+    },
+    {
+      "type": "range",
+      "id": "logo_text_size",
+      "label": "Size on desktop",
+      "info": "0 uses the theme default.",
+      "min": 0,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "logo_text_size_mobile",
+      "label": "Size on mobile",
+      "info": "0 uses the desktop size.",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "logo_text_weight",
+      "label": "Weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra bold" },
+        { "value": "900", "label": "Black" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "color",
+      "id": "logo_text_color",
+      "label": "Color",
+      "info": "Leave blank to follow the header text color. A set color is kept on a transparent header too."
     },
     {
       "type": "header",

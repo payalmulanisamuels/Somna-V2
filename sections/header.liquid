@@ -362,6 +362,12 @@
   style="
     --color-background-top-row: rgba({{ section.settings.background_color_top.rgba | default: settings.page_background_color.rgba }});
     --color-background-bottom-row: rgba({{ section.settings.background_color_bottom.rgba | default: settings.page_background_color.rgba }});
+    {% if transparent and section.settings.transparent_header_tint != blank %}
+      --header-transparent-tint: {{ section.settings.transparent_header_tint }};
+    {% endif %}
+    {% if section.settings.actions_icon_size > 0 %}
+      --header-actions-icon-size: {{ section.settings.actions_icon_size }}px;
+    {% endif %}
     {% if transparent and text_color_transparent != blank %}
       --color-transparent-text: {{ text_color_transparent }};
       --color-transparent-text-rgb: {{ text_color_transparent.rgb }};
@@ -383,6 +389,10 @@
   <div
     class="header__underlay header__underlay-open"
   ></div>
+  {%- if transparent and section.settings.transparent_header_tint != blank -%}
+    {%- comment -%} Somna V2: optional tint/gradient shown only while the header is transparent {%- endcomment -%}
+    <div class="header__transparent-tint" aria-hidden="true"></div>
+  {%- endif -%}
   {%- if request.page_type == 'index' -%}
     <h1 class="visually-hidden">{{ shop.name }}</h1>
   {%- endif -%}
@@ -1016,8 +1026,24 @@
   }
 
   .header-actions__action:not(.account-button) svg {
-    width: var(--icon-size-md);
-    height: var(--icon-size-md);
+    width: var(--header-actions-icon-size, var(--icon-size-md));
+    height: var(--header-actions-icon-size, var(--icon-size-md));
+  }
+
+  /* Somna V2: tint behind a transparent header; fades out once the header turns solid or a menu opens */
+  .header__transparent-tint {
+    position: absolute;
+    inset: 0;
+    z-index: var(--layer-lowest);
+    background: var(--header-transparent-tint);
+    pointer-events: none;
+    transition: opacity var(--animation-speed-slow) var(--ease-out-cubic);
+  }
+
+  .header[transparent='not-sticky'][data-sticky-state='active'] .header__transparent-tint,
+  .header:has(header-menu[aria-expanded='true']) .header__transparent-tint,
+  .header:has(.menu-list__link:hover) .header__transparent-tint {
+    opacity: 0;
   }
 
   .header:has(#Details-menu-drawer-container[open]) {
@@ -1621,6 +1647,18 @@
       "default": "icon"
     },
     {
+      "type": "range",
+      "id": "actions_icon_size",
+      "label": "Icon size",
+      "info": "0 uses the theme default.",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.actions_display_style == 'icon' }}"
+    },
+    {
       "type": "select",
       "id": "actions_font_size",
       "label": "t:settings.size",
@@ -1822,6 +1860,16 @@
       "label": "t:settings.text_color_transparent",
       "placeholder": "t:settings.default",
       "visible_if": "{{ section.settings.enable_transparent_header_collection }}"
+    },
+    {
+      "type": "header",
+      "content": "Transparent header tint"
+    },
+    {
+      "type": "color_background",
+      "id": "transparent_header_tint",
+      "label": "Tint",
+      "info": "Optional color or gradient behind the header while it's transparent. Leave blank for fully clear."
     }
   ],
   "presets": []
