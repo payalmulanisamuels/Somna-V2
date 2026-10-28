@@ -47,6 +47,9 @@
     if block_settings.background
       echo ' text-block--background '
     endif
+    if block_settings.accent_color != blank
+      echo ' text-block--accent '
+    endif
     if is_rte
       echo ' rte '
     endif
@@ -64,6 +67,9 @@
     {% if block_settings.text_color != blank %}
       --color: {{ block_settings.text_color }};
       --color-rgb: {{ block_settings.text_color.rgb }};
+    {% endif %}
+    {% if block_settings.accent_color != blank %}
+      --text-accent-color: {{ block_settings.accent_color }};
     {% endif %}
 
     --width: {{ text_width }};
@@ -134,6 +140,12 @@
 
   [style*='--horizontal-alignment: flex-end'] > .text-block {
     --text-align-default: end;
+  }
+
+  /* Somna V2: italic text shows upright in the block's accent color (two-tone headings) */
+  .text-block--accent :is(em, i) {
+    color: var(--text-accent-color);
+    font-style: normal;
   }
 
   .text-block > * {
