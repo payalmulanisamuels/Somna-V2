@@ -1,0 +1,102 @@
+{
+ "sections": {
+  "compare": {
+   "type": "somna-compare-tabs",
+   "settings": {
+    "eyebrow": "Made for your nights",
+    "heading": "Built for Bedtime. Not the First-Aid Kit.",
+    "column_2_image": "shopify://shop_images/somna-v2-compare-tape-roll.png",
+    "column_2_label": "Medical tape",
+    "column_3_image": "shopify://shop_images/somna-v2-compare-chin-strap.png",
+    "column_3_label": "Chin strap",
+    "column_4_image": "shopify://shop_images/somna-v2-compare-mouth-guard.png",
+    "column_4_label": "Mouth guard"
+   },
+   "blocks": {
+    "tab_tape": {
+     "type": "tab",
+     "settings": {
+      "name": "Mouth Tape",
+      "image": "shopify://shop_images/somna-v2-tape-pouch.png",
+      "label": "somna."
+     }
+    },
+    "tab_strips": {
+     "type": "tab",
+     "settings": {
+      "name": "Nasal Strips",
+      "image": "shopify://shop_images/somna-v2-compare-somna.png",
+      "label": "somna."
+     }
+    },
+    "row_1": {
+     "type": "row",
+     "settings": {
+      "tab": "1",
+      "label": "Drug-free",
+      "column_1": true,
+      "column_2": true,
+      "column_3": true,
+      "column_4": true
+     }
+    },
+    "row_2": {
+     "type": "row",
+     "settings": {
+      "tab": "1",
+      "label": "Nothing in your mouth",
+      "column_1": true,
+      "column_2": true,
+      "column_3": true,
+      "column_4": false
+     }
+    },
+    "row_3": {
+     "type": "row",
+     "settings": {
+      "tab": "1",
+      "label": "Nothing around your head",
+      "column_1": true,
+      "column_2": true,
+      "column_3": false,
+      "column_4": true
+     }
+    },
+    "row_4": {
+     "type": "row",
+     "settings": {
+      "tab": "1",
+      "label": "Made for lips",
+      "column_1": true,
+      "column_2": false,
+      "column_3": false,
+      "column_4": false
+     }
+    },
+    "row_5": {
+     "type": "row",
+     "settings": {
+      "tab": "1",
+      "label": "Pairs with Nasal Strips",
+      "column_1": true,
+      "column_2": false,
+      "column_3": false,
+      "column_4": false
+     }
+    }
+   },
+   "block_order": [
+    "tab_tape",
+    "tab_strips",
+    "row_1",
+    "row_2",
+    "row_3",
+    "row_4",
+    "row_5"
+   ]
+  }
+ },
+ "order": [
+  "compare"
+ ]
+}

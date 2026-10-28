@@ -1,0 +1,110 @@
+{
+ "sections": {
+  "guarantee": {
+   "type": "section",
+   "settings": {
+    "content_direction": "column",
+    "gap": 16,
+    "section_width": "page-width",
+    "background_color": "#98a3de",
+    "padding-block-start": 24,
+    "padding-block-end": 56,
+    "horizontal_alignment_flex_direction_column": "center"
+   },
+   "blocks": {
+    "icon": {
+     "type": "somna-icon",
+     "settings": {
+      "icon": "shield",
+      "size": 104,
+      "color": "#000000",
+      "backdrop": "none",
+      "icon_offset": 0
+     },
+     "blocks": {}
+    },
+    "eyebrow": {
+     "type": "text",
+     "settings": {
+      "text": "<p>30-Night Money-Back Guarantee</p>",
+      "width": "100%",
+      "max_width": "none",
+      "alignment": "center",
+      "type_preset": "custom",
+      "font": "var(--font-body--family)",
+      "font_size": "1.5rem",
+      "line_height": "normal",
+      "letter_spacing": "loose",
+      "case": "uppercase",
+      "wrap": "pretty",
+      "text_color": "#000000"
+     },
+     "blocks": {}
+    },
+    "heading": {
+     "type": "text",
+     "settings": {
+      "text": "<h2>Try for 30 nights</h2>",
+      "width": "100%",
+      "max_width": "none",
+      "alignment": "center",
+      "type_preset": "custom",
+      "font": "var(--font-accent--family)",
+      "font_size": "4.5rem",
+      "line_height": "tight",
+      "letter_spacing": "normal",
+      "case": "uppercase",
+      "wrap": "balance",
+      "text_color": "#000000",
+      "accent_color": "#98a3de"
+     },
+     "blocks": {}
+    },
+    "text": {
+     "type": "text",
+     "settings": {
+      "text": "<p>Not for you? We’ll refund you. Simple as that.</p>",
+      "width": "100%",
+      "max_width": "none",
+      "alignment": "center",
+      "type_preset": "custom",
+      "font": "var(--font-body--family)",
+      "font_size": "2rem",
+      "line_height": "normal",
+      "letter_spacing": "loose",
+      "case": "none",
+      "wrap": "pretty",
+      "text_color": "#000000"
+     },
+     "blocks": {}
+    },
+    "button": {
+     "type": "button",
+     "settings": {
+      "label": "Try Somna risk-free",
+      "link": "shopify://collections/all",
+      "style_class": "button-custom",
+      "custom_button_background": "#ffffff",
+      "custom_button_text": "#000000",
+      "custom_button_border": "#ffffff",
+      "width": "custom",
+      "custom_width": 50,
+      "width_mobile": "custom",
+      "custom_width_mobile": 100
+     },
+     "blocks": {}
+    }
+   },
+   "block_order": [
+    "icon",
+    "eyebrow",
+    "heading",
+    "text",
+    "button"
+   ]
+  }
+ },
+ "order": [
+  "guarantee"
+ ]
+}

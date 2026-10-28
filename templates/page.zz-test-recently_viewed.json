@@ -1,0 +1,14 @@
+{
+ "sections": {
+  "recently_viewed": {
+   "type": "somna-recently-viewed",
+   "settings": {
+    "mode": "show"
+   },
+   "blocks": {}
+  }
+ },
+ "order": [
+  "recently_viewed"
+ ]
+}

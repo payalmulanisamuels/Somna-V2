@@ -1,0 +1,66 @@
+{
+ "sections": {
+  "newsletter": {
+   "type": "section",
+   "settings": {
+    "content_direction": "row",
+    "gap": 40,
+    "section_width": "page-width",
+    "background_color": "#000000",
+    "padding-block-start": 48,
+    "padding-block-end": 48,
+    "horizontal_alignment": "space-between",
+    "vertical_alignment": "center"
+   },
+   "blocks": {
+    "heading": {
+     "type": "text",
+     "settings": {
+      "text": "<h2>Get <em>10% off</em><br>your first order</h2>",
+      "width": "100%",
+      "max_width": "none",
+      "alignment": "left",
+      "type_preset": "custom",
+      "font": "var(--font-accent--family)",
+      "font_size": "3.5rem",
+      "line_height": "tight",
+      "letter_spacing": "normal",
+      "case": "uppercase",
+      "wrap": "balance",
+      "text_color": "#ffffff",
+      "accent_color": "#98a3de"
+     },
+     "blocks": {}
+    },
+    "signup": {
+     "type": "email-signup",
+     "settings": {
+      "width": "custom",
+      "custom_width": 60,
+      "border_style": "all",
+      "input_style": "custom",
+      "border_radius": 100,
+      "input_background_color": "#ffffff",
+      "input_text_color": "#000000",
+      "input_border_color": "#ffffff",
+      "style_class": "button-custom",
+      "custom_button_background": "#afbdf8",
+      "custom_button_text": "#000000",
+      "custom_button_border": "#afbdf8",
+      "display_type": "text",
+      "label": "Subscribe →",
+      "integrated_button": true
+     },
+     "blocks": {}
+    }
+   },
+   "block_order": [
+    "heading",
+    "signup"
+   ]
+  }
+ },
+ "order": [
+  "newsletter"
+ ]
+}

@@ -1,0 +1,79 @@
+{
+ "sections": {
+  "buy_box": {
+   "type": "somna-buy-box",
+   "settings": {
+    "legal": "<p>Subscribe & Save renews every 30 days. Pause or cancel anytime.<br>30-Night Money-Back Guarantee</p>"
+   },
+   "blocks": {
+    "tape": {
+     "type": "product",
+     "settings": {
+      "product": "mouth-tape",
+      "tab_label": "Mouth Tape",
+      "title": "Mouth Tape",
+      "rating_text": "",
+      "description": "The tape that sits on the outside of your lips and stays put till morning. 30 per bag.",
+      "points": "Drug-free\nStays on all night\nGentle on skin\n3 colors",
+      "popular_position": 2,
+      "popular_label": "Most popular",
+      "nights_per_bag": 30
+     }
+    },
+    "strips": {
+     "type": "product",
+     "settings": {
+      "product": "nasal-strips",
+      "tab_label": "Nasal Strips",
+      "title": "Nasal Strips",
+      "rating_text": "",
+      "description": "The strip that sits on the outside of your nose and stays put till morning. 30 per bag.",
+      "points": "Drug-free\nStays on all night\nGentle on skin\n3 colors",
+      "popular_position": 2,
+      "popular_label": "Most popular",
+      "nights_per_bag": 30
+     }
+    },
+    "q1": {
+     "type": "question",
+     "settings": {
+      "question": "Will it irritate my skin?",
+      "answer": "<p>Each strip and tape uses a hypoallergenic adhesive layer designed to stay comfortable through the night without irritating skin.</p>"
+     }
+    },
+    "q2": {
+     "type": "question",
+     "settings": {
+      "question": "Strips or Tape: where do I start?",
+      "answer": "<p>Both are available individually if you’d rather start with one. Not sure? The bundle gives you both for the full routine.</p>"
+     }
+    },
+    "q3": {
+     "type": "question",
+     "settings": {
+      "question": "How long does one bag last?",
+      "answer": "<p>Each bag holds 30 nights.</p>"
+     }
+    },
+    "q4": {
+     "type": "question",
+     "settings": {
+      "question": "Can I skip, pause or cancel Autoship?",
+      "answer": "<p>Yes. Pause or cancel anytime from your account. No fees, no calls.</p>"
+     }
+    }
+   },
+   "block_order": [
+    "tape",
+    "strips",
+    "q1",
+    "q2",
+    "q3",
+    "q4"
+   ]
+  }
+ },
+ "order": [
+  "buy_box"
+ ]
+}
