@@ -201,7 +201,10 @@
         <nav
           class="menu-list"
           aria-label="{{ 'accessibility.header_navigation_label' | t }}"
-          style="{% render 'menu-font-styles', settings: block_settings, menu_type: 'mega_menu' %}"
+          {% if block_settings.active_link_style == 'underline' %}
+            data-active-style="underline"
+          {% endif %}
+          style="{% render 'menu-font-styles', settings: block_settings, menu_type: 'mega_menu' %}{% if block_settings.active_link_underline_color != blank %} --menu-active-underline-color: {{ block_settings.active_link_underline_color }};{% endif %}"
         >
           {% assign class = 'overflow-menu' | append: background_color_classes %}
           {% render 'overflow-list',
@@ -813,6 +816,28 @@
   .menu-list__list-item:not(:has([aria-expanded='true'])) > .menu-list__submenu product-component {
     display: none;
   }
+  /* Somna V2: optional underline under the active top-level link (desktop menu) */
+  .menu-list[data-active-style='underline'] .menu-list__link--active .menu-list__link-title {
+    position: relative;
+  }
+
+  .menu-list[data-active-style='underline'] .menu-list__link--active .menu-list__link-title::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: -0.55em;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--menu-active-underline-color, currentcolor);
+  }
+
+  /* With the underline marking the active page, other links keep full strength until one is hovered */
+  .menu-list[data-active-style='underline']:not(:has(.menu-list__list-item:hover)):not(
+      :has(.menu-list__list-item:focus-within)
+    )
+    .menu-list__link {
+    color: var(--menu-top-level-font-color);
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -825,6 +850,29 @@
       "id": "menu",
       "label": "t:settings.menu",
       "default": "main-menu"
+    },
+    {
+      "type": "select",
+      "id": "active_link_style",
+      "label": "Current page link",
+      "options": [
+        {
+          "value": "subdued",
+          "label": "Dim the other links"
+        },
+        {
+          "value": "underline",
+          "label": "Underline it"
+        }
+      ],
+      "default": "subdued"
+    },
+    {
+      "type": "color",
+      "id": "active_link_underline_color",
+      "label": "Underline color",
+      "info": "Leave blank to match the link color.",
+      "visible_if": "{{ block.settings.active_link_style == 'underline' }}"
     },
     {
       "type": "header",

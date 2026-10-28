@@ -6,7 +6,46 @@
 {%- assign plain_text = block_settings.text | strip_newlines | strip_html | strip -%}
 {%- assign block_index = section.blocks | find_index: 'id', block.id -%}
 
-{%- unless plain_text == '' -%}
+{%- liquid
+  # Somna V2: 'wide' is an announcement-only spacing for tracked-out strip text
+  assign wide_spacing_style = ''
+  if block_settings.letter_spacing == 'wide'
+    assign wide_spacing_style = '--letter-spacing: 0.4em;'
+  endif
+-%}
+
+{%- if section.settings.display_style == 'scroll' and plain_text != '' -%}
+  <div
+    class="
+      announcement-bar__marquee-item
+      text-block
+      text-block--{{ block.id }}
+      custom-typography
+      {% if block_settings.font_size != "" %}custom-font-size{% endif %}
+      {% if block_settings.weight != "" %}custom-font-weight{% endif %}
+    "
+    style="
+      {% render 'typography-style', settings: block_settings, preset: 'custom' %}
+      {{ wide_spacing_style }}
+      {% if block_settings.text_color != blank %}--color: {{ block_settings.text_color }}; --color-rgb: {{ block_settings.text_color.rgb }};{% endif %}
+      --line-height: 1.3;
+    "
+    {{ block.shopify_attributes }}
+  >
+    <p class="announcement-bar__text">
+      {{ block.settings.text }}
+    </p>
+
+    {% if block_settings.link != blank %}
+      {%- comment -%} Mouse/touch target only; the keyboard link sits in the accessible copy {%- endcomment -%}
+      <a
+        class="announcement-bar__link"
+        href="{{ block_settings.link }}"
+        tabindex="-1"
+      ></a>
+    {% endif %}
+  </div>
+{%- elsif plain_text != '' -%}
   <slideshow-slide
     ref="slides[]"
     class="
@@ -21,6 +60,7 @@
     "
     style="
       {% render 'typography-style', settings: block_settings, preset: 'custom' %}
+      {{ wide_spacing_style }}
       {% if block_settings.text_color != blank %}--color: {{ block_settings.text_color }}; --color-rgb: {{ block_settings.text_color.rgb }};{% endif %}
       --width: 100%;
       --text-align: center;
@@ -44,7 +84,7 @@
       </a>
     {% endif %}
   </slideshow-slide>
-{%- endunless -%}
+{%- endif -%}
 
 {% schema %}
 {
@@ -222,6 +262,10 @@
         {
           "value": "loose",
           "label": "t:options.loose"
+        },
+        {
+          "value": "wide",
+          "label": "Extra wide"
         }
       ],
       "default": "normal"

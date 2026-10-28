@@ -1,6 +1,20 @@
 
 
-{% if section.blocks.size > 1 %}
+{%- liquid
+  assign is_scroll = false
+  if section.settings.display_style == 'scroll'
+    assign is_scroll = true
+  endif
+-%}
+
+{% if is_scroll %}
+  {%- comment -%} Somna V2: the scrolling style reuses Horizon's marquee component. {%- endcomment -%}
+  <script
+    src="{{ 'marquee.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+{% elsif section.blocks.size > 1 %}
   <script
     src="{{ 'announcement-bar.js' | asset_url }}"
     type="module"
@@ -12,9 +26,43 @@
 
 <div class="section-background color-custom-{{ section.id }}"></div>
 <aside
-  class="announcement-bar spacing-style section section--{{ section.settings.section_width }} color-custom-{{ section.id }}"
+  class="announcement-bar spacing-style section section--{{ section.settings.section_width }} color-custom-{{ section.id }}{% if is_scroll %} announcement-bar--scroll{% endif %}"
   style="{% render 'spacing-padding', settings: section.settings %}; --border-bottom-width: {{ section.settings.divider_width }}px;{% if section.settings.divider_color != blank %} --color-border: {{ section.settings.divider_color }};{% endif %}"
 >
+  {% if is_scroll %}
+    {%- comment -%}
+      Screen readers and keyboard users get each announcement once, here.
+      The moving copy below is decorative (it repeats the same text) and is hidden from them.
+    {%- endcomment -%}
+    <div class="announcement-bar__accessible-text">
+      {% for block in section.blocks %}
+        {%- assign plain_text = block.settings.text | strip_newlines | strip_html | strip -%}
+        {%- if plain_text != '' -%}
+          {%- if block.settings.link != blank -%}
+            <a class="visually-hidden announcement-bar__accessible-link" href="{{ block.settings.link }}">{{ plain_text }}</a>
+          {%- else -%}
+            <p class="visually-hidden">{{ plain_text }}</p>
+          {%- endif -%}
+        {%- endif -%}
+      {% endfor %}
+    </div>
+
+    <marquee-component
+      class="announcement-bar__marquee"
+      aria-hidden="true"
+      data-speed-factor="{{ section.settings.scroll_speed }}"
+      data-movement-direction="normal"
+      style="--marquee-gap: {{ section.settings.scroll_gap }}px; --marquee-direction: normal;"
+    >
+      <div class="marquee__wrapper" ref="wrapper">
+        <div class="marquee__content" ref="content">
+          <div class="marquee__repeated-items" ref="marqueeItems[]">
+            {% content_for 'blocks' %}
+          </div>
+        </div>
+      </div>
+    </marquee-component>
+  {% else %}
   {% liquid
     assign autoplay = false
     assign show_arrows = false
@@ -38,6 +86,7 @@
       {% content_for 'blocks' %}
     </div>
   </announcement-bar-component>
+  {% endif %}
 </aside>
 
 {% stylesheet %}
@@ -123,6 +172,70 @@
     position: absolute;
     inset: 0;
   }
+
+  /* Somna V2: scrolling announcement style (opt-in via "Display style") */
+  .announcement-bar--scroll {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* the strip runs edge to edge whatever the section width setting */
+  .announcement-bar--scroll > .announcement-bar__marquee {
+    grid-column: 1 / -1;
+  }
+
+  .announcement-bar__marquee-item {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .announcement-bar__marquee-item .announcement-bar__text {
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  /* The accessible copy takes no space in the strip's grid */
+  .announcement-bar__accessible-text {
+    display: contents;
+  }
+
+  /* A focused keyboard link becomes visible over the strip */
+  .announcement-bar__accessible-link:focus-visible {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: grid;
+    place-content: center;
+    background: var(--color-background);
+    color: var(--color-foreground);
+    outline-offset: calc(var(--focus-outline-offset) * -1);
+  }
+
+  /* Reduced motion: no movement, one centred copy that may wrap */
+  @media (prefers-reduced-motion: reduce) {
+    .announcement-bar__marquee .marquee__wrapper,
+    .announcement-bar__marquee .marquee__content,
+    .announcement-bar__marquee .marquee__repeated-items {
+      width: 100%;
+      min-width: 0;
+      justify-content: center;
+    }
+
+    .announcement-bar__marquee .marquee__content:not(:first-child),
+    .announcement-bar__marquee .marquee__repeated-items:not(:first-child) {
+      display: none;
+    }
+
+    .announcement-bar__marquee .marquee__repeated-items {
+      flex-wrap: wrap;
+      row-gap: var(--gap-2xs);
+    }
+
+    .announcement-bar__marquee .announcement-bar__marquee-item .announcement-bar__text {
+      white-space: normal;
+      text-align: center;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -138,13 +251,54 @@
   },
   "settings": [
     {
+      "type": "select",
+      "id": "display_style",
+      "label": "Display style",
+      "options": [
+        {
+          "value": "slideshow",
+          "label": "Rotate one at a time"
+        },
+        {
+          "value": "scroll",
+          "label": "Scroll continuously"
+        }
+      ],
+      "default": "slideshow",
+      "info": "Scrolling pauses on hover and stays still for visitors who turn off motion."
+    },
+    {
       "type": "range",
       "id": "speed",
       "label": "t:settings.scroll_speed",
       "min": 2,
       "max": 10,
       "default": 5,
-      "unit": "sec"
+      "unit": "sec",
+      "visible_if": "{{ section.settings.display_style != 'scroll' }}"
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "label": "Scroll duration",
+      "info": "Higher is slower.",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "default": 25,
+      "unit": "sec",
+      "visible_if": "{{ section.settings.display_style == 'scroll' }}"
+    },
+    {
+      "type": "range",
+      "id": "scroll_gap",
+      "label": "Gap between repeats",
+      "min": 16,
+      "max": 160,
+      "step": 8,
+      "default": 64,
+      "unit": "px",
+      "visible_if": "{{ section.settings.display_style == 'scroll' }}"
     },
     {
       "type": "header",
