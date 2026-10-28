@@ -886,7 +886,8 @@
         "text_color": "#000000",
         "button_color": "#afbdf8",
         "padding_top": 32,
-        "padding_bottom": 32
+        "padding_bottom": 32,
+        "wave_color": "#000000"
       },
       "blocks": {
         "step_1": {
@@ -916,17 +917,6 @@
         "step_2",
         "step_3"
       ]
-    },
-    "wave_mint_black": {
-      "type": "somna-wave",
-      "settings": {
-        "top_color": "#f3feee",
-        "bottom_color": "#000000",
-        "flip": false,
-        "drops": true,
-        "height": 96,
-        "height_mobile": 40
-      }
     },
     "match": {
       "type": "somna-match-cards",
@@ -1065,7 +1055,8 @@
     "routine": {
       "type": "somna-routine",
       "settings": {
-        "heading": "<h2>Your night routine, <em>stripped back.</em></h2>"
+        "heading": "<h2>Your night routine, <em>stripped back.</em></h2>",
+        "wave_color": "#afbdf8"
       },
       "blocks": {
         "prep": {
@@ -1096,17 +1087,6 @@
         "unwind"
       ]
     },
-    "wave_black_lav": {
-      "type": "somna-wave",
-      "settings": {
-        "top_color": "#000000",
-        "bottom_color": "#afbdf8",
-        "flip": false,
-        "drops": true,
-        "height": 96,
-        "height_mobile": 40
-      }
-    },
     "compare": {
       "type": "somna-compare-tabs",
       "settings": {
@@ -1117,7 +1097,8 @@
         "column_3_image": "shopify://shop_images/somna-v2-compare-chin-strap.png",
         "column_3_label": "Chin strap",
         "column_4_image": "shopify://shop_images/somna-v2-compare-mouth-guard.png",
-        "column_4_label": "Mouth guard"
+        "column_4_label": "Mouth guard",
+        "wave_color": "#000000"
       },
       "blocks": {
         "tab_tape": {
@@ -1202,22 +1183,12 @@
         "row_5"
       ]
     },
-    "wave_lav_black": {
-      "type": "somna-wave",
-      "settings": {
-        "top_color": "#afbdf8",
-        "bottom_color": "#000000",
-        "flip": false,
-        "drops": true,
-        "height": 96,
-        "height_mobile": 40
-      }
-    },
     "proof": {
       "type": "somna-proof",
       "settings": {
         "eyebrow": "",
-        "heading": "<p>Real people. <em>Real nights.</em></p>"
+        "heading": "<p>Real people. <em>Real nights.</em></p>",
+        "wave_color": "#f3feee"
       },
       "blocks": {
         "stat_1": {
@@ -1283,17 +1254,6 @@
         "review_2",
         "review_3"
       ]
-    },
-    "wave_black_mint": {
-      "type": "somna-wave",
-      "settings": {
-        "top_color": "#000000",
-        "bottom_color": "#f3feee",
-        "flip": false,
-        "drops": true,
-        "height": 96,
-        "height_mobile": 40
-      }
     },
     "trust": {
       "type": "section",
@@ -1453,7 +1413,8 @@
         "eyebrow": "On camera",
         "heading": "Hear it from them",
         "card_width": 208,
-        "background_color": "#f3feee"
+        "background_color": "#f3feee",
+        "wave_color": "#000000"
       },
       "blocks": {
         "card_1": {
@@ -1507,17 +1468,6 @@
         "card_5",
         "card_6"
       ]
-    },
-    "wave_mint_black_2": {
-      "type": "somna-wave",
-      "settings": {
-        "top_color": "#f3feee",
-        "bottom_color": "#000000",
-        "flip": false,
-        "drops": true,
-        "height": 96,
-        "height_mobile": 40
-      }
     },
     "gifts": {
       "type": "section",
@@ -1874,7 +1824,8 @@
     "buy_box": {
       "type": "somna-buy-box",
       "settings": {
-        "legal": "<p>Subscribe & Save renews every 30 days. Pause or cancel anytime.<br>30-Night Money-Back Guarantee</p>"
+        "legal": "<p>Subscribe & Save renews every 30 days. Pause or cancel anytime.<br>30-Night Money-Back Guarantee</p>",
+        "wave_color": "#000000"
       },
       "blocks": {
         "tape": {
@@ -1943,21 +1894,11 @@
         "q4"
       ]
     },
-    "wave_lav_black_2": {
-      "type": "somna-wave",
-      "settings": {
-        "top_color": "#afbdf8",
-        "bottom_color": "#000000",
-        "flip": false,
-        "drops": true,
-        "height": 96,
-        "height_mobile": 40
-      }
-    },
     "bundles": {
       "type": "somna-bundle-picker",
       "settings": {
-        "heading": "<p>Never <em>Run Out</em> Again.</p>"
+        "heading": "<p>Never <em>Run Out</em> Again.</p>",
+        "wave_color": "#f3feee"
       },
       "blocks": {
         "perk_1": {
@@ -2026,17 +1967,6 @@
         "p2",
         "p3"
       ]
-    },
-    "wave_black_mint_2": {
-      "type": "somna-wave",
-      "settings": {
-        "top_color": "#000000",
-        "bottom_color": "#f3feee",
-        "flip": false,
-        "drops": true,
-        "height": 96,
-        "height_mobile": 40
-      }
     },
     "faq": {
       "type": "section",
@@ -2778,24 +2708,17 @@
     "recently_viewed",
     "wave_navy_mint",
     "steps",
-    "wave_mint_black",
     "match",
     "still_cant_pick",
     "routine",
-    "wave_black_lav",
     "compare",
-    "wave_lav_black",
     "proof",
-    "wave_black_mint",
     "trust",
     "ugc",
-    "wave_mint_black_2",
     "gifts",
     "wave_black_lav_2",
     "buy_box",
-    "wave_lav_black_2",
     "bundles",
-    "wave_black_mint_2",
     "faq",
     "wave_mint_black_3",
     "reviews",
