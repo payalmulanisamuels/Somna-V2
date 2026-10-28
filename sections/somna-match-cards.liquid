@@ -23,12 +23,11 @@
       {%- if s.video_image != blank -%}
         {%- capture thumb -%}
           {{ s.video_image | image_url: width: 400 | image_tag: loading: 'lazy', widths: '200, 300, 400', sizes: '136px', class: 'somna-match__thumb-img', alt: s.video_image.alt }}
-          <span class="somna-match__play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" fill="currentColor"/></svg></span>
         {%- endcapture -%}
         <figure class="somna-match__video">
           {%- if s.video_link != blank -%}
             <a class="somna-match__thumb" href="{{ s.video_link }}"{% if s.video_new_tab %} target="_blank" rel="noopener"{% endif %}>
-              {{ thumb }}<span class="visually-hidden">{{ s.video_caption | default: 'Watch video' }}</span>
+              {{ thumb }}<span class="somna-match__play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" fill="currentColor"/></svg></span><span class="visually-hidden">{{ s.video_caption | default: 'Watch video' }}</span>
             </a>
           {%- else -%}
             <span class="somna-match__thumb">{{ thumb }}</span>

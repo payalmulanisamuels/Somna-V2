@@ -21,30 +21,12 @@
         "padding-block-end": 24
       },
       "blocks": {
-        "logo": {
-          "type": "text",
-          "settings": {
-            "text": "<p><strong>somna.</strong></p>",
-            "width": "fit-content",
-            "max_width": "none",
-            "alignment": "left",
-            "type_preset": "custom",
-            "font": "var(--font-body--family)",
-            "font_size": "5.5rem",
-            "line_height": "tight",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "text_color": "#0b3fa6"
-          },
-          "blocks": {}
-        },
-        "menus": {
+        "brand": {
           "type": "group",
           "settings": {
-            "content_direction": "row",
+            "content_direction": "column",
             "vertical_on_mobile": true,
-            "gap": 32,
+            "gap": 40,
             "width": "fill",
             "custom_width": 100,
             "width_mobile": "fill",
@@ -52,72 +34,114 @@
             "border_radius": 0,
             "padding-block-start": 0,
             "padding-block-end": 0,
-            "padding-inline-start": 16,
-            "padding-inline-end": 16,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-start"
+            "padding-inline-start": 0,
+            "padding-inline-end": 0,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center"
           },
           "blocks": {
-            "shop": {
-              "type": "menu",
+            "logo": {
+              "type": "text",
               "settings": {
-                "menu": "shop",
-                "heading": "Shop",
-                "menu_spacing": 12,
-                "text_color": "#0a1a4a",
-                "heading_preset": "h5",
-                "link_preset": "paragraph"
+                "text": "<p><strong>somna.</strong></p>",
+                "width": "fit-content",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-body--family)",
+                "font_size": "5.5rem",
+                "line_height": "tight",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#0b3fa6"
               },
               "blocks": {}
             },
-            "support": {
-              "type": "menu",
+            "menus": {
+              "type": "group",
               "settings": {
-                "menu": "support",
-                "heading": "Support",
-                "menu_spacing": 12,
-                "text_color": "#0a1a4a",
-                "heading_preset": "h5",
-                "link_preset": "paragraph"
+                "content_direction": "row",
+                "vertical_on_mobile": true,
+                "gap": 32,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "height": "fit",
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 16,
+                "padding-inline-end": 16,
+                "horizontal_alignment": "space-between",
+                "vertical_alignment": "flex-start"
               },
-              "blocks": {}
-            },
-            "learn": {
-              "type": "menu",
-              "settings": {
-                "menu": "learn",
-                "heading": "Learn",
-                "menu_spacing": 12,
-                "text_color": "#0a1a4a",
-                "heading_preset": "h5",
-                "link_preset": "paragraph"
+              "blocks": {
+                "shop": {
+                  "type": "menu",
+                  "settings": {
+                    "menu": "shop",
+                    "heading": "Shop",
+                    "menu_spacing": 12,
+                    "text_color": "#0a1a4a",
+                    "heading_preset": "h5",
+                    "link_preset": "paragraph"
+                  },
+                  "blocks": {}
+                },
+                "support": {
+                  "type": "menu",
+                  "settings": {
+                    "menu": "support",
+                    "heading": "Support",
+                    "menu_spacing": 12,
+                    "text_color": "#0a1a4a",
+                    "heading_preset": "h5",
+                    "link_preset": "paragraph"
+                  },
+                  "blocks": {}
+                },
+                "learn": {
+                  "type": "menu",
+                  "settings": {
+                    "menu": "learn",
+                    "heading": "Learn",
+                    "menu_spacing": 12,
+                    "text_color": "#0a1a4a",
+                    "heading_preset": "h5",
+                    "link_preset": "paragraph"
+                  },
+                  "blocks": {}
+                },
+                "connect": {
+                  "type": "menu",
+                  "settings": {
+                    "menu": "connect",
+                    "heading": "Connect",
+                    "menu_spacing": 12,
+                    "text_color": "#0a1a4a",
+                    "heading_preset": "h5",
+                    "link_preset": "paragraph"
+                  },
+                  "blocks": {}
+                }
               },
-              "blocks": {}
-            },
-            "connect": {
-              "type": "menu",
-              "settings": {
-                "menu": "connect",
-                "heading": "Connect",
-                "menu_spacing": 12,
-                "text_color": "#0a1a4a",
-                "heading_preset": "h5",
-                "link_preset": "paragraph"
-              },
-              "blocks": {}
+              "block_order": [
+                "shop",
+                "support",
+                "learn",
+                "connect"
+              ]
             }
           },
           "block_order": [
-            "shop",
-            "support",
-            "learn",
-            "connect"
+            "logo",
+            "menus"
           ]
         }
       },
       "block_order": [
-        "logo",
-        "menus"
+        "brand"
       ]
     },
     "footer_utilities_somna": {

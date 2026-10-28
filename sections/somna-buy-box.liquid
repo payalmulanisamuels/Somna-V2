@@ -27,7 +27,7 @@
       "nights": {{ block.settings.nights_per_bag | default: 0 }},
       "media": [
         {%- assign imgs = p.media | where: 'media_type', 'image' -%}
-        {%- for m in imgs limit: 6 -%}
+        {%- for m in imgs limit: 5 -%}
           { "src": {{ m | image_url: width: 1200 | json }}, "thumb": {{ m | image_url: width: 240 | json }}, "alt": {{ m.alt | default: p.title | json }} }{% unless forloop.last %},{% endunless %}
         {%- endfor -%}
       ],

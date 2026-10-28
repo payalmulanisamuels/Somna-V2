@@ -3,9 +3,13 @@
   section renders it so the stylesheet below is bundled once with the theme styles.
 {%- endcomment -%}
 {% stylesheet %}
+  :is(somna-compare-tabs, somna-proof, somna-buy-box, somna-bundle-picker) {
+    display: block;
+  }
+
   .somna-container {
     width: 100%;
-    max-width: calc(var(--page-content-width, 1320px) + var(--page-margin, 16px) * 2);
+    max-width: calc(var(--somna-content-width, 1160px) + var(--page-margin, 16px) * 2);
     margin-inline: auto;
     padding-inline: var(--page-margin, 16px);
   }
