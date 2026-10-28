@@ -57,35 +57,40 @@
       <div class="marquee__wrapper" ref="wrapper">
         <div class="marquee__content" ref="content">
           <div class="marquee__repeated-items" ref="marqueeItems[]">
-            {% content_for 'blocks' %}
+  {% else %}
+    {% liquid
+      assign autoplay = false
+      assign show_arrows = false
+      if section.blocks.size > 1
+        assign autoplay = true
+        assign show_arrows = true
+      endif
+    %}
+
+    <announcement-bar-component
+      class="announcement-bar__slider"
+      {% if autoplay == true %}
+        autoplay="{{ section.settings.speed }}" aria-live="polite"
+      {% endif %}
+    >
+      {% if show_arrows %}
+        {% render 'slideshow-arrows', icon_style: 'chevron' %}
+      {% endif %}
+
+      <div class="announcement-bar__slides">
+  {% endif %}
+
+  {%- comment -%} Shopify allows content_for 'blocks' once per file, so both styles share it {%- endcomment -%}
+  {% content_for 'blocks' %}
+
+  {% if is_scroll %}
           </div>
         </div>
       </div>
     </marquee-component>
   {% else %}
-  {% liquid
-    assign autoplay = false
-    assign show_arrows = false
-    if section.blocks.size > 1
-      assign autoplay = true
-      assign show_arrows = true
-    endif
-  %}
-
-  <announcement-bar-component
-    class="announcement-bar__slider"
-    {% if autoplay == true %}
-      autoplay="{{ section.settings.speed }}" aria-live="polite"
-    {% endif %}
-  >
-    {% if show_arrows %}
-      {% render 'slideshow-arrows', icon_style: 'chevron' %}
-    {% endif %}
-
-    <div class="announcement-bar__slides">
-      {% content_for 'blocks' %}
-    </div>
-  </announcement-bar-component>
+      </div>
+    </announcement-bar-component>
   {% endif %}
 </aside>
 

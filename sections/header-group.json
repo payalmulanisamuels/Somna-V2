@@ -33,16 +33,16 @@
       ],
       "name": "t:names.announcement_bar",
       "settings": {
+        "display_style": "scroll",
+        "scroll_speed": 30,
+        "scroll_gap": 64,
         "speed": 5,
         "section_width": "full-width",
         "background_color": "#afbdf8",
         "divider_width": 0,
         "divider_color": "{{ settings.color_palette.color2 }}",
         "padding-block-start": 7,
-        "padding-block-end": 7,
-        "display_style": "scroll",
-        "scroll_speed": 30,
-        "scroll_gap": 64
+        "padding-block-end": 7
       }
     },
     "header_section": {
@@ -111,10 +111,10 @@
         "enable_transparent_header_product": false,
         "enable_transparent_header_collection": false,
         "actions_display_style": "icon",
-        "actions_icon_size": 28,
         "text_color_top": "#ffffff",
         "home_inverse_logo": false,
         "text_color_transparent_home": "#ffffff",
+        "actions_icon_size": 28,
         "transparent_header_tint": "linear-gradient(90deg, rgba(0, 0, 0, 0.16) 0%, rgba(102, 102, 102, 0.16) 100%)"
       }
     }
