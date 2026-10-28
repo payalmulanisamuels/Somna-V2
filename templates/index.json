@@ -1471,6 +1471,7 @@
       "settings": {
         "eyebrow": "On camera",
         "heading": "Hear it from them",
+        "card_width": 208,
         "background_color": "#f3feee"
       },
       "blocks": {
