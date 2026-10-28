@@ -1,0 +1,10 @@
+{%- doc -%}
+  Somna V2 — yes / no mark (green tick or pink cross) with an accessible label.
+  @param {boolean} value - true shows a tick, false a cross
+  @param {string} [label] - screen-reader text; defaults to Yes / No
+{%- enddoc -%}
+{%- if value -%}
+  <span class="somna-check"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span class="visually-hidden">{{ label | default: 'Yes' }}</span></span>
+{%- else -%}
+  <span class="somna-cross"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg><span class="visually-hidden">{{ label | default: 'No' }}</span></span>
+{%- endif -%}

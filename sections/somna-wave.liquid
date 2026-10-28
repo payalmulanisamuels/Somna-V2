@@ -1,0 +1,117 @@
+{%- comment -%}
+  Somna V2 — wave divider.
+  A soft drippy edge between two sections. Pick the colour of the section above and the one below.
+  Pure SVG + CSS: no images, no JavaScript. Height scales down on small screens.
+{%- endcomment -%}
+{%- liquid
+  assign top = section.settings.top_color | default: '#0b0f1d'
+  assign bottom = section.settings.bottom_color | default: '#f3feee'
+-%}
+<div
+  class="somna-wave{% if section.settings.flip %} somna-wave--flip{% endif %}"
+  style="--somna-wave-top: {{ top }}; --somna-wave-bottom: {{ bottom }}; --somna-wave-h: {{ section.settings.height }}px; --somna-wave-h-mobile: {{ section.settings.height_mobile }}px;"
+  aria-hidden="true"
+>
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="none" focusable="false">
+    <rect width="1440" height="120" fill="var(--somna-wave-top)"/>
+    <path
+      fill="var(--somna-wave-bottom)"
+      d="M0 58C70 30 135 18 198 30C262 42 300 92 372 96C444 100 492 64 560 58C628 52 664 82 724 84C786 86 806 56 862 54C918 52 950 92 1010 94C1072 96 1104 58 1168 50C1236 42 1282 70 1338 56C1382 45 1410 30 1440 24V120H0Z"
+    />
+    {%- if section.settings.drops -%}
+      <g fill="var(--somna-wave-bottom)">
+        <ellipse cx="300" cy="104" rx="9" ry="6" transform="rotate(-20 300 104)"/>
+        <ellipse cx="316" cy="99" rx="5" ry="4"/>
+        <ellipse cx="572" cy="70" rx="6" ry="4"/>
+        <ellipse cx="848" cy="68" rx="6" ry="4"/>
+        <ellipse cx="1092" cy="72" rx="9" ry="6" transform="rotate(20 1092 72)"/>
+        <ellipse cx="1108" cy="77" rx="5" ry="4"/>
+      </g>
+    {%- endif -%}
+  </svg>
+</div>
+
+{% stylesheet %}
+  .somna-wave {
+    display: block;
+    line-height: 0;
+    height: var(--somna-wave-h-mobile, 40px);
+    background: var(--somna-wave-top);
+    overflow: hidden;
+  }
+
+  .somna-wave svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .somna-wave--flip svg {
+    transform: scaleX(-1);
+  }
+
+  @media screen and (min-width: 750px) {
+    .somna-wave {
+      height: var(--somna-wave-h, 96px);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna wave",
+  "tag": "div",
+  "class": "section-somna-wave",
+  "settings": [
+    {
+      "type": "color",
+      "id": "top_color",
+      "label": "Colour above",
+      "default": "#0b0f1d"
+    },
+    {
+      "type": "color",
+      "id": "bottom_color",
+      "label": "Colour below",
+      "default": "#f3feee"
+    },
+    {
+      "type": "checkbox",
+      "id": "flip",
+      "label": "Flip horizontally",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "drops",
+      "label": "Show drops",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "height",
+      "label": "Height (desktop)",
+      "min": 40,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "label": "Height (mobile)",
+      "min": 16,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Somna wave"
+    }
+  ]
+}
+{% endschema %}

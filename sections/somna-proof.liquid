@@ -1,0 +1,378 @@
+{%- comment -%}
+  Somna V2 — "Real people. Real nights."
+  Stat rings (count up + ring fill once, when scrolled into view) and a review card slider.
+  Blocks: Stat (value 0–100, label) and Review (avatar, rating, quote, name).
+  Values and reviews come from the editor; nothing is generated.
+  Reduced motion: final values shown immediately, no animation.
+{%- endcomment -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  assign stats = section.blocks | where: 'type', 'stat'
+  assign reviews = section.blocks | where: 'type', 'review'
+-%}
+<somna-proof
+  class="somna-proof"
+  style="background: {{ s.background_color }}; color: {{ s.text_color }}; --somna-accent: {{ s.accent_color }}; --somna-ring: {{ s.ring_color }}; --somna-card: {{ s.card_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+>
+  <div class="somna-proof__inner somna-container">
+    <div class="somna-proof__head">
+      <div class="somna-proof__intro">
+        {%- if s.eyebrow != blank -%}<p class="somna-proof__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="somna-display somna-proof__heading">{{ s.heading }}</h2>{%- endif -%}
+      </div>
+
+      {%- if stats.size > 0 -%}
+        <ul class="somna-proof__stats" role="list">
+          {%- for block in stats -%}
+            {%- assign v = block.settings.value | at_most: 100 | at_least: 0 -%}
+            <li class="somna-proof__stat" {{ block.shopify_attributes }}>
+              <span class="somna-proof__ring" style="--somna-v: {{ v }};" data-value="{{ v }}">
+                <svg viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+                  <circle cx="60" cy="60" r="56" class="somna-proof__track"/>
+                  <circle cx="60" cy="60" r="56" class="somna-proof__fill" pathLength="100"/>
+                </svg>
+                <span class="somna-proof__value"><span data-count>{{ v }}</span>%</span>
+              </span>
+              <span class="somna-proof__label">{{ block.settings.label }}</span>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    {%- if reviews.size > 0 -%}
+      <div class="somna-proof__slider">
+        <ul class="somna-proof__reviews" role="list" data-track tabindex="0" aria-label="{{ s.reviews_label | escape }}">
+          {%- for block in reviews -%}
+            {%- assign b = block.settings -%}
+            <li class="somna-proof__review" {{ block.shopify_attributes }}>
+              {%- if b.avatar != blank -%}
+                {{ b.avatar | image_url: width: 120 | image_tag: loading: 'lazy', class: 'somna-proof__avatar', width: 55, height: 55, alt: '' }}
+              {%- endif -%}
+              <div>
+                <span class="somna-proof__stars" role="img" aria-label="{{ b.rating }} out of 5 stars">
+                  {%- for i in (1..5) -%}<span{% if i > b.rating %} class="is-off"{% endif %}>★</span>{%- endfor -%}
+                </span>
+                <blockquote class="somna-proof__quote">{{ b.quote }}</blockquote>
+                {%- if b.name != blank -%}<p class="somna-proof__name">{{ b.name }}</p>{%- endif -%}
+              </div>
+            </li>
+          {%- endfor -%}
+        </ul>
+        <div class="somna-proof__nav" hidden data-nav>
+          <button type="button" class="somna-proof__arrow" data-dir="-1" aria-label="{{ s.prev_label | escape }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+          <button type="button" class="somna-proof__arrow" data-dir="1" aria-label="{{ s.next_label | escape }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</somna-proof>
+
+<script type="module">
+  if (!customElements.get('somna-proof')) {
+    customElements.define('somna-proof', class extends HTMLElement {
+      connectedCallback() {
+        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const rings = [...this.querySelectorAll('.somna-proof__ring')];
+        if (!reduce && rings.length && 'IntersectionObserver' in window) {
+          rings.forEach((r) => { r.classList.add('is-pending'); r.querySelector('[data-count]').textContent = '0'; });
+          this.io = new IntersectionObserver((entries) => {
+            if (!entries.some((e) => e.isIntersecting)) return;
+            this.io.disconnect();
+            rings.forEach((r) => this.count(r));
+          }, { threshold: 0.4 });
+          this.io.observe(this.querySelector('.somna-proof__stats') || this);
+        }
+        this.track = this.querySelector('[data-track]');
+        this.nav = this.querySelector('[data-nav]');
+        if (this.track && this.nav) {
+          this.onNav = (e) => {
+            const b = e.target.closest('[data-dir]');
+            if (!b) return;
+            const card = this.track.querySelector('.somna-proof__review');
+            const step = card ? card.getBoundingClientRect().width + 24 : this.track.clientWidth;
+            this.track.scrollBy({ left: step * Number(b.dataset.dir), behavior: reduce ? 'auto' : 'smooth' });
+          };
+          this.nav.addEventListener('click', this.onNav);
+          this.ro = new ResizeObserver(() => { this.nav.hidden = this.track.scrollWidth <= this.track.clientWidth + 2; });
+          this.ro.observe(this.track);
+        }
+      }
+      count(ring) {
+        const target = Number(ring.dataset.value) || 0;
+        const out = ring.querySelector('[data-count]');
+        ring.classList.remove('is-pending');
+        const start = performance.now(), dur = 1200;
+        const tick = (t) => {
+          const k = Math.min(1, (t - start) / dur);
+          out.textContent = String(Math.round(target * (1 - Math.pow(1 - k, 3))));
+          if (k < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }
+      disconnectedCallback() {
+        this.io?.disconnect();
+        this.ro?.disconnect();
+        this.nav?.removeEventListener('click', this.onNav);
+      }
+    });
+  }
+</script>
+
+{% stylesheet %}
+  .somna-proof__head {
+    display: grid;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .somna-proof__eyebrow {
+    margin: 0 0 6px;
+    font-size: 0.875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .somna-proof__heading {
+    font-size: clamp(2.75rem, 5.2vw, 4.5rem);
+    line-height: 0.98;
+  }
+
+  .somna-proof__heading p {
+    margin: 0;
+  }
+
+  .somna-proof__stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-proof__stat {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    width: 160px;
+    text-align: center;
+  }
+
+  .somna-proof__ring {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 122px;
+    height: 122px;
+  }
+
+  .somna-proof__ring svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    rotate: -90deg;
+  }
+
+  .somna-proof__track {
+    fill: none;
+    stroke: rgb(255 255 255 / 0.12);
+    stroke-width: 3;
+  }
+
+  .somna-proof__fill {
+    fill: none;
+    stroke: var(--somna-ring);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: var(--somna-v) 100;
+    transition: stroke-dasharray 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-proof__ring.is-pending .somna-proof__fill {
+    stroke-dasharray: 0 100;
+  }
+
+  .somna-proof__value {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 2.4rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .somna-proof__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .somna-proof__slider {
+    margin-top: 56px;
+  }
+
+  .somna-proof__reviews {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(383px, 86%);
+    gap: 24px;
+    margin: 0;
+    padding: 0 0 6px;
+    list-style: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .somna-proof__reviews::-webkit-scrollbar {
+    display: none;
+  }
+
+  .somna-proof__reviews:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+  }
+
+  .somna-proof__review {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 121px;
+    padding: 16px 14px;
+    border-radius: 6px;
+    background: var(--somna-card);
+    color: #0a1a4a;
+    scroll-snap-align: start;
+  }
+
+  .somna-proof__avatar {
+    flex: none;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .somna-proof__stars {
+    display: flex;
+    gap: 4px;
+    color: #f1c644;
+    font-size: 0.875rem;
+  }
+
+  .somna-proof__stars .is-off {
+    opacity: 0.35;
+  }
+
+  .somna-proof__quote {
+    margin: 2px 0 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 1.375rem;
+    line-height: 1.15;
+  }
+
+  .somna-proof__name {
+    margin: 6px 0 0;
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+
+  .somna-proof__nav {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .somna-proof__nav[hidden] {
+    display: none;
+  }
+
+  .somna-proof__arrow {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .somna-proof__arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .somna-proof__arrow:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .somna-proof__head {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-proof__fill {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna proof",
+  "tag": "section",
+  "class": "section-somna-proof",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "info": "Text set in italics shows in the accent colour.", "default": "<p>Real people. <em>Real nights.</em></p>" },
+    { "type": "text", "id": "reviews_label", "label": "Reviews label (screen readers)", "default": "Customer reviews" },
+    { "type": "text", "id": "prev_label", "label": "Previous button label", "default": "Previous reviews" },
+    { "type": "text", "id": "next_label", "label": "Next button label", "default": "Next reviews" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#000000" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#f3feee" },
+    { "type": "color", "id": "accent_color", "label": "Accent (italic text)", "default": "#98a3de" },
+    { "type": "color", "id": "ring_color", "label": "Ring colour", "default": "#98a3de" },
+    { "type": "color", "id": "card_color", "label": "Review card background", "default": "#f3feee" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "limit": 4,
+      "settings": [
+        { "type": "range", "id": "value", "label": "Percentage", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 92 },
+        { "type": "text", "id": "label", "label": "Label", "default": "Found it easy to use" }
+      ]
+    },
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        { "type": "image_picker", "id": "avatar", "label": "Photo" },
+        { "type": "range", "id": "rating", "label": "Rating", "min": 1, "max": 5, "step": 1, "default": 5 },
+        { "type": "textarea", "id": "quote", "label": "Quote", "default": "“I finally have a bedtime routine I actually stick to.”" },
+        { "type": "text", "id": "name", "label": "Name" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Somna proof",
+      "blocks": [{ "type": "stat" }, { "type": "review" }]
+    }
+  ]
+}
+{% endschema %}

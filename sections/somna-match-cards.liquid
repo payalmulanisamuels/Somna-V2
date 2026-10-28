@@ -1,0 +1,358 @@
+{%- comment -%}
+  Somna V2 — "Nose or mouth? Meet your match."
+  Left: two-tone heading, intro and an optional video thumbnail. Right: product cards.
+  Desktop (mouse/trackpad): the hovered or focused card widens. Touch screens: static layout.
+  Cards have a fixed height on desktop so widening never moves anything outside the section.
+{%- endcomment -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+-%}
+<div
+  class="somna-match"
+  style="background: {{ s.background_color }}; color: {{ s.text_color }}; --somna-accent: {{ s.accent_color }}; --somna-card-bg: {{ s.card_color }}; --somna-card-text: {{ s.card_text_color }}; --somna-btn-bg: {{ s.button_color }}; --somna-match-h: {{ s.card_height }}px; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+>
+  <div class="somna-match__inner somna-container">
+    <div class="somna-match__intro">
+      {%- if s.heading != blank -%}
+        <h2 class="somna-display somna-match__heading">{{ s.heading }}</h2>
+      {%- endif -%}
+      {%- if s.text != blank -%}
+        <div class="somna-match__text">{{ s.text }}</div>
+      {%- endif -%}
+      {%- if s.video_image != blank -%}
+        {%- capture thumb -%}
+          {{ s.video_image | image_url: width: 400 | image_tag: loading: 'lazy', widths: '200, 300, 400', sizes: '136px', class: 'somna-match__thumb-img', alt: s.video_image.alt }}
+          <span class="somna-match__play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" fill="currentColor"/></svg></span>
+        {%- endcapture -%}
+        <figure class="somna-match__video">
+          {%- if s.video_link != blank -%}
+            <a class="somna-match__thumb" href="{{ s.video_link }}"{% if s.video_new_tab %} target="_blank" rel="noopener"{% endif %}>
+              {{ thumb }}<span class="visually-hidden">{{ s.video_caption | default: 'Watch video' }}</span>
+            </a>
+          {%- else -%}
+            <span class="somna-match__thumb">{{ thumb }}</span>
+          {%- endif -%}
+          {%- if s.video_caption != blank -%}<figcaption>{{ s.video_caption }}</figcaption>{%- endif -%}
+        </figure>
+      {%- endif -%}
+    </div>
+
+    <ul class="somna-match__cards" role="list">
+      {%- for block in section.blocks -%}
+        {%- assign b = block.settings -%}
+        <li class="somna-match__card" {{ block.shopify_attributes }}>
+          {%- if b.image != blank -%}
+            <div class="somna-match__media">
+              {{ b.image | image_url: width: 640 | image_tag: loading: 'lazy', widths: '320, 480, 640', sizes: '(min-width: 990px) 320px, 45vw', alt: b.image.alt }}
+            </div>
+          {%- endif -%}
+          <div class="somna-match__body">
+            <h3 class="somna-match__title">{{ b.title }}</h3>
+            {%- if b.subtitle != blank -%}<p class="somna-match__subtitle">{{ b.subtitle }}</p>{%- endif -%}
+            {%- assign points = b.points | newline_to_br | split: '<br />' -%}
+            {%- if b.points != blank -%}
+              <ul class="somna-match__points" role="list">
+                {%- for point in points -%}
+                  {%- assign p = point | strip -%}
+                  {%- if p != blank -%}
+                    <li>{% render 'somna-mark', value: true, label: ' ' %}<span>{{ p }}</span></li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+            {%- if b.button_label != blank -%}
+              <a class="somna-match__button" href="{{ b.button_link | default: '#' }}">{{ b.button_label }}</a>
+            {%- endif -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% stylesheet %}
+  .somna-match__inner {
+    display: grid;
+    gap: 32px;
+  }
+
+  .somna-match__heading {
+    font-size: clamp(2.5rem, 5vw, 4.75rem);
+    line-height: 0.95;
+  }
+
+  .somna-match__heading p {
+    margin: 0;
+  }
+
+  .somna-match__text {
+    margin-top: 14px;
+    font-size: clamp(1rem, 1.4vw, 1.25rem);
+    font-weight: 500;
+    line-height: 1.25;
+  }
+
+  .somna-match__text p {
+    margin: 0;
+  }
+
+  .somna-match__video {
+    width: 136px;
+    margin: 20px 0 0;
+  }
+
+  .somna-match__thumb {
+    position: relative;
+    display: block;
+    aspect-ratio: 136 / 225;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .somna-match__thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .somna-match__play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #000;
+    color: #fff;
+  }
+
+  .somna-match__play svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .somna-match__video figcaption {
+    margin-top: 8px;
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+
+  .somna-match__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-match__card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 8px 8px 16px;
+    border-radius: 6px 6px 18px 18px;
+    background: var(--somna-card-bg);
+    color: var(--somna-card-text);
+  }
+
+  .somna-match__media {
+    aspect-ratio: 280 / 188;
+    border-radius: 22px;
+    overflow: hidden;
+  }
+
+  .somna-match__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .somna-match__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 12px 8px 0;
+  }
+
+  .somna-match__title {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+    line-height: 1;
+  }
+
+  .somna-match__subtitle {
+    margin: 4px 0 12px;
+    font-size: 0.8125rem;
+    opacity: 0.6;
+  }
+
+  .somna-match__points {
+    display: grid;
+    gap: 12px;
+    margin: 0 0 20px;
+    padding: 0;
+    list-style: none;
+    font-size: 0.9375rem;
+    line-height: 1.25;
+  }
+
+  .somna-match__points li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .somna-match__points .somna-check {
+    --somna-mark-size: 18px;
+  }
+
+  .somna-match__button {
+    display: grid;
+    place-items: center;
+    min-height: 50px;
+    margin-top: auto;
+    padding-inline: 16px;
+    border-radius: 13px;
+    background: var(--somna-btn-bg);
+    color: #000;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-decoration: none;
+    text-align: center;
+    box-shadow: 0 4px 6px rgb(0 0 0 / 0.25);
+  }
+
+  .somna-match__button:focus-visible,
+  .somna-match__thumb:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .somna-match__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: start;
+      gap: 48px;
+    }
+  }
+
+  /* Desktop with a mouse or trackpad: hovered / focused card widens, fixed height */
+  @media (hover: hover) and (pointer: fine) and (min-width: 990px) {
+    .somna-match__cards {
+      display: flex;
+      height: var(--somna-match-h);
+    }
+
+    .somna-match__card {
+      flex: 1 1 0;
+      overflow: hidden;
+      transition: flex-grow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .somna-match__cards:hover .somna-match__card:hover,
+    .somna-match__card:focus-within {
+      flex-grow: 1.65;
+    }
+
+    .somna-match__cards:has(.somna-match__card:focus-within):not(:hover) .somna-match__card:not(:focus-within) {
+      flex-grow: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-match__card {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna match cards",
+  "tag": "section",
+  "class": "section-somna-match",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Text set in italics shows in the accent colour.",
+      "default": "<p>Nose or mouth? <em>Meet your match.</em></p>"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Most people start with one. Plenty end up with both.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_image",
+      "label": "Video thumbnail"
+    },
+    {
+      "type": "url",
+      "id": "video_link",
+      "label": "Video link"
+    },
+    {
+      "type": "checkbox",
+      "id": "video_new_tab",
+      "label": "Open video in a new tab",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "video_caption",
+      "label": "Video caption",
+      "default": "My new bedtime habit"
+    },
+    {
+      "type": "range",
+      "id": "card_height",
+      "label": "Card height (desktop)",
+      "min": 360,
+      "max": 640,
+      "step": 10,
+      "unit": "px",
+      "default": 520
+    },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#000000" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#f3feee" },
+    { "type": "color", "id": "accent_color", "label": "Accent (italic text)", "default": "#98a3de" },
+    { "type": "color", "id": "card_color", "label": "Card background", "default": "#f3feee" },
+    { "type": "color", "id": "card_text_color", "label": "Card text", "default": "#0a1a4a" },
+    { "type": "color", "id": "button_color", "label": "Button background", "default": "#98a3de" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 40 }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Nasal Strips" },
+        { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Sits on the outside of your nose." },
+        { "type": "textarea", "id": "points", "label": "Points", "info": "One per line.", "default": "Nothing inside your nose\nComfortable & discreet\n3 colours to match you" },
+        { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop strips →" },
+        { "type": "url", "id": "button_link", "label": "Button link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Somna match cards",
+      "blocks": [{ "type": "card" }, { "type": "card" }]
+    }
+  ]
+}
+{% endschema %}

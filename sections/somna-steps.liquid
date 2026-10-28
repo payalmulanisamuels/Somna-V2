@@ -1,0 +1,245 @@
+{%- comment -%}
+  Somna V2 — social proof strip + "Three steps" how-to.
+  Left: large image with a wavy bottom edge. Right: heading, sub-text, step list (optional thumbnail
+  strip beside the steps) and a button. The proof row (eyebrow, avatars, rating text) sits on top.
+{%- endcomment -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+-%}
+<div
+  class="somna-steps"
+  style="background: {{ s.background_color }}; color: {{ s.text_color }}; --somna-btn: {{ s.button_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+>
+  <div class="somna-container">
+    {%- if s.eyebrow != blank or s.avatars != blank or s.rating_text != blank -%}
+      <div class="somna-steps__proof">
+        {%- if s.eyebrow != blank -%}<p class="somna-steps__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
+        {%- if s.avatars != blank -%}
+          {{ s.avatars | image_url: width: 240 | image_tag: class: 'somna-steps__avatars', alt: '', loading: 'lazy', width: 120 }}
+        {%- endif -%}
+        {%- if s.rating_text != blank -%}<p class="somna-steps__rating">{{ s.rating_text }}</p>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="somna-steps__grid">
+      <div class="somna-steps__media">
+        {%- if s.image != blank -%}
+          {{ s.image | image_url: width: 1200 | image_tag: widths: '400, 600, 800, 1000, 1200', sizes: '(min-width: 990px) 546px, 100vw', loading: 'lazy', class: 'somna-steps__image' }}
+        {%- else -%}
+          {{ 'image' | placeholder_svg_tag: 'somna-steps__image' }}
+        {%- endif -%}
+        <svg class="somna-steps__edge" viewBox="0 0 546 80" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 22c38-20 58 6 92-4s48-20 82-2 46 20 80 8 56-26 96-12 50 20 86 6 72-24 110-6V80H0z" fill="{{ s.background_color }}"/></svg>
+      </div>
+
+      <div class="somna-steps__content">
+        {%- if s.heading != blank -%}<h2 class="somna-steps__heading">{{ s.heading }}</h2>{%- endif -%}
+        {%- if s.text != blank -%}<div class="somna-steps__text">{{ s.text }}</div>{%- endif -%}
+
+        <div class="somna-steps__list-wrap{% if s.thumbs != blank %} has-thumbs{% endif %}">
+          {%- if s.thumbs != blank -%}
+            {{ s.thumbs | image_url: width: 400 | image_tag: class: 'somna-steps__thumbs', alt: '', loading: 'lazy' }}
+          {%- endif -%}
+          <ol class="somna-steps__list" role="list">
+            {%- for block in section.blocks -%}
+              <li class="somna-steps__step" {{ block.shopify_attributes }}>
+                <h3 class="somna-steps__step-title">{{ block.settings.title }}</h3>
+                {%- if block.settings.text != blank -%}<p>{{ block.settings.text }}</p>{%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ol>
+        </div>
+
+        {%- if s.button_label != blank and s.button_link != blank -%}
+          <a class="somna-steps__button" href="{{ s.button_link }}">{{ s.button_label }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .somna-steps__proof {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .somna-steps__eyebrow {
+    margin: 0;
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .somna-steps__avatars {
+    width: 104px;
+    height: auto;
+  }
+
+  .somna-steps__rating {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .somna-steps__grid {
+    display: grid;
+    gap: 32px;
+    align-items: start;
+  }
+
+  .somna-steps__media {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .somna-steps__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 546 / 640;
+    object-fit: cover;
+  }
+
+  .somna-steps__edge {
+    position: absolute;
+    inset: auto 0 -1px;
+    width: 100%;
+    height: 12%;
+  }
+
+  .somna-steps__heading {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 0.9;
+    color: inherit;
+  }
+
+  .somna-steps__text {
+    margin-top: 12px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .somna-steps__text p {
+    margin: 0;
+  }
+
+  .somna-steps__list-wrap {
+    margin-top: 36px;
+  }
+
+  .somna-steps__list-wrap.has-thumbs {
+    display: grid;
+    grid-template-columns: minmax(0, 175px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .somna-steps__thumbs {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+
+  .somna-steps__list {
+    display: grid;
+    align-content: space-around;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-steps__step-title {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: clamp(1.5rem, 3vw, 2.625rem);
+    line-height: 1;
+    text-transform: uppercase;
+    color: inherit;
+  }
+
+  .somna-steps__step p {
+    margin: 4px 0 0;
+    max-width: 260px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .somna-steps__button {
+    display: grid;
+    place-items: center;
+    min-height: 72px;
+    margin-top: 14px;
+    padding: 0 24px;
+    border-radius: 18px;
+    background: var(--somna-btn);
+    color: #000;
+    font-size: clamp(1rem, 1.6vw, 1.375rem);
+    font-weight: 800;
+    text-decoration: none;
+    text-transform: uppercase;
+    box-shadow: 0 6px 16px rgb(0 0 0 / 0.15);
+  }
+
+  .somna-steps__button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .somna-steps__grid {
+      grid-template-columns: minmax(0, 546px) minmax(0, 544px);
+      justify-content: space-between;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna steps",
+  "tag": "section",
+  "class": "section-somna-steps",
+  "settings": [
+    { "type": "header", "content": "Social proof" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "image_picker", "id": "avatars", "label": "Avatars image" },
+    { "type": "text", "id": "rating_text", "label": "Rating text", "info": "Only use a figure you can verify." },
+    { "type": "header", "content": "Steps" },
+    { "type": "image_picker", "id": "image", "label": "Main image" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Three steps. Zero fuss." },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "image_picker", "id": "thumbs", "label": "Step thumbnails", "info": "Shown beside the step list." },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "header", "content": "Colours and spacing" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#f3feee" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },
+    { "type": "color", "id": "button_color", "label": "Button", "default": "#afbdf8" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "limit": 6,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "01 Step" },
+        { "type": "textarea", "id": "text", "label": "Text" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Somna steps", "blocks": [{ "type": "step" }, { "type": "step" }, { "type": "step" }] }
+  ]
+}
+{% endschema %}

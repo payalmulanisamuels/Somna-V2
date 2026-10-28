@@ -1,0 +1,683 @@
+{%- comment -%}
+  Somna V2 — "Never run out again." bundle picker.
+  - Purchase toggle: one-time (no selling plan) or subscribe (the variant's first selling plan).
+    Prices are the live variant prices / selling-plan allocation prices; nothing is hardcoded.
+    Products without a selling plan show the one-time price in both modes.
+  - The first product block is featured. Choosing another product card swaps the featured card
+    (image, title, description, price, variant) without a page reload.
+  - Add to cart uses Shopify's cart API and the theme's CartLinesUpdateEvent, so the existing
+    cart drawer opens and updates. Double clicks are ignored while a request is running.
+{%- endcomment -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  assign product_blocks = section.blocks | where: 'type', 'product'
+  assign perk_blocks = section.blocks | where: 'type', 'perk'
+-%}
+
+{%- capture data -%}
+  [
+  {%- for block in product_blocks -%}
+    {%- assign p = block.settings.product -%}
+    {%- if p == blank -%}{%- continue -%}{%- endif -%}
+    {%- assign img = block.settings.image | default: p.featured_image -%}
+    {
+      "block": {{ block.id | json }},
+      "title": {{ p.title | json }},
+      "subtitle": {{ block.settings.subtitle | json }},
+      "badge": {{ block.settings.badge | json }},
+      "url": {{ p.url | json }},
+      "nights": {{ block.settings.nights | default: 0 }},
+      "image": {{ img | image_url: width: 1100 | json }},
+      "thumb": {{ img | image_url: width: 300 | json }},
+      "alt": {{ img.alt | default: p.title | json }},
+      "variants": [
+        {%- for v in p.variants -%}
+          {%- assign alloc = v.selling_plan_allocations | first -%}
+          {
+            "id": {{ v.id }},
+            "title": {{ v.title | json }},
+            "available": {{ v.available | json }},
+            "once": {{ v.price }},
+            "onceCompare": {{ v.compare_at_price | default: 0 }},
+            "sub": {% if alloc %}{{ alloc.price }}{% else %}null{% endif %},
+            "plan": {% if alloc %}{{ alloc.selling_plan.id }}{% else %}null{% endif %}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }{% unless forloop.last %},{% endunless %}
+  {%- endfor -%}
+  ]
+{%- endcapture -%}
+
+<somna-bundle-picker
+  class="somna-bundle"
+  data-mode="{{ s.default_mode }}"
+  data-currency="{{ cart.currency.iso_code }}"
+  data-locale="{{ request.locale.iso_code }}"
+  style="background: {{ s.background_color }}; color: {{ s.text_color }}; --somna-accent: {{ s.accent_color }}; --somna-card: {{ s.card_color }}; --somna-chip: {{ s.chip_color }}; --somna-btn: {{ s.button_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+>
+  <script type="application/json" data-products>{{ data | strip_newlines }}</script>
+  <div class="somna-bundle__inner somna-container">
+    {%- if s.heading != blank -%}<h2 class="somna-bundle__heading">{{ s.heading }}</h2>{%- endif -%}
+
+    <div class="somna-bundle__toggle" role="radiogroup" aria-label="{{ s.mode_label | escape }}">
+      <button type="button" role="radio" data-set-mode="once" aria-checked="{% if s.default_mode == 'once' %}true{% else %}false{% endif %}">{{ s.once_label }}</button>
+      <button type="button" role="radio" data-set-mode="sub" aria-checked="{% if s.default_mode == 'sub' %}true{% else %}false{% endif %}">{{ s.sub_label }}</button>
+    </div>
+
+    {%- if perk_blocks.size > 0 -%}
+      <ul class="somna-bundle__perks" role="list">
+        {%- for block in perk_blocks -%}
+          <li class="somna-bundle__perk" {{ block.shopify_attributes }}>
+            <span class="somna-bundle__perk-icon" aria-hidden="true">
+              {%- if block.settings.icon != blank -%}
+                <span class="somna-bundle__perk-mask" style="--mask: url('{{ block.settings.icon | image_url: width: 120 }}');"></span>
+              {%- else -%}
+                {{ block.settings.icon_text }}
+              {%- endif -%}
+            </span>
+            <span>{{ block.settings.text }}</span>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    <div class="somna-bundle__grid">
+      <article class="somna-bundle__featured" aria-live="polite" data-featured>
+        <header class="somna-bundle__featured-head">
+          <h3 class="somna-bundle__title" data-f-title></h3>
+          <p class="somna-bundle__subtitle" data-f-subtitle></p>
+          <span class="somna-bundle__badge" data-f-badge hidden></span>
+        </header>
+        <div class="somna-bundle__media"><img data-f-image alt="" width="1100" height="700" loading="lazy" decoding="async"></div>
+        <div class="somna-bundle__buy">
+          <label class="somna-bundle__variant" data-f-variant-wrap hidden>
+            <span class="visually-hidden">{{ s.variant_label }}</span>
+            <select data-f-variant></select>
+          </label>
+          <div class="somna-bundle__prices">
+            <span class="somna-bundle__price" data-f-price></span>
+            <s class="somna-bundle__compare" data-f-compare></s>
+            <span class="somna-bundle__night" data-f-night></span>
+          </div>
+          <p class="somna-bundle__note" data-f-note>{{ s.note }}</p>
+          <button type="button" class="somna-bundle__add" data-add>
+            <span data-add-label>{{ s.add_label }}</span>
+          </button>
+          <p class="somna-bundle__status" role="status" data-status></p>
+        </div>
+      </article>
+
+      <ul class="somna-bundle__others" role="list" data-others></ul>
+    </div>
+
+    {%- if s.bar_title != blank -%}
+      <a class="somna-bundle__bar" href="{{ s.bar_link | default: '#' }}">
+        <span class="somna-bundle__bar-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></span>
+        <span class="somna-bundle__bar-text"><strong>{{ s.bar_title }}</strong>{% if s.bar_text != blank %}<span>{{ s.bar_text }}</span>{% endif %}</span>
+        <span class="somna-bundle__bar-arrow" aria-hidden="true">→</span>
+      </a>
+    {%- endif -%}
+  </div>
+</somna-bundle-picker>
+
+<script type="module">
+  import { somnaAddToCart, somnaMoney } from '{{ 'somna-cart.js' | asset_url }}';
+
+  if (!customElements.get('somna-bundle-picker')) {
+    customElements.define('somna-bundle-picker', class extends HTMLElement {
+      connectedCallback() {
+        try { this.products = JSON.parse(this.querySelector('[data-products]').textContent); } catch (e) { this.products = []; }
+        if (!this.products.length) return;
+        this.mode = this.dataset.mode === 'once' ? 'once' : 'sub';
+        this.active = 0;
+        this.variantIndex = this.products.map((p) => Math.max(0, p.variants.findIndex((v) => v.available)));
+        this.labels = {
+          add: this.querySelector('[data-add-label]').textContent.trim(),
+          added: {{ s.added_label | json }},
+          error: {{ s.error_label | json }},
+          soldOut: {{ s.sold_out_label | json }},
+          night: {{ s.night_label | json }},
+          noPlan: {{ s.no_plan_label | json }}
+        };
+        this.addEventListener('click', this.onClick);
+        this.querySelector('[data-f-variant]').addEventListener('change', this.onVariant);
+        this.render();
+      }
+      disconnectedCallback() {
+        this.removeEventListener('click', this.onClick);
+      }
+      money(cents) { return somnaMoney(cents, this.dataset.currency || 'USD', this.dataset.locale || 'en'); }
+      variant(i = this.active) { return this.products[i].variants[this.variantIndex[i]]; }
+      priceFor(v) {
+        const sub = this.mode === 'sub' && v.plan != null;
+        return { price: sub ? v.sub : v.once, compare: sub ? (v.sub < v.once ? v.once : 0) : (v.onceCompare > v.once ? v.onceCompare : 0), plan: sub ? v.plan : null };
+      }
+      render() {
+        const p = this.products[this.active];
+        const v = this.variant();
+        const pr = this.priceFor(v);
+        const q = (sel) => this.querySelector(sel);
+        q('[data-f-title]').textContent = p.title;
+        q('[data-f-subtitle]').textContent = p.subtitle || '';
+        const badge = q('[data-f-badge]');
+        badge.textContent = p.badge || '';
+        badge.hidden = !p.badge;
+        const img = q('[data-f-image]');
+        if (p.image) { img.src = p.image; img.alt = p.alt || ''; }
+        const sel = q('[data-f-variant]');
+        q('[data-f-variant-wrap]').hidden = p.variants.length < 2;
+        sel.innerHTML = p.variants.map((x, i) => `<option value="${i}"${i === this.variantIndex[this.active] ? ' selected' : ''}${x.available ? '' : ' disabled'}>${x.title.replace(/</g, '&lt;')}</option>`).join('');
+        q('[data-f-price]').textContent = this.money(pr.price);
+        q('[data-f-compare]').textContent = pr.compare ? this.money(pr.compare) : '';
+        q('[data-f-night]').textContent = p.nights > 0 ? `${this.money(Math.round(pr.price / p.nights))} ${this.labels.night}` : '';
+        const note = q('[data-f-note]');
+        note.dataset.noPlan = String(this.mode === 'sub' && v.plan == null);
+        if (this.mode === 'sub' && v.plan == null) note.textContent = this.labels.noPlan;
+        else note.textContent = {{ s.note | json }};
+        const add = q('[data-add]');
+        add.disabled = !v.available;
+        q('[data-add-label]').textContent = v.available ? `${this.labels.add} · ${this.money(pr.price)}` : this.labels.soldOut;
+        this.querySelectorAll('[data-set-mode]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.setMode === this.mode)));
+        q('[data-others]').innerHTML = this.products.map((o, i) => {
+          if (i === this.active) return '';
+          const ov = this.variant(i);
+          const op = this.priceFor(ov);
+          const night = o.nights > 0 ? ` · ${this.money(Math.round(op.price / o.nights))} ${this.labels.night}` : '';
+          return `<li><button type="button" class="somna-bundle__other" data-pick="${i}">
+            ${o.thumb ? `<img src="${o.thumb}" alt="" width="146" height="110" loading="lazy">` : ''}
+            <span class="somna-bundle__other-text"><span class="somna-bundle__other-title">${o.title.replace(/</g, '&lt;')}</span>
+            <span class="somna-bundle__other-price">${this.money(op.price)}${op.compare ? ` · <s>${this.money(op.compare)}</s>` : ''}${night}</span></span>
+          </button></li>`;
+        }).join('');
+      }
+      onVariant = (e) => {
+        this.variantIndex[this.active] = Number(e.target.value) || 0;
+        this.render();
+      };
+      onClick = (e) => {
+        const mode = e.target.closest('[data-set-mode]');
+        if (mode) { this.mode = mode.dataset.setMode; this.render(); return; }
+        const pick = e.target.closest('[data-pick]');
+        if (pick) {
+          this.active = Number(pick.dataset.pick);
+          this.render();
+          this.querySelector('[data-f-title]').scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+          return;
+        }
+        if (e.target.closest('[data-add]')) this.add();
+      };
+      async add() {
+        if (this.busy) return;
+        const btn = this.querySelector('[data-add]');
+        const status = this.querySelector('[data-status]');
+        const v = this.variant();
+        const pr = this.priceFor(v);
+        if (!v.available) return;
+        this.busy = true;
+        btn.setAttribute('aria-busy', 'true');
+        btn.disabled = true;
+        status.textContent = '';
+        try {
+          await somnaAddToCart(this, { id: v.id, quantity: 1, selling_plan: pr.plan });
+          status.textContent = this.labels.added;
+        } catch (err) {
+          status.textContent = err && err.message ? err.message : this.labels.error;
+        } finally {
+          this.busy = false;
+          btn.removeAttribute('aria-busy');
+          btn.disabled = !v.available;
+        }
+      }
+    });
+  }
+</script>
+
+{% stylesheet %}
+  .somna-bundle__inner {
+    display: grid;
+    justify-items: center;
+    gap: 28px;
+  }
+
+  .somna-bundle__heading {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: clamp(2.75rem, 6vw, 5.5rem);
+    line-height: 1;
+    text-align: center;
+    color: inherit;
+  }
+
+  .somna-bundle__heading em {
+    font-style: normal;
+    color: var(--somna-accent);
+  }
+
+  .somna-bundle__heading p {
+    margin: 0;
+  }
+
+  .somna-bundle__toggle {
+    display: inline-flex;
+    gap: 4px;
+    padding: 5px;
+    border-radius: 999px;
+    background: var(--somna-card);
+  }
+
+  .somna-bundle__toggle button {
+    min-height: 36px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #383434;
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .somna-bundle__toggle [aria-checked='true'] {
+    background: var(--somna-chip);
+    color: #0a1a4a;
+  }
+
+  .somna-bundle__toggle button:focus-visible,
+  .somna-bundle__other:focus-visible,
+  .somna-bundle__add:focus-visible,
+  .somna-bundle__bar:focus-visible {
+    outline: 2px solid var(--somna-chip);
+    outline-offset: 3px;
+  }
+
+  .somna-bundle__perks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-bundle__perk {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 76px;
+    padding: 10px 16px;
+    border-radius: 4px;
+    background: var(--somna-chip);
+    color: #000;
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
+  .somna-bundle__perk-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--somna-card);
+    font-size: 1.6rem;
+    font-weight: 500;
+  }
+
+  .somna-bundle__perk-mask {
+    width: 30px;
+    height: 30px;
+    background: #000;
+    -webkit-mask: var(--mask) center / contain no-repeat;
+    mask: var(--mask) center / contain no-repeat;
+  }
+
+  .somna-bundle__grid {
+    display: grid;
+    gap: 24px;
+    width: 100%;
+    align-items: start;
+  }
+
+  .somna-bundle__featured {
+    position: relative;
+    border-radius: 4px 4px 28px 28px;
+    background: var(--somna-card);
+    color: #000;
+    overflow: hidden;
+  }
+
+  .somna-bundle__featured-head {
+    padding: 14px 16px 10px;
+  }
+
+  .somna-bundle__title {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: clamp(2rem, 3.6vw, 3rem);
+    line-height: 1;
+  }
+
+  .somna-bundle__subtitle {
+    margin: 4px 0 0;
+    font-size: 0.75rem;
+    opacity: 0.6;
+  }
+
+  .somna-bundle__badge {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    display: grid;
+    place-items: center;
+    width: 118px;
+    height: 118px;
+    padding: 12px;
+    border-radius: 50%;
+    background: var(--somna-chip);
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 1.6rem;
+    line-height: 0.95;
+    text-align: center;
+    rotate: 8deg;
+  }
+
+  .somna-bundle__badge[hidden] {
+    display: none;
+  }
+
+  .somna-bundle__media {
+    aspect-ratio: 536 / 311;
+    background: #0b0f1d;
+  }
+
+  .somna-bundle__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .somna-bundle__buy {
+    display: grid;
+    gap: 6px;
+    padding: 14px 16px 24px;
+  }
+
+  .somna-bundle__variant select {
+    width: 100%;
+    min-height: 40px;
+    padding: 0 12px;
+    border: 1px solid rgb(0 0 0 / 0.2);
+    border-radius: 8px;
+    background: #fff;
+    font: inherit;
+  }
+
+  .somna-bundle__prices {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .somna-bundle__price {
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+
+  .somna-bundle__compare {
+    font-size: 0.75rem;
+    opacity: 0.6;
+  }
+
+  .somna-bundle__compare:empty {
+    display: none;
+  }
+
+  .somna-bundle__night {
+    margin-left: auto;
+    color: #5e9a3f;
+    font-weight: 500;
+  }
+
+  .somna-bundle__note {
+    margin: 0;
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+
+  .somna-bundle__add {
+    min-height: 46px;
+    margin-top: 8px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--somna-chip);
+    color: #000;
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .somna-bundle__add[aria-busy='true'] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .somna-bundle__add:disabled:not([aria-busy]) {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .somna-bundle__status {
+    min-height: 1.2em;
+    margin: 0;
+    font-size: 0.8125rem;
+  }
+
+  .somna-bundle__others {
+    display: grid;
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-bundle__other {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 6px 10px;
+    border: 0;
+    border-radius: 6px;
+    background: var(--somna-card);
+    color: #0a1a4a;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .somna-bundle__other:hover {
+    transform: translateY(-2px);
+  }
+
+  .somna-bundle__other img {
+    flex: none;
+    width: 146px;
+    height: 110px;
+    object-fit: cover;
+  }
+
+  .somna-bundle__other-text {
+    display: grid;
+    gap: 6px;
+  }
+
+  .somna-bundle__other-title {
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+    line-height: 1;
+    color: #000;
+  }
+
+  .somna-bundle__other-price {
+    font-size: 1rem;
+  }
+
+  .somna-bundle__other-price s {
+    opacity: 0.6;
+  }
+
+  .somna-bundle__bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: min(100%, 468px);
+    padding: 14px 20px;
+    border-radius: 6px;
+    background: var(--somna-card);
+    color: #000;
+    text-decoration: none;
+  }
+
+  .somna-bundle__bar-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 80px;
+    height: 80px;
+    margin-block: -20px;
+    border-radius: 50%;
+    background: var(--somna-chip);
+  }
+
+  .somna-bundle__bar-icon svg {
+    width: 44px;
+    height: 44px;
+  }
+
+  .somna-bundle__bar-text {
+    display: grid;
+    flex: 1;
+  }
+
+  .somna-bundle__bar-text strong {
+    font-size: 1.375rem;
+    font-weight: 500;
+  }
+
+  .somna-bundle__bar-text span {
+    font-size: 0.875rem;
+    opacity: 0.6;
+  }
+
+  .somna-bundle__bar-arrow {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #000;
+    color: #fff;
+  }
+
+  @media screen and (min-width: 990px) {
+    .somna-bundle__grid {
+      grid-template-columns: minmax(0, 536px) minmax(0, 472px);
+      justify-content: center;
+      gap: 80px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-bundle__other {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna bundle picker",
+  "tag": "section",
+  "class": "section-somna-bundle",
+  "settings": [
+    { "type": "richtext", "id": "heading", "label": "Heading", "info": "Text set in italics shows in the accent colour.", "default": "<p>Never <em>Run Out</em> Again.</p>" },
+    { "type": "text", "id": "mode_label", "label": "Purchase toggle label (screen readers)", "default": "Purchase option" },
+    { "type": "text", "id": "once_label", "label": "One-time label", "default": "One-time" },
+    { "type": "text", "id": "sub_label", "label": "Subscribe label", "default": "Subscribe" },
+    {
+      "type": "select",
+      "id": "default_mode",
+      "label": "Selected by default",
+      "options": [
+        { "value": "sub", "label": "Subscribe" },
+        { "value": "once", "label": "One-time" }
+      ],
+      "default": "sub"
+    },
+    { "type": "text", "id": "variant_label", "label": "Variant label (screen readers)", "default": "Choose an option" },
+    { "type": "text", "id": "note", "label": "Note under the price", "default": "Includes 3 free gifts on your first order." },
+    { "type": "text", "id": "no_plan_label", "label": "Note when a product has no subscription", "default": "This product is one-time purchase only." },
+    { "type": "text", "id": "night_label", "label": "Per-night suffix", "default": "/ night" },
+    { "type": "text", "id": "add_label", "label": "Add to cart label", "default": "Add to cart" },
+    { "type": "text", "id": "added_label", "label": "Added message", "default": "Added to your cart." },
+    { "type": "text", "id": "error_label", "label": "Error message", "default": "Couldn’t add to cart. Please try again." },
+    { "type": "text", "id": "sold_out_label", "label": "Sold out label", "default": "Sold out" },
+    { "type": "header", "content": "Bottom link" },
+    { "type": "text", "id": "bar_title", "label": "Title", "default": "Start Autoship & Save" },
+    { "type": "text", "id": "bar_text", "label": "Text" },
+    { "type": "url", "id": "bar_link", "label": "Link" },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#000000" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#f3feee" },
+    { "type": "color", "id": "accent_color", "label": "Accent (italic text)", "default": "#afbdf8" },
+    { "type": "color", "id": "card_color", "label": "Card background", "default": "#f3feee" },
+    { "type": "color", "id": "chip_color", "label": "Highlight (toggle, perks, button)", "default": "#afbdf8" },
+    { "type": "color", "id": "button_color", "label": "Button background", "default": "#afbdf8" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 }
+  ],
+  "blocks": [
+    {
+      "type": "perk",
+      "name": "Perk",
+      "limit": 4,
+      "settings": [
+        { "type": "image_picker", "id": "icon", "label": "Icon", "info": "Silhouette on transparent background." },
+        { "type": "text", "id": "icon_text", "label": "Icon text", "info": "Used when there's no icon image, e.g. %." },
+        { "type": "text", "id": "text", "label": "Text", "default": "Free shipping, always" }
+      ]
+    },
+    {
+      "type": "product",
+      "name": "Product",
+      "limit": 4,
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Defaults to the product image." },
+        { "type": "text", "id": "subtitle", "label": "Description" },
+        { "type": "text", "id": "badge", "label": "Badge", "info": "Shown on the featured card, e.g. a sale message." },
+        { "type": "number", "id": "nights", "label": "Nights per order", "info": "Used for the per-night price. Leave empty to hide it." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Somna bundle picker",
+      "blocks": [{ "type": "perk" }, { "type": "product" }]
+    }
+  ]
+}
+{% endschema %}

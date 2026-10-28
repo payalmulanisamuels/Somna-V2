@@ -1,0 +1,52 @@
+{%- comment -%}
+  Somna V2 — shared layout helpers for the custom Somna sections. Outputs no markup; each Somna
+  section renders it so the stylesheet below is bundled once with the theme styles.
+{%- endcomment -%}
+{% stylesheet %}
+  .somna-container {
+    width: 100%;
+    max-width: calc(var(--page-content-width, 1320px) + var(--page-margin, 16px) * 2);
+    margin-inline: auto;
+    padding-inline: var(--page-margin, 16px);
+  }
+
+  .somna-display {
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    line-height: 1;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .somna-display em,
+  .somna-accent em {
+    font-style: normal;
+    color: var(--somna-accent, #98a3de);
+  }
+
+  .somna-check,
+  .somna-cross {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: var(--somna-mark-size, 22px);
+    height: var(--somna-mark-size, 22px);
+    border-radius: 50%;
+  }
+
+  .somna-check {
+    background: #4a6b3a;
+    color: #f3feee;
+  }
+
+  .somna-cross {
+    background: #f6dcd8;
+    color: #d0021b;
+  }
+
+  .somna-check svg,
+  .somna-cross svg {
+    width: 58%;
+    height: 58%;
+  }
+{% endstylesheet %}

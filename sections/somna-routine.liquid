@@ -1,0 +1,154 @@
+{%- comment -%}
+  Somna V2 — numbered routine in a wavy panel, with a large heading beside it.
+  Heading: wrap words in <em> (italic button in the editor) to colour them with the accent.
+{%- endcomment -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+-%}
+<div
+  class="somna-routine"
+  style="background: {{ s.background_color }}; --somna-accent: {{ s.accent_color }}; --somna-panel: {{ s.panel_color }}; --somna-num: {{ s.number_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+>
+  <div class="somna-container somna-routine__grid">
+    <div class="somna-routine__panel">
+      <ol class="somna-routine__list" role="list">
+        {%- for block in section.blocks -%}
+          <li class="somna-routine__item" {{ block.shopify_attributes }}>
+            <span class="somna-routine__num" aria-hidden="true">{{ forloop.index }}</span>
+            <div>
+              <h3 class="somna-routine__title"><span class="visually-hidden">{{ forloop.index }}. </span>{{ block.settings.title }}</h3>
+              {%- if block.settings.text != blank -%}<p>{{ block.settings.text }}</p>{%- endif -%}
+            </div>
+          </li>
+        {%- endfor -%}
+      </ol>
+    </div>
+    {%- if s.heading != blank -%}
+      <div class="somna-routine__heading somna-display" style="color: {{ s.heading_color }};">{{ s.heading }}</div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .somna-routine__grid {
+    display: grid;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .somna-routine__panel {
+    padding: clamp(40px, 6vw, 80px) clamp(24px, 5vw, 64px);
+    background: var(--somna-panel);
+    color: #000;
+    border-radius: 48% 52% 46% 54% / 8% 6% 9% 7%;
+  }
+
+  .somna-routine__list {
+    position: relative;
+    display: grid;
+    gap: 56px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-routine__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 46px minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .somna-routine__item:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    inset: 50px auto -52px 21px;
+    border-left: 4px dashed #000;
+  }
+
+  .somna-routine__num {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--somna-num);
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .somna-routine__title {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: clamp(1.75rem, 3vw, 2.625rem);
+    line-height: 1;
+    text-transform: uppercase;
+    color: inherit;
+  }
+
+  .somna-routine__item p {
+    margin: 6px 0 0;
+    max-width: 220px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .somna-routine__heading {
+    font-size: clamp(2.75rem, 6.6vw, 6rem);
+    line-height: 0.95;
+  }
+
+  .somna-routine__heading :is(h2, p) {
+    margin: 0;
+    font: inherit;
+    color: inherit;
+  }
+
+  @media screen and (min-width: 990px) {
+    .somna-routine__grid {
+      grid-template-columns: minmax(0, 450px) minmax(0, 1fr);
+      gap: 56px;
+    }
+
+    .somna-routine__heading {
+      text-align: right;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna routine",
+  "tag": "section",
+  "class": "section-somna-routine",
+  "settings": [
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<h2>Your night routine, <em>stripped back.</em></h2>" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#000000" },
+    { "type": "color", "id": "heading_color", "label": "Heading", "default": "#f3feee" },
+    { "type": "color", "id": "accent_color", "label": "Heading accent", "default": "#afbdf8" },
+    { "type": "color", "id": "panel_color", "label": "Panel", "default": "#f3feee" },
+    { "type": "color", "id": "number_color", "label": "Number circles", "default": "#afbdf8" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "limit": 5,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Prep" },
+        { "type": "textarea", "id": "text", "label": "Text" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Somna routine", "blocks": [{ "type": "step" }, { "type": "step" }, { "type": "step" }] }
+  ]
+}
+{% endschema %}
