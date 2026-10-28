@@ -36,7 +36,6 @@
             "border_width": 1,
             "border_opacity": 100,
             "border_radius": 0,
-            "link": "",
             "open_in_new_tab": false,
             "padding-block-start": 0,
             "padding-block-end": 0,
@@ -68,7 +67,6 @@
                 "border_width": 1,
                 "border_opacity": 100,
                 "border_radius": 0,
-                "link": "",
                 "open_in_new_tab": false,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
@@ -177,7 +175,6 @@
                 "border_width": 1,
                 "border_opacity": 100,
                 "border_radius": 0,
-                "link": "",
                 "open_in_new_tab": false,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
@@ -195,7 +192,6 @@
                     "custom_button_background": "#afbdf8",
                     "custom_button_text": "#000000",
                     "custom_button_border": "#afbdf8",
-                    "link_text_color": "",
                     "width": "custom",
                     "custom_width": 100,
                     "width_mobile": "custom",
@@ -256,7 +252,6 @@
                 "border_width": 1,
                 "border_opacity": 100,
                 "border_radius": 0,
-                "link": "",
                 "open_in_new_tab": false,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
@@ -288,7 +283,6 @@
                     "border_width": 1,
                     "border_opacity": 100,
                     "border_radius": 4,
-                    "link": "",
                     "open_in_new_tab": false,
                     "padding-block-start": 14,
                     "padding-block-end": 12,
@@ -302,7 +296,6 @@
                       "settings": {
                         "icon": "none",
                         "width": 36,
-                        "link": "",
                         "open_in_new_tab": false,
                         "icon_color": "#f3feee",
                         "image_upload": "shopify://shop_images/somna-v2-icon-drug-free-light.png"
@@ -362,7 +355,6 @@
                     "border_width": 1,
                     "border_opacity": 100,
                     "border_radius": 4,
-                    "link": "",
                     "open_in_new_tab": false,
                     "padding-block-start": 14,
                     "padding-block-end": 12,
@@ -376,7 +368,6 @@
                       "settings": {
                         "icon": "none",
                         "width": 26,
-                        "link": "",
                         "open_in_new_tab": false,
                         "icon_color": "#f3feee",
                         "image_upload": "shopify://shop_images/somna-v2-icon-gentle-light.png"
@@ -436,7 +427,6 @@
                     "border_width": 1,
                     "border_opacity": 100,
                     "border_radius": 4,
-                    "link": "",
                     "open_in_new_tab": false,
                     "padding-block-start": 14,
                     "padding-block-end": 12,
@@ -450,7 +440,6 @@
                       "settings": {
                         "icon": "none",
                         "width": 26,
-                        "link": "",
                         "open_in_new_tab": false,
                         "icon_color": "#f3feee",
                         "image_upload": "shopify://shop_images/somna-v2-icon-made-in-usa-light.png"
@@ -517,7 +506,6 @@
                 "border_width": 1,
                 "border_opacity": 100,
                 "border_radius": 4,
-                "link": "",
                 "open_in_new_tab": false,
                 "padding-block-start": 10,
                 "padding-block-end": 10,
@@ -570,7 +558,6 @@
                     "border_width": 1,
                     "border_opacity": 100,
                     "border_radius": 0,
-                    "link": "",
                     "open_in_new_tab": false,
                     "padding-block-start": 0,
                     "padding-block-end": 0,
@@ -685,7 +672,6 @@
                 "border_width": 1,
                 "border_opacity": 100,
                 "border_radius": 0,
-                "link": "",
                 "open_in_new_tab": false,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
@@ -717,7 +703,6 @@
                     "border_width": 1,
                     "border_opacity": 100,
                     "border_radius": 0,
-                    "link": "",
                     "open_in_new_tab": false,
                     "padding-block-start": 0,
                     "padding-block-end": 0,
@@ -845,7 +830,6 @@
         "custom_mobile_media": false,
         "media_type_1_mobile": "image",
         "media_type_2_mobile": "image",
-        "link": "",
         "open_in_new_tab": false,
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -892,14 +876,12 @@
       "type": "somna-steps",
       "settings": {
         "eyebrow": "",
-        "avatars": "",
         "rating_text": "",
         "image": "shopify://shop_images/somna-v2-steps-model.png",
         "heading": "Three Steps. Zero Fuss.",
         "text": "<p>From bathroom sink to lights out in under a minute.</p>",
         "thumbs": "shopify://shop_images/somna-v2-steps-thumbs.png",
         "button_label": "Watch how it works",
-        "button_link": "",
         "background_color": "#f3feee",
         "text_color": "#000000",
         "button_color": "#afbdf8",
@@ -952,7 +934,6 @@
         "heading": "<p>Nose or mouth? <em>Meet your match.</em></p>",
         "text": "<p>Most people start with one.<br>Plenty end up with both.</p>",
         "video_image": "shopify://shop_images/somna-v2-ugc-1.png",
-        "video_link": "",
         "video_caption": "My new bedtime habit"
       },
       "blocks": {
@@ -1479,7 +1460,6 @@
           "type": "card",
           "settings": {
             "image": "shopify://shop_images/somna-v2-ugc-1.png",
-            "video_link": "",
             "caption": "My new bedtime habit"
           }
         },
@@ -1487,7 +1467,6 @@
           "type": "card",
           "settings": {
             "image": "shopify://shop_images/somna-v2-ugc-2.png",
-            "video_link": "",
             "caption": "30 nights later"
           }
         },
@@ -1495,7 +1474,6 @@
           "type": "card",
           "settings": {
             "image": "shopify://shop_images/somna-v2-ugc-1.png",
-            "video_link": "",
             "caption": "How I put it on"
           }
         },
@@ -1503,7 +1481,6 @@
           "type": "card",
           "settings": {
             "image": "shopify://shop_images/somna-v2-ugc-2.png",
-            "video_link": "",
             "caption": "Why I switched"
           }
         },
@@ -1511,7 +1488,6 @@
           "type": "card",
           "settings": {
             "image": "shopify://shop_images/somna-v2-ugc-1.png",
-            "video_link": "",
             "caption": ""
           }
         },
@@ -1519,7 +1495,6 @@
           "type": "card",
           "settings": {
             "image": "shopify://shop_images/somna-v2-ugc-2.png",
-            "video_link": "",
             "caption": ""
           }
         }
@@ -2439,7 +2414,7 @@
           "type": "shopify://apps/judge-me-reviews/blocks/review_widget_homepage/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
           "settings": {
             "product": "",
-            "max_width": 1024
+            "max_width": 1200
           }
         }
       },
