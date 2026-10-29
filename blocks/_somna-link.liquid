@@ -1,0 +1,78 @@
+{%- doc -%}
+  Somna V2 — one link inside a footer menu block, used when the menu block has no menu picked
+  (theme-only links, so store menus don't need changing). Optional social icon before the label.
+{%- enddoc -%}
+{%- liquid
+  assign b = block.settings
+  assign icon = b.icon
+-%}
+{%- if b.label != blank -%}
+  <li class="menu__item paragraph somna-link" {{ block.shopify_attributes }}>
+    {%- capture inner -%}
+      {%- if icon != 'none' and icon != blank -%}
+        <svg class="somna-link__icon somna-link__icon--{{ icon }}" viewBox="0 0 20 20" aria-hidden="true" focusable="false" fill="currentColor">
+          {%- render 'icon', icon: icon -%}
+        </svg>
+      {%- endif -%}
+      <span>{{ b.label | escape }}</span>
+    {%- endcapture -%}
+    {%- if b.link != blank -%}
+      <a href="{{ b.link }}"{% if icon != 'none' and icon != blank %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ inner }}</a>
+    {%- else -%}
+      <span class="somna-link__plain">{{ inner }}</span>
+    {%- endif -%}
+  </li>
+{%- endif -%}
+
+{% stylesheet %}
+  .somna-link > :is(a, .somna-link__plain) {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .somna-link__icon {
+    flex: none;
+    width: 20px;
+    height: 20px;
+  }
+
+  /* brand colours, as in the Figma footer */
+  .somna-link__icon--instagram {
+    color: #d62976;
+  }
+
+  .somna-link__icon--tiktok,
+  .somna-link__icon--x {
+    color: #000;
+  }
+
+  .somna-link__icon--facebook {
+    color: #1877f2;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Link",
+  "tag": null,
+  "settings": [
+    { "type": "text", "id": "label", "label": "Label", "default": "Link" },
+    { "type": "url", "id": "link", "label": "Link" },
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "Icon",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "instagram", "label": "Instagram" },
+        { "value": "tiktok", "label": "TikTok" },
+        { "value": "x", "label": "X" },
+        { "value": "facebook", "label": "Facebook" }
+      ],
+      "default": "none"
+    }
+  ],
+  "presets": [{ "name": "Link" }]
+}
+{% endschema %}

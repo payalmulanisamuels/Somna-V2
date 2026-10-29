@@ -855,7 +855,9 @@
         "padding_bottom": 16,
         "wave_color": "#000000",
         "avatars": "shopify://shop_images/somna-v2-steps-avatars.png",
-        "wave_shape": "drip-2"
+        "wave_shape": "drip-2",
+        "button_link": "shopify://pages/how-to-use",
+        "button_note": "✓ 30-Night Money-Back Guarantee"
       },
       "blocks": {
         "step_1": {
@@ -1607,7 +1609,7 @@
             "eyebrow": {
               "type": "text",
               "settings": {
-                "text": "<p>On orders of 2+ bags</p>",
+                "text": "<p>On Orders of 2+ Bags</p>",
                 "width": "100%",
                 "max_width": "none",
                 "alignment": "left",
@@ -1945,8 +1947,8 @@
             "rating_text": "★★★★★ 4.6/5 (3,600+ reviews)",
             "description": "The tape that sits on the outside of your lips and stays put till morning. 30 per bag.",
             "points": "Drug-free\nStays on all night\nGentle on skin\n3 colors",
-            "popular_position": 2,
-            "popular_label": "Most popular",
+            "popular_position": 1,
+            "popular_label": "Recommended",
             "nights_per_bag": 30
           }
         },
@@ -1958,9 +1960,9 @@
             "title": "Nasal Strips",
             "rating_text": "★★★★★ 4.6/5 (3,600+ reviews)",
             "description": "The strip that sits on the outside of your nose and stays put till morning. 30 per bag.",
-            "points": "Drug-free\nStays on all night\nGentle on skin\n3 colors",
-            "popular_position": 2,
-            "popular_label": "Most popular",
+            "points": "Drug-free\nStays on all night\nGentle on skin\nSits outside",
+            "popular_position": 1,
+            "popular_label": "Recommended",
             "nights_per_bag": 30
           }
         },

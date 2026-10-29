@@ -51,7 +51,11 @@
         </div>
 
         {%- if s.button_label != blank and s.button_link != blank -%}
-          <a class="somna-steps__button" href="{{ s.button_link }}">{{ s.button_label }}</a>
+          <a class="somna-steps__button" href="{{ s.button_link }}">
+            <svg class="somna-steps__play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="12"/><path d="M9.5 7.5v9l7-4.5z" fill="#fff"/></svg>
+            <span>{{ s.button_label }}</span>
+          </a>
+          {%- if s.button_note != blank -%}<p class="somna-steps__note">{{ s.button_note }}</p>{%- endif -%}
         {%- endif -%}
       </div>
     </div>
@@ -179,8 +183,10 @@
   }
 
   .somna-steps__button {
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
     min-height: 72px;
     margin-top: 14px;
     padding: 0 24px;
@@ -192,6 +198,21 @@
     text-decoration: none;
     text-transform: uppercase;
     box-shadow: 0 6px 16px rgb(0 0 0 / 0.15);
+  }
+
+  .somna-steps__play {
+    flex: none;
+    width: 1.4em;
+    height: 1.4em;
+    fill: #000;
+  }
+
+  /* shown under the button on phones only (mobile Figma) */
+  .somna-steps__note {
+    display: none;
+    margin: 8px 0 0;
+    font-size: 0.6875rem;
+    text-align: center;
   }
 
   .somna-steps__button:focus-visible {
@@ -283,6 +304,10 @@
       border-radius: 12px;
       font-size: 0.8125rem;
     }
+
+    .somna-steps__note {
+      display: block;
+    }
   }
 {% endstylesheet %}
 
@@ -303,6 +328,7 @@
     { "type": "image_picker", "id": "thumbs", "label": "Step thumbnails", "info": "Shown beside the step list." },
     { "type": "text", "id": "button_label", "label": "Button label" },
     { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "text", "id": "button_note", "label": "Note under the button (phones)", "default": "✓ 30-Night Money-Back Guarantee" },
     { "type": "header", "content": "Colours and spacing" },
     { "type": "color", "id": "background_color", "label": "Background", "default": "#f3feee" },
     { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },

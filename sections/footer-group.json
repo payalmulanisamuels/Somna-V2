@@ -80,50 +80,170 @@
                 "shop": {
                   "type": "menu",
                   "settings": {
-                    "menu": "shop",
+                    "menu": "",
                     "heading": "SHOP",
                     "menu_spacing": 12,
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
                     "link_preset": "paragraph"
                   },
-                  "blocks": {}
+                  "blocks": {
+                    "shop_1": {
+                      "type": "_somna-link",
+                      "settings": {
+                        "label": "Strips",
+                        "link": "/products/nasal-strips",
+                        "icon": "none"
+                      }
+                    },
+                    "shop_2": {
+                      "type": "_somna-link",
+                      "settings": {
+                        "label": "Tapes",
+                        "link": "/products/mouth-tape",
+                        "icon": "none"
+                      }
+                    },
+                    "shop_3": {
+                      "type": "_somna-link",
+                      "settings": {
+                        "label": "Bundles",
+                        "link": "/collections/all",
+                        "icon": "none"
+                      }
+                    }
+                  },
+                  "block_order": [
+                    "shop_1",
+                    "shop_2",
+                    "shop_3"
+                  ]
                 },
                 "support": {
                   "type": "menu",
                   "settings": {
-                    "menu": "support",
+                    "menu": "",
                     "heading": "SUPPORT",
                     "menu_spacing": 12,
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
                     "link_preset": "paragraph"
                   },
-                  "blocks": {}
+                  "blocks": {
+                    "support_1": {
+                      "type": "_somna-link",
+                      "settings": {
+                        "label": "Contact",
+                        "link": "/pages/contact",
+                        "icon": "none"
+                      }
+                    },
+                    "support_2": {
+                      "type": "_somna-link",
+                      "settings": {
+                        "label": "Shipping",
+                        "link": "/pages/shipping-policy",
+                        "icon": "none"
+                      }
+                    },
+                    "support_3": {
+                      "type": "_somna-link",
+                      "settings": {
+                        "label": "Returns",
+                        "link": "/pages/return-refund-policy",
+                        "icon": "none"
+                      }
+                    }
+                  },
+                  "block_order": [
+                    "support_1",
+                    "support_2",
+                    "support_3"
+                  ]
                 },
                 "learn": {
                   "type": "menu",
                   "settings": {
-                    "menu": "learn",
+                    "menu": "",
                     "heading": "LEARN",
                     "menu_spacing": 12,
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
                     "link_preset": "paragraph"
                   },
-                  "blocks": {}
+                  "blocks": {
+                    "learn_1": {
+                      "type": "_somna-link",
+                      "settings": {
+                        "label": "How to use",
+                        "link": "/pages/how-to-use",
+                        "icon": "none"
+                      }
+                    },
+                    "learn_2": {
+                      "type": "_somna-link",
+                      "settings": {
+                        "label": "FAQs",
+                        "link": "/pages/support",
+                        "icon": "none"
+                      }
+                    }
+                  },
+                  "block_order": [
+                    "learn_1",
+                    "learn_2"
+                  ]
                 },
                 "connect": {
                   "type": "menu",
                   "settings": {
-                    "menu": "connect",
+                    "menu": "",
                     "heading": "CONNECT",
                     "menu_spacing": 12,
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
                     "link_preset": "paragraph"
                   },
-                  "blocks": {}
+                  "blocks": {
+                    "connect_1": {
+                      "type": "_somna-link",
+                      "settings": {
+                        "label": "Instagram",
+                        "link": "https://www.instagram.com/somnasleep_official",
+                        "icon": "instagram"
+                      }
+                    },
+                    "connect_2": {
+                      "type": "_somna-link",
+                      "settings": {
+                        "label": "TikTok",
+                        "link": "",
+                        "icon": "tiktok"
+                      }
+                    },
+                    "connect_3": {
+                      "type": "_somna-link",
+                      "settings": {
+                        "label": "X",
+                        "link": "",
+                        "icon": "x"
+                      }
+                    },
+                    "connect_4": {
+                      "type": "_somna-link",
+                      "settings": {
+                        "label": "Facebook",
+                        "link": "",
+                        "icon": "facebook"
+                      }
+                    }
+                  },
+                  "block_order": [
+                    "connect_1",
+                    "connect_2",
+                    "connect_3",
+                    "connect_4"
+                  ]
                 }
               },
               "block_order": [
@@ -136,7 +256,7 @@
             "policies": {
               "type": "text",
               "settings": {
-                "text": "<p><a href=\"/policies/terms-of-service\" title=\"Terms of Service\">Terms of Service</a> · <a href=\"/policies/shipping-policy\" title=\"Shipping Policy\">Shipping Policy</a> · <a href=\"/policies/privacy-policy\" title=\"Privacy Policy\">Privacy Policy</a> · <a href=\"/policies/refund-policy\" title=\"Returns &amp; Refund Policy\">Returns &amp; Refund Policy</a> · <a href=\"/policies/subscription-policy\" title=\"Subscription Policy\">Subscription Policy</a></p>",
+                "text": "<p><a href=\"/policies/terms-of-service\" title=\"Terms of Service\">Terms of Service</a> · <a href=\"/policies/shipping-policy\" title=\"Shipping Policy\">Shipping Policy</a> · <a href=\"/policies/privacy-policy\" title=\"Privacy Policy\">Privacy Policy</a> · <a href=\"/pages/order-cancellation-policy\" title=\"Order Cancellation Policy\">Order Cancellation Policy</a> · <a href=\"/policies/refund-policy\" title=\"Returns &amp; Refund Policy\">Returns &amp; Refund Policy</a> · <a href=\"/policies/subscription-policy\" title=\"Subscription Policy\">Subscription Policy</a></p>",
                 "width": "100%",
                 "max_width": "none",
                 "alignment": "center",
