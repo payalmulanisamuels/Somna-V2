@@ -205,6 +205,76 @@
       justify-content: space-between;
     }
   }
+
+  /* final mobile design: small proof row, full-bleed photo, centred heading, compact step list */
+  @media screen and (max-width: 749px) {
+    .somna-steps {
+      overflow-x: clip;
+    }
+
+    .somna-steps__proof {
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .somna-steps__eyebrow {
+      font-size: 0.5625rem;
+    }
+
+    .somna-steps__avatars {
+      width: 72px;
+    }
+
+    .somna-steps__rating {
+      font-size: 0.75rem;
+    }
+
+    .somna-steps__grid {
+      gap: 24px;
+    }
+
+    .somna-steps__media {
+      margin-inline: calc(50% - 50vw);
+    }
+
+    .somna-steps__image {
+      aspect-ratio: 398 / 410;
+    }
+
+    .somna-steps__heading,
+    .somna-steps__text {
+      text-align: center;
+    }
+
+    .somna-steps__text {
+      margin-top: 8px;
+      font-size: 0.6875rem;
+    }
+
+    .somna-steps__list-wrap {
+      margin-top: 24px;
+    }
+
+    .somna-steps__list-wrap.has-thumbs {
+      grid-template-columns: minmax(0, 125px) minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .somna-steps__step-title {
+      font-size: 1.625rem;
+      line-height: 1.1;
+    }
+
+    .somna-steps__step p {
+      font-size: 0.6875rem;
+    }
+
+    .somna-steps__button {
+      min-height: 46px;
+      border-radius: 12px;
+      font-size: 0.8125rem;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

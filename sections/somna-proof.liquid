@@ -330,6 +330,55 @@
     }
   }
 
+  /* final mobile design: centred heading, the three stats in one row */
+  @media screen and (max-width: 749px) {
+    .somna-proof__intro {
+      text-align: center;
+    }
+
+    .somna-proof__eyebrow {
+      font-size: 0.625rem;
+    }
+
+    .somna-proof__heading {
+      font-size: 1.875rem;
+      line-height: 1.25;
+    }
+
+    .somna-proof__stats {
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .somna-proof__stat {
+      flex: 1 1 0;
+      width: auto;
+      gap: 8px;
+    }
+
+    .somna-proof__ring {
+      width: 84px;
+      height: 84px;
+    }
+
+    .somna-proof__value {
+      font-size: 1.75rem;
+    }
+
+    .somna-proof__label {
+      font-size: 0.625rem;
+    }
+
+    .somna-proof__avatar {
+      width: 40px;
+    }
+
+    .somna-proof__quote {
+      font-size: 0.875rem;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .somna-proof__fill {
       transition: none;

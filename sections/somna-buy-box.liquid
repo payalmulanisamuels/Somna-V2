@@ -576,6 +576,72 @@
       justify-content: space-between;
     }
   }
+
+  /* final mobile design: compact tabs, full-bleed photo, thumbnails and dark panel */
+  @media screen and (max-width: 749px) {
+    .somna-buy {
+      overflow-x: clip;
+    }
+
+    .somna-buy__tab {
+      min-height: 40px;
+      padding: 0 22px;
+      font-size: 0.75rem;
+    }
+
+    .somna-buy__gallery,
+    .somna-buy__panel {
+      margin-inline: calc(50% - 50vw);
+    }
+
+    .somna-buy__main {
+      aspect-ratio: 398 / 420;
+    }
+
+    .somna-buy__grid {
+      gap: 0;
+    }
+
+    .somna-buy__thumbs {
+      gap: 4px;
+      margin-top: 0;
+      padding: 4px;
+      background: var(--somna-panel);
+    }
+
+    .somna-buy__panel {
+      padding: 20px 24px 24px;
+      border-radius: 0;
+    }
+
+    .somna-buy__title {
+      font-size: 1.5rem;
+    }
+
+    .somna-buy__pack-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .somna-buy__pack {
+      padding: 14px 4px 8px;
+      font-size: 0.75rem;
+    }
+
+    .somna-buy__pack-price {
+      font-size: 1.125rem;
+    }
+
+    .somna-buy__mode {
+      font-size: 0.8125rem;
+    }
+
+    .somna-buy__add {
+      min-height: 50px;
+      border-radius: 14px;
+      font-size: 1rem;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

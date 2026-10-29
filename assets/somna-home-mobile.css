@@ -1,0 +1,336 @@
+/*
+ * Somna V2 — final mobile design for the Horizon-built homepage sections.
+ * Loaded from layout/theme.liquid with media="(max-width: 749px)", so desktop never applies it
+ * (and it never blocks desktop rendering). The Somna sections carry their own mobile rules;
+ * this file only covers sections made from Horizon's hero / section / footer blocks, keyed by
+ * their section ids in templates/index.json and sections/footer-group.json.
+ */
+@media screen and (max-width: 749px) {
+  /* ---------- Hero: centred copy over the dark top, pouches below, review at the bottom ---------- */
+  [id$='__hero_jVaWmY'] .hero {
+    --hero-min-height: 930px;
+    min-height: 930px;
+  }
+
+  /* the mobile image already carries the navy fades; it starts under the announcement bar */
+  [id$='__hero_jVaWmY'] img.hero__media {
+    object-position: 50% -34px;
+  }
+
+  [id$='__hero_jVaWmY'] .overlay {
+    display: none;
+  }
+
+  [id$='__hero_jVaWmY'] .hero__content-wrapper {
+    padding-block: 0;
+  }
+
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block {
+    width: 100%;
+    align-self: stretch;
+  }
+
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content {
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    min-height: 780px;
+    padding-block: 26px 58px;
+  }
+
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content > * {
+    width: 100%;
+  }
+
+  [id$='__hero_jVaWmY'] .group-block-content {
+    align-items: center;
+  }
+
+  [id$='__hero_jVaWmY'] .text-block {
+    --text-align: center !important;
+    text-align: center;
+  }
+
+  [id$='__hero_jVaWmY'] h1 {
+    font-size: 34.5px !important;
+    line-height: 1.35;
+  }
+
+  [id$='__hero_jVaWmY'] .somna-badge {
+    font-size: 12px;
+    justify-content: center;
+  }
+
+  [id$='__hero_jVaWmY'] [class*='__description'] {
+    max-width: 250px;
+    margin-inline: auto;
+  }
+
+  [id$='__hero_jVaWmY'] [class*='__description'] p {
+    font-size: 11px;
+  }
+
+  /* 2: icon row */
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content > :nth-child(2 of .group-block) > .group-block-content {
+    justify-content: center;
+    gap: 28px !important;
+  }
+
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content > :nth-child(2 of .group-block) img {
+    width: 20px !important;
+    height: auto;
+  }
+
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content > :nth-child(2 of .group-block) .text-block p {
+    font-size: 9px;
+  }
+
+  /* 3: button */
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content > :nth-child(3 of .group-block) {
+    width: 228px !important;
+  }
+
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content > :nth-child(3 of .group-block) .button-custom {
+    min-height: 0;
+    height: 32px;
+    padding-block: 0;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  /* 4: review, pushed to the bottom under the pouches */
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content > :nth-child(4 of .group-block) {
+    margin-top: auto;
+    width: auto !important;
+    align-self: flex-start;
+  }
+
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content > :nth-child(4 of .group-block) .text-block {
+    --text-align: start !important;
+    text-align: start;
+  }
+
+  [id$='__hero_jVaWmY'] [class*='__avatar'] {
+    width: 41px !important;
+    flex: 0 0 41px !important;
+  }
+
+  /* 5: "Join 1,000+" with the avatar stack on one line */
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content > :nth-child(5 of .group-block) {
+    align-self: flex-start;
+    width: auto !important;
+  }
+
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content > :nth-child(5 of .group-block) .group-block-content {
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content > :nth-child(5 of .group-block) .group-block {
+    width: auto !important;
+    flex: none !important;
+  }
+
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content > :nth-child(5 of .group-block) .image-block {
+    width: 15px !important;
+    flex: 0 0 15px !important;
+    margin-inline-end: -4px;
+  }
+
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content > :nth-child(5 of .group-block) .text-block {
+    --text-align: start !important;
+  }
+
+  [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content > :nth-child(5 of .group-block) .text-block p {
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  /* ---------- Still can't pick ---------- */
+  [id$='__still_cant_pick'] h2 {
+    font-size: 1.875rem !important;
+  }
+
+  [id$='__still_cant_pick'] [class*='__text'] p {
+    font-size: 0.6875rem;
+  }
+
+  [id$='__still_cant_pick'] .button-custom {
+    width: 263px;
+    max-width: 100%;
+  }
+
+  /* ---------- Trust tiles: three small tiles in one row ---------- */
+  [id$='__trust'] .group-block-content:has(> .group-block > .group-block-content > .somna-icon) {
+    flex-direction: row !important;
+    flex-wrap: nowrap;
+    gap: 10px !important;
+    justify-content: center;
+  }
+
+  [id$='__trust'] .group-block:has(> .group-block-content > .somna-icon) {
+    flex: 0 0 31% !important;
+    width: 31% !important;
+    padding: 16px 6px !important;
+  }
+
+  [id$='__trust'] .group-block:has(> .group-block-content > .somna-icon) > .group-block-content {
+    gap: 10px !important;
+  }
+
+  [id$='__trust'] .somna-icon svg,
+  [id$='__trust'] .somna-icon img {
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  [id$='__trust'] .text-block p {
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* ---------- Gifts: centred copy, three gifts in a row ---------- */
+  [id$='__gifts'] .text-block {
+    --text-align: center !important;
+    text-align: center;
+  }
+
+  [id$='__gifts'] [class*='__heading'] :is(h2, p) {
+    font-size: 1.875rem !important;
+    line-height: 1.2;
+  }
+
+  [id$='__gifts'] :is([class*='__eyebrow'], [class*='__text'], [class*='__label']) p {
+    font-size: 0.6875rem;
+  }
+
+  [id$='__gifts'] .group-block-content:has(> .group-block > .group-block-content > .somna-icon) {
+    flex-wrap: nowrap !important;
+    justify-content: center;
+    gap: 12px !important;
+  }
+
+  [id$='__gifts'] .group-block:has(> .group-block-content > .somna-icon) {
+    flex: 1 1 0 !important;
+    width: auto !important;
+  }
+
+  /* ---------- FAQ and reviews headings ---------- */
+  [id$='__faq'] .text-block {
+    --text-align: center !important;
+    text-align: center;
+  }
+
+  [id$='__faq'] [class*='__heading'] :is(h2, p) {
+    font-size: 2.25rem !important;
+    line-height: 1.2;
+  }
+
+  [id$='__faq'] [class*='__text'] p {
+    font-size: 0.6875rem;
+  }
+
+  [id$='__reviews'] [class*='__eyebrow'] p {
+    font-size: 0.625rem;
+  }
+
+  [id$='__reviews'] [class*='__heading'] :is(h2, p) {
+    font-size: 2.25rem !important;
+    line-height: 1.15;
+  }
+
+  /* ---------- Guarantee ---------- */
+  [id$='__guarantee'] .somna-icon svg {
+    width: 44px;
+    height: 44px;
+  }
+
+  [id$='__guarantee'] [class*='__eyebrow'] p {
+    font-size: 0.625rem;
+  }
+
+  [id$='__guarantee'] [class*='__heading'] :is(h2, p) {
+    font-size: 1.875rem !important;
+    line-height: 1.1;
+  }
+
+  [id$='__guarantee'] [class*='__text'] p {
+    font-size: 0.8125rem;
+  }
+
+  /* ---------- Final CTA: copy on black at the top, pouches below ---------- */
+  [id$='__final_cta'] .hero {
+    --hero-min-height: 610px;
+    min-height: 610px;
+  }
+
+  [id$='__final_cta'] img.hero__media {
+    object-position: center top;
+  }
+
+  [id$='__final_cta'] .hero__content-wrapper {
+    justify-content: flex-start !important;
+    align-items: center !important;
+    padding-block: 50px 0;
+  }
+
+  [id$='__final_cta'] .hero__content-wrapper > .group-block {
+    width: 100%;
+  }
+
+  [id$='__final_cta'] .group-block-content {
+    align-items: center !important;
+    gap: 20px;
+  }
+
+  [id$='__final_cta'] .text-block {
+    --text-align: center !important;
+    text-align: center;
+  }
+
+  [id$='__final_cta'] [class*='__heading'] :is(h2, p) {
+    font-size: 1.75rem !important;
+    line-height: 1.1;
+  }
+
+  [id$='__final_cta'] .button-custom {
+    width: 200px;
+  }
+
+  /* ---------- #SomnaNights and newsletter ---------- */
+  [id$='__somna_nights'] [class*='__eyebrow'] p {
+    font-size: 0.625rem;
+  }
+
+  [id$='__somna_nights'] [class*='__heading'] :is(h2, p) {
+    font-size: 2.125rem !important;
+  }
+
+  [id$='__newsletter'] .text-block {
+    --text-align: center !important;
+    text-align: center;
+  }
+
+  [id$='__newsletter'] [class*='__heading'] :is(h2, p) {
+    font-size: 1.875rem !important;
+    line-height: 1.2;
+  }
+
+  /* ---------- Shared: compact buttons in the Horizon sections ---------- */
+  :is([id$='__still_cant_pick'], [id$='__gifts'], [id$='__guarantee'], [id$='__somna_nights'], [id$='__final_cta']) .button-custom {
+    min-height: 0;
+    height: 44px;
+    padding-block: 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  /* ---------- Footer: menus in two columns ---------- */
+  [id$='__footer_somna'] .group-block-content:has(> .menu ~ .menu ~ .menu) {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    grid-auto-flow: column;
+    gap: 24px 16px !important;
+  }
+}

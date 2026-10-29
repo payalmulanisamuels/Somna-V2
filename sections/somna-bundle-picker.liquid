@@ -603,6 +603,50 @@
     }
   }
 
+  /* final mobile design: smaller heading, perks in a 2 × 2 grid */
+  @media screen and (max-width: 749px) {
+    .somna-bundle__heading {
+      font-size: 2.125rem;
+      line-height: 1.15;
+    }
+
+    .somna-bundle__toggle button {
+      padding: 0 14px;
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+
+    .somna-bundle__perks {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .somna-bundle__perk {
+      gap: 8px;
+      min-height: 48px;
+      padding: 6px 8px;
+      font-size: 0.6875rem;
+    }
+
+    .somna-bundle__perk-icon {
+      width: 32px;
+      height: 32px;
+      font-size: 1rem;
+    }
+
+    .somna-bundle__perk-mask {
+      width: 20px;
+      height: 20px;
+    }
+
+    .somna-bundle__badge {
+      width: 82px;
+      height: 82px;
+      padding: 8px;
+      font-size: 0.75rem;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .somna-bundle__other {
       transition: none;
