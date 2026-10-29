@@ -279,8 +279,8 @@
   [id$='__final_cta'] .hero__content-wrapper {
     justify-content: flex-start !important;
     align-items: center !important;
-    /* the guarantee wave hangs over the top of this section (135 units of a 720-unit crop) */
-    padding-block: calc(100vw * 135 / 720 + 24px) 0;
+    /* the guarantee wave hangs over the top of this section (135 units of a 560-unit crop) */
+    padding-block: calc(100vw * 135 / 560 + 24px) 0;
   }
 
   [id$='__final_cta'] .hero__content-wrapper > .group-block {
@@ -357,17 +357,17 @@
     font-size: 1.25rem !important;
   }
 
-  /* ---------- Spacing QA: 12px above and below each section's content ---------- */
+  /* ---------- Spacing QA: 8px above and below each section's content ---------- */
   :is(.somna-steps, .somna-match, .somna-routine, .somna-compare, .somna-proof, .somna-strip, .somna-buy, .somna-bundle) {
-    padding-block: 12px !important;
+    padding-block: 8px !important;
   }
 
   :is([id$='__still_cant_pick'], [id$='__trust'], [id$='__gifts'], [id$='__faq'], [id$='__reviews'], [id$='__somna_nights'], [id$='__newsletter']) > * > .spacing-style.layout-panel-flex {
-    padding-block: 12px !important;
+    padding-block: 8px !important;
   }
 
   [id$='__guarantee'] > * > .spacing-style.layout-panel-flex {
-    padding-block-end: 12px !important;
+    padding-block-end: 8px !important;
   }
 
   .somna-strip__list {
