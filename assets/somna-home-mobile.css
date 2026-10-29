@@ -346,7 +346,15 @@
   /* ---------- Headings: one mobile scale (section titles 26px, step titles 22px) ---------- */
   :is(.somna-steps, .somna-match, .somna-routine, .somna-compare, .somna-proof, .somna-strip, .somna-bundle) h2 {
     font-size: 1.625rem !important;
-    line-height: 1.3 !important;
+    line-height: 1.35 !important;
+  }
+
+  /* mobile Figma: titles in capitals with 1.35 line spacing (the buy box keeps "somna." lowercase) */
+  main :is(h1, h2):not(.somna-buy *),
+  main :is(h1, h2):not(.somna-buy *) :is(p, span, em, strong),
+  main .text-block:has(> :is(h1, h2)) > p {
+    text-transform: uppercase !important;
+    line-height: 1.35 !important;
   }
 
   :is(.somna-steps, .somna-routine) h3 {
