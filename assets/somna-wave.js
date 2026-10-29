@@ -136,6 +136,10 @@
     for (var i = 0; i < this.dropList.length; i++) {
       var dr = this.dropList[i];
       var off = Math.max(-18, Math.min(18, dr[1] - edgeAt(prof, dr[0])));
+      var fill = dr[5];
+      // a wave hanging over a photo (nothing drawn below the edge): drops hang just under the edge
+      // in the wave's own colour, as in the Figma guarantee → photo wave
+      if (!this.below) { off = Math.abs(off); fill = this.fill; }
       u = (dr[0] + travel) % 1440;
       var y = surf(u) + off, rmax = Math.max(dr[2], dr[3]);
       y = Math.max(rmax + 1, Math.min(this.units - rmax - 1, y));
@@ -146,7 +150,7 @@
       ctx.rotate((dr[4] + (still ? 0 : tilt)) * Math.PI / 180);
       ctx.beginPath();
       ctx.ellipse(0, 0, dr[2], dr[3], 0, 0, TAU);
-      ctx.fillStyle = dr[5];
+      ctx.fillStyle = fill;
       ctx.fill();
       ctx.restore();
     }
