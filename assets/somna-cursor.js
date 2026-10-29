@@ -79,6 +79,9 @@
     while (node && node.nodeType === 1) {
       var hint = node.getAttribute('data-cursor-tone');
       if (hint) { dark = hint === 'dark'; break; }
+      // the Somna header is navy but painted without a solid background on its own elements:
+      // anything inside it without its own solid background (e.g. the menu links) counts as dark
+      if (node.tagName === 'HEADER-COMPONENT') { dark = true; break; }
       var m = getComputedStyle(node).backgroundColor.match(/rgba?\(([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+%?))?/);
       if (m) {
         var alpha = m[4] === undefined ? 1 : (m[4].indexOf('%') > -1 ? parseFloat(m[4]) / 100 : parseFloat(m[4]));
