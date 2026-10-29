@@ -1,6 +1,7 @@
 {%- doc -%}
   Somna V2 — custom cursor (approved demo "D · Stardust trail"): the Figma crescent moon follows the
   pointer with soft easing and leaves a short trail of stardust (no pointer dot, no wave line).
+  On hover it tilts and little "z"s float up ("N · Sleepy Zzz").
 
   Rendered once from layout/theme.liquid. Turned on/off in Theme settings → Animations → "Somna cursor".
   Not loaded in the theme editor, so editing keeps the normal cursor.
@@ -114,13 +115,58 @@
     transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  /* hover: the shadow slides away and the crescent swells towards a full moon */
+  /* hover ("N · Sleepy Zzz"): the crescent tilts and little "z"s float up from it */
   .somna-cursor.is-hover .somna-cursor__moon svg {
-    transform: scale(1.12) rotate(-12deg);
+    transform: scale(1.1) rotate(-15deg);
   }
 
-  .somna-cursor.is-hover .somna-cursor__cut {
-    transform: translate(10px, -10px);
+  .somna-cursor__zzz {
+    position: absolute;
+    left: 27px;
+    top: -4px;
+    width: 0;
+    height: 0;
+  }
+
+  .somna-cursor__zzz i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font: 800 9px/1 var(--font-body--family, system-ui, sans-serif);
+    font-style: normal;
+    color: var(--somna-cursor-moon);
+    text-shadow: 0 0 2px var(--somna-cursor-halo);
+    opacity: 0;
+  }
+
+  .somna-cursor.is-hover .somna-cursor__zzz i {
+    animation: somna-cursor-zzz 2.1s ease-out infinite;
+  }
+
+  .somna-cursor.is-hover .somna-cursor__zzz i:nth-child(2) {
+    animation-delay: 0.7s;
+    font-size: 11px;
+  }
+
+  .somna-cursor.is-hover .somna-cursor__zzz i:nth-child(3) {
+    animation-delay: 1.4s;
+    font-size: 13px;
+  }
+
+  @keyframes somna-cursor-zzz {
+    0% {
+      transform: translate(0, 0);
+      opacity: 0;
+    }
+
+    20% {
+      opacity: 1;
+    }
+
+    100% {
+      transform: translate(14px, -22px);
+      opacity: 0;
+    }
   }
 
   .somna-cursor.is-down .somna-cursor__moon svg {
@@ -129,7 +175,7 @@
   }
 
   .somna-cursor.is-hover.is-down .somna-cursor__moon svg {
-    transform: scale(1.02) rotate(-12deg);
+    transform: scale(0.98) rotate(-15deg);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -140,6 +186,10 @@
 
     .somna-cursor__fx {
       display: none;
+    }
+
+    .somna-cursor.is-hover .somna-cursor__zzz i {
+      animation: none;
     }
   }
 {% endstylesheet %}

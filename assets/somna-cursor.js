@@ -3,7 +3,8 @@
  *
  * A crescent moon (Figma 4397:1501) follows the pointer with soft easing, the pointer sitting in the
  * crescent's open side, and leaves a short trail of twinkling stardust. On links, buttons,
- * product cards and galleries the moon swells towards a full moon; a click scatters a few stars.
+ * product cards and galleries the moon tilts and little "z"s float up from it ("N · Sleepy Zzz",
+ * approved demo); a click scatters a few stars.
  *
  * Safe by design:
  * - Only runs with a mouse or trackpad (hover + fine pointer); touch devices keep their normal behaviour.
@@ -41,7 +42,7 @@
         '<defs><mask id="somna-cursor-cut"><rect x="-4" y="-4" width="42" height="42" fill="#fff"/>' +
         '<circle class="somna-cursor__cut" cx="17.43" cy="12.57" r="8.34" fill="#000"/></mask></defs>' +
         '<circle class="somna-cursor__body" cx="15" cy="15" r="11" mask="url(#somna-cursor-cut)"/>' +
-      '</svg></span>';
+      '</svg><span class="somna-cursor__zzz"><i>z</i><i>z</i><i>z</i></span></span>';
     cv = root.querySelector('canvas');
     ctx = cv.getContext('2d');
     moon = root.querySelector('.somna-cursor__moon');
@@ -107,8 +108,11 @@
     root.classList.toggle('is-native', native);
     if (native) { setHover(false); return; }
     var zone = t.closest(ZONE);
-    setHover(!!zone || !!t.closest(INTERACTIVE));
-    root.classList.toggle('on-dark', isDark(zone || t));
+    var control = t.closest(INTERACTIVE);
+    setHover(!!zone || !!control);
+    // over a button or link, the colour follows what is behind it (a button on a black section gets
+    // the lavender moon; its navy halo keeps it readable on the button itself)
+    root.classList.toggle('on-dark', isDark(zone || (control && control.parentElement) || t));
   }
 
   function palette() { return root.classList.contains('on-dark') ? ['#afbdf8', '#f3feee'] : ['#0b0f1d', '#8d9ef0']; }
