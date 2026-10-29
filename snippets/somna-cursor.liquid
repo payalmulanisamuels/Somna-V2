@@ -1,0 +1,183 @@
+{%- doc -%}
+  Somna V2 — custom cursor (approved demo "D · Stardust trail"): a crescent moon with a breathing
+  wave that follows the pointer with soft easing and leaves a short trail of stardust.
+
+  Rendered once from layout/theme.liquid. Turned on/off in Theme settings → Animations → "Somna cursor".
+  Not loaded in the theme editor, so editing keeps the normal cursor.
+  Behaviour lives in assets/somna-cursor.js; the native cursor is only hidden once that script has
+  drawn the custom one (html.somna-cursor-on), so if it fails the normal cursor stays.
+{%- enddoc -%}
+{%- if settings.somna_cursor and request.design_mode == false -%}
+  <script src="{{ 'somna-cursor.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{% stylesheet %}
+  /* native cursor off only once the custom one is live; text fields, iframes and disabled/busy controls keep theirs */
+  html.somna-cursor-on,
+  html.somna-cursor-on *,
+  html.somna-cursor-on ::backdrop {
+    cursor: none !important;
+  }
+
+  html.somna-cursor-on :is(input:not([type='button'], [type='submit'], [type='reset'], [type='checkbox'], [type='radio'], [type='range'], [type='color'], [type='file'], [type='image']), textarea, [contenteditable=''], [contenteditable='true']) {
+    cursor: text !important;
+  }
+
+  html.somna-cursor-on :is(:disabled, [aria-disabled='true']) {
+    cursor: not-allowed !important;
+  }
+
+  html.somna-cursor-on [aria-busy='true'] {
+    cursor: progress !important;
+  }
+
+  .somna-cursor {
+    /* navy on light grounds, lavender + mint on dark; a thin opposite halo keeps it readable over photos */
+    --somna-cursor-moon: #0b0f1d;
+    --somna-cursor-wave: #0b0f1d;
+    --somna-cursor-halo: rgb(243 254 238 / 0.9);
+
+    position: fixed;
+    inset: 0 auto auto 0;
+    z-index: 2147483647;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    overflow: visible;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .somna-cursor.on-dark {
+    --somna-cursor-moon: #afbdf8;
+    --somna-cursor-wave: #f3feee;
+    --somna-cursor-halo: rgb(11 15 29 / 0.75);
+  }
+
+  .somna-cursor.is-visible {
+    opacity: 1;
+  }
+
+  .somna-cursor.is-native {
+    opacity: 0;
+    transition-duration: 0.08s;
+  }
+
+  .somna-cursor > * {
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform;
+  }
+
+  .somna-cursor__fx {
+    width: 100vw;
+    height: 100vh;
+    will-change: auto;
+  }
+
+  .somna-cursor__dot {
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    border-radius: 50%;
+    background: var(--somna-cursor-moon);
+    box-shadow: 0 0 0 1px var(--somna-cursor-halo);
+    transition: background-color 0.25s, box-shadow 0.25s;
+  }
+
+  /* the crescent's open side sits on the pointer, like a star beside the moon */
+  .somna-cursor__moon {
+    width: 34px;
+    height: 34px;
+    margin: -14px 0 0 -23px;
+  }
+
+  .somna-cursor__moon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    transform-origin: 23px 14px;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .somna-cursor__body {
+    fill: var(--somna-cursor-moon);
+    stroke: var(--somna-cursor-halo);
+    stroke-width: 1;
+    paint-order: stroke;
+    transition: fill 0.25s, stroke 0.25s;
+  }
+
+  .somna-cursor__cut {
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .somna-cursor__wave {
+    fill: none;
+    stroke: var(--somna-cursor-wave);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    opacity: 0.75;
+    transform-origin: 17px 30px;
+    animation: somna-cursor-breathe 8s ease-in-out infinite;
+    transition: stroke 0.25s;
+  }
+
+  @keyframes somna-cursor-breathe {
+    0%,
+    100% {
+      transform: scale(0.82, 0.55);
+      opacity: 0.5;
+    }
+
+    45% {
+      transform: scale(1, 1);
+      opacity: 0.9;
+    }
+  }
+
+  /* hover: the shadow slides away and the crescent swells towards a full moon */
+  .somna-cursor.is-hover .somna-cursor__moon svg {
+    transform: scale(1.12) rotate(-12deg);
+  }
+
+  .somna-cursor.is-hover .somna-cursor__cut {
+    transform: translate(7px, -7px);
+  }
+
+  .somna-cursor.is-hover .somna-cursor__dot {
+    background: var(--somna-cursor-wave);
+  }
+
+  .somna-cursor.is-down .somna-cursor__moon svg {
+    transform: scale(0.86) rotate(-6deg);
+    transition-duration: 0.12s;
+  }
+
+  .somna-cursor.is-hover.is-down .somna-cursor__moon svg {
+    transform: scale(1.02) rotate(-12deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-cursor__wave {
+      animation: none;
+      transform: none;
+    }
+
+    .somna-cursor__moon svg,
+    .somna-cursor__cut,
+    .somna-cursor__dot {
+      transition: none !important;
+    }
+
+    .somna-cursor__fx {
+      display: none;
+    }
+  }
+{% endstylesheet %}
