@@ -83,15 +83,27 @@
       // the Somna header is navy but painted without a solid background on its own elements:
       // anything inside it without its own solid background (e.g. the menu links) counts as dark
       if (node.tagName === 'HEADER-COMPONENT') { dark = true; break; }
-      var m = getComputedStyle(node).backgroundColor.match(/rgba?\(([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+%?))?/);
-      if (m) {
-        var alpha = m[4] === undefined ? 1 : (m[4].indexOf('%') > -1 ? parseFloat(m[4]) / 100 : parseFloat(m[4]));
-        if (alpha > 0.5) { dark = (0.299 * m[1] + 0.587 * m[2] + 0.114 * m[3]) < 140; break; }
+      // Somna's hero and final call-to-action sit on dark night photos
+      if (node.classList.contains('hero')) { dark = true; break; }
+      var v = solid(getComputedStyle(node).backgroundColor);
+      // Horizon sections paint their colour on a .section-background layer beside the content
+      if (v < 0) {
+        var layer = node.querySelector(':scope > .section-background');
+        if (layer) v = solid(getComputedStyle(layer).backgroundColor);
       }
+      if (v >= 0) { dark = v < 140; break; }
       node = node.parentElement;
     }
     tone.set(el, dark);
     return dark;
+  }
+
+  // brightness 0–255 of a mostly opaque colour, or -1 when it is see-through
+  function solid(bg) {
+    var m = bg.match(/rgba?\(([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+%?))?/);
+    if (!m) return -1;
+    var alpha = m[4] === undefined ? 1 : (m[4].indexOf('%') > -1 ? parseFloat(m[4]) / 100 : parseFloat(m[4]));
+    return alpha > 0.5 ? 0.299 * m[1] + 0.587 * m[2] + 0.114 * m[3] : -1;
   }
 
   function setHover(on) {
