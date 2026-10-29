@@ -4,6 +4,8 @@
 {%- render 'somna-wave',
   top: section.settings.top_color,
   bottom: section.settings.bottom_color,
+  shape: section.settings.shape,
+  overlap: section.settings.overlap,
   flip: section.settings.flip,
   drops: section.settings.drops,
   animate: section.settings.animate,
@@ -29,6 +31,21 @@
       "id": "bottom_color",
       "label": "Colour below",
       "default": "#f3feee"
+    },
+    {
+      "type": "select",
+      "id": "shape",
+      "label": "Shape",
+      "info": "Drip and Soft shapes are traced from the Figma design. Speed, height and animation apply to the rolling wave only.",
+      "options": [{ "value": "drip-1", "label": "Drip 1" }, { "value": "drip-2", "label": "Drip 2" }, { "value": "drip-3", "label": "Drip 3" }, { "value": "drip-4", "label": "Drip 4" }, { "value": "drip-5", "label": "Drip 5" }, { "value": "drip-6", "label": "Drip 6" }, { "value": "drip-7", "label": "Drip 7" }, { "value": "drip-8", "label": "Drip 8" }, { "value": "drip-9", "label": "Drip 9" }, { "value": "drip-10", "label": "Drip 10" }, { "value": "drip-11", "label": "Drip 11" }, { "value": "soft-1", "label": "Soft 1" }, { "value": "soft-2", "label": "Soft 2" }, { "value": "sine", "label": "Rolling wave (animated)" }],
+      "default": "drip-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "overlap",
+      "label": "Hang over the next section",
+      "info": "For a photo below: leave \"Colour below\" empty and the wave sits on top of the next section.",
+      "default": false
     },
     {
       "type": "checkbox",

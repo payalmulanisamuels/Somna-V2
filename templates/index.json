@@ -834,7 +834,8 @@
         "drops": true,
         "animate": true,
         "height": 140,
-        "height_mobile": 48
+        "height_mobile": 48,
+        "shape": "drip-1"
       }
     },
     "steps": {
@@ -853,7 +854,8 @@
         "padding_top": 32,
         "padding_bottom": 32,
         "wave_color": "#000000",
-        "avatars": "shopify://shop_images/somna-v2-steps-avatars.png"
+        "avatars": "shopify://shop_images/somna-v2-steps-avatars.png",
+        "wave_shape": "drip-2"
       },
       "blocks": {
         "step_1": {
@@ -1020,7 +1022,8 @@
       "type": "somna-routine",
       "settings": {
         "heading": "<h2>Your night routine, <em>stripped back.</em></h2>",
-        "wave_color": "#afbdf8"
+        "wave_color": "#afbdf8",
+        "wave_shape": "drip-3"
       },
       "blocks": {
         "prep": {
@@ -1057,7 +1060,8 @@
         "eyebrow": "Made for your nights",
         "heading": "Built for Bedtime. Not the First-Aid Kit.",
         "show_column_names": false,
-        "wave_color": "#000000"
+        "wave_color": "#000000",
+        "wave_shape": "drip-4"
       },
       "blocks": {
         "tab_tape": {
@@ -1216,7 +1220,8 @@
       "settings": {
         "eyebrow": "Don't just take our word for it",
         "heading": "<p>Real people. <em>Real nights.</em></p>",
-        "wave_color": "#f3feee"
+        "wave_color": "#f3feee",
+        "wave_shape": "drip-5"
       },
       "blocks": {
         "stat_1": {
@@ -1496,7 +1501,8 @@
         "heading": "Hear it from them",
         "card_width": 208,
         "background_color": "#f3feee",
-        "wave_color": "#000000"
+        "wave_color": "#000000",
+        "wave_shape": "drip-6"
       },
       "blocks": {
         "card_1": {
@@ -1901,14 +1907,16 @@
         "drops": true,
         "animate": true,
         "height": 140,
-        "height_mobile": 48
+        "height_mobile": 48,
+        "shape": "drip-7"
       }
     },
     "buy_box": {
       "type": "somna-buy-box",
       "settings": {
         "legal": "<p>Subscribe & Save renews every 30 days. Pause or cancel anytime.<br>30-Night Money-Back Guarantee</p>",
-        "wave_color": "#000000"
+        "wave_color": "#000000",
+        "wave_shape": "drip-8"
       },
       "blocks": {
         "tape": {
@@ -1985,7 +1993,8 @@
         "once_label": "One-time · 50% off",
         "sub_label": "Subscribe · 60% off",
         "bar_title": "Start Subscribe & Save",
-        "bar_text": "From $19.95 off your first box."
+        "bar_text": "From $19.95 off your first box.",
+        "wave_shape": "drip-9"
       },
       "blocks": {
         "perk_1": {
@@ -2376,7 +2385,8 @@
         "drops": true,
         "animate": true,
         "height": 140,
-        "height_mobile": 48
+        "height_mobile": 48,
+        "shape": "drip-10"
       }
     },
     "reviews": {
@@ -2451,7 +2461,8 @@
         "drops": true,
         "animate": true,
         "height": 140,
-        "height_mobile": 48
+        "height_mobile": 48,
+        "shape": "soft-1"
       }
     },
     "guarantee": {
@@ -2780,6 +2791,21 @@
         "drops": true,
         "animate": true,
         "height": 140,
+        "height_mobile": 48,
+        "shape": "drip-11"
+      }
+    },
+    "wave_peri_photo": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#98a3de",
+        "bottom_color": "",
+        "shape": "soft-2",
+        "overlap": true,
+        "flip": false,
+        "drops": true,
+        "animate": false,
+        "height": 140,
         "height_mobile": 48
       }
     }
@@ -2805,6 +2831,7 @@
     "reviews",
     "wave_black_peri",
     "guarantee",
+    "wave_peri_photo",
     "final_cta",
     "somna_nights",
     "newsletter",
