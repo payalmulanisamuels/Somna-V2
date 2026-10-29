@@ -84,11 +84,11 @@
     {%- endif -%}
 
     <div class="somna-bundle__grid">
+      <div class="somna-bundle__featured-wrap">
       <article class="somna-bundle__featured{% if s.drip_edges %} somna-edge-drip-bottom{% endif %}" aria-live="polite" data-featured>
         <header class="somna-bundle__featured-head">
           <h3 class="somna-bundle__title" data-f-title></h3>
           <p class="somna-bundle__subtitle" data-f-subtitle></p>
-          <span class="somna-bundle__badge" data-f-badge hidden></span>
         </header>
         <div class="somna-bundle__media"><img data-f-image alt="" width="1100" height="700" loading="lazy" decoding="async"></div>
         <div class="somna-bundle__buy">
@@ -108,6 +108,8 @@
           <p class="somna-bundle__status" role="status" data-status></p>
         </div>
       </article>
+        <span class="somna-bundle__badge" data-f-badge hidden></span>
+      </div>
 
       <ul class="somna-bundle__others" role="list" data-others></ul>
     </div>
@@ -347,6 +349,12 @@
     align-items: start;
   }
 
+  /* the badge sits outside the card so the card's edge mask doesn't clip its overhang (Figma) */
+  .somna-bundle__featured-wrap {
+    position: relative;
+    min-width: 0;
+  }
+
   .somna-bundle__featured {
     position: relative;
     border-radius: 4px 4px 28px 28px;
@@ -375,21 +383,21 @@
 
   .somna-bundle__badge {
     position: absolute;
-    top: 6px;
-    right: 6px;
-    z-index: 1;
+    top: -31px;
+    right: -22px;
+    z-index: 2;
     display: grid;
     place-items: center;
     width: 118px;
     height: 118px;
-    padding: 12px 17px;
+    padding: 0 17px;
     border-radius: 50%;
     background: var(--somna-chip);
     color: #000;
     font-family: var(--font-accent--family);
     font-weight: var(--font-accent--weight);
     font-size: 1.3rem;
-    line-height: 1.25;
+    line-height: 1.5;
     text-transform: uppercase;
     text-align: center;
     rotate: 7.6deg;
@@ -671,7 +679,9 @@
     .somna-bundle__badge {
       width: 82px;
       height: 82px;
-      padding: 8px 12px;
+      top: 6px;
+      right: 6px;
+      padding: 0 12px;
       font-size: 0.9rem;
     }
   }

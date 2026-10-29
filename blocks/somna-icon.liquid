@@ -18,6 +18,7 @@
   {{ block.shopify_attributes }}
 >
   {%- if s.image != blank -%}
+    {%- if s.backdrop == 'image' -%}<span class="somna-icon__patch" aria-hidden="true"></span>{%- endif -%}
     <span
       class="somna-icon__glyph somna-icon__glyph--mask"
       style="--somna-icon-mask: url('{{ s.image | image_url: width: 200 }}');"
@@ -75,6 +76,18 @@
     width: var(--somna-icon-size);
     height: var(--somna-icon-size);
     translate: 0 var(--somna-icon-offset, 0px);
+  }
+
+  /* fills the gap in the gift-box silhouette behind the icon, as in Figma */
+  .somna-icon__patch {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(var(--somna-icon-size) * 0.9);
+    height: calc(var(--somna-icon-size) * 0.9);
+    translate: -50% calc(-50% + var(--somna-icon-offset, 0px));
+    border-radius: 6px;
+    background: var(--somna-icon-backdrop);
   }
 
   .somna-icon__glyph--mask {
