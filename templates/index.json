@@ -844,7 +844,7 @@
         "section_height_custom": 50,
         "background_color": "#0b0f1d",
         "toggle_overlay": true,
-        "overlay_color": "#0b0f1db3",
+        "overlay_color": "#0b0f1d",
         "overlay_style": "gradient",
         "gradient_direction": "to top",
         "blurred_reflection": false,
@@ -2837,4 +2837,3 @@
     "wave_black_mint_footer"
   ]
 }
-
