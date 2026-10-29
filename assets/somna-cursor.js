@@ -1,8 +1,8 @@
 /**
  * Somna V2 — custom cursor ("D · Stardust trail", approved demo).
  *
- * A small dot sits exactly on the pointer (the click point). A crescent moon (Figma 4397:1501) with a breathing wave
- * follows it with soft easing and leaves a short trail of twinkling stardust. On links, buttons,
+ * A crescent moon (Figma 4397:1501) follows the pointer with soft easing, the pointer sitting in the
+ * crescent's open side, and leaves a short trail of twinkling stardust. On links, buttons,
  * product cards and galleries the moon swells towards a full moon; a click scatters a few stars.
  *
  * Safe by design:
@@ -12,7 +12,7 @@
  * - Text fields, editable areas, iframes and disabled/busy controls show the native cursor instead.
  * - Never takes pointer events or focus. Lives in the top layer (popover) so it stays above the cart
  *   drawer, quick add, zoom and other modal dialogs.
- * - Reduced motion: no easing, trail, breathing or burst — the moon simply sits on the pointer.
+ * - Reduced motion: no easing, trail or burst — the moon simply sits on the pointer.
  * - Animates only while something moves; idle otherwise.
  */
 (function () {
@@ -30,7 +30,7 @@
   // a product card or gallery is one hover zone: one steady moon state and colour across everything inside it
   var ZONE = 'product-card, .resource-card, .collection-card, media-gallery, .card-gallery, .somna-rv__card, .somna-strip__card, .somna-match__card, .somna-buy__gallery, .somna-buy__pack, [data-cursor-zone]';
 
-  var root, dot, moon, cv, ctx;
+  var root, moon, cv, ctx;
   try {
     root = document.createElement('div');
     root.className = 'somna-cursor';
@@ -41,13 +41,10 @@
         '<defs><mask id="somna-cursor-cut"><rect x="-4" y="-4" width="42" height="42" fill="#fff"/>' +
         '<circle class="somna-cursor__cut" cx="17.43" cy="12.57" r="8.34" fill="#000"/></mask></defs>' +
         '<circle class="somna-cursor__body" cx="15" cy="15" r="11" mask="url(#somna-cursor-cut)"/>' +
-        '<path class="somna-cursor__wave" d="M7 30c2.5-2.6 5-2.6 7.5 0s5 2.6 7.5 0 5-2.6 7.5 0"/>' +
-      '</svg></span>' +
-      '<span class="somna-cursor__dot"></span>';
+      '</svg></span>';
     cv = root.querySelector('canvas');
     ctx = cv.getContext('2d');
     moon = root.querySelector('.somna-cursor__moon');
-    dot = root.querySelector('.somna-cursor__dot');
     if (!ctx) throw new Error('no canvas');
     // top layer when supported, so modal dialogs (cart drawer, quick add, zoom) never cover it
     if (typeof root.showPopover === 'function') root.setAttribute('popover', 'manual');
@@ -168,7 +165,6 @@
       var km = 1 - Math.pow(0.7, dt / 16.67);
       moonX += (mx - moonX) * km; moonY += (my - moonY) * km;
     }
-    place(dot, mx, my);
     place(moon, moonX, moonY);
     var busy = 0;
     if (!reduced()) busy = drawDust(dt, now);
