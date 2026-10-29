@@ -27,14 +27,28 @@
   if animate == false
     assign classes = classes | append: ' somna-wave--static'
   endif
+
+  # As in the Figma, the darker colour always carries the drippy edge and the light drops.
+  # When the lighter colour is on top, the same wave is drawn upside down with the colours swapped.
+  assign wave_bg = top
+  assign wave_fill = bottom
+  assign top_brightness = top | color_brightness
+  assign bottom_brightness = bottom | color_brightness
+  if top_brightness > bottom_brightness
+    assign wave_bg = bottom
+    assign wave_fill = top
+    assign classes = classes | append: ' somna-wave--invert'
+  endif
 -%}
 <div
   class="{{ classes }}"
-  style="--somna-wave-top: {{ top }}; --somna-wave-bottom: {{ bottom }}; --somna-wave-h: {{ height | default: 140 }}px; --somna-wave-h-mobile: {{ height_mobile | default: 48 }}px; --somna-wave-mask: url('{{ mask | asset_url }}'); --somna-wave-mask-plain: url('{{ 'somna-wave-mask-plain.svg' | asset_url }}');"
+  style="--somna-wave-top: {{ wave_bg }}; --somna-wave-bottom: {{ wave_fill }}; --somna-wave-h: {{ height | default: 140 }}px; --somna-wave-h-mobile: {{ height_mobile | default: 48 }}px; --somna-wave-mask: url('{{ mask | asset_url }}'); --somna-wave-mask-plain: url('{{ 'somna-wave-mask-plain.svg' | asset_url }}');"
   aria-hidden="true"
 >
-  <span class="somna-wave__layer somna-wave__layer--back"><span class="somna-wave__shape"></span></span>
-  <span class="somna-wave__layer somna-wave__layer--front"><span class="somna-wave__shape"></span></span>
+  <span class="somna-wave__inner">
+    <span class="somna-wave__layer somna-wave__layer--back"><span class="somna-wave__shape"></span></span>
+    <span class="somna-wave__layer somna-wave__layer--front"><span class="somna-wave__shape"></span></span>
+  </span>
 </div>
 
 {% stylesheet %}
@@ -52,9 +66,14 @@
     contain: paint;
   }
 
+  .somna-wave__inner,
   .somna-wave__layer {
     position: absolute;
     inset: 0;
+  }
+
+  .somna-wave--invert .somna-wave__inner {
+    transform: scaleY(-1);
   }
 
   .somna-wave__layer--back {
