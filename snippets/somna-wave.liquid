@@ -207,6 +207,7 @@
   .somna-wave--shape svg {
     --somna-wave-u: calc(min(100cqi, 1440px) / 1440);
     display: block;
+    max-width: none; /* base.css caps svg at 100%, which squashed the mobile crop */
     width: max(100%, calc(1440 * var(--somna-wave-u)));
     height: calc(var(--somna-wave-units) * var(--somna-wave-u));
     margin-inline-start: 50%;
