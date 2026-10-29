@@ -214,6 +214,7 @@
 
   .somna-compare__panel {
     width: 100%;
+    min-width: 0;
     padding: 16px 28px 16px;
     border-radius: 20px;
     background: var(--somna-panel);
@@ -303,6 +304,17 @@
   }
 
   /* final mobile design: centred heading, the table fits the screen (no sideways scroll) */
+  /* small laptops / large tablets: let the table use the column it has instead of a 520px minimum */
+  @media screen and (min-width: 990px) and (max-width: 1199px) {
+    .somna-compare__inner {
+      gap: 24px;
+    }
+
+    .somna-compare__table {
+      min-width: 0;
+    }
+  }
+
   @media screen and (max-width: 749px) {
     .somna-compare__inner {
       grid-template-columns: minmax(0, 1fr);
