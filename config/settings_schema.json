@@ -1150,6 +1150,13 @@
         "default": true
       },
       {
+        "type": "checkbox",
+        "id": "somna_cursor",
+        "label": "Somna cursor",
+        "info": "Crescent-moon cursor with a stardust trail on desktop. Touch devices and reduced-motion settings are handled automatically.",
+        "default": true
+      },
+      {
         "type": "select",
         "id": "card_hover_effect",
         "label": "t:settings.card_hover_effect",
