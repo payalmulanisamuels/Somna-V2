@@ -950,7 +950,8 @@
             "padding-inline-end": 24,
             "horizontal_alignment_flex_direction_column": "center",
             "vertical_alignment_flex_direction_column": "center",
-            "background_color": "#f3feee"
+            "background_color": "#f3feee",
+            "somna_edge": "torn"
           },
           "blocks": {
             "heading": {
@@ -1331,7 +1332,8 @@
                 "horizontal_alignment_flex_direction_column": "center",
                 "vertical_alignment_flex_direction_column": "center",
                 "background_color": "#000000",
-                "custom_width_mobile": 31
+                "custom_width_mobile": 31,
+                "somna_edge": "drip-bottom"
               },
               "blocks": {
                 "icon": {
@@ -1387,7 +1389,8 @@
                 "horizontal_alignment_flex_direction_column": "center",
                 "vertical_alignment_flex_direction_column": "center",
                 "background_color": "#000000",
-                "custom_width_mobile": 31
+                "custom_width_mobile": 31,
+                "somna_edge": "drip-bottom"
               },
               "blocks": {
                 "icon": {
@@ -1444,7 +1447,8 @@
                 "horizontal_alignment_flex_direction_column": "center",
                 "vertical_alignment_flex_direction_column": "center",
                 "background_color": "#000000",
-                "custom_width_mobile": 31
+                "custom_width_mobile": 31,
+                "somna_edge": "drip-bottom"
               },
               "blocks": {
                 "icon": {

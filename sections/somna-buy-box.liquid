@@ -55,12 +55,12 @@
 
     <div class="somna-buy__grid">
       <div class="somna-buy__gallery">
-        <div class="somna-buy__main"><img data-main alt="" width="1200" height="1200" loading="lazy" decoding="async"></div>
+        <div class="somna-buy__main{% if s.drip_edges %} somna-edge-drip-top{% endif %}"><img data-main alt="" width="1200" height="1200" loading="lazy" decoding="async"></div>
         <ul class="somna-buy__thumbs" role="list" data-thumbs></ul>
       </div>
 
       <div class="somna-buy__side">
-        <div class="somna-buy__panel" role="tabpanel" data-panel>
+        <div class="somna-buy__panel{% if s.drip_edges %} somna-edge-drip-top{% endif %}" role="tabpanel" data-panel>
           <h2 class="somna-buy__title"><span class="somna-buy__brand">{{ s.brand }}</span> <span data-title></span></h2>
           <p class="somna-buy__rating" data-rating></p>
           <p class="somna-buy__desc" data-desc></p>
@@ -298,6 +298,11 @@
     border-radius: 18px;
     background: var(--somna-panel);
     color: #fff;
+  }
+
+  /* room for the drips cut into the top of the panel */
+  .somna-buy__panel.somna-edge-drip-top {
+    padding-top: calc(28px + var(--somna-drip-h));
   }
 
   .somna-buy__title {
@@ -614,6 +619,17 @@
       border-radius: 0;
     }
 
+    /* the approved mobile layout keeps straight edges here */
+    .somna-buy__main.somna-edge-drip-top,
+    .somna-buy__panel.somna-edge-drip-top {
+      -webkit-mask: none;
+      mask: none;
+    }
+
+    .somna-buy__panel.somna-edge-drip-top {
+      padding-top: 20px;
+    }
+
     .somna-buy__title {
       font-size: 1.5rem;
     }
@@ -650,6 +666,7 @@
   "tag": "section",
   "class": "section-somna-buy",
   "settings": [
+    { "type": "checkbox", "id": "drip_edges", "label": "Drippy card edges", "info": "Drip shapes on the card edges, as in the Figma design.", "default": true },
     { "type": "text", "id": "tabs_label", "label": "Tabs label (screen readers)", "default": "Choose a product" },
     { "type": "text", "id": "brand", "label": "Brand before the title", "default": "somna." },
     { "type": "text", "id": "packs_label", "label": "Pack label", "default": "Choose Your Pack" },

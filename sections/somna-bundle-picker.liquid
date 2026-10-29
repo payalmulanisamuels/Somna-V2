@@ -84,7 +84,7 @@
     {%- endif -%}
 
     <div class="somna-bundle__grid">
-      <article class="somna-bundle__featured" aria-live="polite" data-featured>
+      <article class="somna-bundle__featured{% if s.drip_edges %} somna-edge-drip-bottom{% endif %}" aria-live="polite" data-featured>
         <header class="somna-bundle__featured-head">
           <h3 class="somna-bundle__title" data-f-title></h3>
           <p class="somna-bundle__subtitle" data-f-subtitle></p>
@@ -113,7 +113,7 @@
     </div>
 
     {%- if s.bar_title != blank -%}
-      <a class="somna-bundle__bar" href="{{ s.bar_link | default: '#' }}">
+      <a class="somna-bundle__bar{% if s.drip_edges %} somna-edge-drip-bottom{% endif %}" href="{{ s.bar_link | default: '#' }}">
         <span class="somna-bundle__bar-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></span>
         <span class="somna-bundle__bar-text"><strong>{{ s.bar_title }}</strong>{% if s.bar_text != blank %}<span>{{ s.bar_text }}</span>{% endif %}</span>
         <span class="somna-bundle__bar-arrow" aria-hidden="true">→</span>
@@ -660,6 +660,7 @@
   "tag": "section",
   "class": "section-somna-bundle",
   "settings": [
+    { "type": "checkbox", "id": "drip_edges", "label": "Drippy card edges", "info": "Drip shapes on the card edges, as in the Figma design.", "default": true },
     { "type": "richtext", "id": "heading", "label": "Heading", "info": "Text set in italics shows in the accent colour.", "default": "<p>Never <em>Run Out</em> Again.</p>" },
     { "type": "text", "id": "mode_label", "label": "Purchase toggle label (screen readers)", "default": "Purchase option" },
     { "type": "text", "id": "once_label", "label": "One-time label", "default": "One-time" },
