@@ -9,6 +9,9 @@
   if block.settings.somna_edge != blank and block.settings.somna_edge != 'none'
     assign edge_class = 'somna-edge-' | append: block.settings.somna_edge
   endif
+  if block.settings.somna_edge_mobile != blank and block.settings.somna_edge_mobile != 'same'
+    assign edge_class = edge_class | append: ' somna-edge-mobile-' | append: block.settings.somna_edge_mobile
+  endif
 -%}
 {% render 'group',
   children: children,
@@ -463,6 +466,17 @@
         { "value": "torn", "label": "Torn sides" }
       ],
       "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "somna_edge_mobile",
+      "label": "Edge shape on mobile",
+      "options": [
+        { "value": "same", "label": "Same as desktop" },
+        { "value": "none", "label": "Straight" },
+        { "value": "drip-bottom", "label": "Drips at the bottom" }
+      ],
+      "default": "same"
     },
     {
       "type": "header",

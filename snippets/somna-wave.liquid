@@ -185,7 +185,7 @@
   }
 
   /* Figma shapes: 1440 design units across on desktop (capped at 1440px tall-scale on wide screens),
-     the middle 640 units across on mobile, so the wave keeps the mobile Figma size */
+     the middle 560 units across on mobile, so the wave keeps the mobile Figma size */
   .somna-wave--shape {
     container-type: inline-size;
     background: none;
@@ -212,11 +212,11 @@
 
   @media screen and (max-width: 749px) {
     .somna-wave--shape svg {
-      --somna-wave-u: calc(100cqi / 640);
+      --somna-wave-u: calc(100cqi / 560);
     }
 
     .somna-wave--overlap {
-      margin-block-end: calc(var(--somna-wave-units) * 100vw / -640);
+      margin-block-end: calc(var(--somna-wave-units) * 100vw / -560);
     }
   }
 {% endstylesheet %}

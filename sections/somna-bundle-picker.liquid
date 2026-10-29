@@ -605,6 +605,24 @@
 
   /* final mobile design: smaller heading, perks in a 2 × 2 grid */
   @media screen and (max-width: 749px) {
+    /* mobile Figma: the bundle card and the Subscribe bar keep straight edges */
+    .somna-bundle__featured.somna-edge-drip-bottom,
+    .somna-bundle__bar.somna-edge-drip-bottom {
+      border-bottom-width: 0 !important;
+      -webkit-mask: none;
+      mask: none;
+    }
+
+    .somna-bundle__featured.somna-edge-drip-bottom {
+      border-end-start-radius: 28px !important;
+      border-end-end-radius: 28px !important;
+    }
+
+    .somna-bundle__bar.somna-edge-drip-bottom {
+      border-end-start-radius: 6px !important;
+      border-end-end-radius: 6px !important;
+    }
+
     .somna-bundle__heading {
       font-size: 2.125rem;
       line-height: 1.15;

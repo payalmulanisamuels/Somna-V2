@@ -951,7 +951,8 @@
             "horizontal_alignment_flex_direction_column": "center",
             "vertical_alignment_flex_direction_column": "center",
             "background_color": "#f3feee",
-            "somna_edge": "torn"
+            "somna_edge": "torn",
+            "somna_edge_mobile": "drip-bottom"
           },
           "blocks": {
             "heading": {

@@ -56,7 +56,7 @@
   /* Drippy and torn edges traced from the Figma design (cards, tiles, panels).
      drip-bottom adds the drip height as a transparent border so nothing inside is cut; drip-top cuts
      into the top of the element (use it on images or panels with top padding). */
-  :is(.somna-edge-drip-bottom, .somna-edge-drip-top, .somna-edge-torn) {
+  :is(.somna-edge-drip-bottom, .somna-edge-drip-top, .somna-edge-torn, .somna-edge-mobile-drip-bottom) {
     --somna-drip-h: 44px;
     --somna-drip: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 46' preserveAspectRatio='none'%3E%3Cpath d='M0,0L0,3Q1.61,16 2.42,20Q3.23,24 4.035,27Q4.84,30 5.645,30.5Q6.45,31 7.255,31Q8.06,31 8.87,31Q9.68,31 10.485,30.5Q11.29,30 12.095,29.5Q12.9,29 13.71,29Q14.52,29 15.325,28Q16.13,27 16.935,26.5Q17.74,26 18.545,25.5Q19.35,25 20.16,24.5Q20.97,24 21.775,24.5Q22.58,25 23.385,26Q24.19,27 25,28.5Q25.81,30 26.615,31.5Q27.42,33 28.225,34.5Q29.03,36 29.84,37Q30.65,38 31.455,38Q32.26,38 33.065,37Q33.87,36 34.675,34Q35.48,32 36.29,29.5Q37.1,27 37.905,25Q38.71,23 39.515,21.5Q40.32,20 41.13,21Q41.94,22 42.745,23.5Q43.55,25 44.355,25.5Q45.16,26 45.965,27Q46.77,28 47.58,28.5Q48.39,29 49.195,29Q50,29 50.805,29Q51.61,29 52.42,28.5Q53.23,28 54.035,28Q54.84,28 55.645,28.5Q56.45,29 57.255,30Q58.06,31 58.87,32.5Q59.68,34 60.485,36Q61.29,38 62.095,40Q62.9,42 63.71,43.5Q64.52,45 65.325,44Q66.13,43 66.935,39.5Q67.74,36 68.545,33Q69.35,30 70.16,28.5Q70.97,27 71.775,27.5Q72.58,28 73.385,29Q74.19,30 75,31Q75.81,32 76.615,33.5Q77.42,35 78.225,36Q79.03,37 79.84,38Q80.65,39 81.455,39.5Q82.26,40 83.065,41Q83.87,42 84.675,42Q85.48,42 86.29,42Q87.1,42 87.905,42Q88.71,42 89.515,41Q90.32,40 91.13,39Q91.94,38 92.745,36Q93.55,34 94.355,32Q95.16,30 95.965,27.5Q96.77,25 97.58,22.5Q98.39,20 99.195,16L100,12L100,0Z'/%3E%3C/svg%3E");
   }
@@ -91,11 +91,28 @@
   }
 
   @media screen and (max-width: 749px) {
-    :is(.somna-edge-drip-bottom, .somna-edge-drip-top, .somna-edge-torn) {
+    :is(.somna-edge-drip-bottom, .somna-edge-drip-top, .somna-edge-torn, .somna-edge-mobile-drip-bottom) {
       --somna-drip-h: 26px;
     }
 
-    .somna-edge-torn {
+    /* "Edge shape on mobile" overrides */
+    .somna-edge-mobile-none {
+      -webkit-mask: none;
+      mask: none;
+      border-bottom-width: 0 !important;
+    }
+
+    .somna-edge-mobile-drip-bottom {
+      border-bottom: var(--somna-drip-h) solid transparent !important;
+      border-end-start-radius: 0 !important;
+      border-end-end-radius: 0 !important;
+      -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - var(--somna-drip-h) + 1px) no-repeat,
+        var(--somna-drip) bottom / 100% var(--somna-drip-h) no-repeat;
+      mask: linear-gradient(#000 0 0) top / 100% calc(100% - var(--somna-drip-h) + 1px) no-repeat,
+        var(--somna-drip) bottom / 100% var(--somna-drip-h) no-repeat;
+    }
+
+    .somna-edge-torn:not([class*='somna-edge-mobile-']) {
       -webkit-mask-size: 20px 100%, calc(100% - 38px) 100%, 20px 100%;
       mask-size: 20px 100%, calc(100% - 38px) 100%, 20px 100%;
     }
