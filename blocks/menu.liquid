@@ -70,7 +70,7 @@
           aria-label="{{ menu.title | escape }}"
         {% endif %}
       >
-        {% if menu %}
+        {% if menu != blank and menu.links.size > 0 %}
           <ul class="list-unstyled">
             {% for link in menu.links %}
               <li class="menu__item {{ block_settings.link_preset }}">
