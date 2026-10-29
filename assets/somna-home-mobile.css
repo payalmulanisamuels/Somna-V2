@@ -220,6 +220,7 @@
   [id$='__gifts'] .somna-icon {
     --somna-icon-box: 108px !important;
     --somna-icon-size: 54px !important;
+    --somna-icon-offset: 10px !important;
   }
 
   /* ---------- FAQ and reviews headings ---------- */
