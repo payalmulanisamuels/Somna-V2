@@ -334,6 +334,23 @@
     font-weight: 700;
   }
 
+  /* ---------- Spacing QA: 12px above and below each section's content ---------- */
+  :is(.somna-steps, .somna-match, .somna-routine, .somna-compare, .somna-proof, .somna-strip, .somna-buy, .somna-bundle) {
+    padding-block: 12px !important;
+  }
+
+  :is([id$='__still_cant_pick'], [id$='__trust'], [id$='__gifts'], [id$='__faq'], [id$='__reviews'], [id$='__somna_nights'], [id$='__newsletter']) > * > .spacing-style.layout-panel-flex {
+    padding-block: 12px !important;
+  }
+
+  [id$='__guarantee'] > * > .spacing-style.layout-panel-flex {
+    padding-block-end: 12px !important;
+  }
+
+  .somna-strip__list {
+    padding-block-end: 0 !important;
+  }
+
   /* ---------- Footer: menus in two columns ---------- */
   [id$='__footer_somna'] .group-block-content:has(> .menu ~ .menu ~ .menu) {
     display: grid !important;
