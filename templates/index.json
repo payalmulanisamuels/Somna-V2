@@ -931,7 +931,7 @@
         "section_width": "page-width",
         "background_color": "#000000",
         "padding-block-start": 16,
-        "padding-block-end": 32,
+        "padding-block-end": 24,
         "horizontal_alignment_flex_direction_column": "center"
       },
       "blocks": {

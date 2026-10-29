@@ -673,6 +673,22 @@
     }
   }
 
+  /* very small phones (320–359px): keep the toggle and perks inside the screen */
+  @media screen and (max-width: 359px) {
+    .somna-bundle__heading {
+      font-size: 1.75rem;
+    }
+
+    .somna-bundle__toggle button {
+      padding: 0 10px;
+      font-size: 0.6875rem;
+    }
+
+    .somna-bundle__perk {
+      font-size: 0.625rem;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .somna-bundle__other {
       transition: none;
