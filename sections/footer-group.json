@@ -132,40 +132,40 @@
                 "learn",
                 "connect"
               ]
+            },
+            "policies": {
+              "type": "text",
+              "settings": {
+                "text": "<p><a href=\"/policies/terms-of-service\" title=\"Terms of Service\">Terms of Service</a> · <a href=\"/policies/shipping-policy\" title=\"Shipping Policy\">Shipping Policy</a> · <a href=\"/policies/privacy-policy\" title=\"Privacy Policy\">Privacy Policy</a> · <a href=\"/policies/refund-policy\" title=\"Returns &amp; Refund Policy\">Returns &amp; Refund Policy</a> · <a href=\"/policies/subscription-policy\" title=\"Subscription Policy\">Subscription Policy</a></p>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "center",
+                "type_preset": "custom",
+                "font": "var(--font-body--family)",
+                "font_size": "0.875rem",
+                "line_height": "loose",
+                "letter_spacing": "loose",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#000000",
+                "background": false,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
             }
           },
           "block_order": [
             "logo",
-            "menus"
+            "menus",
+            "policies"
           ]
-        },
-        "policies": {
-          "type": "text",
-          "settings": {
-            "text": "<p><a href=\"/policies/terms-of-service\" title=\"Terms of Service\">Terms of Service</a> · <a href=\"/policies/shipping-policy\" title=\"Shipping Policy\">Shipping Policy</a> · <a href=\"/policies/privacy-policy\" title=\"Privacy Policy\">Privacy Policy</a> · <a href=\"/policies/refund-policy\" title=\"Returns &amp; Refund Policy\">Returns &amp; Refund Policy</a> · <a href=\"/policies/subscription-policy\" title=\"Subscription Policy\">Subscription Policy</a></p>",
-            "width": "100%",
-            "max_width": "none",
-            "alignment": "center",
-            "type_preset": "custom",
-            "font": "var(--font-body--family)",
-            "font_size": "0.875rem",
-            "line_height": "loose",
-            "letter_spacing": "loose",
-            "case": "none",
-            "wrap": "pretty",
-            "text_color": "#000000",
-            "background": false,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
         }
       },
       "block_order": [
-        "brand",
-        "policies"
+        "brand"
       ]
     },
     "footer_utilities_somna": {
