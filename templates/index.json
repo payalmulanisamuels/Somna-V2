@@ -2467,7 +2467,7 @@
         "animate": true,
         "height": 140,
         "height_mobile": 48,
-        "shape": "soft-1"
+        "shape": "drip-7"
       }
     },
     "guarantee": {
@@ -2806,7 +2806,7 @@
       "settings": {
         "top_color": "#98a3de",
         "bottom_color": "",
-        "shape": "soft-2",
+        "shape": "drip-4",
         "overlap": true,
         "flip": false,
         "drops": true,
