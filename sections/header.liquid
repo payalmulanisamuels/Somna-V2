@@ -393,9 +393,10 @@
     {%- comment -%} Somna V2: optional tint/gradient shown only while the header is transparent {%- endcomment -%}
     <div class="header__transparent-tint" aria-hidden="true"></div>
   {%- endif -%}
-  {%- if request.page_type == 'index' -%}
-    <h1 class="visually-hidden">{{ shop.name }}</h1>
-  {%- endif -%}
+  {%- comment -%}
+    Somna V2: the homepage hero heading is the page's h1, so the header no longer adds a hidden
+    "{{ shop.name }}" h1 there (it made two h1s on the homepage).
+  {%- endcomment -%}
   {% for row in rows %}
     {% liquid
       assign background = 'background_color_' | append: row
