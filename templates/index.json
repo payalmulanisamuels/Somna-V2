@@ -2810,7 +2810,7 @@
         "overlap": true,
         "flip": false,
         "drops": true,
-        "animate": false,
+        "animate": true,
         "height": 140,
         "height_mobile": 48
       }
