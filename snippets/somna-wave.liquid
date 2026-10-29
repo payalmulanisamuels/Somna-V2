@@ -12,9 +12,9 @@
   shape 'sine' (or blank): the animated "K2" rolling wave drawn by assets/somna-wave.js.
 
   @param {string} top - colour above the wave
-  @param {string} bottom - colour below the wave (blank = transparent, Figma shapes only)
+  @param {string} bottom - colour below the wave (blank = transparent: the wave hangs over the next section)
   @param {string} [shape] - wave shape (see above)
-  @param {boolean} [overlap] - pull the next section up under the wave (Figma shapes only)
+  @param {boolean} [overlap] - pull the next section up under the wave
   @param {boolean} [flip] - mirror horizontally
   @param {boolean} [drops] - show the small drops (default true)
   @param {boolean} [animate] - rolling motion (default true)
@@ -131,12 +131,22 @@
   # When the lighter colour is on top, the same wave is drawn upside down with the colours swapped.
   assign wave_bg = top
   assign wave_fill = bottom
-  assign top_brightness = top | color_brightness
-  assign bottom_brightness = bottom | color_brightness
-  if top_brightness > bottom_brightness
-    assign wave_bg = bottom
+  if bottom == blank
+    # hangs over the next section (e.g. a photo): only the top colour is drawn, drops hang below
+    assign wave_bg = 'transparent'
     assign wave_fill = top
     assign classes = classes | append: ' somna-wave--invert'
+  else
+    assign top_brightness = top | color_brightness
+    assign bottom_brightness = bottom | color_brightness
+    if top_brightness > bottom_brightness
+      assign wave_bg = bottom
+      assign wave_fill = top
+      assign classes = classes | append: ' somna-wave--invert'
+    endif
+  endif
+  if overlap
+    assign classes = classes | append: ' somna-wave--overlap'
   endif
 -%}
 <div
@@ -226,12 +236,16 @@
     pointer-events: none;
   }
 
+  .somna-wave--overlap:not(.somna-wave--shape) {
+    margin-block-end: calc(-1 * var(--somna-wave-height));
+  }
+
   @media screen and (max-width: 749px) {
     .somna-wave--shape svg {
       --somna-wave-u: calc(100cqi / 560);
     }
 
-    .somna-wave--overlap {
+    .somna-wave--shape.somna-wave--overlap {
       margin-block-end: calc(var(--somna-wave-units) * 100vw / -560);
     }
   }
