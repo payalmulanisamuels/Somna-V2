@@ -260,8 +260,8 @@
 
   /* ---------- Final CTA: copy on black at the top, pouches below ---------- */
   [id$='__final_cta'] .hero {
-    --hero-min-height: 610px;
-    min-height: 610px;
+    --hero-min-height: 680px;
+    min-height: 680px;
   }
 
   [id$='__final_cta'] img.hero__media {
@@ -271,7 +271,8 @@
   [id$='__final_cta'] .hero__content-wrapper {
     justify-content: flex-start !important;
     align-items: center !important;
-    padding-block: 50px 0;
+    /* the guarantee wave hangs over the top of this section (133 units of a 560-unit crop) */
+    padding-block: calc(100vw * 133 / 560 + 24px) 0;
   }
 
   [id$='__final_cta'] .hero__content-wrapper > .group-block {
