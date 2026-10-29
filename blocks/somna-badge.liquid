@@ -1,0 +1,62 @@
+{%- doc -%}
+  Somna V2 — two-part offer badge, e.g. [UP TO 60% OFF | 3+ gifts on your first order].
+  The first part is solid, the second a soft tint of the same colour.
+{%- enddoc -%}
+{%- assign b = block.settings -%}
+<p
+  class="somna-badge"
+  style="--somna-badge-color: {{ b.color }}; --somna-badge-text: {{ b.text_color }}; --somna-badge-text-2: {{ b.text_color_2 }}; --somna-badge-tint: {{ b.color | color_modify: 'alpha', 0.2 }};"
+  {{ block.shopify_attributes }}
+>
+  {%- if b.label != blank -%}<span class="somna-badge__main">{{ b.label | escape }}</span>{%- endif -%}
+  {%- if b.text != blank -%}<span class="somna-badge__extra">{{ b.text | escape }}</span>{%- endif -%}
+</p>
+
+{% stylesheet %}
+  .somna-badge {
+    display: inline-flex;
+    flex-wrap: wrap;
+    margin: 0;
+    font-family: var(--font-body--family);
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  .somna-badge > span {
+    padding: 0.4375rem 0.625rem;
+  }
+
+  .somna-badge__main {
+    background: var(--somna-badge-color);
+    color: var(--somna-badge-text);
+    border-radius: 10px 0 0 10px;
+    text-transform: uppercase;
+  }
+
+  .somna-badge__extra {
+    background: var(--somna-badge-tint);
+    color: var(--somna-badge-text-2);
+    border-radius: 0 10px 10px 0;
+  }
+
+  .somna-badge__main:only-child,
+  .somna-badge__extra:only-child {
+    border-radius: 10px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna badge",
+  "tag": null,
+  "settings": [
+    { "type": "text", "id": "label", "label": "Main text", "default": "Up to 60% off" },
+    { "type": "text", "id": "text", "label": "Extra text", "default": "3+ gifts on your first order" },
+    { "type": "color", "id": "color", "label": "Badge colour", "default": "#afbdf8" },
+    { "type": "color", "id": "text_color", "label": "Main text colour", "default": "#000000" },
+    { "type": "color", "id": "text_color_2", "label": "Extra text colour", "default": "#ffffff" }
+  ],
+  "presets": [{ "name": "Somna badge" }]
+}
+{% endschema %}

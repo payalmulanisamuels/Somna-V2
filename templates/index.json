@@ -74,29 +74,6 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "eyebrow": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p>Up to 60% off · Subscribe &amp; save from $19.95</p>",
-                    "width": "100%",
-                    "max_width": "none",
-                    "alignment": "left",
-                    "type_preset": "custom",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "uppercase",
-                    "wrap": "pretty",
-                    "text_color": "#98a3de",
-                    "background": false,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                },
                 "heading": {
                   "type": "text",
                   "settings": {
@@ -135,7 +112,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
-                    "text_color": "#ffffff",
+                    "text_color": "rgba(255,255,255,0.67)",
                     "background": false,
                     "padding-block-start": 0,
                     "padding-block-end": 0,
@@ -143,10 +120,20 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {}
+                },
+                "badge": {
+                  "type": "somna-badge",
+                  "settings": {
+                    "label": "Up to 60% off",
+                    "text": "3+ gifts on your first order",
+                    "color": "#afbdf8",
+                    "text_color": "#000000",
+                    "text_color_2": "#ffffff"
+                  }
                 }
               },
               "block_order": [
-                "eyebrow",
+                "badge",
                 "heading",
                 "description"
               ]
@@ -163,7 +150,7 @@
                 "vertical_alignment_flex_direction_column": "center",
                 "gap": 10,
                 "width": "custom",
-                "custom_width": 68,
+                "custom_width": 44,
                 "width_mobile": "fill",
                 "custom_width_mobile": 100,
                 "height": "fit",
@@ -185,7 +172,7 @@
                 "button": {
                   "type": "button",
                   "settings": {
-                    "label": "SHOP NOW · FROM $19.95  →",
+                    "label": "SHOP NOW  →",
                     "link": "shopify://collections/all",
                     "open_in_new_tab": false,
                     "style_class": "button-custom",
@@ -198,34 +185,10 @@
                     "custom_width_mobile": 100
                   },
                   "blocks": {}
-                },
-                "guarantee": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p>✓ 30-Night Money-Back Guarantee</p>",
-                    "width": "100%",
-                    "max_width": "none",
-                    "alignment": "center",
-                    "type_preset": "custom",
-                    "font": "var(--font-body--family)",
-                    "font_size": "0.75rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "wrap": "pretty",
-                    "text_color": "#8a8c93",
-                    "background": false,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
                 }
               },
               "block_order": [
-                "button",
-                "guarantee"
+                "button"
               ]
             },
             "tiles": {
@@ -238,7 +201,7 @@
                 "align_baseline": false,
                 "horizontal_alignment_flex_direction_column": "flex-start",
                 "vertical_alignment_flex_direction_column": "center",
-                "gap": 21,
+                "gap": 24,
                 "width": "fill",
                 "custom_width": 100,
                 "width_mobile": "fill",
@@ -269,25 +232,25 @@
                     "align_baseline": false,
                     "horizontal_alignment_flex_direction_column": "center",
                     "vertical_alignment_flex_direction_column": "center",
-                    "gap": 8,
-                    "width": "custom",
+                    "gap": 6,
+                    "width": "fit-content",
                     "custom_width": 19,
-                    "width_mobile": "custom",
+                    "width_mobile": "fit-content",
                     "custom_width_mobile": 31,
                     "height": "fit",
                     "custom_height": 100,
                     "background_media": "none",
                     "background_color": "rgba(0,0,0,0)",
                     "toggle_overlay": false,
-                    "border": "solid",
+                    "border": "none",
                     "border_width": 1,
                     "border_opacity": 100,
                     "border_radius": 4,
                     "open_in_new_tab": false,
-                    "padding-block-start": 14,
-                    "padding-block-end": 12,
-                    "padding-inline-start": 6,
-                    "padding-inline-end": 6,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0,
                     "border_color": "#f3feee"
                   },
                   "blocks": {
@@ -295,10 +258,10 @@
                       "type": "icon",
                       "settings": {
                         "icon": "none",
-                        "width": 36,
+                        "width": 30,
                         "open_in_new_tab": false,
                         "icon_color": "#f3feee",
-                        "image_upload": "shopify://shop_images/somna-v2-icon-drug-free-light.png"
+                        "image_upload": "shopify://shop_images/somna-v2-icon-leaf-light.png"
                       },
                       "blocks": {}
                     },
@@ -311,7 +274,7 @@
                         "alignment": "center",
                         "type_preset": "custom",
                         "font": "var(--font-body--family)",
-                        "font_size": "0.75rem",
+                        "font_size": "0.625rem",
                         "line_height": "normal",
                         "letter_spacing": "normal",
                         "case": "none",
@@ -341,25 +304,25 @@
                     "align_baseline": false,
                     "horizontal_alignment_flex_direction_column": "center",
                     "vertical_alignment_flex_direction_column": "center",
-                    "gap": 8,
-                    "width": "custom",
+                    "gap": 6,
+                    "width": "fit-content",
                     "custom_width": 19,
-                    "width_mobile": "custom",
+                    "width_mobile": "fit-content",
                     "custom_width_mobile": 31,
                     "height": "fit",
                     "custom_height": 100,
                     "background_media": "none",
                     "background_color": "rgba(0,0,0,0)",
                     "toggle_overlay": false,
-                    "border": "solid",
+                    "border": "none",
                     "border_width": 1,
                     "border_opacity": 100,
                     "border_radius": 4,
                     "open_in_new_tab": false,
-                    "padding-block-start": 14,
-                    "padding-block-end": 12,
-                    "padding-inline-start": 6,
-                    "padding-inline-end": 6,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0,
                     "border_color": "#f3feee"
                   },
                   "blocks": {
@@ -367,23 +330,23 @@
                       "type": "icon",
                       "settings": {
                         "icon": "none",
-                        "width": 26,
+                        "width": 30,
                         "open_in_new_tab": false,
                         "icon_color": "#f3feee",
-                        "image_upload": "shopify://shop_images/somna-v2-icon-gentle-light.png"
+                        "image_upload": "shopify://shop_images/somna-v2-icon-shield-light.png"
                       },
                       "blocks": {}
                     },
                     "label": {
                       "type": "text",
                       "settings": {
-                        "text": "<p>Gentle on skin</p>",
+                        "text": "<p>30-Nights guarantee</p>",
                         "width": "100%",
                         "max_width": "none",
                         "alignment": "center",
                         "type_preset": "custom",
                         "font": "var(--font-body--family)",
-                        "font_size": "0.75rem",
+                        "font_size": "0.625rem",
                         "line_height": "normal",
                         "letter_spacing": "normal",
                         "case": "none",
@@ -413,25 +376,25 @@
                     "align_baseline": false,
                     "horizontal_alignment_flex_direction_column": "center",
                     "vertical_alignment_flex_direction_column": "center",
-                    "gap": 8,
-                    "width": "custom",
+                    "gap": 6,
+                    "width": "fit-content",
                     "custom_width": 19,
-                    "width_mobile": "custom",
+                    "width_mobile": "fit-content",
                     "custom_width_mobile": 31,
                     "height": "fit",
                     "custom_height": 100,
                     "background_media": "none",
                     "background_color": "rgba(0,0,0,0)",
                     "toggle_overlay": false,
-                    "border": "solid",
+                    "border": "none",
                     "border_width": 1,
                     "border_opacity": 100,
                     "border_radius": 4,
                     "open_in_new_tab": false,
-                    "padding-block-start": 14,
-                    "padding-block-end": 12,
-                    "padding-inline-start": 6,
-                    "padding-inline-end": 6,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0,
                     "border_color": "#f3feee"
                   },
                   "blocks": {
@@ -439,23 +402,23 @@
                       "type": "icon",
                       "settings": {
                         "icon": "none",
-                        "width": 26,
+                        "width": 30,
                         "open_in_new_tab": false,
                         "icon_color": "#f3feee",
-                        "image_upload": "shopify://shop_images/somna-v2-icon-made-in-usa-light.png"
+                        "image_upload": "shopify://shop_images/somna-v2-icon-gift-light.png"
                       },
                       "blocks": {}
                     },
                     "label": {
                       "type": "text",
                       "settings": {
-                        "text": "<p>Made in USA</p>",
+                        "text": "<p>3 Free gifts</p>",
                         "width": "100%",
                         "max_width": "none",
                         "alignment": "center",
                         "type_preset": "custom",
                         "font": "var(--font-body--family)",
-                        "font_size": "0.75rem",
+                        "font_size": "0.625rem",
                         "line_height": "normal",
                         "letter_spacing": "normal",
                         "case": "none",
@@ -500,17 +463,17 @@
                 "height": "fit",
                 "custom_height": 100,
                 "background_media": "none",
-                "background_color": "#f3feee",
+                "background_color": "rgba(0,0,0,0)",
                 "toggle_overlay": false,
                 "border": "none",
                 "border_width": 1,
                 "border_opacity": 100,
                 "border_radius": 4,
                 "open_in_new_tab": false,
-                "padding-block-start": 10,
-                "padding-block-end": 10,
-                "padding-inline-start": 10,
-                "padding-inline-end": 16
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {
                 "avatar": {
@@ -602,7 +565,7 @@
                         "letter_spacing": "normal",
                         "case": "none",
                         "wrap": "pretty",
-                        "text_color": "#000000",
+                        "text_color": "#f3feee",
                         "background": false,
                         "padding-block-start": 0,
                         "padding-block-end": 0,
@@ -625,13 +588,13 @@
                         "letter_spacing": "normal",
                         "case": "none",
                         "wrap": "pretty",
-                        "text_color": "#000000",
+                        "text_color": "rgba(255,255,255,0.62)",
                         "background": false,
                         "padding-block-start": 0,
                         "padding-block-end": 0,
                         "padding-inline-start": 0,
                         "padding-inline-end": 0,
-                        "accent_color": "#5e9a3f"
+                        "accent_color": "#498525"
                       },
                       "blocks": {}
                     }
@@ -783,7 +746,7 @@
                 "text": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Join 1,000+ people sleeping with SOMNA.</p>",
+                    "text": "<p>4.6, Join 1,000+ people sleeping with SOMNA.</p>",
                     "width": "fit-content",
                     "max_width": "none",
                     "alignment": "left",
@@ -794,7 +757,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
-                    "text_color": "#ffffff",
+                    "text_color": "rgba(255,255,255,0.82)",
                     "background": false,
                     "padding-block-start": 0,
                     "padding-block-end": 0,
@@ -812,8 +775,8 @@
           },
           "block_order": [
             "intro",
-            "cta",
             "tiles",
+            "cta",
             "review",
             "join"
           ]
@@ -881,34 +844,35 @@
         "image": "shopify://shop_images/somna-v2-steps-model.png",
         "heading": "Three Steps. Zero Fuss.",
         "text": "<p>From bathroom sink to lights out in under a minute.</p>",
-        "thumbs": "shopify://shop_images/somna-v2-steps-thumbs.png",
+        "thumbs": "shopify://shop_images/somna-v2-steps-thumbs-v2.png",
         "button_label": "Watch how it works",
         "background_color": "#f3feee",
         "text_color": "#000000",
         "button_color": "#afbdf8",
         "padding_top": 32,
         "padding_bottom": 32,
-        "wave_color": "#000000"
+        "wave_color": "#000000",
+        "avatars": "shopify://shop_images/somna-v2-steps-avatars.png"
       },
       "blocks": {
         "step_1": {
           "type": "step",
           "settings": {
-            "title": "01 Nasal strip",
+            "title": "01 Wipe",
             "text": "A quick wipe so it grips."
           }
         },
         "step_2": {
           "type": "step",
           "settings": {
-            "title": "02 Peel & apply",
+            "title": "02 Stick",
             "text": "Center it on your nose and smooth both sides."
           }
         },
         "step_3": {
           "type": "step",
           "settings": {
-            "title": "03 Mouth tape",
+            "title": "03 Sleep",
             "text": "Press once, lie back. It stays put till morning."
           }
         }
@@ -934,7 +898,7 @@
             "image": "shopify://shop_images/somna-v2-strips-pouch.png",
             "title": "Nasal Strips",
             "subtitle": "Sits on the outside of your nose.",
-            "points": "Nothing inside your nose\nComfortable & discreet\n3 colors to match you",
+            "points": "Nothing inside your nose\nEasy of adhesive\nBlue Red or Black",
             "button_label": "Shop strips →",
             "button_link": "shopify://products/nasal-strips"
           }
@@ -945,7 +909,7 @@
             "image": "shopify://shop_images/somna-v2-tape-pouch.png",
             "title": "Mouth Tape",
             "subtitle": "Sits on the outside of your lips.",
-            "points": "Nothing inside your mouth\nComfortable & discreet\n3 colors to match you",
+            "points": "Soft on lips\nPeels off easy\nMade to pair with strips",
             "button_label": "Shop tape →",
             "button_link": "shopify://products/mouth-tape"
           }
@@ -1010,7 +974,7 @@
             "text": {
               "type": "text",
               "settings": {
-                "text": "<p>Take our 30-second quiz to find your match.</p>",
+                "text": "<p>Take our 60-second quiz to find your match.</p>",
                 "width": "100%",
                 "max_width": "none",
                 "alignment": "center",
@@ -1159,7 +1123,7 @@
           "type": "row",
           "settings": {
             "tab": "1",
-            "label": "Made for lips, not first aid",
+            "label": "Made for lips",
             "column_1": true,
             "column_2": false,
             "column_3": false,
@@ -1282,7 +1246,7 @@
           "settings": {
             "avatar": "shopify://shop_images/somna-v2-review-avatar.png",
             "rating": 5,
-            "quote": "I finally have a bedtime routine I actually stick to.",
+            "quote": "\"I finally have a bedtime routine I actually stick to.\"",
             "name": ""
           }
         },
@@ -1291,7 +1255,7 @@
           "settings": {
             "avatar": "shopify://shop_images/somna-v2-review-avatar.png",
             "rating": 5,
-            "quote": "I finally have a bedtime routine I actually stick to.",
+            "quote": "\"Three weeks in and I actually look forward to bedtime\"",
             "name": ""
           }
         },
@@ -1300,7 +1264,7 @@
           "settings": {
             "avatar": "shopify://shop_images/somna-v2-review-avatar.png",
             "rating": 5,
-            "quote": "I finally have a bedtime routine I actually stick to.",
+            "quote": "\"Goes on in seconds and its still there when the alarm goes off\"",
             "name": ""
           }
         }
@@ -1368,7 +1332,7 @@
                 "icon": {
                   "type": "somna-icon",
                   "settings": {
-                    "icon": "users",
+                    "icon": "leaf",
                     "size": 72,
                     "color": "#f3feee",
                     "backdrop": "none",
@@ -1379,7 +1343,7 @@
                 "label": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>No drugs. No sprays.</p>",
+                    "text": "<p>No Drugs. No Sprays.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "center",
@@ -1423,18 +1387,19 @@
                 "icon": {
                   "type": "somna-icon",
                   "settings": {
-                    "icon": "star",
+                    "icon": "none",
                     "size": 72,
                     "color": "#f3feee",
                     "backdrop": "none",
-                    "icon_offset": 0
+                    "icon_offset": 0,
+                    "image": "shopify://shop_images/somna-v2-icon-comfy.png"
                   },
                   "blocks": {}
                 },
                 "label": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Gentle enough for regular use</p>",
+                    "text": "<p>Comfy enough to Forget</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "center",
@@ -1478,7 +1443,7 @@
                 "icon": {
                   "type": "somna-icon",
                   "settings": {
-                    "icon": "shield",
+                    "icon": "users",
                     "size": 72,
                     "color": "#f3feee",
                     "backdrop": "none",
@@ -1489,7 +1454,7 @@
                 "label": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Loved by 1,000+ sleepers</p>",
+                    "text": "<p>Loved by 1,000+ Sleepers</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "center",
@@ -2014,35 +1979,39 @@
       "type": "somna-bundle-picker",
       "settings": {
         "heading": "<p>Never <em>Run Out</em> Again.</p>",
-        "wave_color": "#f3feee"
+        "wave_color": "#f3feee",
+        "once_label": "One-time · 50% off",
+        "sub_label": "Subscribe · 60% off",
+        "bar_title": "Start Subscribe & Save",
+        "bar_text": "From $19.95 off your first box."
       },
       "blocks": {
         "perk_1": {
           "type": "perk",
           "settings": {
             "icon_text": "%",
-            "text": "Save on every order"
+            "text": "60% off first order"
           }
         },
         "perk_2": {
           "type": "perk",
           "settings": {
             "icon": "shopify://shop_images/somna-v2-mask-gift.png",
-            "text": "3 free gifts on your first order"
+            "text": "3 gifts on 2+ packs"
           }
         },
         "perk_3": {
           "type": "perk",
           "settings": {
-            "icon": "shopify://shop_images/somna-v2-mask-truck.png",
-            "text": "Free US shipping"
+            "icon": "shopify://shop_images/somna-v2-mask-moon.png",
+            "text": "From $0.67 a night"
           }
         },
         "perk_4": {
           "type": "perk",
           "settings": {
             "icon": "shopify://shop_images/somna-v2-mask-refresh.png",
-            "text": "Pause or cancel anytime"
+            "text": "Skip or cancel in a few taps"
           }
         },
         "p1": {
@@ -2050,8 +2019,8 @@
           "settings": {
             "product": "sleep-bundle",
             "image": "shopify://shop_images/somna-v2-sleep-bundle.png",
-            "subtitle": "Strips + Tape",
-            "badge": "Best value",
+            "subtitle": "The full routine: Strips + Tape",
+            "badge": "Up to 60% off",
             "nights": 30
           }
         },
