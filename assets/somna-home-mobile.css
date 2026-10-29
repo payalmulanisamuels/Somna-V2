@@ -216,6 +216,12 @@
     min-width: 0;
   }
 
+  /* Approved mobile gift size (desktop uses the larger Figma size) */
+  [id$='__gifts'] .somna-icon {
+    --somna-icon-box: 108px !important;
+    --somna-icon-size: 54px !important;
+  }
+
   /* ---------- FAQ and reviews headings ---------- */
   [id$='__faq'] .text-block {
     --text-align: center !important;
