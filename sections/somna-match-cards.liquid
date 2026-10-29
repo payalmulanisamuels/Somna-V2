@@ -242,6 +242,18 @@
     }
   }
 
+  /* tablet: heading on top, the two cards side by side below it */
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-match__inner {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+    }
+
+    .somna-match__cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
   /* final mobile design: centred heading, two compact cards side by side */
   @media screen and (max-width: 749px) {
     .somna-match__inner {
