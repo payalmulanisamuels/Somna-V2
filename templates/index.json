@@ -851,8 +851,8 @@
         "background_color": "#f3feee",
         "text_color": "#000000",
         "button_color": "#afbdf8",
-        "padding_top": 32,
-        "padding_bottom": 32,
+        "padding_top": 24,
+        "padding_bottom": 16,
         "wave_color": "#000000",
         "avatars": "shopify://shop_images/somna-v2-steps-avatars.png",
         "wave_shape": "drip-2"
@@ -890,7 +890,9 @@
       "type": "somna-match-cards",
       "settings": {
         "heading": "<p>Nose or mouth? <em>Meet your match.</em></p>",
-        "text": "<p>Most people start with one. <br>Plenty end up with both.</p>"
+        "text": "<p>Most people start with one. <br>Plenty end up with both.</p>",
+        "padding_top": 24,
+        "padding_bottom": 24
       },
       "blocks": {
         "card_strips": {
@@ -928,8 +930,8 @@
         "gap": 24,
         "section_width": "page-width",
         "background_color": "#000000",
-        "padding-block-start": 24,
-        "padding-block-end": 48,
+        "padding-block-start": 16,
+        "padding-block-end": 32,
         "horizontal_alignment_flex_direction_column": "center"
       },
       "blocks": {
@@ -944,8 +946,8 @@
             "width_mobile": "fill",
             "height": "fit",
             "border_radius": 0,
-            "padding-block-start": 48,
-            "padding-block-end": 48,
+            "padding-block-start": 32,
+            "padding-block-end": 32,
             "padding-inline-start": 24,
             "padding-inline-end": 24,
             "horizontal_alignment_flex_direction_column": "center",
@@ -1025,7 +1027,9 @@
       "settings": {
         "heading": "<h2>Your night routine, <em>stripped back.</em></h2>",
         "wave_color": "#afbdf8",
-        "wave_shape": "drip-3"
+        "wave_shape": "drip-3",
+        "padding_top": 16,
+        "padding_bottom": 16
       },
       "blocks": {
         "prep": {
@@ -1063,7 +1067,9 @@
         "heading": "Built for Bedtime. Not the First-Aid Kit.",
         "show_column_names": false,
         "wave_color": "#000000",
-        "wave_shape": "drip-4"
+        "wave_shape": "drip-4",
+        "padding_top": 24,
+        "padding_bottom": 8
       },
       "blocks": {
         "tab_tape": {
@@ -1223,7 +1229,9 @@
         "eyebrow": "Don't just take our word for it",
         "heading": "<p>Real people. <em>Real nights.</em></p>",
         "wave_color": "#f3feee",
-        "wave_shape": "drip-5"
+        "wave_shape": "drip-5",
+        "padding_top": 16,
+        "padding_bottom": 24
       },
       "blocks": {
         "stat_1": {
@@ -1291,8 +1299,8 @@
         "gap": 24,
         "section_width": "page-width",
         "background_color": "#f3feee",
-        "padding-block-start": 48,
-        "padding-block-end": 24,
+        "padding-block-start": 24,
+        "padding-block-end": 16,
         "horizontal_alignment_flex_direction_column": "center"
       },
       "blocks": {
@@ -1326,8 +1334,8 @@
                 "width_mobile": "custom",
                 "height": "fill",
                 "border_radius": 16,
-                "padding-block-start": 44,
-                "padding-block-end": 44,
+                "padding-block-start": 32,
+                "padding-block-end": 28,
                 "padding-inline-start": 16,
                 "padding-inline-end": 16,
                 "horizontal_alignment_flex_direction_column": "center",
@@ -1383,8 +1391,8 @@
                 "width_mobile": "custom",
                 "height": "fill",
                 "border_radius": 16,
-                "padding-block-start": 44,
-                "padding-block-end": 44,
+                "padding-block-start": 32,
+                "padding-block-end": 28,
                 "padding-inline-start": 16,
                 "padding-inline-end": 16,
                 "horizontal_alignment_flex_direction_column": "center",
@@ -1441,8 +1449,8 @@
                 "width_mobile": "custom",
                 "height": "fill",
                 "border_radius": 16,
-                "padding-block-start": 44,
-                "padding-block-end": 44,
+                "padding-block-start": 32,
+                "padding-block-end": 28,
                 "padding-inline-start": 16,
                 "padding-inline-end": 16,
                 "horizontal_alignment_flex_direction_column": "center",
@@ -1507,7 +1515,9 @@
         "card_width": 208,
         "background_color": "#f3feee",
         "wave_color": "#000000",
-        "wave_shape": "drip-6"
+        "wave_shape": "drip-6",
+        "padding_top": 16,
+        "padding_bottom": 24
       },
       "blocks": {
         "card_1": {
@@ -1569,8 +1579,8 @@
         "gap": 40,
         "section_width": "page-width",
         "background_color": "#000000",
-        "padding-block-start": 40,
-        "padding-block-end": 40,
+        "padding-block-start": 24,
+        "padding-block-end": 24,
         "horizontal_alignment": "space-between",
         "vertical_alignment": "center"
       },
@@ -1921,7 +1931,9 @@
       "settings": {
         "legal": "<p>Subscribe & Save renews every 30 days. Pause or cancel anytime.<br>30-Night Money-Back Guarantee</p>",
         "wave_color": "#000000",
-        "wave_shape": "drip-8"
+        "wave_shape": "drip-8",
+        "padding_top": 16,
+        "padding_bottom": 16
       },
       "blocks": {
         "tape": {
@@ -1999,7 +2011,9 @@
         "sub_label": "Subscribe · 60% off",
         "bar_title": "Start Subscribe & Save",
         "bar_text": "From $19.95 off your first box.",
-        "wave_shape": "drip-9"
+        "wave_shape": "drip-9",
+        "padding_top": 16,
+        "padding_bottom": 24
       },
       "blocks": {
         "perk_1": {
@@ -2076,8 +2090,8 @@
         "gap": 56,
         "section_width": "page-width",
         "background_color": "#f3feee",
-        "padding-block-start": 40,
-        "padding-block-end": 40,
+        "padding-block-start": 24,
+        "padding-block-end": 24,
         "horizontal_alignment": "space-between",
         "vertical_alignment": "flex-start"
       },
@@ -2401,8 +2415,8 @@
         "gap": 24,
         "section_width": "page-width",
         "background_color": "#000000",
-        "padding-block-start": 40,
-        "padding-block-end": 48,
+        "padding-block-start": 24,
+        "padding-block-end": 24,
         "horizontal_alignment_flex_direction_column": "center"
       },
       "blocks": {
@@ -2477,8 +2491,8 @@
         "gap": 16,
         "section_width": "page-width",
         "background_color": "#98a3de",
-        "padding-block-start": 24,
-        "padding-block-end": 56,
+        "padding-block-start": 16,
+        "padding-block-end": 32,
         "horizontal_alignment_flex_direction_column": "center"
       },
       "blocks": {
@@ -2662,11 +2676,11 @@
       "type": "section",
       "settings": {
         "content_direction": "column",
-        "gap": 32,
+        "gap": 24,
         "section_width": "page-width",
         "background_color": "#000000",
-        "padding-block-start": 40,
-        "padding-block-end": 40,
+        "padding-block-start": 32,
+        "padding-block-end": 24,
         "horizontal_alignment_flex_direction_column": "center"
       },
       "blocks": {
@@ -2748,8 +2762,8 @@
         "gap": 40,
         "section_width": "page-width",
         "background_color": "#000000",
-        "padding-block-start": 48,
-        "padding-block-end": 48,
+        "padding-block-start": 24,
+        "padding-block-end": 32,
         "horizontal_alignment": "space-between",
         "vertical_alignment": "center"
       },
