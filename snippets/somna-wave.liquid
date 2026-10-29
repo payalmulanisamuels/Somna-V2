@@ -90,11 +90,11 @@
   <div class="{{ classes }}" style="--somna-wave-units: {{ shape_h }};" aria-hidden="true">
     <svg viewBox="0 0 1440 {{ shape_h }}" preserveAspectRatio="none" focusable="false" overflow="hidden">
       {%- if bottom != blank -%}
-        {%- if top != blank -%}<rect width="1440" height="{{ shape_h }}" fill="{{ top }}"/>{%- endif -%}
+        {%- if top != blank -%}<rect x="-4" y="-2" width="1448" height="{{ shape_h | plus: 4 }}" fill="{{ top }}"/>{%- endif -%}
         {%- assign shape_below = shape_h | plus: 2 -%}
-        <path fill="{{ bottom }}" d="M0,{{ shape_below }}{{ shape_edge }}L1440,{{ shape_below }}Z"/>
+        <path fill="{{ bottom }}" d="M-4,{{ shape_below }}{{ shape_edge }}L1444,{{ shape_below }}Z"/>
       {%- else -%}
-        <path fill="{{ top }}" d="M0,-2{{ shape_edge }}L1440,-2Z"/>
+        <path fill="{{ top }}" d="M-4,-2{{ shape_edge }}L1444,-2Z"/>
       {%- endif -%}
       {%- unless drops == false -%}
         {%- assign drop_list = shape_drops | split: ';' -%}
