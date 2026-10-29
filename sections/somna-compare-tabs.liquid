@@ -55,7 +55,7 @@
         {%- for row in row_blocks -%}{%- if row.settings.tab == tab_index -%}{%- assign row_count = row_count | plus: 1 -%}{%- endif -%}{%- endfor -%}
         {%- if row_count > 0 -%}
           <div
-            class="somna-compare__panel"
+            class="somna-compare__panel{% if s.drip_edges %} somna-edge-drip-bottom{% endif %}"
             role="tabpanel"
             id="{{ uid }}-panel-{{ forloop.index }}"
             aria-labelledby="{{ uid }}-tab-{{ forloop.index }}"
@@ -365,6 +365,7 @@
   "tag": "section",
   "class": "section-somna-compare",
   "settings": [
+    { "type": "checkbox", "id": "drip_edges", "label": "Drippy card edges", "info": "Drip shapes on the card edges, as in the Figma design.", "default": true },
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Made for your nights" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "Built for Bedtime. Not the First-Aid Kit." },
     { "type": "text", "id": "tabs_label", "label": "Tabs label (screen readers)", "default": "Compare products" },

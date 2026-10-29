@@ -40,7 +40,7 @@
     <ul class="somna-match__cards" role="list">
       {%- for block in section.blocks -%}
         {%- assign b = block.settings -%}
-        <li class="somna-match__card" {{ block.shopify_attributes }}>
+        <li class="somna-match__card{% if s.drip_edges %} somna-edge-drip-bottom{% endif %}" {{ block.shopify_attributes }}>
           {%- if b.image != blank -%}
             <div class="somna-match__media">
               {{ b.image | image_url: width: 640 | image_tag: loading: 'lazy', widths: '320, 480, 640', sizes: '(min-width: 990px) 320px, 45vw', alt: b.image.alt }}
@@ -334,6 +334,7 @@
   "class": "section-somna-match",
   "max_blocks": 3,
   "settings": [
+    { "type": "checkbox", "id": "drip_edges", "label": "Drippy card edges", "info": "Drip shapes on the card edges, as in the Figma design.", "default": true },
     {
       "type": "richtext",
       "id": "heading",

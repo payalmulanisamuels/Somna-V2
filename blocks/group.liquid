@@ -4,12 +4,19 @@
   {% content_for 'blocks' %}
 {% endcapture %}
 
+{%- liquid
+  assign edge_class = ''
+  if block.settings.somna_edge != blank and block.settings.somna_edge != 'none'
+    assign edge_class = 'somna-edge-' | append: block.settings.somna_edge
+  endif
+-%}
 {% render 'group',
   children: children,
   settings: block.settings,
   shopify_attributes: block.shopify_attributes,
   background_color: block.settings.background_color,
-  block_id: block.id
+  block_id: block.id,
+  class: edge_class
 %}
 
 {% schema %}
@@ -443,6 +450,19 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "select",
+      "id": "somna_edge",
+      "label": "Edge shape",
+      "info": "Somna: drippy or torn edges traced from the Figma design.",
+      "options": [
+        { "value": "none", "label": "Straight" },
+        { "value": "drip-bottom", "label": "Drips at the bottom" },
+        { "value": "drip-top", "label": "Drips at the top" },
+        { "value": "torn", "label": "Torn sides" }
+      ],
+      "default": "none"
     },
     {
       "type": "header",
