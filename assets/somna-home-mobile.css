@@ -34,8 +34,8 @@
     justify-content: flex-start;
     align-items: center;
     gap: 12px;
-    min-height: 780px;
-    padding-block: 26px 58px;
+    min-height: 740px;
+    padding-block: 26px 20px;
   }
 
   [id$='__hero_jVaWmY'] .hero__content-wrapper > .group-block > .group-block-content > * {
@@ -52,7 +52,7 @@
   }
 
   [id$='__hero_jVaWmY'] h1 {
-    font-size: 34.5px !important;
+    font-size: 30px !important;
     line-height: 1.35;
   }
 
@@ -148,7 +148,7 @@
 
   /* ---------- Still can't pick ---------- */
   [id$='__still_cant_pick'] h2 {
-    font-size: 1.875rem !important;
+    font-size: 1.625rem !important;
   }
 
   [id$='__still_cant_pick'] [class*='__text'] p {
@@ -196,7 +196,7 @@
   }
 
   [id$='__gifts'] [class*='__heading'] :is(h2, p) {
-    font-size: 1.875rem !important;
+    font-size: 1.625rem !important;
     line-height: 1.2;
   }
 
@@ -230,7 +230,7 @@
   }
 
   [id$='__faq'] [class*='__heading'] :is(h2, p) {
-    font-size: 2.25rem !important;
+    font-size: 1.625rem !important;
     line-height: 1.2;
   }
 
@@ -243,7 +243,7 @@
   }
 
   [id$='__reviews'] [class*='__heading'] :is(h2, p) {
-    font-size: 2.25rem !important;
+    font-size: 1.625rem !important;
     line-height: 1.15;
   }
 
@@ -258,7 +258,7 @@
   }
 
   [id$='__guarantee'] [class*='__heading'] :is(h2, p) {
-    font-size: 1.875rem !important;
+    font-size: 1.625rem !important;
     line-height: 1.3;
   }
 
@@ -279,8 +279,8 @@
   [id$='__final_cta'] .hero__content-wrapper {
     justify-content: flex-start !important;
     align-items: center !important;
-    /* the guarantee wave hangs over the top of this section (135 units of a 560-unit crop) */
-    padding-block: calc(100vw * 135 / 560 + 24px) 0;
+    /* the guarantee wave hangs over the top of this section (135 units of a 720-unit crop) */
+    padding-block: calc(100vw * 135 / 720 + 24px) 0;
   }
 
   [id$='__final_cta'] .hero__content-wrapper > .group-block {
@@ -298,7 +298,7 @@
   }
 
   [id$='__final_cta'] [class*='__heading'] :is(h2, p) {
-    font-size: 1.75rem !important;
+    font-size: 1.625rem !important;
     line-height: 1.3;
   }
 
@@ -312,7 +312,7 @@
   }
 
   [id$='__somna_nights'] [class*='__heading'] :is(h2, p) {
-    font-size: 2.125rem !important;
+    font-size: 1.625rem !important;
   }
 
   [id$='__newsletter'] .text-block {
@@ -321,7 +321,7 @@
   }
 
   [id$='__newsletter'] [class*='__heading'] :is(h2, p) {
-    font-size: 1.875rem !important;
+    font-size: 1.625rem !important;
     line-height: 1.3;
   }
 
@@ -332,6 +332,29 @@
     padding-block: 0;
     font-size: 0.875rem;
     font-weight: 700;
+  }
+
+  /* ---------- Hero: no empty band under the rating ---------- */
+  [id$='__hero_jVaWmY'] :is(.hero, .hero__container) {
+    min-height: 0 !important;
+  }
+
+  [id$='__hero_jVaWmY'] .hero__container {
+    padding-block-end: 0 !important;
+  }
+
+  /* ---------- Headings: one mobile scale (section titles 26px, step titles 22px) ---------- */
+  :is(.somna-steps, .somna-match, .somna-routine, .somna-compare, .somna-proof, .somna-strip, .somna-bundle) h2 {
+    font-size: 1.625rem !important;
+    line-height: 1.3 !important;
+  }
+
+  :is(.somna-steps, .somna-routine) h3 {
+    font-size: 1.375rem !important;
+  }
+
+  .somna-match h3 {
+    font-size: 1.25rem !important;
   }
 
   /* ---------- Spacing QA: 12px above and below each section's content ---------- */
