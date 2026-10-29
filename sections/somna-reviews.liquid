@@ -1,0 +1,514 @@
+{%- comment -%}
+  Somna V2 — reviews as in the Figma design: a featured review, the rating summary with bars and
+  customer photos, filter chips, more reviews and a "Show more reviews" button.
+  Content is set in the editor (review blocks); chips and the button link to the reviews page.
+{%- endcomment -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  assign bars = s.bars | split: ','
+-%}
+{%- capture star_svg -%}<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.6 7.7l5.8-.8z"/></svg>{%- endcapture -%}
+
+<div
+  class="somna-reviews"
+  style="background: {{ s.background_color }}; --somna-accent: {{ s.accent_color }}; --somna-card: {{ s.card_color }}; --somna-star: {{ s.star_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+>
+  <div class="somna-container somna-reviews__inner">
+    {%- if s.eyebrow != blank -%}<p class="somna-reviews__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
+    {%- if s.heading != blank -%}<div class="somna-reviews__heading somna-display">{{ s.heading }}</div>{%- endif -%}
+
+    {%- liquid
+      assign featured = section.blocks | where: 'type', 'review' | first
+    -%}
+    {%- if featured -%}
+      {%- assign b = featured.settings -%}
+      <article class="somna-reviews__card somna-reviews__card--featured somna-edge-drip-bottom" {{ featured.shopify_attributes }}>
+        {%- if b.title != blank -%}<h3 class="somna-reviews__title">“{{ b.title }}”</h3>{%- endif -%}
+        {%- if b.text != blank -%}<p class="somna-reviews__text">“{{ b.text }}”</p>{%- endif -%}
+        <div class="somna-reviews__by">
+          {%- if b.avatar != blank -%}{{ b.avatar | image_url: width: 120 | image_tag: class: 'somna-reviews__avatar', alt: '', loading: 'lazy' }}{%- endif -%}
+          <p class="somna-reviews__name"><strong>{{ b.name }}</strong>{% if b.meta != blank %}<span>{{ b.meta }}</span>{% endif %}</p>
+          <span class="somna-reviews__stars" role="img" aria-label="{{ b.rating }} out of 5 stars">
+            {%- for i in (1..5) -%}<span class="somna-reviews__star{% if b.rating < i %}{% if b.rating > i | minus: 1 %} is-half{% else %} is-empty{% endif %}{% endif %}">{{ star_svg }}</span>{%- endfor -%}
+          </span>
+        </div>
+      </article>
+    {%- endif -%}
+
+    <div class="somna-reviews__summary somna-edge-drip-top">
+      <div class="somna-reviews__score">
+        <p class="somna-reviews__number">{{ s.rating }}</p>
+        <span class="somna-reviews__stars" role="img" aria-label="{{ s.rating }} out of 5 stars">
+          {%- assign r = s.rating | plus: 0 -%}
+          {%- for i in (1..5) -%}<span class="somna-reviews__star{% if r < i %}{% if r > i | minus: 1 %} is-half{% else %} is-empty{% endif %}{% endif %}">{{ star_svg }}</span>{%- endfor -%}
+        </span>
+        {%- if s.count != blank -%}<p class="somna-reviews__count">{{ s.count }}</p>{%- endif -%}
+      </div>
+      <ul class="somna-reviews__bars" role="list">
+        {%- for pct in bars limit: 5 -%}
+          {%- assign stars = 6 | minus: forloop.index -%}
+          {%- assign p = pct | strip | plus: 0 -%}
+          <li>
+            <span class="somna-reviews__bar-label">{{ stars }}★</span>
+            <span class="somna-reviews__bar" aria-hidden="true"><span style="width: {{ p }}%;"></span></span>
+            <span class="somna-reviews__bar-pct">{{ p }}%<span class="visually-hidden"> of reviews gave {{ stars }} stars</span></span>
+          </li>
+        {%- endfor -%}
+      </ul>
+      <div class="somna-reviews__photos">
+        {%- for i in (1..6) -%}
+          {%- assign key = 'photo_' | append: i -%}
+          {%- assign img = s[key] -%}
+          {%- if img != blank -%}{{ img | image_url: width: 300 | image_tag: loading: 'lazy', class: 'somna-reviews__photo', alt: img.alt }}{%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+    {%- assign chips = s.chips | split: '|' -%}
+    {%- if chips.size > 0 -%}
+      <nav class="somna-reviews__chips" aria-label="{{ s.chips_label | escape }}">
+        {%- for chip in chips -%}
+          <a class="somna-reviews__chip{% if forloop.first %} is-active{% endif %}" href="{{ s.button_link | default: '#' }}">{{ chip | strip }}</a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+
+    <ul class="somna-reviews__list" role="list">
+      {%- for block in section.blocks -%}
+        {%- if forloop.first -%}{%- continue -%}{%- endif -%}
+        {%- assign b = block.settings -%}
+        <li class="somna-reviews__card somna-reviews__card--small" {{ block.shopify_attributes }}>
+          {%- if b.avatar != blank -%}{{ b.avatar | image_url: width: 100 | image_tag: class: 'somna-reviews__avatar', alt: '', loading: 'lazy' }}{%- endif -%}
+          <div class="somna-reviews__body">
+            {%- if b.title != blank -%}<h3 class="somna-reviews__title">“{{ b.title }}”</h3>{%- endif -%}
+            {%- if b.text != blank -%}<p class="somna-reviews__text">“{{ b.text }}”</p>{%- endif -%}
+            <p class="somna-reviews__name"><strong>{{ b.name }}</strong>{% if b.meta != blank %} <span>{{ b.meta }}</span>{% endif %}</p>
+          </div>
+          <span class="somna-reviews__stars" role="img" aria-label="{{ b.rating }} out of 5 stars">
+            {%- for i in (1..5) -%}<span class="somna-reviews__star{% if b.rating < i %}{% if b.rating > i | minus: 1 %} is-half{% else %} is-empty{% endif %}{% endif %}">{{ star_svg }}</span>{%- endfor -%}
+          </span>
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    {%- if s.button_label != blank -%}
+      <a class="somna-reviews__more" href="{{ s.button_link | default: '#' }}">{{ s.button_label }}</a>
+    {%- endif -%}
+  </div>
+</div>
+{%- if s.wave_color != blank -%}
+  {%- render 'somna-wave', top: s.background_color, bottom: s.wave_color, shape: s.wave_shape -%}
+{%- endif -%}
+
+{% stylesheet %}
+  .somna-reviews__inner {
+    --somna-content-width: 1024px;
+    display: grid;
+    justify-items: center;
+    gap: 24px;
+    color: #f3feee;
+  }
+
+  .somna-reviews__eyebrow {
+    margin: 0;
+    font-size: 1.5rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .somna-reviews__heading {
+    font-size: clamp(2.25rem, 4.6vw, 4.125rem);
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .somna-reviews__heading :is(h2, p) {
+    margin: 0;
+    font: inherit;
+  }
+
+  .somna-reviews__card {
+    width: 100%;
+    background: var(--somna-card);
+    color: #0b1a45;
+    border-radius: 10px;
+  }
+
+  .somna-reviews__card--featured {
+    display: grid;
+    gap: 6px;
+    padding: 28px 32px 8px;
+    margin-bottom: -18px;
+  }
+
+  .somna-reviews__title {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 1.375rem;
+    line-height: 1.3;
+    color: #000;
+  }
+
+  .somna-reviews__card--featured .somna-reviews__title {
+    font-size: clamp(1.5rem, 2.3vw, 2.125rem);
+  }
+
+  .somna-reviews__text {
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .somna-reviews__card--featured .somna-reviews__text {
+    font-size: 1rem;
+  }
+
+  .somna-reviews__by {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .somna-reviews__avatar {
+    flex: none;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .somna-reviews__name {
+    display: grid;
+    margin: 0;
+    font-size: 0.75rem;
+  }
+
+  .somna-reviews__card--featured .somna-reviews__name {
+    font-size: 1.125rem;
+    letter-spacing: 0.04em;
+  }
+
+  .somna-reviews__name span {
+    color: #4a6b3a;
+  }
+
+  .somna-reviews__card--featured .somna-reviews__name span {
+    color: #8a8f99;
+    font-style: italic;
+  }
+
+  .somna-reviews__stars {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: auto;
+    color: var(--somna-star);
+  }
+
+  .somna-reviews__star svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  .somna-reviews__star.is-half svg {
+    -webkit-mask: linear-gradient(90deg, #000 50%, rgb(0 0 0 / 0.35) 50%);
+    mask: linear-gradient(90deg, #000 50%, rgb(0 0 0 / 0.35) 50%);
+  }
+
+  .somna-reviews__star.is-empty svg {
+    opacity: 0.3;
+  }
+
+  .somna-reviews__summary {
+    --somna-drip-cut: transparent;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 32px;
+    width: 100%;
+    padding: 56px 32px 24px;
+    border-radius: 10px;
+    background: var(--somna-card);
+    color: #000;
+  }
+
+  .somna-reviews__score {
+    display: grid;
+    gap: 4px;
+  }
+
+  .somna-reviews__number {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: clamp(4rem, 8vw, 7.5rem);
+    line-height: 1;
+  }
+
+  .somna-reviews__score .somna-reviews__stars {
+    margin: 0;
+  }
+
+  .somna-reviews__count {
+    margin: 0;
+    font-size: 0.875rem;
+    letter-spacing: 0.06em;
+    color: #4b5160;
+  }
+
+  .somna-reviews__bars {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-reviews__bars li {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr) 40px;
+    align-items: center;
+    gap: 14px;
+    font-weight: 700;
+  }
+
+  .somna-reviews__bar {
+    height: 6px;
+    border-radius: 999px;
+    background: #d9ddd5;
+    overflow: hidden;
+  }
+
+  .somna-reviews__bar span {
+    display: block;
+    height: 100%;
+    background: var(--somna-accent);
+  }
+
+  .somna-reviews__bar-pct {
+    font-weight: 400;
+    font-size: 0.8125rem;
+    text-align: right;
+    color: #4b5160;
+  }
+
+  .somna-reviews__photos {
+    display: grid;
+    grid-template-columns: repeat(3, 72px);
+    gap: 4px;
+  }
+
+  .somna-reviews__photo {
+    width: 100%;
+    height: 72px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  .somna-reviews__chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .somna-reviews__chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0 16px;
+    border-radius: 999px;
+    background: var(--somna-card);
+    color: #000;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgb(175 189 248 / 0.25);
+  }
+
+  .somna-reviews__chip.is-active {
+    background: var(--somna-accent);
+  }
+
+  .somna-reviews__list {
+    display: grid;
+    gap: 14px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-reviews__card--small {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 14px;
+    padding: 20px 28px;
+  }
+
+  .somna-reviews__card--small .somna-reviews__avatar {
+    width: 52px;
+    height: 52px;
+    margin-top: 4px;
+  }
+
+  .somna-reviews__body {
+    display: grid;
+    gap: 4px;
+  }
+
+  .somna-reviews__more {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 62px;
+    min-width: min(100%, 446px);
+    padding: 0 28px;
+    border-radius: 12px;
+    background: var(--somna-accent);
+    color: #000;
+    font-weight: 700;
+    font-size: 1.25rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    box-shadow: 0 6px 18px rgb(175 189 248 / 0.35);
+  }
+
+  :is(.somna-reviews__chip, .somna-reviews__more):focus-visible {
+    outline: 2px solid #f3feee;
+    outline-offset: 3px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .somna-reviews__eyebrow {
+      font-size: 0.75rem;
+    }
+
+    .somna-reviews__heading {
+      font-size: 2rem;
+    }
+
+    .somna-reviews__card--featured {
+      padding: 20px 18px 6px;
+    }
+
+    .somna-reviews__by .somna-reviews__avatar {
+      width: 40px;
+      height: 40px;
+    }
+
+    .somna-reviews__card--featured .somna-reviews__name {
+      font-size: 0.875rem;
+    }
+
+    .somna-reviews__summary {
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 18px;
+      padding: 44px 18px 18px;
+    }
+
+    .somna-reviews__photos {
+      grid-column: 1 / -1;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .somna-reviews__photo {
+      height: 52px;
+    }
+
+    .somna-reviews__chips {
+      gap: 6px;
+    }
+
+    .somna-reviews__chip {
+      min-height: 32px;
+      padding: 0 12px;
+      font-size: 0.75rem;
+    }
+
+    .somna-reviews__card--small {
+      grid-template-columns: auto minmax(0, 1fr);
+      padding: 14px 16px;
+    }
+
+    .somna-reviews__card--small .somna-reviews__stars {
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: end;
+    }
+
+    .somna-reviews__card--small .somna-reviews__avatar {
+      width: 40px;
+      height: 40px;
+    }
+
+    .somna-reviews__title {
+      font-size: 1rem;
+    }
+
+    .somna-reviews__star svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .somna-reviews__more {
+      min-height: 48px;
+      font-size: 0.9375rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna reviews",
+  "tag": "section",
+  "class": "section-somna-reviews",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Reviews" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "info": "Italic words use the accent colour.", "default": "<h2>What <em>sleepers</em> are saying</h2>" },
+    { "type": "text", "id": "rating", "label": "Average rating", "default": "4.6" },
+    { "type": "text", "id": "count", "label": "Review count", "default": "3600+ reviews" },
+    { "type": "text", "id": "bars", "label": "Rating bars (5★ to 1★, %)", "default": "78,15,4,2,1" },
+    { "type": "image_picker", "id": "photo_1", "label": "Photo 1" },
+    { "type": "image_picker", "id": "photo_2", "label": "Photo 2" },
+    { "type": "image_picker", "id": "photo_3", "label": "Photo 3" },
+    { "type": "image_picker", "id": "photo_4", "label": "Photo 4" },
+    { "type": "image_picker", "id": "photo_5", "label": "Photo 5" },
+    { "type": "image_picker", "id": "photo_6", "label": "Photo 6" },
+    { "type": "text", "id": "chips", "label": "Filter chips (separate with |)", "default": "All|5★|4★|3 & below|with photos" },
+    { "type": "text", "id": "chips_label", "label": "Filter chips label (screen readers)", "default": "Browse reviews" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Show more reviews ↓" },
+    { "type": "url", "id": "button_link", "label": "Reviews page" },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#000000" },
+    { "type": "color", "id": "card_color", "label": "Cards", "default": "#f3feee" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#afbdf8" },
+    { "type": "color", "id": "star_color", "label": "Stars", "default": "#f5c242" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
+    { "type": "header", "content": "Bottom wave" },
+    { "type": "color", "id": "wave_color", "label": "Colour below the wave", "info": "Leave empty for a straight edge." },
+    { "type": "select", "id": "wave_shape", "label": "Wave shape", "options": [{ "value": "drip-1", "label": "Drip 1" }, { "value": "drip-7", "label": "Drip 7" }, { "value": "soft-1", "label": "Soft 1" }, { "value": "sine", "label": "Rolling wave (animated)" }], "default": "drip-1" }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        { "type": "paragraph", "content": "The first review is shown large at the top." },
+        { "type": "text", "id": "title", "label": "Title", "default": "Hooked from bag one." },
+        { "type": "textarea", "id": "text", "label": "Review" },
+        { "type": "text", "id": "name", "label": "Name", "default": "Priya S." },
+        { "type": "text", "id": "meta", "label": "Details", "default": "Verified Buyer" },
+        { "type": "image_picker", "id": "avatar", "label": "Photo" },
+        { "type": "range", "id": "rating", "label": "Stars", "min": 1, "max": 5, "step": 0.5, "default": 5 }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Somna reviews", "blocks": [{ "type": "review" }, { "type": "review" }, { "type": "review" }] }]
+}
+{% endschema %}
