@@ -1,0 +1,53 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "somna-quiz",
+      "settings": {
+        "email_heading": "Unlock 10% off your SOMNA plan",
+        "email_consent": "By signing up you agree to receive marketing emails from SOMNA. Unsubscribe anytime.",
+        "klaviyo_company_id": "Tr7JSM",
+        "klaviyo_list_id": "SGCi7d",
+        "klaviyo_source": "quiz",
+        "discount_code": "QUIZ10",
+        "intro_review_quote": "Flexible fabric backing feels nice and breathable. Packaging and instructions were straightforward too.",
+        "intro_review_name": "John Phillips",
+        "intro_review_asset": "somna-quiz-review-strips.jpg",
+        "video_strips": "shopify://files/videos/somna-nasal-strips-how-to.mp4",
+        "video_strips_label": "How to apply",
+        "preselect_size": "2 Bags",
+        "problem_a_self": "You told us snoring is the biggest problem at night.",
+        "problem_a_partner": "You told us their snoring is the biggest problem at night.",
+        "problem_b_self": "You told us a blocked or stuffy nose is keeping you up.",
+        "problem_b_partner": "You told us their blocked or stuffy nose is the problem.",
+        "problem_c_self": "You told us you wake up with a dry mouth or sore throat.",
+        "problem_c_partner": "You told us they wake up with a dry mouth or sore throat.",
+        "problem_d_self": "You told us you wake up tired, even after a full night.",
+        "problem_d_partner": "You told us they wake up tired, even after a full night.",
+        "product_strips": "nasal-strips",
+        "strips_name": "The Nose Breather",
+        "strips_self": "Your nose is the bottleneck. When airflow is restricted lying down, snoring and groggy mornings follow. SOMNA Strips are designed to hold your nose open all night.",
+        "strips_partner": "Their nose is the bottleneck. When airflow is restricted lying down, they snore, and you're the one losing sleep. SOMNA Strips are designed to hold their nose open all night.",
+        "product_tape": "mouth-tape",
+        "tape_name": "The Mouth Breather",
+        "tape_self": "You're breathing through your mouth at night, which is why you wake up dry and groggy. SOMNA Tape is designed to keep your lips gently closed so you breathe through your nose.",
+        "tape_partner": "They're breathing through their mouth at night. SOMNA Tape is designed to keep their lips gently closed so they breathe through their nose.",
+        "product_bundle": "sleep-bundle",
+        "bundle_name": "The Double Trouble",
+        "bundle_self": "It's your nose and your mouth. Strips open the airway; Tape keeps you breathing through it. Built to work together.",
+        "bundle_partner": "It's their nose and their mouth. Strips open the airway; Tape keeps them breathing through it. Built to work together."
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

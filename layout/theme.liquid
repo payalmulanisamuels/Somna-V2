@@ -175,6 +175,7 @@
         data-product-transition="{{ settings.transition_to_main_product }}"
         data-template="{{ template }}"
       >
+        {%- if template.name == 'product' -%}{% render 'somna-quiz-match' %}{%- endif -%}
         {{ content_for_layout }}
       </main>
 

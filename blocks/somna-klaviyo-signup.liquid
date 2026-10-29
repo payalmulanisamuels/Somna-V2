@@ -1,0 +1,212 @@
+{%- comment -%}
+  Somna V2 — email signup that subscribes straight to a Klaviyo list (client Subscriptions API,
+  public company ID only). Defaults are the live footer form "Footer Signup - 10% Off":
+  list "Email List" (XyWydk), source "Footer Signup - 10% Off". No Klaviyo script is loaded.
+{%- endcomment -%}
+{%- liquid
+  assign s = block.settings
+  assign uid = block.id | replace: '_', '-'
+-%}
+<somna-klaviyo-signup
+  class="somna-signup"
+  data-company="{{ s.company_id | escape }}"
+  data-list="{{ s.list_id | escape }}"
+  data-source="{{ s.source | escape }}"
+  data-ok="{{ s.success | escape }}"
+  data-err="{{ s.error | escape }}"
+  data-bad="{{ s.invalid | escape }}"
+  style="--signup-width: {{ s.width }}%; --signup-input-bg: {{ s.input_background }}; --signup-input-text: {{ s.input_text }}; --signup-btn-bg: {{ s.button_background }}; --signup-btn-text: {{ s.button_text }}; --signup-note: {{ s.note_color }};"
+  {{ block.shopify_attributes }}
+>
+  <form class="somna-signup__form" novalidate data-form>
+    <label class="visually-hidden" for="{{ uid }}-email">{{ s.placeholder }}</label>
+    <input
+      class="somna-signup__input"
+      id="{{ uid }}-email"
+      type="email"
+      name="email"
+      autocomplete="email"
+      inputmode="email"
+      required
+      placeholder="{{ s.placeholder | escape }}"
+      aria-describedby="{{ uid }}-msg"
+      data-email
+    >
+    <button class="somna-signup__button" type="submit" data-submit>{{ s.button_label }}</button>
+  </form>
+  <p class="somna-signup__msg" id="{{ uid }}-msg" role="status" aria-live="polite" data-msg></p>
+  {%- if s.consent != blank -%}<div class="somna-signup__consent">{{ s.consent }}</div>{%- endif -%}
+</somna-klaviyo-signup>
+
+<script type="module">
+  if (!customElements.get('somna-klaviyo-signup')) {
+    const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    customElements.define('somna-klaviyo-signup', class extends HTMLElement {
+      connectedCallback() {
+        this.labels = { ok: this.dataset.ok, err: this.dataset.err, bad: this.dataset.bad };
+        this.form = this.querySelector('[data-form]');
+        this.input = this.querySelector('[data-email]');
+        this.btn = this.querySelector('[data-submit]');
+        this.msg = this.querySelector('[data-msg]');
+        this.form.addEventListener('submit', this.onSubmit);
+      }
+      disconnectedCallback() { this.form.removeEventListener('submit', this.onSubmit); }
+      say(text, state) { this.msg.textContent = text; this.dataset.state = state || ''; this.input.setAttribute('aria-invalid', String(state === 'error')); }
+      onSubmit = async (e) => {
+        e.preventDefault();
+        if (this.busy) return;
+        const email = this.input.value.trim();
+        if (!EMAIL.test(email)) { this.say(this.labels.bad, 'error'); this.input.focus(); return; }
+        const { company, list, source } = this.dataset;
+        if (!company || !list) { this.say(this.labels.err, 'error'); return; }
+        this.busy = true; this.btn.disabled = true; this.btn.setAttribute('aria-busy', 'true'); this.say('', '');
+        const body = { data: { type: 'subscription', attributes: {
+          custom_source: source,
+          profile: { data: { type: 'profile', attributes: { email, properties: { 'Signup source': source } } } }
+        }, relationships: { list: { data: { type: 'list', id: list } } } } };
+        try {
+          const res = await fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + encodeURIComponent(company), {
+            method: 'POST', headers: { 'Content-Type': 'application/json', revision: '2024-10-15' }, body: JSON.stringify(body)
+          });
+          if (!res.ok) throw new Error(String(res.status));
+          this.form.reset();
+          this.say(this.labels.ok, 'success');
+        } catch (error) {
+          this.say(this.labels.err, 'error');
+        } finally {
+          this.busy = false; this.btn.disabled = false; this.btn.removeAttribute('aria-busy');
+        }
+      };
+    });
+  }
+</script>
+
+{% stylesheet %}
+  .somna-signup {
+    display: block;
+    width: 100%;
+    max-width: var(--signup-width, 100%);
+  }
+
+  .somna-signup__form {
+    display: flex;
+    align-items: stretch;
+    min-height: 80px;
+    border-radius: 999px;
+    background: var(--signup-input-bg);
+    overflow: hidden;
+  }
+
+  .somna-signup__input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0 28px;
+    border: 0;
+    background: transparent;
+    color: var(--signup-input-text);
+    font: inherit;
+    font-size: 1.25rem;
+  }
+
+  .somna-signup__input::placeholder {
+    color: color-mix(in srgb, var(--signup-input-text) 45%, transparent);
+  }
+
+  .somna-signup__input:focus-visible {
+    outline: none;
+  }
+
+  .somna-signup__form:focus-within {
+    outline: 2px solid var(--signup-btn-bg);
+    outline-offset: 3px;
+  }
+
+  .somna-signup__button {
+    flex: none;
+    padding: 0 40px;
+    border: 0;
+    border-radius: 0 999px 999px 0;
+    background: var(--signup-btn-bg);
+    color: var(--signup-btn-text);
+    font: inherit;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .somna-signup__button[aria-busy='true'] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .somna-signup__msg {
+    min-height: 1.4em;
+    margin: 10px 0 0;
+    padding-inline: 28px;
+    color: var(--signup-note);
+    font-size: 0.875rem;
+  }
+
+  .somna-signup[data-state='error'] .somna-signup__msg {
+    color: #ffb4a8;
+  }
+
+  .somna-signup__consent {
+    padding-inline: 28px;
+    color: var(--signup-note);
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+
+  .somna-signup__consent p {
+    margin: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .somna-signup {
+      max-width: 100%;
+    }
+
+    .somna-signup__form {
+      min-height: 56px;
+    }
+
+    .somna-signup__input,
+    .somna-signup__button {
+      font-size: 1rem;
+    }
+
+    .somna-signup__input {
+      padding-inline: 20px;
+    }
+
+    .somna-signup__button {
+      padding-inline: 20px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Klaviyo email signup",
+  "tag": null,
+  "settings": [
+    { "type": "text", "id": "company_id", "label": "Klaviyo public key (company ID)", "default": "Tr7JSM" },
+    { "type": "text", "id": "list_id", "label": "Klaviyo list ID", "default": "XyWydk", "info": "XyWydk is the list the live footer form uses (\"Email List\")." },
+    { "type": "text", "id": "source", "label": "Signup source", "default": "Footer Signup - 10% Off" },
+    { "type": "text", "id": "placeholder", "label": "Email placeholder", "default": "Your email" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Subscribe →" },
+    { "type": "text", "id": "success", "label": "Success message", "default": "You’re on the list! New here? Your code is on its way." },
+    { "type": "text", "id": "error", "label": "Error message", "default": "We couldn’t sign you up. Please try again." },
+    { "type": "text", "id": "invalid", "label": "Invalid email message", "default": "Enter a valid email address." },
+    { "type": "richtext", "id": "consent", "label": "Consent text" },
+    { "type": "range", "id": "width", "label": "Width", "min": 30, "max": 100, "step": 1, "unit": "%", "default": 100 },
+    { "type": "color", "id": "input_background", "label": "Field background", "default": "#ffffff" },
+    { "type": "color", "id": "input_text", "label": "Field text", "default": "#000000" },
+    { "type": "color", "id": "button_background", "label": "Button background", "default": "#afbdf8" },
+    { "type": "color", "id": "button_text", "label": "Button text", "default": "#000000" },
+    { "type": "color", "id": "note_color", "label": "Message text", "default": "#f3feee" }
+  ],
+  "presets": [{ "name": "Klaviyo email signup" }]
+}
+{% endschema %}

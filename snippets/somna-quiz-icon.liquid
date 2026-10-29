@@ -1,0 +1,19 @@
+{%- comment -%} SOMNA quiz icons (inline SVG, 24px grid, currentColor). Usage: render 'somna-quiz-icon', name: 'drop' {%- endcomment -%}
+{%- case name -%}
+  {%- when 'person' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.6 7-5.6s6.2 2 7 5.6"/></svg>
+  {%- when 'partner' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="9" cy="9" r="3.4"/><path d="M3 20c.7-3.4 3.2-5.3 6-5.3s5.3 1.9 6 5.3"/><path d="M15 4.5h3l-3 3h3M19.5 9h2.5l-2.5 2.5H22"/></svg>
+  {%- when 'both' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8.5" cy="9" r="3"/><circle cx="15.5" cy="9" r="3"/><path d="M2.5 19.5c.6-3 2.9-4.7 6-4.7 1.5 0 2.7.4 3.5 1M21.5 19.5c-.6-3-2.9-4.7-6-4.7-3 0-5.3 1.7-6 4.7"/></svg>
+  {%- when 'zzz' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 11h6l-6 8h6M13 5h4l-4 5h4M18.5 2.5h3l-3 3.5h3"/></svg>
+  {%- when 'wind' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 8h11a2.5 2.5 0 1 0-2.5-2.5M3 12h16a2.5 2.5 0 1 1-2.5 2.5M3 16h9a2 2 0 1 1-2 2"/></svg>
+  {%- when 'drop' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3s6 6.4 6 10.6A6 6 0 0 1 6 13.6C6 9.4 12 3 12 3z"/><path d="M8.5 19 16 8"/></svg>
+  {%- when 'combo' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 4c-1.6 2.6-3 5-3 8 0 2.2 1.6 3.4 3.4 3.4M9 15.4c0 2.2-.8 3.6-2.5 4.6"/><path d="M17 10v8M13 14h8"/></svg>
+  {%- when 'battery-1' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2.5" y="7" width="17" height="10" rx="2"/><path d="M21.5 10.5v3"/><rect x="5" y="9.5" width="3" height="5" rx=".6" class="fill"/></svg>
+  {%- when 'battery-2' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2.5" y="7" width="17" height="10" rx="2"/><path d="M21.5 10.5v3"/><rect x="5" y="9.5" width="3" height="5" rx=".6" class="fill"/><rect x="9" y="9.5" width="3" height="5" rx=".6" class="fill"/></svg>
+  {%- when 'battery-3' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2.5" y="7" width="17" height="10" rx="2"/><path d="M21.5 10.5v3"/><rect x="5" y="9.5" width="3" height="5" rx=".6" class="fill"/><rect x="9" y="9.5" width="3" height="5" rx=".6" class="fill"/><rect x="13" y="9.5" width="3" height="5" rx=".6" class="fill"/></svg>
+  {%- when 'battery-4' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2.5" y="7" width="17" height="10" rx="2"/><path d="M21.5 10.5v3"/><rect x="5" y="9.5" width="2.6" height="5" rx=".6" class="fill"/><rect x="8.4" y="9.5" width="2.6" height="5" rx=".6" class="fill"/><rect x="11.8" y="9.5" width="2.6" height="5" rx=".6" class="fill"/><rect x="15.2" y="9.5" width="2.6" height="5" rx=".6" class="fill"/></svg>
+  {%- when 'battery-low' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2.5" y="7" width="17" height="10" rx="2"/><path d="M21.5 10.5v3"/><rect x="5" y="9.5" width="4" height="5" rx=".6" class="fill"/></svg>
+  {%- when 'check' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+  {%- when 'play' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13l11-6.5z" class="fill"/></svg>
+  {%- when 'shield' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3 5 6v5.5c0 4.3 2.9 7.9 7 9.5 4.1-1.6 7-5.2 7-9.5V6z"/><path d="m8.8 12.2 2.2 2.2 4.3-4.6"/></svg>
+  {%- when 'share' -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8M5 12.5V19a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-6.5"/></svg>
+{%- endcase -%}
