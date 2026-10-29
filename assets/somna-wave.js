@@ -4,10 +4,9 @@
  * bobbing on the surface. Same drawing as the approved demo.
  *
  * Figma shapes (.somna-wave--shape): the traced Figma edge and drops are read from the SVG in the
- * snippet and rolled left to right at the same on-screen speed as K2 (≈270 design units per `roll`
- * seconds), with the same slow counter-ripple. The shape repeats mirrored, so the loop has no seam,
- * and every drop travels and bobs with the water around it. At rest (first frame, reduced motion)
- * the wave is exactly the Figma frame.
+ * snippet. The curve stays where Figma puts it while a K2 swell rolls through it left to right, and
+ * the drops drift with the swell at a quarter of its speed ("B+", approved demo). At rest (first
+ * frame, reduced motion) the wave is exactly the Figma frame.
  *
  * Each .somna-wave holds a <canvas data-somna-wave>. Until this runs (or if it can't), the static
  * CSS-masked wave underneath shows the same shape. Animation pauses off screen, in background tabs
@@ -100,6 +99,10 @@
     return i >= 1440 ? prof[1440] : prof[i] + (prof[i + 1] - prof[i]) * f;
   }
 
+  // "B+" (approved demo): the Figma curve stays put, a K2 swell rolls through it left to right
+  // (one 360-unit wave per roll, 13 units high, plus the K2 counter-ripple), and the drops drift
+  // with the swell at a quarter of its speed, keeping their Figma distance from the surface.
+  var SWELL = 13, DROP_SPEED = 0.25;
   Wave.prototype.drawShape = function () {
     var ctx = this.ctx, W = this.w, H = this.h, dpr = this.dpr || 1;
     if (!W || !H) return;
@@ -110,11 +113,10 @@
     var ox = (sr.left - cr.left) * dpr;
     var still = !this.animate || reduce.matches;
     var p = still ? 0 : this.phase;
-    var shift = p * 270; // design units travelled: same on-screen speed as K2 at 1440 (≈270px per roll)
-    var amp = still ? 0 : 3 * Math.min(1, p * 2); // counter-ripple eases in from the exact Figma frame
+    var A = still ? 0 : SWELL * Math.min(1, p * 2); // eases in from the exact Figma frame
     var prof = this.prof;
-    var ripple = function (u) { return amp * Math.sin(TAU * (u / 830 + p * 0.35)); };
-    var surf = function (u) { return edgeAt(prof, u - shift) + ripple(u); };
+    var swell = function (u) { return A * Math.sin(TAU * (u / 360 - p)) + 0.4 * A * Math.sin(TAU * (u / 830 + p * 0.35)); };
+    var surf = function (u) { return edgeAt(prof, u) + swell(u); };
     var step = 2 * dpr, x, u;
     ctx.clearRect(0, 0, W, H);
     if (this.bg) { ctx.fillStyle = this.bg; ctx.fillRect(0, 0, W, H); }
@@ -130,26 +132,23 @@
     ctx.closePath();
     ctx.fill();
     if (!this.drops) return;
-    var uMin = -ox / sx - 40, uMax = (W - ox) / sx + 40;
+    var travel = p * 360 * DROP_SPEED;
     for (var i = 0; i < this.dropList.length; i++) {
       var dr = this.dropList[i];
-      for (var mirror = 0; mirror < 2; mirror++) {
-        var base = mirror ? PERIOD - dr[0] : dr[0], rot = mirror ? -dr[4] : dr[4];
-        var first = Math.floor((uMin - base - shift) / PERIOD);
-        for (var k = first; base + shift + k * PERIOD <= uMax; k++) {
-          u = base + shift + k * PERIOD;
-          if (u < uMin) continue;
-          ctx.save();
-          ctx.translate(ox + u * sx, (dr[1] + ripple(u)) * sy);
-          ctx.scale(sx, sy);
-          ctx.rotate(rot * Math.PI / 180);
-          ctx.beginPath();
-          ctx.ellipse(0, 0, dr[2], dr[3], 0, 0, TAU);
-          ctx.fillStyle = dr[5];
-          ctx.fill();
-          ctx.restore();
-        }
-      }
+      var off = Math.max(-18, Math.min(18, dr[1] - edgeAt(prof, dr[0])));
+      u = (dr[0] + travel) % 1440;
+      var y = surf(u) + off, rmax = Math.max(dr[2], dr[3]);
+      y = Math.max(rmax + 1, Math.min(this.units - rmax - 1, y));
+      var tilt = Math.atan((surf(u + 3) - surf(u - 3)) / 6) * 180 / Math.PI * 0.6;
+      ctx.save();
+      ctx.translate(ox + u * sx, y * sy);
+      ctx.scale(sx, sy);
+      ctx.rotate((dr[4] + (still ? 0 : tilt)) * Math.PI / 180);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, dr[2], dr[3], 0, 0, TAU);
+      ctx.fillStyle = dr[5];
+      ctx.fill();
+      ctx.restore();
     }
   };
 
