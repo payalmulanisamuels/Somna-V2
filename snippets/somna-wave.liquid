@@ -2,7 +2,9 @@
   Somna V2 — wave divider between two colours.
 
   Figma shapes (shape: 'drip-1' … 'drip-11', 'soft-1', 'soft-2'): the exact wave edges and drops
-  traced from the final desktop Figma, drawn as one static SVG (no script). On desktop the full
+  traced from the final desktop Figma, drawn as an SVG (first paint, reduced motion, no script).
+  assets/somna-wave.js then rolls the same shape left to right with the approved K2 motion (speed
+  and counter-ripple), the drops riding along with the water. On desktop the full
   1440-wide shape scales with the page; under 750px the middle of the shape is shown larger, as in
   the mobile Figma. Leave `bottom` blank to draw only the top colour and let the wave hang over the
   next section (use with `overlap`).
@@ -15,10 +17,10 @@
   @param {boolean} [overlap] - pull the next section up under the wave (Figma shapes only)
   @param {boolean} [flip] - mirror horizontally
   @param {boolean} [drops] - show the small drops (default true)
-  @param {boolean} [animate] - gentle drift, K2 only (default true)
+  @param {boolean} [animate] - rolling motion (default true)
   @param {number} [height] - K2 only: maximum height in px on large screens (default 140)
   @param {number} [height_mobile] - K2 only: minimum height in px on small screens (default 48)
-  @param {number} [roll] - K2 only: seconds for one crest to roll past (default 8)
+  @param {number} [roll] - seconds for one wave length to roll past (default 8)
 {%- enddoc -%}
 {%- liquid
   assign shape_h = 0
@@ -87,7 +89,13 @@
       assign classes = classes | append: ' somna-wave--overlap'
     endif
   -%}
-  <div class="{{ classes }}" style="--somna-wave-units: {{ shape_h }};" aria-hidden="true">
+  <div
+    class="{{ classes }}"
+    style="--somna-wave-units: {{ shape_h }};"
+    data-roll="{{ roll | default: 8 }}"
+    data-animate="{% if animate == false %}false{% else %}true{% endif %}"
+    aria-hidden="true"
+  >
     <svg viewBox="0 0 1440 {{ shape_h }}" preserveAspectRatio="none" focusable="false" overflow="hidden">
       {%- if bottom != blank -%}
         {%- if top != blank -%}<rect x="-4" y="-2" width="1448" height="{{ shape_h | plus: 4 }}" fill="{{ top }}"/>{%- endif -%}
@@ -105,7 +113,9 @@
         {%- endfor -%}
       {%- endunless -%}
     </svg>
+    <canvas class="somna-wave__canvas" data-somna-wave></canvas>
   </div>
+  <script src="{{ 'somna-wave.js' | asset_url }}" defer></script>
 {%- else -%}
 {%- liquid
   assign mask = 'somna-wave-sine.svg'
@@ -201,6 +211,11 @@
     height: calc(var(--somna-wave-units) * var(--somna-wave-u));
     margin-inline-start: 50%;
     transform: translateX(-50%) scaleX(var(--somna-wave-sx, 1));
+  }
+
+  /* the script draws the same shape on the canvas, rolling, once it runs */
+  .somna-wave--shape.somna-wave--live svg {
+    visibility: hidden;
   }
 
   .somna-wave--overlap {

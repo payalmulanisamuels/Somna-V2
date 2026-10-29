@@ -3,6 +3,12 @@
  * with a slower counter-ripple so the crests keep changing height like water, and the drops
  * bobbing on the surface. Same drawing as the approved demo.
  *
+ * Figma shapes (.somna-wave--shape): the traced Figma edge and drops are read from the SVG in the
+ * snippet and rolled left to right at the same on-screen speed as K2 (≈270 design units per `roll`
+ * seconds), with the same slow counter-ripple. The shape repeats mirrored, so the loop has no seam,
+ * and every drop travels and bobs with the water around it. At rest (first frame, reduced motion)
+ * the wave is exactly the Figma frame.
+ *
  * Each .somna-wave holds a <canvas data-somna-wave>. Until this runs (or if it can't), the static
  * CSS-masked wave underneath shows the same shape. Animation pauses off screen, in background tabs
  * and for prefers-reduced-motion (one still frame is drawn instead).
@@ -43,8 +49,109 @@
     this.w = 0;
     this.h = 0;
     this.colour = getComputedStyle(root).getPropertyValue('--somna-wave-bottom').trim() || '#f3feee';
+    this.svg = root.classList.contains('somna-wave--shape') ? root.querySelector('svg') : null;
+    if (this.svg) readShape(this);
     root.classList.add('somna-wave--live');
   }
+
+  // Figma shapes: edge profile (1 value per design unit), colours and drops from the SVG
+  function readShape(wv) {
+    var svg = wv.svg;
+    var vb = svg.viewBox.baseVal;
+    var path = svg.querySelector('path');
+    var rect = svg.querySelector('rect');
+    var d = path.getAttribute('d');
+    var pts = [], cx = 0, cy = 0, re = /([MLQZ])([^MLQZ]*)/g, m, n, t, k;
+    while ((m = re.exec(d))) {
+      n = m[2].split(/[ ,]+/).filter(Boolean).map(Number);
+      if (m[1] === 'M' || m[1] === 'L') { cx = n[0]; cy = n[1]; pts.push([cx, cy]); }
+      else if (m[1] === 'Q') {
+        for (k = 1; k <= 6; k++) {
+          t = k / 6;
+          pts.push([(1 - t) * (1 - t) * cx + 2 * (1 - t) * t * n[0] + t * t * n[2], (1 - t) * (1 - t) * cy + 2 * (1 - t) * t * n[1] + t * t * n[3]]);
+        }
+        cx = n[2]; cy = n[3];
+      }
+    }
+    pts = pts.filter(function (p) { return p[0] >= 0 && p[0] <= 1440; });
+    var prof = new Float32Array(1441), j = 0;
+    for (var x = 0; x <= 1440; x++) {
+      while (j < pts.length - 2 && pts[j + 1][0] < x) j++;
+      var a = pts[j], b = pts[j + 1] || a, span = b[0] - a[0];
+      prof[x] = span > 0 ? a[1] + (b[1] - a[1]) * Math.min(1, Math.max(0, (x - a[0]) / span)) : a[1];
+    }
+    wv.prof = prof;
+    wv.units = vb.height;
+    wv.below = d.indexOf('M-4,-2') !== 0; // the filled region is below the edge (else above it)
+    wv.fill = path.getAttribute('fill');
+    wv.bg = rect ? rect.getAttribute('fill') : '';
+    wv.dropList = Array.prototype.map.call(svg.querySelectorAll('ellipse'), function (e) {
+      var r = /rotate\(([-\d.]+)/.exec(e.getAttribute('transform') || '');
+      return [+e.getAttribute('cx'), +e.getAttribute('cy'), +e.getAttribute('rx'), +e.getAttribute('ry'), r ? +r[1] : 0, e.getAttribute('fill')];
+    });
+  }
+
+  var PERIOD = 2880; // the shape followed by its mirror image
+  function edgeAt(prof, u) {
+    var v = u % PERIOD;
+    if (v < 0) v += PERIOD;
+    if (v > 1440) v = PERIOD - v;
+    var i = Math.floor(v), f = v - i;
+    return i >= 1440 ? prof[1440] : prof[i] + (prof[i + 1] - prof[i]) * f;
+  }
+
+  Wave.prototype.drawShape = function () {
+    var ctx = this.ctx, W = this.w, H = this.h, dpr = this.dpr || 1;
+    if (!W || !H) return;
+    var cr = this.canvas.getBoundingClientRect(), sr = this.svg.getBoundingClientRect();
+    if (!sr.width) return;
+    var sx = sr.width / 1440 * dpr, sy = H / this.units;
+    // svg is centred in the wave; when flipped both are mirrored by CSS, so measure unflipped
+    var ox = (sr.left - cr.left) * dpr;
+    var still = !this.animate || reduce.matches;
+    var p = still ? 0 : this.phase;
+    var shift = p * 270; // design units travelled: same on-screen speed as K2 at 1440 (≈270px per roll)
+    var amp = still ? 0 : 3 * Math.min(1, p * 2); // counter-ripple eases in from the exact Figma frame
+    var prof = this.prof;
+    var ripple = function (u) { return amp * Math.sin(TAU * (u / 830 + p * 0.35)); };
+    var surf = function (u) { return edgeAt(prof, u - shift) + ripple(u); };
+    var step = 2 * dpr, x, u;
+    ctx.clearRect(0, 0, W, H);
+    if (this.bg) { ctx.fillStyle = this.bg; ctx.fillRect(0, 0, W, H); }
+    ctx.fillStyle = this.fill;
+    ctx.beginPath();
+    var edgeY = this.below ? H + 2 : -2;
+    ctx.moveTo(0, edgeY);
+    for (x = 0; x <= W + step; x += step) {
+      u = (x - ox) / sx;
+      ctx.lineTo(x, surf(u) * sy);
+    }
+    ctx.lineTo(W + step, edgeY);
+    ctx.closePath();
+    ctx.fill();
+    if (!this.drops) return;
+    var uMin = -ox / sx - 40, uMax = (W - ox) / sx + 40;
+    for (var i = 0; i < this.dropList.length; i++) {
+      var dr = this.dropList[i];
+      for (var mirror = 0; mirror < 2; mirror++) {
+        var base = mirror ? PERIOD - dr[0] : dr[0], rot = mirror ? -dr[4] : dr[4];
+        var first = Math.floor((uMin - base - shift) / PERIOD);
+        for (var k = first; base + shift + k * PERIOD <= uMax; k++) {
+          u = base + shift + k * PERIOD;
+          if (u < uMin) continue;
+          ctx.save();
+          ctx.translate(ox + u * sx, (dr[1] + ripple(u)) * sy);
+          ctx.scale(sx, sy);
+          ctx.rotate(rot * Math.PI / 180);
+          ctx.beginPath();
+          ctx.ellipse(0, 0, dr[2], dr[3], 0, 0, TAU);
+          ctx.fillStyle = dr[5];
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+    }
+  };
 
   Wave.prototype.resize = function () {
     var r = this.canvas.getBoundingClientRect();
@@ -59,6 +166,7 @@
   };
 
   Wave.prototype.draw = function () {
+    if (this.svg) return this.drawShape();
     var ctx = this.ctx, W = this.w, H = this.h;
     if (!W || !H) return;
     // the wave keeps the demo's proportions at any width: one 1440-unit tile is 7.65 × the height
