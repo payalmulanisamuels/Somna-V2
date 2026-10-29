@@ -868,8 +868,9 @@
         "bottom_color": "#f3feee",
         "flip": false,
         "drops": true,
-        "height": 96,
-        "height_mobile": 40
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
       }
     },
     "steps": {
@@ -1931,8 +1932,9 @@
         "bottom_color": "#afbdf8",
         "flip": false,
         "drops": true,
-        "height": 96,
-        "height_mobile": 40
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
       }
     },
     "buy_box": {
@@ -2401,8 +2403,9 @@
         "bottom_color": "#000000",
         "flip": false,
         "drops": true,
-        "height": 96,
-        "height_mobile": 40
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
       }
     },
     "reviews": {
@@ -2475,8 +2478,9 @@
         "bottom_color": "#98a3de",
         "flip": false,
         "drops": true,
-        "height": 96,
-        "height_mobile": 40
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
       }
     },
     "guarantee": {
@@ -2800,8 +2804,9 @@
         "bottom_color": "#f3feee",
         "flip": false,
         "drops": true,
-        "height": 96,
-        "height_mobile": 40
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
       }
     }
   },
