@@ -231,6 +231,12 @@
     scrollbar-width: none;
   }
 
+  @media screen and (min-width: 990px) {
+    .somna-proof__reviews {
+      grid-auto-columns: min(383px, calc((100% - 48px) / 3));
+    }
+  }
+
   .somna-proof__reviews::-webkit-scrollbar {
     display: none;
   }
