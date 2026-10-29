@@ -74,6 +74,14 @@
     will-change: transform;
   }
 
+  /* the theme's base.css caps canvas/svg at max-width: 100% of their parent; the cursor box is 0 × 0,
+     which squashed the stardust canvas to nothing — lift that cap for the cursor only */
+  .somna-cursor canvas,
+  .somna-cursor svg {
+    max-width: none;
+    max-height: none;
+  }
+
   .somna-cursor__fx {
     width: 100vw;
     height: 100vh;
