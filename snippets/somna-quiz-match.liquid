@@ -1,0 +1,36 @@
+{%- comment -%}
+  SOMNA quiz v5.1 · screen 13: "Matched for you" banner on product pages.
+  Shows only when the URL has ?quiz= and the quiz saved its result in this browser session
+  (sessionStorage "somna-quiz-match", written on the quiz's "Getting your plan ready" screen).
+  Rendered from layout/theme.liquid on product templates only. No app needed.
+{%- endcomment -%}
+<style>
+  .sq-match { background: #E8EDFB; color: #0E1A4A; border-bottom: 1px solid #D5DDF5; font-family: var(--font-body--family, Inter, sans-serif); }
+  .sq-match__in { max-width: 1280px; margin: 0 auto; padding: 18px 16px 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 12px; font-size: 13px; line-height: 1.45; }
+  .sq-match__t { font-weight: 700; color: #2B4CC2; }
+  .sq-match__d strong { font-weight: 700; }
+  .sq-match a { margin-left: auto; color: #0E1A4A; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  @media screen and (min-width: 750px) { .sq-match__in { padding: 20px 24px 12px; font-size: 14px; } }
+</style>
+<script>
+  (function () {
+    if (!/[?&]quiz=(strips|tape|bundle)/.test(location.search)) return;
+    var m = null;
+    try { m = JSON.parse(sessionStorage.getItem('somna-quiz-match') || 'null'); } catch (e) {}
+    if (!m || !m.type || Date.now() - (m.at || 0) > 6 * 60 * 60 * 1000) return;
+    function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+    function mount() {
+      if (document.querySelector('.sq-match')) return;
+      var main = document.getElementById('MainContent'); if (!main) return;
+      var bar = el('div', 'sq-match'), inner = el('div', 'sq-match__in'), d = el('span', 'sq-match__d');
+      bar.setAttribute('role', 'note');
+      inner.appendChild(el('span', 'sq-match__t', '✓ Matched for you: ' + m.type));
+      if (m.built) d.appendChild(document.createTextNode(m.built));
+      if (m.code) { if (m.built) d.appendChild(document.createTextNode(' · ')); d.appendChild(el('strong', '', m.code)); d.appendChild(document.createTextNode(' applied at checkout')); }
+      if (d.childNodes.length) inner.appendChild(d);
+      var a = el('a', '', 'Retake'); a.href = '{{ pages['quiz'].url | default: '/pages/quiz' }}'; inner.appendChild(a);
+      bar.appendChild(inner); main.insertBefore(bar, main.firstChild);
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount); else mount();
+  })();
+</script>

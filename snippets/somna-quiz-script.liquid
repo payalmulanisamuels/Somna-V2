@@ -1,0 +1,344 @@
+{%- comment -%} SOMNA quiz v5.2 logic: only rendered by sections/somna-quiz.liquid {%- endcomment -%}
+<script>
+(function () {
+  var root = document.getElementById('sq-{{ sid }}');
+  if (!root || root.dataset.sqReady) return;              // never initialise twice
+  root.dataset.sqReady = '1';
+
+  var $ = function (s, el) { return (el || root).querySelector(s); };
+  var $$ = function (s, el) { return [].slice.call((el || root).querySelectorAll(s)); };
+  var cfg = {};
+  try { cfg = JSON.parse(root.parentNode.querySelector('[data-sq-config]').textContent); } catch (e) {}
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var screens = $$('.sq-s');
+  var qScreens = {}; screens.forEach(function (s) { if (s.dataset.q) qScreens[s.dataset.q] = s; });
+  var top = $('[data-sq-top]'), back = $('[data-sq-back]'), progf = $('[data-sq-progf]'), prog = $('[data-sq-prog]');
+  var step = $('[data-sq-step]'), live = $('[data-sq-live]');
+  var form = $('[data-sq-form]'), emailIn = $('[data-sq-email]'), sendBtn = $('[data-sq-send]'), err = $('[data-sq-err]');
+  var goLink = $('[data-sq-go]');
+  var TOTAL = 6;
+  // progress bar per screen (PDF mockups)
+  var PROG = { q1: 12, q2: 25, q3: 38, q4: 50, story: 58, q5: 70, multi6: 82, analyze: 90, email: 95 };
+
+  // ---- state ----
+  var i = 0, answers = {}, busy = false, timer = null, signedUp = false, sending = false, run = 0;
+
+  function opt(q) { var s = qScreens[q]; return answers[q] == null || !s ? null : s.querySelectorAll('.sq-opt')[answers[q]]; }
+  function key(q) { var o = opt(q); return o ? o.getAttribute('data-key') : ''; }
+
+  // ---- scoring (SOMNA_Quiz_v5.1: S = snoring/nose, T = mouth breathing; Q1–Q4 decide, Q5–Q6 report only) ----
+  function score() {
+    var S = 0, T = 0, who = 'self';
+    for (var q = 1; q <= 4; q++) {
+      var o = opt(q); if (!o) continue;
+      S += parseInt(o.getAttribute('data-s') || '0', 10);
+      T += parseInt(o.getAttribute('data-t') || '0', 10);
+      if (q === 1) who = o.getAttribute('data-tag');
+    }
+    var tried = (answers[6] || []).map(function (k) { return qScreens[6].querySelectorAll('.sq-opt')[k].getAttribute('data-tried'); });
+    // Check in order, stop at first match. Nasal Strips is the default (ties, low scores).
+    var result = (S >= 3 && T >= 3) ? 'bundle' : (T > S ? 'tape' : 'strips');
+    return { S: S, T: T, who: who, partner: who === 'partner', result: result, tried: tried,
+      problem: key(2), nose: key(3), mouth: key(4), energy: key(5) };
+  }
+  // trend after Q4 (for the story break): same rule as the result
+  function trend() { return score().result; }
+
+  // ---- copy tables (report tiles, analyzing checklist, "why it fits you" ticks) ----
+  var TXT = {
+    issue: { snoring: 'Snoring', nose: 'Blocked nose', mouth: 'Dry mouth', tired: 'Waking up tired', both: 'Nose + mouth' },
+    nose: { blocked: 'Blocked most nights', stuffy: 'Stuffy with a cold', clear: 'Clear' },
+    mouth: { dry: 'Bone dry', drool: 'Drooling / breath', fine: 'Fine' },
+    energy: { '1': 'Running on empty', '2': '3pm crash', '3': 'Foggy until coffee', '4': 'Pretty good' },
+    tried: { strips: 'cheap strips', tape: 'mouth tape', pills: 'melatonin', earlier: 'sleeping earlier', spray: 'nasal spray' },
+    check2: { snoring: ['Snoring: your biggest problem at night', 'Snoring: their biggest problem at night'],
+      nose: ['Blocked or stuffy nose: your biggest problem', 'Blocked or stuffy nose: their biggest problem'],
+      mouth: ['Dry mouth or sore throat on waking', 'Dry mouth or sore throat on waking'],
+      tired: ['Waking up tired, even after a full night', 'Waking up tired, even after a full night'],
+      both: ['Snoring or a blocked nose, plus a dry mouth', 'Snoring or a blocked nose, plus a dry mouth'] },
+    check3: { blocked: 'Nose blocked most nights', stuffy: 'Nose stuffy with a cold or allergies', clear: 'Nose clear at night' },
+    check4: { dry: 'Mouth bone dry on waking', drool: 'Drooling or morning breath', fine: 'Mouth fine on waking' },
+    built: { snoring: 'snoring', nose: 'a blocked nose', mouth: 'a dry mouth', tired: 'tired mornings', both: 'a blocked nose + a dry mouth' }
+  };
+  function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  function triedText(s) {
+    var t = s.tried.filter(function (k) { return TXT.tried[k]; }).map(function (k) { return TXT.tried[k]; });
+    return t.length ? cap(t.join(', ')) : 'Nothing yet';
+  }
+  function level(n) { return n >= 5 ? 'Strong' : (n >= 3 ? 'Medium' : 'Low'); }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+  // "Why it fits you": one tick from the result + up to two from Q6 (fallbacks keep it at three)
+  function ticks(s) {
+    var p = s.partner, out = [];
+    if (s.result === 'strips') {
+      var n = { blocked: p ? '. You said theirs is blocked most nights.' : ". You said it's blocked most nights.", stuffy: ', even when a cold or allergies hit.' }[s.nose]
+        || ((s.problem === 'snoring') ? ', right where snoring usually starts.' : '.');
+      out.push('Designed to hold ' + (p ? 'their' : 'your') + ' nose open all night' + n);
+    } else if (s.result === 'tape') {
+      var m = { dry: p ? '. You said they wake up bone dry.' : '. You said you wake up bone dry.', drool: '. You mentioned drooling or morning breath.' }[s.mouth]
+        || ((s.problem === 'mouth') ? (p ? '. You said they wake with a dry mouth.' : '. You said you wake with a dry mouth.') : '.');
+      out.push('Designed to keep ' + (p ? 'their lips gently closed so they breathe' : 'your lips gently closed so you breathe') + ' through the nose' + m);
+    } else {
+      out.push((p ? (cfg.bundleTickPartner || cfg.bundleTick) : cfg.bundleTick) || '');
+    }
+    var extra = [];
+    if (s.tried.indexOf('strips') > -1 && s.result !== 'tape') extra.push(p ? (cfg.triedStripsPartner || cfg.triedStrips) : cfg.triedStrips);
+    if (s.tried.indexOf('pills') > -1) extra.push(cfg.triedPills);
+    if (s.tried.indexOf('tape') > -1 && s.result !== 'strips') extra.push(cfg.triedTape);
+    extra = extra.filter(Boolean).slice(0, 2);
+    if (extra.length < 2 && extra.indexOf(cfg.triedPills) < 0 && cfg.triedPills) extra.push(cfg.triedPills);
+    // The 30-Night Money-Back Guarantee has its own trust line above the button, so it is not repeated here.
+    return out.concat(extra).filter(Boolean).slice(0, 3);
+  }
+
+  function resEl(s) { return $('.sq-res[data-res="' + s.result + '"]'); }
+  function productUrl(s) {
+    var r = resEl(s), base = r ? r.getAttribute('data-url') : '';
+    if (!base) return cfg.fallbackUrl || '/collections/all';
+    var tried = s.tried.join(',');
+    var path = base.split('?')[0], qs = (base.split('?')[1] ? base.split('?')[1] + '&' : '') + 'quiz=' + s.result + '&for=' + s.who + (tried ? '&tried=' + encodeURIComponent(tried) : '');
+    // Email sign-ups: Shopify discount link applies the code, then opens the same product page.
+    // Shopify drops a query string inside "redirect" but passes the link's other parameters on, so they go alongside it.
+    if (signedUp && cfg.code) return '/discount/' + encodeURIComponent(cfg.code) + '?redirect=' + encodeURIComponent(path) + '&' + qs;
+    return path + '?' + qs;
+  }
+
+  // Q1 "My partner" switches you/your to they/their. "Me" and "Both of us" keep the self wording.
+  function applyWording() {
+    var partner = score().partner;
+    $$('[data-self][data-partner]').forEach(function (e) {
+      var v = e.getAttribute(partner ? 'data-partner' : 'data-self');
+      if (e.hasAttribute('data-html')) e.innerHTML = v; else e.textContent = v;
+    });
+  }
+
+  function screenKey(sc) { var t = sc.getAttribute('data-type'); return t === 'q' ? 'q' + sc.dataset.q : (t === 'multi' ? 'multi' + sc.dataset.q : t); }
+  function idx(type) { for (var k = 0; k < screens.length; k++) if (screens[k].getAttribute('data-type') === type) return k; return -1; }
+
+  function show(n, focus) {
+    clearTimeout(timer); busy = false; i = n; run++;
+    screens.forEach(function (s, k) { s.classList.toggle('is-on', k === n); });
+    // stop story-break videos (and any sound) once the shopper leaves that screen
+    $$('.sq-s:not(.is-on) video').forEach(function (v) { try { v.pause(); } catch (e) {} });
+    var sc = screens[n], ty = sc.getAttribute('data-type'), q = +sc.dataset.step || 0, pk = screenKey(sc);
+    applyWording();
+    var hasBar = PROG[pk] != null;
+    top.hidden = !hasBar;
+    if (hasBar) { progf.style.width = PROG[pk] + '%'; prog.setAttribute('aria-valuenow', PROG[pk]); }
+    back.hidden = !(q > 1);
+    step.hidden = !q; step.textContent = q ? q + ' of ' + TOTAL : '';
+    live.textContent = q ? 'Question ' + q + ' of ' + TOTAL : '';
+    if (ty === 'q') {
+      var a = answers[sc.dataset.q];
+      $$('.sq-opt', sc).forEach(function (o, k) { o.setAttribute('aria-pressed', a === k ? 'true' : 'false'); });
+    }
+    if (ty === 'multi') syncMulti();
+    if (ty === 'story') renderStory();
+    if (ty === 'analyze') runAnalyze();
+    if (ty === 'email') { err.hidden = true; renderPeek(); }
+    if (ty === 'report') renderReport();
+    if (ty === 'fix') renderFix();
+    if (ty === 'loader') runLoader();
+    var h = sc.querySelector('.sq-res:not([hidden]) [tabindex="-1"]') || sc.querySelector('[tabindex="-1"]');
+    if (focus && h) { try { h.focus({ preventScroll: true }); } catch (e) { h.focus(); } }
+    if (root.getBoundingClientRect().top < 0 || window.scrollY > root.offsetTop) { try { window.scrollTo({ top: root.offsetTop, behavior: reduce ? 'auto' : 'smooth' }); } catch (e) { window.scrollTo(0, root.offsetTop); } }
+  }
+  function go(n) { show(n, true); }
+
+  // ---- single-select questions: tap lights up, moves on after 0.3s; repeat taps ignored ----
+  screens.forEach(function (sc, si) {
+    if (sc.getAttribute('data-type') !== 'q') return;
+    $$('.sq-opt', sc).forEach(function (o, k) {
+      o.addEventListener('click', function () {
+        if (busy || screens[i] !== sc) return;
+        busy = true;
+        answers[sc.dataset.q] = k;
+        $$('.sq-opt', sc).forEach(function (x) { x.setAttribute('aria-pressed', x === o ? 'true' : 'false'); });
+        timer = setTimeout(function () { go(si + 1); }, 300);
+      });
+    });
+  });
+  // Back goes to the previous question (skips the story break)
+  back.addEventListener('click', function () {
+    for (var k = i - 1; k >= 0; k--) if (screens[k].dataset.q) { go(k); return; }
+  });
+  $('[data-sq-story-next]').addEventListener('click', function () { if (!busy) { busy = true; go(i + 1); } });
+
+  // ---- story break: Strips story if trending to Strips, Tape if Tape, one review of each for the Bundle ----
+  function renderStory() {
+    var t = trend(), boxes = $$('.sq-story');
+    boxes.forEach(function (b) {
+      var k = b.getAttribute('data-story'), revs = $$('.sq-review', b);
+      var on = t === 'bundle' || k === t;
+      b.hidden = !on || !b.children.length;
+      revs.forEach(function (r, ri) { r.hidden = t === 'bundle' && ri > 0; });
+      var v = $('video', b);
+      if (v) { v.hidden = t === 'bundle' && k === 'tape' && $('video', boxes[0]); if (on && !v.hidden && !reduce) { try { v.muted = true; v.play(); } catch (e) {} } else { try { v.pause(); } catch (e) {} } }
+    });
+  }
+
+  // ---- Q6 multi-select chips: "Nothing yet" clears the others and the others clear it ----
+  var q6 = qScreens[6], q6opts = $$('.sq-opt', q6), cont = $('[data-sq-continue]'), NOTHING = q6opts.length - 1;
+  function syncMulti() {
+    var picked = answers[6] || [];
+    q6opts.forEach(function (x, j) { x.setAttribute('aria-pressed', picked.indexOf(j) > -1 ? 'true' : 'false'); });
+    cont.disabled = picked.length === 0;
+  }
+  q6opts.forEach(function (o, k) {
+    o.addEventListener('click', function () {
+      var picked = (answers[6] || []).slice(), at = picked.indexOf(k);
+      if (at > -1) picked.splice(at, 1);
+      else if (k === NOTHING) picked = [NOTHING];
+      else { picked = picked.filter(function (x) { return x !== NOTHING; }); picked.push(k); }
+      picked.sort(function (a, b) { return a - b; });
+      answers[6] = picked; syncMulti();
+    });
+  });
+  cont.addEventListener('click', function () { if (!busy && (answers[6] || []).length) { busy = true; go(i + 1); } });
+
+  // ---- 08 analyzing ring: 0→100% in 3 seconds, ticks off their own answers ----
+  function runAnalyze() {
+    var s = score(), my = run, p = s.partner ? 1 : 0;
+    var items = [TXT.check2[s.problem] ? TXT.check2[s.problem][p] : 'Your biggest problem at night', TXT.check3[s.nose] || 'Nose at night',
+      TXT.check4[s.mouth] || 'Mouth on waking', 'Tried before: ' + triedText(s).toLowerCase()];
+    if (triedText(s) === 'Nothing yet') items[3] = 'Nothing tried yet';
+    var list = $('[data-sq-checks]'); list.innerHTML = '';
+    var lis = items.map(function (t) { var li = el('li', '', null); li.appendChild(el('span', 'sq-tick', null)); li.appendChild(el('span', '', t)); list.appendChild(li); return li; });
+    var ring = $('[data-sq-ring]'), pct = $('[data-sq-pct]'), lbl = $('[data-sq-ring-lbl]');
+    var C = 2 * Math.PI * 52; ring.style.strokeDasharray = C; ring.style.strokeDashoffset = C;
+    var labels = ['Checking ' + (p ? 'their' : 'your') + ' nose answers', 'Checking ' + (p ? 'their' : 'your') + ' mouth answers', 'Finding ' + (p ? 'their' : 'your') + ' SOMNA fix'];
+    var t0 = null, DUR = 3000;
+    function frame(ts) {
+      if (my !== run) return;                              // left the screen (Back / Retake)
+      if (t0 == null) t0 = ts;
+      var f = Math.min(1, (ts - t0) / DUR), v = Math.round(f * 100);
+      ring.style.strokeDashoffset = C * (1 - f); pct.textContent = v + '%';
+      lbl.textContent = labels[Math.min(2, Math.floor(f * 3))];
+      lis.forEach(function (li, k) { li.classList.toggle('is-done', f >= (k + 1) * 0.22); });
+      if (f < 1) requestAnimationFrame(frame);
+      else timer = setTimeout(function () { if (my === run) go(i + 1); }, 350);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // ---- report building blocks (also used blurred on the email screen) ----
+  function dots(box, n, max, animate) {
+    box.innerHTML = '';
+    for (var k = 0; k < max; k++) { var d = el('i', k < n ? 'is-on' : '', null); if (animate && k < n && !reduce) { d.className = ''; (function (d, k) { setTimeout(function () { d.className = 'is-on'; }, 250 + k * 110); })(d, k); } box.appendChild(d); }
+  }
+  function tiles(box, s) {
+    box.innerHTML = '';
+    var list = [['Main issue', TXT.issue[s.problem]]];
+    if (s.result !== 'tape') list.push(['Nose at night', TXT.nose[s.nose]]);
+    if (s.result !== 'strips') list.push(['Mouth on waking', TXT.mouth[s.mouth]]);
+    list.push(['Daytime energy', TXT.energy[s.energy]], ['Tried before', triedText(s)]);
+    list.forEach(function (t, k) {
+      var d = el('div', 'sq-tilecard' + (list.length % 2 && k === list.length - 1 ? ' sq-tilecard--wide' : ''), null);
+      d.appendChild(el('p', 'sq-lbl', t[0])); d.appendChild(el('p', '', t[1] || 'Not answered')); box.appendChild(d);
+    });
+  }
+  function renderPeek() {
+    var s = score(), box = $('[data-sq-peek]'); box.innerHTML = '';
+    var c = el('div', 'sq-card sq-profile', null);
+    c.appendChild(el('p', 'sq-lbl', 'Your breathing profile'));
+    var m1 = el('div', 'sq-dots', null), m2 = el('div', 'sq-dots', null); dots(m1, Math.min(8, s.S), 8); dots(m2, Math.min(6, s.T), 6);
+    c.appendChild(m1); c.appendChild(m2); box.appendChild(c);
+    var g = el('div', 'sq-tilegrid', null); tiles(g, s); box.appendChild(g);
+  }
+
+  // ---- 10 sleep report ----
+  function renderReport() {
+    var s = score(), r = resEl(s), p = s.partner;
+    var type = $('[data-sq-type]'); type.textContent = r ? r.getAttribute('data-name') : '';
+    type.classList.remove('is-reveal'); void type.offsetWidth; type.classList.add('is-reveal');
+    var pr = $('[data-sq-problem]'), lines = (cfg.problems || {})[s.problem];
+    pr.textContent = lines ? lines[p ? 1 : 0] : ''; pr.hidden = !pr.textContent;
+    $('[data-sq-nose-lbl]').textContent = level(s.S); $('[data-sq-mouth-lbl]').textContent = level(s.T);
+    dots($('[data-sq-nose]'), Math.min(8, s.S), 8, true); dots($('[data-sq-mouth]'), Math.min(6, s.T), 6, true);
+    tiles($('[data-sq-tilegrid]'), s);
+    $('[data-sq-desc]').textContent = r ? r.getAttribute(p ? 'data-copy-partner' : 'data-copy-self') : '';
+    var share = $('[data-sq-share]'); share.hidden = !(p && (navigator.share || (navigator.clipboard && window.isSecureContext)));
+    $('[data-sq-share-msg]').hidden = true;
+  }
+  $('[data-sq-to-fix]').addEventListener('click', function () { go(idx('fix')); });
+  $('[data-sq-share]').addEventListener('click', function () {
+    var s = score(), r = resEl(s), url = location.origin + productUrl(s).replace(/^\/discount\/[^?]+\?redirect=([^&]+)&/, function (m, p1) { return decodeURIComponent(p1) + '?'; });
+    var text = 'I took the SOMNA sleep quiz about your snoring. It matched you to SOMNA ' + (r ? r.getAttribute('data-ptitle') : '') + ' (' + (r ? r.getAttribute('data-name') : '') + ').';
+    var msg = $('[data-sq-share-msg]');
+    if (navigator.share) { navigator.share({ title: 'SOMNA sleep quiz', text: text, url: url }).catch(function () {}); }
+    else { navigator.clipboard.writeText(text + ' ' + url).then(function () { msg.textContent = 'Link copied. Paste it in a message.'; msg.hidden = false; }); }
+  });
+
+  // ---- 11 your fix ----
+  function renderFix() {
+    var s = score();
+    $$('.sq-res').forEach(function (e) { e.hidden = e.getAttribute('data-res') !== s.result; });
+    $('[data-sq-plan]').setAttribute('href', productUrl(s));
+    var ul = $('[data-sq-ticks]'); ul.innerHTML = '';
+    ticks(s).forEach(function (t) { var li = el('li', '', null); li.appendChild(el('span', 'sq-tick', null)); li.appendChild(el('span', '', t)); ul.appendChild(li); });
+    var code = $('[data-sq-code]'); if (code) code.hidden = !(signedUp && cfg.code);
+  }
+  // "Get my plan" is a real link to the product page; with JS it shows the 1.5s loader first, then goes to the same URL.
+  $('[data-sq-plan]').addEventListener('click', function (e) { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return; e.preventDefault(); if (!busy) { busy = true; go(idx('loader')); } });
+
+  // ---- 12 getting your plan ready (1.5s) → product page; the result is saved for the "Matched for you" banner ----
+  function runLoader() {
+    var s = score(), r = resEl(s), my = run, name = r ? r.getAttribute('data-ptitle') : '';
+    var url = productUrl(s); goLink.setAttribute('href', url);
+    $('[data-sq-loader-sub]').textContent = (cfg.loaderSub || '').replace('[product]', name);
+    var rows = [(cfg.loaderSelected || '').replace('[product]', name), cfg.loaderSubscribe];
+    if (signedUp && cfg.code) rows.push((cfg.loaderCode || '').replace('[code]', cfg.code));
+    var ul = $('[data-sq-loader-list]'); ul.innerHTML = '';
+    rows.filter(Boolean).forEach(function (t, k) {
+      var li = el('li', '', null); li.appendChild(el('span', 'sq-tick', null)); li.appendChild(el('span', '', t)); ul.appendChild(li);
+      setTimeout(function () { li.classList.add('is-done'); }, reduce ? 0 : 200 + k * 400);
+    });
+    var bar = $('[data-sq-loader-bar]'); bar.style.transition = 'none'; bar.style.width = '0%'; void bar.offsetWidth;
+    bar.style.transition = reduce ? 'none' : 'width 1.5s linear'; bar.style.width = '100%';
+    var built = TXT.built[s.problem] || '';
+    if (s.result !== 'tape' && s.problem !== 'nose' && s.problem !== 'both' && (s.nose === 'blocked' || s.nose === 'stuffy')) built += ' + a ' + (s.nose === 'blocked' ? 'blocked' : 'stuffy') + ' nose';
+    if (s.result !== 'strips' && s.problem !== 'mouth' && s.problem !== 'both' && s.mouth === 'dry') built += ' + a dry mouth';
+    try { sessionStorage.setItem('somna-quiz-match', JSON.stringify({ result: s.result, type: r ? r.getAttribute('data-name') : '', built: built ? 'Built for ' + built : '', code: signedUp && cfg.code ? cfg.code : '', at: Date.now() })); } catch (e) {}
+    timer = setTimeout(function () { if (my === run) location.href = url; }, 1500);
+  }
+
+  // ---- 09 optional email → Klaviyo list (default Quiz Signups) with source "quiz" + result + answers ----
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  function showErr(m) { err.textContent = m; err.hidden = !m; }
+  function lead(result) { try { if (window.fbq) fbq('track', 'Lead', { content_name: 'SOMNA Quiz', content_category: result }); } catch (e) {} }
+  function subscribe(email) {
+    var s = score(), r = resEl(s);
+    var props = { 'Signup source': cfg.source || 'quiz', 'Quiz result': s.result, 'Quiz sleep type': r ? r.getAttribute('data-name') : '', 'Quiz for': s.who,
+      'Quiz problem': TXT.issue[s.problem] || '', 'Quiz nose': TXT.nose[s.nose] || '', 'Quiz mouth': TXT.mouth[s.mouth] || '',
+      'Quiz energy': TXT.energy[s.energy] || '', 'Quiz tried': s.tried };
+    var body = { data: { type: 'subscription', attributes: {
+      custom_source: cfg.source || 'quiz',
+      profile: { data: { type: 'profile', attributes: { email: email, properties: props } } }
+    }, relationships: { list: { data: { type: 'list', id: cfg.klaviyoList } } } } };
+    return fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + encodeURIComponent(cfg.klaviyoCompany), {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'revision': '2024-10-15' }, body: JSON.stringify(body)
+    }).then(function (res) { if (!res.ok) throw new Error('Klaviyo ' + res.status); return s.result; });
+  }
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    if (sending) return;                                   // ignore repeat taps / Enter
+    var email = emailIn.value.trim();
+    if (!EMAIL_RE.test(email)) { showErr('Enter a valid email address.'); emailIn.focus(); return; }
+    if (!cfg.klaviyoCompany || !cfg.klaviyoList) { showErr("Sign-up isn't available right now. Tap the link below to see your report."); return; }
+    sending = true; showErr(''); sendBtn.disabled = true; sendBtn.setAttribute('aria-busy', 'true');
+    subscribe(email).then(function (result) {
+      signedUp = true; lead(result); go(idx('report'));
+    }).catch(function () {
+      showErr("We couldn't save your email. Please try again, or tap the link below to see your report.");
+    }).then(function () { sending = false; sendBtn.disabled = false; sendBtn.removeAttribute('aria-busy'); });
+  });
+  emailIn.addEventListener('input', function () { if (!err.hidden) showErr(''); });
+  $('[data-sq-skip]').addEventListener('click', function () { if (!sending) go(idx('report')); });
+
+  $$('[data-sq-retake]').forEach(function (b) { b.addEventListener('click', function () { answers = {}; go(0); }); });
+
+  show(0, false);
+})();
+</script>

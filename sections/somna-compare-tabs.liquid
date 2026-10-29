@@ -1,9 +1,8 @@
 {%- comment -%}
   Somna V2 — "Built for bedtime" comparison with product tabs.
   Blocks:
-  - Tab: name, image and label for the Somna column of that tab.
+  - Tab: name, plus image and name for the Somna column and the three comparison columns of that tab.
   - Row: which tab it belongs to (1 or 2), the feature, and yes/no for each of the four columns.
-  Competitor column images/labels are section settings, shared by both tabs.
   A tab with no rows is hidden, so the section works with one or two tabs.
 {%- endcomment -%}
 {%- render 'somna-shared-styles' -%}
@@ -77,8 +76,8 @@
                       {%- capture img_key -%}column_{{ n }}_image{%- endcapture -%}
                       {%- capture label_key -%}column_{{ n }}_label{%- endcapture -%}
                       <th scope="col">
-                        {%- if s[img_key] != blank -%}{{ s[img_key] | image_url: width: 180 | image_tag: loading: 'lazy', alt: '', width: 80, height: 80 }}{%- endif -%}
-                        <span class="visually-hidden">{{ s[label_key] }}</span>
+                        {%- if tab.settings[img_key] != blank -%}{{ tab.settings[img_key] | image_url: width: 180 | image_tag: loading: 'lazy', alt: '', width: 80, height: 80 }}{%- endif -%}
+                        <span class="somna-compare__col-name{% unless s.show_column_names %} visually-hidden{% endunless %}">{{ tab.settings[label_key] }}</span>
                       </th>
                     {%- endfor -%}
                   </tr>
@@ -260,6 +259,13 @@
     font-size: 0.9375rem;
   }
 
+  .somna-compare__table thead .somna-compare__col-name {
+    color: #000;
+    font-weight: 600;
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+
   .somna-compare__table tbody th {
     width: 32%;
     text-align: start;
@@ -307,13 +313,7 @@
     { "type": "text", "id": "heading", "label": "Heading", "default": "Built for Bedtime. Not the First-Aid Kit." },
     { "type": "text", "id": "tabs_label", "label": "Tabs label (screen readers)", "default": "Compare products" },
     { "type": "text", "id": "caption", "label": "Table caption (screen readers)", "default": "how Somna compares" },
-    { "type": "header", "content": "Comparison columns" },
-    { "type": "image_picker", "id": "column_2_image", "label": "Column 2 image" },
-    { "type": "text", "id": "column_2_label", "label": "Column 2 name", "default": "Medical tape" },
-    { "type": "image_picker", "id": "column_3_image", "label": "Column 3 image" },
-    { "type": "text", "id": "column_3_label", "label": "Column 3 name", "default": "Chin strap" },
-    { "type": "image_picker", "id": "column_4_image", "label": "Column 4 image" },
-    { "type": "text", "id": "column_4_label", "label": "Column 4 name", "default": "Mouth guard" },
+    { "type": "checkbox", "id": "show_column_names", "label": "Show comparison column names", "default": true },
     { "type": "header", "content": "Colours" },
     { "type": "color", "id": "background_color", "label": "Background", "default": "#afbdf8" },
     { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },
@@ -332,7 +332,13 @@
       "settings": [
         { "type": "text", "id": "name", "label": "Tab name", "default": "Mouth Tape" },
         { "type": "image_picker", "id": "image", "label": "Somna column image" },
-        { "type": "text", "id": "label", "label": "Somna column label", "default": "somna." }
+        { "type": "text", "id": "label", "label": "Somna column label", "default": "somna." },
+        { "type": "image_picker", "id": "column_2_image", "label": "Column 2 image" },
+        { "type": "text", "id": "column_2_label", "label": "Column 2 name", "default": "Surgical tape" },
+        { "type": "image_picker", "id": "column_3_image", "label": "Column 3 image" },
+        { "type": "text", "id": "column_3_label", "label": "Column 3 name", "default": "Chin straps" },
+        { "type": "image_picker", "id": "column_4_image", "label": "Column 4 image" },
+        { "type": "text", "id": "column_4_label", "label": "Column 4 name", "default": "Mouthguards" }
       ]
     },
     {
