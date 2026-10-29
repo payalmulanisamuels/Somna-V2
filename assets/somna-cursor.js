@@ -1,7 +1,7 @@
 /**
  * Somna V2 — custom cursor ("D · Stardust trail", approved demo).
  *
- * A small dot sits exactly on the pointer (the click point). A crescent moon with a breathing wave
+ * A small dot sits exactly on the pointer (the click point). A crescent moon (Figma 4397:1501) with a breathing wave
  * follows it with soft easing and leaves a short trail of twinkling stardust. On links, buttons,
  * product cards and galleries the moon swells towards a full moon; a click scatters a few stars.
  *
@@ -39,7 +39,7 @@
       '<canvas class="somna-cursor__fx"></canvas>' +
       '<span class="somna-cursor__moon"><svg viewBox="0 0 34 34" focusable="false">' +
         '<defs><mask id="somna-cursor-cut"><rect x="-4" y="-4" width="42" height="42" fill="#fff"/>' +
-        '<circle class="somna-cursor__cut" cx="21" cy="10" r="9" fill="#000"/></mask></defs>' +
+        '<circle class="somna-cursor__cut" cx="17.43" cy="12.57" r="8.34" fill="#000"/></mask></defs>' +
         '<circle class="somna-cursor__body" cx="15" cy="15" r="11" mask="url(#somna-cursor-cut)"/>' +
         '<path class="somna-cursor__wave" d="M7 30c2.5-2.6 5-2.6 7.5 0s5 2.6 7.5 0 5-2.6 7.5 0"/>' +
       '</svg></span>' +
