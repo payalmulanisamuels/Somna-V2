@@ -1,15 +1,15 @@
 {%- doc -%}
-  Somna V2 — animated wave divider between two colours (shape traced from the Figma wave).
+  Somna V2 — animated wave divider between two colours ("K2": soft, even waves rolling slowly
+  left to right, with the Figma drops riding on the water).
   Used by the "Somna wave" section and at the bottom of the Somna sections ("Bottom wave" setting).
 
-  How it works: one wave shape, nothing stacked. The outline is one seamless period in
-  assets/somna-wave-mask.svg, used as a repeating CSS mask on a single strip in the "below" colour.
-  Two transform-only animations run on that one shape:
-  - swell: the wave rises and settles (ease-in-out, alternating), crests lifting a little more than
-    troughs, like calm water breathing;
-  - drift: a very slow slide by exactly one period, so the peaks travel and the curve keeps changing
-    without ever jumping back.
-  The strip reaches below the box, so the swell never opens a gap. Reduced-motion users get it static.
+  How it works: one wave shape, nothing stacked. assets/somna-wave-sine.svg holds four smooth sine
+  waves in one seamless tile, used as a repeating CSS mask on a single strip in the "below" colour.
+  A sine wave sliding sideways is exactly what rolling water looks like (every point simply rises
+  and falls), so the motion is one linear transform, run by the GPU:
+  - roll: the strip slides one tile to the right per four crests (default 8 s per crest), no reset;
+  - bob: the whole surface rises and settles a few pixels, very slowly (ease-in-out, alternating).
+  The strip reaches below the box, so the bob never opens a gap. Reduced-motion users get it static.
 
   @param {string} top - colour above the wave
   @param {string} bottom - colour below the wave
@@ -18,11 +18,12 @@
   @param {boolean} [animate] - gentle drift (default true)
   @param {number} [height] - maximum height in px on large screens (default 140)
   @param {number} [height_mobile] - minimum height in px on small screens (default 48)
+  @param {number} [roll] - seconds for one crest to roll past (default 8)
 {%- enddoc -%}
 {%- liquid
-  assign mask = 'somna-wave-mask.svg'
+  assign mask = 'somna-wave-sine.svg'
   if drops == false
-    assign mask = 'somna-wave-mask-plain.svg'
+    assign mask = 'somna-wave-sine-plain.svg'
   endif
   assign classes = 'somna-wave'
   if flip
@@ -32,7 +33,7 @@
     assign classes = classes | append: ' somna-wave--static'
   endif
 
-  # As in the Figma, the darker colour always carries the drippy edge and the light drops.
+  # As in the Figma, the darker colour always sits on the drop side and the drops are light.
   # When the lighter colour is on top, the same wave is drawn upside down with the colours swapped.
   assign wave_bg = top
   assign wave_fill = bottom
@@ -46,7 +47,7 @@
 -%}
 <div
   class="{{ classes }}"
-  style="--somna-wave-top: {{ wave_bg }}; --somna-wave-bottom: {{ wave_fill }}; --somna-wave-h: {{ height | default: 140 }}px; --somna-wave-h-mobile: {{ height_mobile | default: 48 }}px; --somna-wave-mask: url('{{ mask | asset_url }}');"
+  style="--somna-wave-top: {{ wave_bg }}; --somna-wave-bottom: {{ wave_fill }}; --somna-wave-h: {{ height | default: 140 }}px; --somna-wave-h-mobile: {{ height_mobile | default: 48 }}px; --somna-wave-roll: {{ roll | default: 8 }}s; --somna-wave-mask: url('{{ mask | asset_url }}');"
   aria-hidden="true"
 >
   <span class="somna-wave__inner"><span class="somna-wave__swell"><span class="somna-wave__shape"></span></span></span>
@@ -58,9 +59,9 @@
     display: block;
     /* height follows the Figma proportions (140 / 1440) between the mobile minimum and the desktop maximum */
     --somna-wave-height: clamp(var(--somna-wave-h-mobile, 48px), 9.72vw, var(--somna-wave-h, 140px));
-    /* one wave period keeps the Figma aspect ratio; whole pixels so the repeating mask tiles meet cleanly */
+    /* one tile (four crests) keeps its aspect ratio; whole pixels so the repeating mask tiles meet cleanly */
     --somna-wave-period: round(calc(var(--somna-wave-height) * 1440 / 140), 1px);
-    --somna-wave-rise: calc(var(--somna-wave-height) * -0.08);
+    --somna-wave-rise: calc(var(--somna-wave-height) * -0.04);
     height: var(--somna-wave-height);
     background: var(--somna-wave-top);
     overflow: hidden;
@@ -86,8 +87,7 @@
   }
 
   .somna-wave__swell {
-    transform-origin: 50% 100%;
-    animation: somna-wave-swell 7s ease-in-out infinite alternate;
+    animation: somna-wave-swell 11s ease-in-out infinite alternate;
     will-change: transform;
   }
 
@@ -103,7 +103,7 @@
     mask:
       var(--somna-wave-mask) 0 0 / var(--somna-wave-period) var(--somna-wave-height) repeat-x,
       linear-gradient(#000, #000) 0 100% / 100% calc(100% - var(--somna-wave-height) + 2px) no-repeat;
-    animation: somna-wave-drift 64s linear infinite;
+    animation: somna-wave-drift calc(var(--somna-wave-roll, 8s) * 4) linear infinite;
     will-change: transform;
   }
 
@@ -124,11 +124,11 @@
 
   @keyframes somna-wave-swell {
     from {
-      transform: translate3d(0, 0, 0) scaleY(1);
+      transform: translate3d(0, 0, 0);
     }
 
     to {
-      transform: translate3d(0, var(--somna-wave-rise), 0) scaleY(1.06);
+      transform: translate3d(0, var(--somna-wave-rise), 0);
     }
   }
 

@@ -7,6 +7,7 @@
   flip: section.settings.flip,
   drops: section.settings.drops,
   animate: section.settings.animate,
+  roll: section.settings.roll,
   height: section.settings.height,
   height_mobile: section.settings.height_mobile
 -%}
@@ -47,6 +48,17 @@
       "label": "Gentle animation",
       "info": "Turned off automatically for visitors who prefer reduced motion.",
       "default": true
+    },
+    {
+      "type": "range",
+      "id": "roll",
+      "label": "Wave speed (seconds per wave)",
+      "info": "Higher is slower and calmer.",
+      "min": 4,
+      "max": 14,
+      "step": 1,
+      "unit": "s",
+      "default": 8
     },
     {
       "type": "range",
