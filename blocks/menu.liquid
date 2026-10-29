@@ -80,6 +80,11 @@
               </li>
             {% endfor %}
           </ul>
+        {% else %}
+          {%- comment -%} Somna: no menu picked → the links added as blocks (theme-only links) {%- endcomment -%}
+          <ul class="list-unstyled">
+            {% content_for 'blocks' %}
+          </ul>
         {% endif %}
       </nav>
     </details>
@@ -155,6 +160,7 @@
 {
   "name": "t:names.menu",
   "tag": null,
+  "blocks": [{ "type": "_somna-link" }],
   "settings": [
     {
       "type": "link_list",
