@@ -1,0 +1,104 @@
+{
+ "sections": {
+  "still_cant_pick": {
+   "type": "section",
+   "settings": {
+    "content_direction": "column",
+    "gap": 24,
+    "section_width": "page-width",
+    "background_color": "#000000",
+    "padding-block-start": 24,
+    "padding-block-end": 48,
+    "horizontal_alignment_flex_direction_column": "center"
+   },
+   "blocks": {
+    "panel": {
+     "type": "group",
+     "settings": {
+      "content_direction": "column",
+      "vertical_on_mobile": true,
+      "gap": 16,
+      "width": "fill",
+      "custom_width": 100,
+      "width_mobile": "fill",
+      "height": "fit",
+      "border_radius": 0,
+      "padding-block-start": 48,
+      "padding-block-end": 48,
+      "padding-inline-start": 24,
+      "padding-inline-end": 24,
+      "horizontal_alignment_flex_direction_column": "center",
+      "vertical_alignment_flex_direction_column": "center",
+      "background_color": "#f3feee"
+     },
+     "blocks": {
+      "heading": {
+       "type": "text",
+       "settings": {
+        "text": "<h2>Still Can't Pick?</h2>",
+        "width": "100%",
+        "max_width": "none",
+        "alignment": "center",
+        "type_preset": "custom",
+        "font": "var(--font-accent--family)",
+        "font_size": "2.5rem",
+        "line_height": "normal",
+        "letter_spacing": "normal",
+        "case": "none",
+        "wrap": "balance",
+        "text_color": "#000000",
+        "accent_color": "#98a3de"
+       },
+       "blocks": {}
+      },
+      "text": {
+       "type": "text",
+       "settings": {
+        "text": "<p>Take our 30-second quiz to find your match.</p>",
+        "width": "100%",
+        "max_width": "none",
+        "alignment": "center",
+        "type_preset": "custom",
+        "font": "var(--font-body--family)",
+        "font_size": "1.125rem",
+        "line_height": "normal",
+        "letter_spacing": "normal",
+        "case": "none",
+        "wrap": "pretty",
+        "text_color": "#000000"
+       },
+       "blocks": {}
+      },
+      "button": {
+       "type": "button",
+       "settings": {
+        "label": "FIND MY MATCH →",
+        "link": "shopify://pages/quiz",
+        "style_class": "button-custom",
+        "custom_button_background": "#98a3de",
+        "custom_button_text": "#000000",
+        "custom_button_border": "#98a3de",
+        "width": "custom",
+        "custom_width": 60,
+        "width_mobile": "custom",
+        "custom_width_mobile": 100
+       },
+       "blocks": {}
+      }
+     },
+     "block_order": [
+      "heading",
+      "text",
+      "button"
+     ]
+    }
+   },
+   "block_order": [
+    "panel"
+   ]
+  }
+ },
+ "order": [
+  "still_cant_pick"
+ ]
+}

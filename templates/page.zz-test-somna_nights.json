@@ -1,0 +1,90 @@
+{
+ "sections": {
+  "somna_nights": {
+   "type": "section",
+   "settings": {
+    "content_direction": "column",
+    "gap": 32,
+    "section_width": "page-width",
+    "background_color": "#000000",
+    "padding-block-start": 40,
+    "padding-block-end": 40,
+    "horizontal_alignment_flex_direction_column": "center"
+   },
+   "blocks": {
+    "eyebrow": {
+     "type": "text",
+     "settings": {
+      "text": "<p>Tag us @somna</p>",
+      "width": "100%",
+      "max_width": "none",
+      "alignment": "center",
+      "type_preset": "custom",
+      "font": "var(--font-body--family)",
+      "font_size": "2rem",
+      "line_height": "normal",
+      "letter_spacing": "loose",
+      "case": "uppercase",
+      "wrap": "pretty",
+      "text_color": "#f3feee"
+     },
+     "blocks": {}
+    },
+    "heading": {
+     "type": "text",
+     "settings": {
+      "text": "<h2>#SomnaNights</h2>",
+      "width": "100%",
+      "max_width": "none",
+      "alignment": "center",
+      "type_preset": "custom",
+      "font": "var(--font-accent--family)",
+      "font_size": "4.5rem",
+      "line_height": "normal",
+      "letter_spacing": "normal",
+      "case": "none",
+      "wrap": "balance",
+      "text_color": "#f3feee",
+      "accent_color": "#98a3de"
+     },
+     "blocks": {}
+    },
+    "strip": {
+     "type": "image",
+     "settings": {
+      "image": "shopify://shop_images/somna-v2-ugc-strip-cropped.png",
+      "image_ratio": "adapt",
+      "width": "fill",
+      "border_radius": 0
+     },
+     "blocks": {}
+    },
+    "button": {
+     "type": "button",
+     "settings": {
+      "label": "FOLLOW US ON INSTAGRAM",
+      "link": "https://www.instagram.com/",
+      "style_class": "button-custom",
+      "custom_button_background": "#afbdf8",
+      "custom_button_text": "#000000",
+      "custom_button_border": "#afbdf8",
+      "width": "custom",
+      "custom_width": 50,
+      "width_mobile": "custom",
+      "custom_width_mobile": 100
+     },
+     "blocks": {}
+    }
+   },
+   "block_order": [
+    "eyebrow",
+    "heading",
+    "strip",
+    "button"
+   ]
+  }
+ },
+ "order": [
+  "somna_nights"
+ ]
+}
