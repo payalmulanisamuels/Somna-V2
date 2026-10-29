@@ -2,10 +2,14 @@
   Somna V2 — animated wave divider between two colours (shape traced from the Figma wave).
   Used by the "Somna wave" section and at the bottom of the Somna sections ("Bottom wave" setting).
 
-  How it works: the wave shape is one seamless period in assets/somna-wave-mask.svg. Each layer is a
-  strip in the "below" colour, one period wider than the screen, cut by that SVG as a repeating CSS
-  mask, and slides left to right by exactly one period with a GPU transform, so the loop has no visible reset. A second, very faint
-  layer (mirrored, slower) gives depth. Reduced-motion users get the same wave, static.
+  How it works: one wave shape, nothing stacked. The outline is one seamless period in
+  assets/somna-wave-mask.svg, used as a repeating CSS mask on a single strip in the "below" colour.
+  Two transform-only animations run on that one shape:
+  - swell: the wave rises and settles (ease-in-out, alternating), crests lifting a little more than
+    troughs, like calm water breathing;
+  - drift: a very slow slide by exactly one period, so the peaks travel and the curve keeps changing
+    without ever jumping back.
+  The strip reaches below the box, so the swell never opens a gap. Reduced-motion users get it static.
 
   @param {string} top - colour above the wave
   @param {string} bottom - colour below the wave
@@ -42,13 +46,10 @@
 -%}
 <div
   class="{{ classes }}"
-  style="--somna-wave-top: {{ wave_bg }}; --somna-wave-bottom: {{ wave_fill }}; --somna-wave-h: {{ height | default: 140 }}px; --somna-wave-h-mobile: {{ height_mobile | default: 48 }}px; --somna-wave-mask: url('{{ mask | asset_url }}'); --somna-wave-mask-plain: url('{{ 'somna-wave-mask-plain.svg' | asset_url }}');"
+  style="--somna-wave-top: {{ wave_bg }}; --somna-wave-bottom: {{ wave_fill }}; --somna-wave-h: {{ height | default: 140 }}px; --somna-wave-h-mobile: {{ height_mobile | default: 48 }}px; --somna-wave-mask: url('{{ mask | asset_url }}');"
   aria-hidden="true"
 >
-  <span class="somna-wave__inner">
-    <span class="somna-wave__layer somna-wave__layer--back"><span class="somna-wave__shape"></span></span>
-    <span class="somna-wave__layer somna-wave__layer--front"><span class="somna-wave__shape"></span></span>
-  </span>
+  <span class="somna-wave__inner"><span class="somna-wave__swell"><span class="somna-wave__shape"></span></span></span>
 </div>
 
 {% stylesheet %}
@@ -57,9 +58,9 @@
     display: block;
     /* height follows the Figma proportions (140 / 1440) between the mobile minimum and the desktop maximum */
     --somna-wave-height: clamp(var(--somna-wave-h-mobile, 48px), 9.72vw, var(--somna-wave-h, 140px));
-    /* one wave period keeps the Figma aspect ratio, so curves never get squeezed on small screens */
-    /* whole pixels, so the repeating mask tiles meet without hairline seams */
+    /* one wave period keeps the Figma aspect ratio; whole pixels so the repeating mask tiles meet cleanly */
     --somna-wave-period: round(calc(var(--somna-wave-height) * 1440 / 140), 1px);
+    --somna-wave-rise: calc(var(--somna-wave-height) * -0.08);
     height: var(--somna-wave-height);
     background: var(--somna-wave-top);
     overflow: hidden;
@@ -67,53 +68,48 @@
   }
 
   .somna-wave__inner,
-  .somna-wave__layer {
+  .somna-wave__swell {
     position: absolute;
     inset: 0;
   }
 
-  .somna-wave--invert .somna-wave__inner {
-    transform: scaleY(-1);
+  .somna-wave__inner {
+    transform: scale(var(--somna-wave-sx, 1), var(--somna-wave-sy, 1));
   }
 
-  .somna-wave__layer--back {
-    opacity: 0.08;
-    transform: scaleX(-1) translateY(-5%);
+  .somna-wave--flip {
+    --somna-wave-sx: -1;
   }
 
-  .somna-wave--flip .somna-wave__layer--front {
-    transform: scaleX(-1);
+  .somna-wave--invert {
+    --somna-wave-sy: -1;
   }
 
-  .somna-wave--flip .somna-wave__layer--back {
-    transform: translateY(-5%);
+  .somna-wave__swell {
+    transform-origin: 50% 100%;
+    animation: somna-wave-swell 7s ease-in-out infinite alternate;
+    will-change: transform;
   }
 
   .somna-wave__shape {
     position: absolute;
-    inset: 0 auto 0 0;
+    /* extends below the box so the rising swell never shows a gap */
+    inset: 0 auto calc(var(--somna-wave-height) * -0.2) 0;
     width: calc(100% + var(--somna-wave-period));
     background: var(--somna-wave-bottom);
-    -webkit-mask: var(--somna-wave-mask) 0 0 / var(--somna-wave-period) 100% repeat-x;
-    mask: var(--somna-wave-mask) 0 0 / var(--somna-wave-period) 100% repeat-x;
-    animation: somna-wave-drift 48s linear infinite;
+    -webkit-mask:
+      var(--somna-wave-mask) 0 0 / var(--somna-wave-period) var(--somna-wave-height) repeat-x,
+      linear-gradient(#000, #000) 0 100% / 100% calc(100% - var(--somna-wave-height) + 2px) no-repeat;
+    mask:
+      var(--somna-wave-mask) 0 0 / var(--somna-wave-period) var(--somna-wave-height) repeat-x,
+      linear-gradient(#000, #000) 0 100% / 100% calc(100% - var(--somna-wave-height) + 2px) no-repeat;
+    animation: somna-wave-drift 64s linear infinite;
     will-change: transform;
   }
 
-  .somna-wave__layer--back .somna-wave__shape {
-    -webkit-mask-image: var(--somna-wave-mask-plain);
-    mask-image: var(--somna-wave-mask-plain);
-    animation-duration: 76s;
+  /* mirrored waves still drift left → right on screen */
+  .somna-wave--flip .somna-wave__shape {
     animation-direction: reverse;
-  }
-
-  /* a mirrored layer moves the other way on screen, so reverse it to keep everything drifting left → right */
-  .somna-wave--flip .somna-wave__layer--front .somna-wave__shape {
-    animation-direction: reverse;
-  }
-
-  .somna-wave--flip .somna-wave__layer--back .somna-wave__shape {
-    animation-direction: normal;
   }
 
   @keyframes somna-wave-drift {
@@ -126,13 +122,23 @@
     }
   }
 
-  .somna-wave--static .somna-wave__shape {
+  @keyframes somna-wave-swell {
+    from {
+      transform: translate3d(0, 0, 0) scaleY(1);
+    }
+
+    to {
+      transform: translate3d(0, var(--somna-wave-rise), 0) scaleY(1.06);
+    }
+  }
+
+  .somna-wave--static :is(.somna-wave__swell, .somna-wave__shape) {
     animation: none;
     will-change: auto;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .somna-wave__shape {
+    :is(.somna-wave__swell, .somna-wave__shape) {
       animation: none;
       will-change: auto;
     }
