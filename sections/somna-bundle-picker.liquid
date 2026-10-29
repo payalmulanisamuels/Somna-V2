@@ -603,6 +603,14 @@
     }
   }
 
+  /* tablet: bundle card and the other sets side by side, as on desktop */
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-bundle__grid {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 24px;
+    }
+  }
+
   /* final mobile design: smaller heading, perks in a 2 × 2 grid */
   @media screen and (max-width: 749px) {
     /* mobile Figma: the bundle card and the Subscribe bar keep straight edges */

@@ -206,6 +206,15 @@
     }
   }
 
+  /* tablet: photo and steps side by side instead of a full-width photo taller than the screen */
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-steps__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 32px;
+      align-items: center;
+    }
+  }
+
   /* final mobile design: small proof row, full-bleed photo, centred heading, compact step list */
   @media screen and (max-width: 749px) {
     .somna-steps {
