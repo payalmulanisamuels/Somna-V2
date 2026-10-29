@@ -1729,14 +1729,14 @@
                       "type": "somna-icon",
                       "settings": {
                         "icon": "none",
-                        "size": 54,
-                        "color": "#000000",
+                        "size": 60,
+                        "color": "#03163b",
                         "backdrop": "image",
                         "icon_offset": 10,
                         "image": "shopify://shop_images/somna-v2-mask-sleep-guide-1.png",
                         "backdrop_image": "shopify://shop_images/somna-v2-mask-gift-box.png",
                         "backdrop_color": "#f3feee",
-                        "backdrop_size": 108
+                        "backdrop_size": 126
                       },
                       "blocks": {}
                     },
@@ -1787,14 +1787,14 @@
                       "type": "somna-icon",
                       "settings": {
                         "icon": "none",
-                        "size": 54,
-                        "color": "#000000",
+                        "size": 60,
+                        "color": "#03163b",
                         "backdrop": "image",
                         "icon_offset": 10,
                         "image": "shopify://shop_images/somna-v2-mask-sleep-guide-2.png",
                         "backdrop_image": "shopify://shop_images/somna-v2-mask-gift-box.png",
                         "backdrop_color": "#f3feee",
-                        "backdrop_size": 108
+                        "backdrop_size": 126
                       },
                       "blocks": {}
                     },
@@ -1845,14 +1845,14 @@
                       "type": "somna-icon",
                       "settings": {
                         "icon": "none",
-                        "size": 54,
-                        "color": "#000000",
+                        "size": 60,
+                        "color": "#03163b",
                         "backdrop": "image",
                         "icon_offset": 10,
                         "image": "shopify://shop_images/somna-v2-mask-tracker.png",
                         "backdrop_image": "shopify://shop_images/somna-v2-mask-gift-box.png",
                         "backdrop_color": "#f3feee",
-                        "backdrop_size": 108
+                        "backdrop_size": 126
                       },
                       "blocks": {}
                     },
