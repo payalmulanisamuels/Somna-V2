@@ -124,6 +124,54 @@
       text-align: right;
     }
   }
+
+  /* final mobile design: heading first and centred, then the step panel */
+  @media screen and (max-width: 749px) {
+    .somna-routine__grid {
+      gap: 24px;
+    }
+
+    .somna-routine__heading {
+      order: -1;
+      font-size: 1.875rem;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .somna-routine__panel {
+      width: min(100%, 320px);
+      justify-self: center;
+      padding: 56px 32px;
+    }
+
+    .somna-routine__list {
+      gap: 40px;
+    }
+
+    .somna-routine__item {
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .somna-routine__num {
+      width: 36px;
+      height: 36px;
+      font-size: 1.125rem;
+    }
+
+    .somna-routine__item:not(:last-child)::before {
+      inset: 40px auto -38px 16px;
+      border-left-width: 3px;
+    }
+
+    .somna-routine__title {
+      font-size: 1.75rem;
+    }
+
+    .somna-routine__item p {
+      font-size: 0.6875rem;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

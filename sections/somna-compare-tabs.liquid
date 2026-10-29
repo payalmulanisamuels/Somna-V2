@@ -301,6 +301,62 @@
       gap: 40px;
     }
   }
+
+  /* final mobile design: centred heading, the table fits the screen (no sideways scroll) */
+  @media screen and (max-width: 749px) {
+    .somna-compare__inner {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 20px;
+    }
+
+    .somna-compare__intro {
+      text-align: center;
+    }
+
+    .somna-compare__eyebrow {
+      margin-bottom: 8px;
+      font-size: 0.625rem;
+    }
+
+    .somna-compare__heading {
+      font-size: 1.75rem;
+      line-height: 1.25;
+    }
+
+    .somna-compare__tab {
+      padding: 0 20px;
+      font-size: 0.75rem;
+    }
+
+    .somna-compare__panel {
+      padding: 8px 12px 16px;
+      border-radius: 12px;
+    }
+
+    .somna-compare__table {
+      min-width: 0;
+      font-size: 0.6875rem;
+    }
+
+    .somna-compare__table th,
+    .somna-compare__table td {
+      padding: 10px 4px;
+    }
+
+    .somna-compare__table thead img {
+      max-width: 44px;
+      height: 44px;
+    }
+
+    .somna-compare__table thead span {
+      font-size: 0.6875rem;
+    }
+
+    .somna-compare__table .somna-check,
+    .somna-compare__table .somna-cross {
+      --somna-mark-size: 24px;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

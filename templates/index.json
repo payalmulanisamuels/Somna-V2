@@ -790,7 +790,7 @@
         "media_type_1": "image",
         "media_type_2": "image",
         "stack_media_on_mobile": false,
-        "custom_mobile_media": false,
+        "custom_mobile_media": true,
         "media_type_1_mobile": "image",
         "media_type_2_mobile": "image",
         "open_in_new_tab": false,
@@ -814,7 +814,8 @@
         "reflection_opacity": 75,
         "padding-block-start": 56,
         "padding-block-end": 72,
-        "image_1": "shopify://shop_images/somna-v2-hero-pouches.png"
+        "image_1": "shopify://shop_images/somna-v2-hero-pouches.png",
+        "image_1_mobile": "shopify://shop_images/somna-v2-hero-mobile.jpg"
       }
     },
     "recently_viewed": {
@@ -887,7 +888,7 @@
       "type": "somna-match-cards",
       "settings": {
         "heading": "<p>Nose or mouth? <em>Meet your match.</em></p>",
-        "text": "<p>Most people start with one.<br>Plenty end up with both.</p>"
+        "text": "<p>Most people start with one. <br>Plenty end up with both.</p>"
       },
       "blocks": {
         "card_strips": {
@@ -1055,7 +1056,7 @@
       "settings": {
         "eyebrow": "Made for your nights",
         "heading": "Built for Bedtime. Not the First-Aid Kit.",
-        "show_column_names": true,
+        "show_column_names": false,
         "wave_color": "#000000"
       },
       "blocks": {
@@ -1213,7 +1214,7 @@
     "proof": {
       "type": "somna-proof",
       "settings": {
-        "eyebrow": "",
+        "eyebrow": "Don't just take our word for it",
         "heading": "<p>Real people. <em>Real nights.</em></p>",
         "wave_color": "#f3feee"
       },
@@ -1292,7 +1293,7 @@
           "type": "group",
           "settings": {
             "content_direction": "row",
-            "vertical_on_mobile": true,
+            "vertical_on_mobile": false,
             "gap": 36,
             "width": "custom",
             "custom_width": 50,
@@ -1315,7 +1316,7 @@
                 "gap": 24,
                 "width": "custom",
                 "custom_width": 30,
-                "width_mobile": "fill",
+                "width_mobile": "custom",
                 "height": "fill",
                 "border_radius": 16,
                 "padding-block-start": 44,
@@ -1324,7 +1325,8 @@
                 "padding-inline-end": 16,
                 "horizontal_alignment_flex_direction_column": "center",
                 "vertical_alignment_flex_direction_column": "center",
-                "background_color": "#000000"
+                "background_color": "#000000",
+                "custom_width_mobile": 31
               },
               "blocks": {
                 "icon": {
@@ -1370,7 +1372,7 @@
                 "gap": 24,
                 "width": "custom",
                 "custom_width": 30,
-                "width_mobile": "fill",
+                "width_mobile": "custom",
                 "height": "fill",
                 "border_radius": 16,
                 "padding-block-start": 44,
@@ -1379,7 +1381,8 @@
                 "padding-inline-end": 16,
                 "horizontal_alignment_flex_direction_column": "center",
                 "vertical_alignment_flex_direction_column": "center",
-                "background_color": "#000000"
+                "background_color": "#000000",
+                "custom_width_mobile": 31
               },
               "blocks": {
                 "icon": {
@@ -1426,7 +1429,7 @@
                 "gap": 24,
                 "width": "custom",
                 "custom_width": 30,
-                "width_mobile": "fill",
+                "width_mobile": "custom",
                 "height": "fill",
                 "border_radius": 16,
                 "padding-block-start": 44,
@@ -1435,7 +1438,8 @@
                 "padding-inline-end": 16,
                 "horizontal_alignment_flex_direction_column": "center",
                 "vertical_alignment_flex_direction_column": "center",
-                "background_color": "#000000"
+                "background_color": "#000000",
+                "custom_width_mobile": 31
               },
               "blocks": {
                 "icon": {
@@ -2566,7 +2570,10 @@
         "section_height": "medium",
         "toggle_overlay": false,
         "padding-block-start": 40,
-        "padding-block-end": 40
+        "padding-block-end": 40,
+        "custom_mobile_media": true,
+        "media_type_1_mobile": "image",
+        "image_1_mobile": "shopify://shop_images/somna-v2-cta-mobile.jpg"
       },
       "blocks": {
         "content": {

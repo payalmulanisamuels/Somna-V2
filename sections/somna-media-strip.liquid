@@ -134,6 +134,35 @@
       transition: none;
     }
   }
+
+  /* final mobile design: left-aligned heading, two cards in view */
+  @media screen and (max-width: 749px) {
+    .somna-strip__head {
+      text-align: start;
+    }
+
+    .somna-strip__eyebrow {
+      font-size: 0.625rem;
+    }
+
+    .somna-strip__heading {
+      font-size: 1.875rem;
+    }
+
+    .somna-strip__list {
+      gap: 20px;
+      padding-inline: 26px;
+      scroll-padding-inline: 26px;
+    }
+
+    .somna-strip__item {
+      flex-basis: min(var(--somna-strip-card), calc(50vw - 36px));
+    }
+
+    .somna-strip__caption {
+      font-size: 0.6875rem;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

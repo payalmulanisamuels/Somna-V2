@@ -23,6 +23,7 @@
     {%- render 'scripts' -%}
     {%- render 'theme-styles-variables' -%}
     {%- render 'somna-fonts' -%}
+    <link rel="stylesheet" href="{{ 'somna-home-mobile.css' | asset_url }}" media="screen and (max-width: 749px)">
     {%- render 'color-palette' -%}
 
     {% if request.design_mode %}
