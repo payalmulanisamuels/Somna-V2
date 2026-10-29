@@ -3,13 +3,11 @@
   left to right, with the Figma drops riding on the water).
   Used by the "Somna wave" section and at the bottom of the Somna sections ("Bottom wave" setting).
 
-  How it works: one wave shape, nothing stacked. assets/somna-wave-sine.svg holds four smooth sine
-  waves in one seamless tile, used as a repeating CSS mask on a single strip in the "below" colour.
-  A sine wave sliding sideways is exactly what rolling water looks like (every point simply rises
-  and falls), so the motion is one linear transform, run by the GPU:
-  - roll: the strip slides one tile to the right per four crests (default 8 s per crest), no reset;
-  - bob: the whole surface rises and settles a few pixels, very slowly (ease-in-out, alternating).
-  The strip reaches below the box, so the bob never opens a gap. Reduced-motion users get it static.
+  How it works: one wave, drawn on a <canvas> by assets/somna-wave.js (same drawing as the approved
+  demo): even waves rolling left to right, a slower counter-ripple so the crests keep changing
+  height, and the drops bobbing on the surface. The script pauses off screen and in background tabs,
+  and draws one still frame for reduced motion. Underneath, the same wave is drawn statically with a
+  CSS mask (assets/somna-wave-sine.svg), so the divider looks right before the script runs.
 
   @param {string} top - colour above the wave
   @param {string} bottom - colour below the wave
@@ -29,11 +27,8 @@
   if flip
     assign classes = classes | append: ' somna-wave--flip'
   endif
-  if animate == false
-    assign classes = classes | append: ' somna-wave--static'
-  endif
 
-  # As in the Figma, the darker colour always sits on the drop side and the drops are light.
+  # The darker colour always sits on the drop side and the drops are light, as in the Figma.
   # When the lighter colour is on top, the same wave is drawn upside down with the colours swapped.
   assign wave_bg = top
   assign wave_fill = bottom
@@ -47,11 +42,16 @@
 -%}
 <div
   class="{{ classes }}"
-  style="--somna-wave-top: {{ wave_bg }}; --somna-wave-bottom: {{ wave_fill }}; --somna-wave-h: {{ height | default: 140 }}px; --somna-wave-h-mobile: {{ height_mobile | default: 48 }}px; --somna-wave-roll: {{ roll | default: 8 }}s; --somna-wave-mask: url('{{ mask | asset_url }}');"
+  data-roll="{{ roll | default: 8 }}"
+  data-animate="{% if animate == false %}false{% else %}true{% endif %}"
+  data-drops="{% if drops == false %}false{% else %}true{% endif %}"
+  style="--somna-wave-top: {{ wave_bg }}; --somna-wave-bottom: {{ wave_fill }}; --somna-wave-h: {{ height | default: 140 }}px; --somna-wave-h-mobile: {{ height_mobile | default: 48 }}px; --somna-wave-mask: url('{{ mask | asset_url }}');"
   aria-hidden="true"
 >
-  <span class="somna-wave__inner"><span class="somna-wave__swell"><span class="somna-wave__shape"></span></span></span>
+  <span class="somna-wave__static"></span>
+  <canvas class="somna-wave__canvas" data-somna-wave></canvas>
 </div>
+<script src="{{ 'somna-wave.js' | asset_url }}" defer></script>
 
 {% stylesheet %}
   .somna-wave {
@@ -59,22 +59,19 @@
     display: block;
     /* height follows the Figma proportions (140 / 1440) between the mobile minimum and the desktop maximum */
     --somna-wave-height: clamp(var(--somna-wave-h-mobile, 48px), 9.72vw, var(--somna-wave-h, 140px));
-    /* one tile (four crests) keeps its aspect ratio; whole pixels so the repeating mask tiles meet cleanly */
-    --somna-wave-period: round(calc(var(--somna-wave-height) * 1440 / 140), 1px);
-    --somna-wave-rise: calc(var(--somna-wave-height) * -0.04);
     height: var(--somna-wave-height);
     background: var(--somna-wave-top);
     overflow: hidden;
     contain: paint;
   }
 
-  .somna-wave__inner,
-  .somna-wave__swell {
+  .somna-wave__static,
+  .somna-wave__canvas {
     position: absolute;
     inset: 0;
-  }
-
-  .somna-wave__inner {
+    display: block;
+    width: 100%;
+    height: 100%;
     transform: scale(var(--somna-wave-sx, 1), var(--somna-wave-sy, 1));
   }
 
@@ -86,61 +83,14 @@
     --somna-wave-sy: -1;
   }
 
-  .somna-wave__swell {
-    animation: somna-wave-swell 11s ease-in-out infinite alternate;
-    will-change: transform;
-  }
-
-  .somna-wave__shape {
-    position: absolute;
-    /* extends below the box so the rising swell never shows a gap */
-    inset: 0 auto calc(var(--somna-wave-height) * -0.2) 0;
-    width: calc(100% + var(--somna-wave-period));
+  /* same wave, still, until the script draws on the canvas; tile width matches the canvas proportions */
+  .somna-wave__static {
     background: var(--somna-wave-bottom);
-    -webkit-mask:
-      var(--somna-wave-mask) 0 0 / var(--somna-wave-period) var(--somna-wave-height) repeat-x,
-      linear-gradient(#000, #000) 0 100% / 100% calc(100% - var(--somna-wave-height) + 2px) no-repeat;
-    mask:
-      var(--somna-wave-mask) 0 0 / var(--somna-wave-period) var(--somna-wave-height) repeat-x,
-      linear-gradient(#000, #000) 0 100% / 100% calc(100% - var(--somna-wave-height) + 2px) no-repeat;
-    animation: somna-wave-drift calc(var(--somna-wave-roll, 8s) * 4) linear infinite;
-    will-change: transform;
+    -webkit-mask: var(--somna-wave-mask) 0 0 / calc(var(--somna-wave-height) * 7.65) 100% repeat-x;
+    mask: var(--somna-wave-mask) 0 0 / calc(var(--somna-wave-height) * 7.65) 100% repeat-x;
   }
 
-  /* mirrored waves still drift left → right on screen */
-  .somna-wave--flip .somna-wave__shape {
-    animation-direction: reverse;
-  }
-
-  @keyframes somna-wave-drift {
-    from {
-      transform: translate3d(calc(-1 * var(--somna-wave-period)), 0, 0);
-    }
-
-    to {
-      transform: translate3d(0, 0, 0);
-    }
-  }
-
-  @keyframes somna-wave-swell {
-    from {
-      transform: translate3d(0, 0, 0);
-    }
-
-    to {
-      transform: translate3d(0, var(--somna-wave-rise), 0);
-    }
-  }
-
-  .somna-wave--static :is(.somna-wave__swell, .somna-wave__shape) {
-    animation: none;
-    will-change: auto;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    :is(.somna-wave__swell, .somna-wave__shape) {
-      animation: none;
-      will-change: auto;
-    }
+  .somna-wave--live .somna-wave__static {
+    visibility: hidden;
   }
 {% endstylesheet %}
