@@ -122,7 +122,7 @@
   </div>
 </somna-bundle-picker>
 {%- if section.settings.wave_color != blank -%}
-  {%- render 'somna-wave', top: section.settings.background_color, bottom: section.settings.wave_color -%}
+  {%- render 'somna-wave', top: section.settings.background_color, bottom: section.settings.wave_color, shape: section.settings.wave_shape -%}
 {%- endif -%}
 
 <script type="module">
@@ -696,7 +696,8 @@
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
     { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },
     { "type": "header", "content": "Bottom wave" },
-    { "type": "color", "id": "wave_color", "label": "Colour below the wave", "info": "Draws a wave into the next section. Leave empty for a straight edge." }
+    { "type": "color", "id": "wave_color", "label": "Colour below the wave", "info": "Draws a wave into the next section. Leave empty for a straight edge." },
+    { "type": "select", "id": "wave_shape", "label": "Wave shape", "info": "Drip and Soft shapes are traced from the Figma design.", "options": [{ "value": "drip-1", "label": "Drip 1" }, { "value": "drip-2", "label": "Drip 2" }, { "value": "drip-3", "label": "Drip 3" }, { "value": "drip-4", "label": "Drip 4" }, { "value": "drip-5", "label": "Drip 5" }, { "value": "drip-6", "label": "Drip 6" }, { "value": "drip-7", "label": "Drip 7" }, { "value": "drip-8", "label": "Drip 8" }, { "value": "drip-9", "label": "Drip 9" }, { "value": "drip-10", "label": "Drip 10" }, { "value": "drip-11", "label": "Drip 11" }, { "value": "soft-1", "label": "Soft 1" }, { "value": "soft-2", "label": "Soft 2" }, { "value": "sine", "label": "Rolling wave (animated)" }], "default": "drip-1" }
   ],
   "blocks": [
     {
