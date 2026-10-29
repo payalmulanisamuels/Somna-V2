@@ -213,6 +213,7 @@
   [id$='__gifts'] .group-block:has(> .group-block-content > .somna-icon) {
     flex: 1 1 0 !important;
     width: auto !important;
+    min-width: 0;
   }
 
   /* ---------- FAQ and reviews headings ---------- */
@@ -333,6 +334,18 @@
     grid-template-rows: auto auto;
     grid-auto-flow: column;
     gap: 24px 16px !important;
+  }
+}
+
+/* Very small phones (320–359px): the three gifts share the width */
+@media screen and (max-width: 359px) {
+  [id$='__gifts'] .group-block-content:has(> .group-block > .group-block-content > .somna-icon) {
+    gap: 6px !important;
+  }
+
+  [id$='__gifts'] .somna-icon :is(svg, img) {
+    max-width: 100%;
+    height: auto;
   }
 }
 
