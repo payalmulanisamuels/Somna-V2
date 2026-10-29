@@ -7,7 +7,7 @@
 {%- endcomment -%}
 {%- assign boldonse_url = 'boldonse-latin-400.woff2' | asset_url -%}
 {%- if template.name == 'index' -%}
-  <link rel="preload" href="{{ boldonse_url }}" as="font" type="font/woff2" crossorigin>
+  {{ boldonse_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
 {%- endif -%}
 <style>
   @font-face {
