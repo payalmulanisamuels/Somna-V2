@@ -875,8 +875,8 @@
     "steps": {
       "type": "somna-steps",
       "settings": {
-        "eyebrow": "",
-        "rating_text": "",
+        "eyebrow": "1,000+ people already sleep better with Somna.",
+        "rating_text": "★★★★★ 4.6/5 Average Rating",
         "image": "shopify://shop_images/somna-v2-steps-model.png",
         "heading": "Three Steps. Zero Fuss.",
         "text": "<p>From bathroom sink to lights out in under a minute.</p>",
@@ -1028,7 +1028,7 @@
               "type": "button",
               "settings": {
                 "label": "FIND MY MATCH →",
-                "link": "shopify://collections/all",
+                "link": "shopify://pages/quiz",
                 "style_class": "button-custom",
                 "custom_button_background": "#98a3de",
                 "custom_button_text": "#000000",
@@ -1092,12 +1092,7 @@
       "settings": {
         "eyebrow": "Made for your nights",
         "heading": "Built for Bedtime. Not the First-Aid Kit.",
-        "column_2_image": "shopify://shop_images/somna-v2-compare-tape-roll.png",
-        "column_2_label": "Medical tape",
-        "column_3_image": "shopify://shop_images/somna-v2-compare-chin-strap.png",
-        "column_3_label": "Chin strap",
-        "column_4_image": "shopify://shop_images/somna-v2-compare-mouth-guard.png",
-        "column_4_label": "Mouth guard",
+        "show_column_names": true,
         "wave_color": "#000000"
       },
       "blocks": {
@@ -1106,7 +1101,13 @@
           "settings": {
             "name": "Mouth Tape",
             "image": "shopify://shop_images/somna-v2-tape-pouch.png",
-            "label": "somna."
+            "label": "somna.",
+            "column_2_image": "shopify://shop_images/somna-v2-compare-tape-roll.png",
+            "column_2_label": "Surgical tape",
+            "column_3_image": "shopify://shop_images/somna-v2-compare-chin-strap.png",
+            "column_3_label": "Chin straps",
+            "column_4_image": "shopify://shop_images/somna-v2-compare-mouth-guard.png",
+            "column_4_label": "Mouthguards"
           }
         },
         "tab_strips": {
@@ -1114,7 +1115,10 @@
           "settings": {
             "name": "Nasal Strips",
             "image": "shopify://shop_images/somna-v2-compare-somna.png",
-            "label": "somna."
+            "label": "somna.",
+            "column_2_label": "Drugstore strips",
+            "column_3_label": "Medicated sprays",
+            "column_4_label": "Nasal dilators"
           }
         },
         "row_1": {
@@ -1154,7 +1158,7 @@
           "type": "row",
           "settings": {
             "tab": "1",
-            "label": "Made for lips",
+            "label": "Made for lips, not first aid",
             "column_1": true,
             "column_2": false,
             "column_3": false,
@@ -1171,6 +1175,61 @@
             "column_3": false,
             "column_4": false
           }
+        },
+        "srow_1": {
+          "type": "row",
+          "settings": {
+            "tab": "2",
+            "label": "Drug-free",
+            "column_1": true,
+            "column_2": true,
+            "column_3": false,
+            "column_4": true
+          }
+        },
+        "srow_2": {
+          "type": "row",
+          "settings": {
+            "tab": "2",
+            "label": "Nothing inside your nose",
+            "column_1": true,
+            "column_2": true,
+            "column_3": true,
+            "column_4": false
+          }
+        },
+        "srow_3": {
+          "type": "row",
+          "settings": {
+            "tab": "2",
+            "label": "Structural strip design",
+            "column_1": true,
+            "column_2": false,
+            "column_3": false,
+            "column_4": false
+          }
+        },
+        "srow_4": {
+          "type": "row",
+          "settings": {
+            "tab": "2",
+            "label": "Pairs with Mouth Tape",
+            "column_1": true,
+            "column_2": false,
+            "column_3": false,
+            "column_4": false
+          }
+        },
+        "srow_5": {
+          "type": "row",
+          "settings": {
+            "tab": "2",
+            "label": "Three colors to match you",
+            "column_1": true,
+            "column_2": false,
+            "column_3": false,
+            "column_4": false
+          }
         }
       },
       "block_order": [
@@ -1180,7 +1239,12 @@
         "row_2",
         "row_3",
         "row_4",
-        "row_5"
+        "row_5",
+        "srow_1",
+        "srow_2",
+        "srow_3",
+        "srow_4",
+        "srow_5"
       ]
     },
     "proof": {
@@ -1196,24 +1260,21 @@
           "settings": {
             "value": 92,
             "label": "Found it easy to use"
-          },
-          "disabled": true
+          }
         },
         "stat_2": {
           "type": "stat",
           "settings": {
             "value": 89,
             "label": "Comfortable all night"
-          },
-          "disabled": true
+          }
         },
         "stat_3": {
           "type": "stat",
           "settings": {
             "value": 94,
             "label": "Would recommend Somna"
-          },
-          "disabled": true
+          }
         },
         "review_1": {
           "type": "review",
@@ -1222,8 +1283,7 @@
             "rating": 5,
             "quote": "I finally have a bedtime routine I actually stick to.",
             "name": ""
-          },
-          "disabled": true
+          }
         },
         "review_2": {
           "type": "review",
@@ -1232,8 +1292,7 @@
             "rating": 5,
             "quote": "I finally have a bedtime routine I actually stick to.",
             "name": ""
-          },
-          "disabled": true
+          }
         },
         "review_3": {
           "type": "review",
@@ -1242,8 +1301,7 @@
             "rating": 5,
             "quote": "I finally have a bedtime routine I actually stick to.",
             "name": ""
-          },
-          "disabled": true
+          }
         }
       },
       "block_order": [
@@ -1395,11 +1453,67 @@
                 "icon",
                 "label"
               ]
+            },
+            "t3": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "gap": 24,
+                "width": "custom",
+                "custom_width": 30,
+                "width_mobile": "fill",
+                "height": "fill",
+                "border_radius": 16,
+                "padding-block-start": 44,
+                "padding-block-end": 44,
+                "padding-inline-start": 16,
+                "padding-inline-end": 16,
+                "horizontal_alignment_flex_direction_column": "center",
+                "vertical_alignment_flex_direction_column": "center",
+                "background_color": "#000000"
+              },
+              "blocks": {
+                "icon": {
+                  "type": "somna-icon",
+                  "settings": {
+                    "icon": "shield",
+                    "size": 72,
+                    "color": "#f3feee",
+                    "backdrop": "none",
+                    "icon_offset": 0
+                  },
+                  "blocks": {}
+                },
+                "label": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Loved by 1,000+ sleepers</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "center",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1.125rem",
+                    "line_height": "normal",
+                    "letter_spacing": "loose",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#f3feee"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "icon",
+                "label"
+              ]
             }
           },
           "block_order": [
             "t1",
-            "t2"
+            "t2",
+            "t3"
           ]
         }
       },
@@ -1834,7 +1948,7 @@
             "product": "mouth-tape",
             "tab_label": "Mouth Tape",
             "title": "Mouth Tape",
-            "rating_text": "",
+            "rating_text": "★★★★★ 4.6/5 (3,600+ reviews)",
             "description": "The tape that sits on the outside of your lips and stays put till morning. 30 per bag.",
             "points": "Drug-free\nStays on all night\nGentle on skin\n3 colors",
             "popular_position": 2,
@@ -1848,7 +1962,7 @@
             "product": "nasal-strips",
             "tab_label": "Nasal Strips",
             "title": "Nasal Strips",
-            "rating_text": "",
+            "rating_text": "★★★★★ 4.6/5 (3,600+ reviews)",
             "description": "The strip that sits on the outside of your nose and stays put till morning. 30 per bag.",
             "points": "Drug-free\nStays on all night\nGentle on skin\n3 colors",
             "popular_position": 2,
@@ -2665,23 +2779,11 @@
           "blocks": {}
         },
         "signup": {
-          "type": "email-signup",
+          "type": "somna-klaviyo-signup",
           "settings": {
-            "width": "custom",
-            "custom_width": 60,
-            "border_style": "all",
-            "input_style": "custom",
-            "border_radius": 100,
-            "input_background_color": "#ffffff",
-            "input_text_color": "#000000",
-            "input_border_color": "#ffffff",
-            "style_class": "button-custom",
-            "custom_button_background": "#afbdf8",
-            "custom_button_text": "#000000",
-            "custom_button_border": "#afbdf8",
-            "display_type": "text",
-            "label": "Subscribe →",
-            "integrated_button": true
+            "placeholder": "Your email",
+            "button_label": "Subscribe →",
+            "width": 60
           },
           "blocks": {}
         }
