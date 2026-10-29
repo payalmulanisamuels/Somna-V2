@@ -229,6 +229,20 @@
     visibility: hidden;
   }
 
+  /* overlap the neighbouring sections by 1px so no hairline shows at fractional heights (tablet) */
+  .somna-wave--shape {
+    margin-block-start: -1px;
+  }
+
+  .somna-wave--shape:not(.somna-wave--overlap) {
+    margin-block-end: -1px;
+  }
+
+  .somna-wave--shape .somna-wave__canvas {
+    inset: -1px 0;
+    height: calc(100% + 2px);
+  }
+
   .somna-wave--overlap {
     position: relative;
     z-index: 2;
