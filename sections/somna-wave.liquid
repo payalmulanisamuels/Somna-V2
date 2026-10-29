@@ -1,11 +1,12 @@
 {%- comment -%}
-  Somna V2 — wave divider section. Pick the colour of the section above and the one below.
+  Somna V2 — animated wave divider section. Pick the colour of the section above and the one below.
 {%- endcomment -%}
 {%- render 'somna-wave',
   top: section.settings.top_color,
   bottom: section.settings.bottom_color,
   flip: section.settings.flip,
   drops: section.settings.drops,
+  animate: section.settings.animate,
   height: section.settings.height,
   height_mobile: section.settings.height_mobile
 -%}
@@ -41,14 +42,22 @@
       "default": true
     },
     {
+      "type": "checkbox",
+      "id": "animate",
+      "label": "Gentle animation",
+      "info": "Turned off automatically for visitors who prefer reduced motion.",
+      "default": true
+    },
+    {
       "type": "range",
       "id": "height",
       "label": "Height (desktop)",
+      "info": "The wave keeps its shape and scales with the screen width up to this height.",
       "min": 40,
       "max": 200,
       "step": 4,
       "unit": "px",
-      "default": 96
+      "default": 140
     },
     {
       "type": "range",
@@ -58,7 +67,7 @@
       "max": 120,
       "step": 4,
       "unit": "px",
-      "default": 40
+      "default": 48
     }
   ],
   "presets": [
