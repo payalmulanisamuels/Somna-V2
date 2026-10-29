@@ -1,0 +1,319 @@
+{
+ "sections": {
+  "faq": {
+   "type": "section",
+   "settings": {
+    "content_direction": "row",
+    "gap": 56,
+    "section_width": "page-width",
+    "background_color": "#f3feee",
+    "padding-block-start": 40,
+    "padding-block-end": 40,
+    "horizontal_alignment": "space-between",
+    "vertical_alignment": "flex-start"
+   },
+   "blocks": {
+    "intro": {
+     "type": "group",
+     "settings": {
+      "content_direction": "column",
+      "vertical_on_mobile": true,
+      "gap": 16,
+      "width": "custom",
+      "custom_width": 30,
+      "width_mobile": "fill",
+      "height": "fit",
+      "border_radius": 0,
+      "padding-block-start": 0,
+      "padding-block-end": 0,
+      "padding-inline-start": 0,
+      "padding-inline-end": 0,
+      "horizontal_alignment_flex_direction_column": "flex-start",
+      "vertical_alignment_flex_direction_column": "flex-start"
+     },
+     "blocks": {
+      "heading": {
+       "type": "text",
+       "settings": {
+        "text": "<h2>Questions?<br>We've Got You.</h2>",
+        "width": "100%",
+        "max_width": "none",
+        "alignment": "left",
+        "type_preset": "custom",
+        "font": "var(--font-accent--family)",
+        "font_size": "3rem",
+        "line_height": "normal",
+        "letter_spacing": "normal",
+        "case": "none",
+        "wrap": "balance",
+        "text_color": "#000000",
+        "accent_color": "#98a3de"
+       },
+       "blocks": {}
+      },
+      "text": {
+       "type": "text",
+       "settings": {
+        "text": "<p>Can’t find your answer? Reply to any email or <a href=\"/pages/contact\">contact us</a>.</p>",
+        "width": "100%",
+        "max_width": "none",
+        "alignment": "left",
+        "type_preset": "custom",
+        "font": "var(--font-body--family)",
+        "font_size": "1rem",
+        "line_height": "normal",
+        "letter_spacing": "normal",
+        "case": "none",
+        "wrap": "pretty",
+        "text_color": "#000000"
+       },
+       "blocks": {}
+      }
+     },
+     "block_order": [
+      "heading",
+      "text"
+     ]
+    },
+    "accordion": {
+     "type": "accordion",
+     "settings": {
+      "icon": "plus",
+      "dividers": true,
+      "divider_color": "#afbdf8",
+      "type_preset": "paragraph",
+      "text_color": "#000000"
+     },
+     "blocks": {
+      "row_1": {
+       "type": "_accordion-row",
+       "settings": {
+        "heading": "Will it hurt to peel off?",
+        "open_by_default": false
+       },
+       "blocks": {
+        "answer": {
+         "type": "text",
+         "settings": {
+          "text": "<p>Designed to be gentle on skin and peel off easily in the morning.</p>",
+          "width": "100%",
+          "max_width": "none",
+          "alignment": "left",
+          "type_preset": "custom",
+          "font": "var(--font-body--family)",
+          "font_size": "1rem",
+          "line_height": "normal",
+          "letter_spacing": "normal",
+          "case": "none",
+          "wrap": "pretty",
+          "text_color": "#000000"
+         },
+         "blocks": {}
+        }
+       },
+       "block_order": [
+        "answer"
+       ]
+      },
+      "row_2": {
+       "type": "_accordion-row",
+       "settings": {
+        "heading": "Will it irritate my skin?",
+        "open_by_default": false
+       },
+       "blocks": {
+        "answer": {
+         "type": "text",
+         "settings": {
+          "text": "<p>Each strip and tape uses a hypoallergenic adhesive layer designed to stay comfortable through the night without irritating skin.</p>",
+          "width": "100%",
+          "max_width": "none",
+          "alignment": "left",
+          "type_preset": "custom",
+          "font": "var(--font-body--family)",
+          "font_size": "1rem",
+          "line_height": "normal",
+          "letter_spacing": "normal",
+          "case": "none",
+          "wrap": "pretty",
+          "text_color": "#000000"
+         },
+         "blocks": {}
+        }
+       },
+       "block_order": [
+        "answer"
+       ]
+      },
+      "row_3": {
+       "type": "_accordion-row",
+       "settings": {
+        "heading": "Strips or Tape: where do I start?",
+        "open_by_default": false
+       },
+       "blocks": {
+        "answer": {
+         "type": "text",
+         "settings": {
+          "text": "<p>Both are available individually if you’d rather start with one. Not sure? The bundle gives you both for the full routine.</p>",
+          "width": "100%",
+          "max_width": "none",
+          "alignment": "left",
+          "type_preset": "custom",
+          "font": "var(--font-body--family)",
+          "font_size": "1rem",
+          "line_height": "normal",
+          "letter_spacing": "normal",
+          "case": "none",
+          "wrap": "pretty",
+          "text_color": "#000000"
+         },
+         "blocks": {}
+        }
+       },
+       "block_order": [
+        "answer"
+       ]
+      },
+      "row_4": {
+       "type": "_accordion-row",
+       "settings": {
+        "heading": "How long does one bag last?",
+        "open_by_default": false
+       },
+       "blocks": {
+        "answer": {
+         "type": "text",
+         "settings": {
+          "text": "<p>Each bag holds 30 nights.</p>",
+          "width": "100%",
+          "max_width": "none",
+          "alignment": "left",
+          "type_preset": "custom",
+          "font": "var(--font-body--family)",
+          "font_size": "1rem",
+          "line_height": "normal",
+          "letter_spacing": "normal",
+          "case": "none",
+          "wrap": "pretty",
+          "text_color": "#000000"
+         },
+         "blocks": {}
+        }
+       },
+       "block_order": [
+        "answer"
+       ]
+      },
+      "row_5": {
+       "type": "_accordion-row",
+       "settings": {
+        "heading": "When will my order arrive?",
+        "open_by_default": false
+       },
+       "blocks": {
+        "answer": {
+         "type": "text",
+         "settings": {
+          "text": "<p>We ship free within the US. Orders arrive in 7–9 business days.</p>",
+          "width": "100%",
+          "max_width": "none",
+          "alignment": "left",
+          "type_preset": "custom",
+          "font": "var(--font-body--family)",
+          "font_size": "1rem",
+          "line_height": "normal",
+          "letter_spacing": "normal",
+          "case": "none",
+          "wrap": "pretty",
+          "text_color": "#000000"
+         },
+         "blocks": {}
+        }
+       },
+       "block_order": [
+        "answer"
+       ]
+      },
+      "row_6": {
+       "type": "_accordion-row",
+       "settings": {
+        "heading": "Can I skip, pause or cancel Autoship?",
+        "open_by_default": false
+       },
+       "blocks": {
+        "answer": {
+         "type": "text",
+         "settings": {
+          "text": "<p>Yes. Pause or cancel anytime from your account. No fees, no calls.</p>",
+          "width": "100%",
+          "max_width": "none",
+          "alignment": "left",
+          "type_preset": "custom",
+          "font": "var(--font-body--family)",
+          "font_size": "1rem",
+          "line_height": "normal",
+          "letter_spacing": "normal",
+          "case": "none",
+          "wrap": "pretty",
+          "text_color": "#000000"
+         },
+         "blocks": {}
+        }
+       },
+       "block_order": [
+        "answer"
+       ]
+      },
+      "row_7": {
+       "type": "_accordion-row",
+       "settings": {
+        "heading": "What if it’s not for me?",
+        "open_by_default": false
+       },
+       "blocks": {
+        "answer": {
+         "type": "text",
+         "settings": {
+          "text": "<p>Every order is covered by our 30-Night Money-Back Guarantee, counted from delivery.</p>",
+          "width": "100%",
+          "max_width": "none",
+          "alignment": "left",
+          "type_preset": "custom",
+          "font": "var(--font-body--family)",
+          "font_size": "1rem",
+          "line_height": "normal",
+          "letter_spacing": "normal",
+          "case": "none",
+          "wrap": "pretty",
+          "text_color": "#000000"
+         },
+         "blocks": {}
+        }
+       },
+       "block_order": [
+        "answer"
+       ]
+      }
+     },
+     "block_order": [
+      "row_1",
+      "row_2",
+      "row_3",
+      "row_4",
+      "row_5",
+      "row_6",
+      "row_7"
+     ]
+    }
+   },
+   "block_order": [
+    "intro",
+    "accordion"
+   ]
+  }
+ },
+ "order": [
+  "faq"
+ ]
+}

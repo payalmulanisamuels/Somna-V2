@@ -1,0 +1,348 @@
+{
+ "sections": {
+  "gifts": {
+   "type": "section",
+   "settings": {
+    "content_direction": "row",
+    "gap": 40,
+    "section_width": "page-width",
+    "background_color": "#000000",
+    "padding-block-start": 40,
+    "padding-block-end": 40,
+    "horizontal_alignment": "space-between",
+    "vertical_alignment": "center"
+   },
+   "blocks": {
+    "copy": {
+     "type": "group",
+     "settings": {
+      "content_direction": "column",
+      "vertical_on_mobile": true,
+      "gap": 12,
+      "width": "custom",
+      "custom_width": 45,
+      "width_mobile": "fill",
+      "height": "fit",
+      "border_radius": 0,
+      "padding-block-start": 0,
+      "padding-block-end": 0,
+      "padding-inline-start": 0,
+      "padding-inline-end": 0,
+      "horizontal_alignment_flex_direction_column": "flex-start",
+      "vertical_alignment_flex_direction_column": "center"
+     },
+     "blocks": {
+      "eyebrow": {
+       "type": "text",
+       "settings": {
+        "text": "<p>On orders of 2+ bags</p>",
+        "width": "100%",
+        "max_width": "none",
+        "alignment": "left",
+        "type_preset": "custom",
+        "font": "var(--font-body--family)",
+        "font_size": "1rem",
+        "line_height": "normal",
+        "letter_spacing": "loose",
+        "case": "none",
+        "wrap": "pretty",
+        "text_color": "#f3feee"
+       },
+       "blocks": {}
+      },
+      "heading": {
+       "type": "text",
+       "settings": {
+        "text": "<h2>Your <em>first order</em> comes with <em>3 gifts.</em></h2>",
+        "width": "100%",
+        "max_width": "none",
+        "alignment": "left",
+        "type_preset": "custom",
+        "font": "var(--font-accent--family)",
+        "font_size": "3.5rem",
+        "line_height": "normal",
+        "letter_spacing": "normal",
+        "case": "uppercase",
+        "wrap": "balance",
+        "text_color": "#f3feee",
+        "accent_color": "#98a3de"
+       },
+       "blocks": {}
+      },
+      "text": {
+       "type": "text",
+       "settings": {
+        "text": "<p>Emailed to you the day your order is delivered.</p>",
+        "width": "100%",
+        "max_width": "none",
+        "alignment": "left",
+        "type_preset": "custom",
+        "font": "var(--font-body--family)",
+        "font_size": "1rem",
+        "line_height": "normal",
+        "letter_spacing": "normal",
+        "case": "none",
+        "wrap": "pretty",
+        "text_color": "#f3feee"
+       },
+       "blocks": {}
+      }
+     },
+     "block_order": [
+      "eyebrow",
+      "heading",
+      "text"
+     ]
+    },
+    "offer": {
+     "type": "group",
+     "settings": {
+      "content_direction": "column",
+      "vertical_on_mobile": true,
+      "gap": 32,
+      "width": "custom",
+      "custom_width": 34,
+      "width_mobile": "fill",
+      "height": "fit",
+      "border_radius": 0,
+      "padding-block-start": 0,
+      "padding-block-end": 0,
+      "padding-inline-start": 0,
+      "padding-inline-end": 0,
+      "horizontal_alignment_flex_direction_column": "center",
+      "vertical_alignment_flex_direction_column": "center"
+     },
+     "blocks": {
+      "icons": {
+       "type": "group",
+       "settings": {
+        "content_direction": "row",
+        "vertical_on_mobile": false,
+        "gap": 16,
+        "width": "fill",
+        "custom_width": 100,
+        "width_mobile": "fill",
+        "height": "fit",
+        "border_radius": 0,
+        "padding-block-start": 0,
+        "padding-block-end": 0,
+        "padding-inline-start": 0,
+        "padding-inline-end": 0,
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "flex-start"
+       },
+       "blocks": {
+        "g1": {
+         "type": "group",
+         "settings": {
+          "content_direction": "column",
+          "vertical_on_mobile": true,
+          "gap": 16,
+          "width": "custom",
+          "custom_width": 30,
+          "width_mobile": "fill",
+          "height": "fit",
+          "border_radius": 0,
+          "padding-block-start": 0,
+          "padding-block-end": 0,
+          "padding-inline-start": 0,
+          "padding-inline-end": 0,
+          "horizontal_alignment_flex_direction_column": "center",
+          "vertical_alignment_flex_direction_column": "center"
+         },
+         "blocks": {
+          "icon": {
+           "type": "somna-icon",
+           "settings": {
+            "icon": "none",
+            "size": 54,
+            "color": "#000000",
+            "backdrop": "image",
+            "icon_offset": 10,
+            "image": "shopify://shop_images/somna-v2-mask-sleep-guide-1.png",
+            "backdrop_image": "shopify://shop_images/somna-v2-mask-gift-box.png",
+            "backdrop_color": "#f3feee",
+            "backdrop_size": 108
+           },
+           "blocks": {}
+          },
+          "label": {
+           "type": "text",
+           "settings": {
+            "text": "<p>Sleep Guide 1</p>",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "loose",
+            "case": "none",
+            "wrap": "pretty",
+            "text_color": "#f3feee"
+           },
+           "blocks": {}
+          }
+         },
+         "block_order": [
+          "icon",
+          "label"
+         ]
+        },
+        "g2": {
+         "type": "group",
+         "settings": {
+          "content_direction": "column",
+          "vertical_on_mobile": true,
+          "gap": 16,
+          "width": "custom",
+          "custom_width": 30,
+          "width_mobile": "fill",
+          "height": "fit",
+          "border_radius": 0,
+          "padding-block-start": 0,
+          "padding-block-end": 0,
+          "padding-inline-start": 0,
+          "padding-inline-end": 0,
+          "horizontal_alignment_flex_direction_column": "center",
+          "vertical_alignment_flex_direction_column": "center"
+         },
+         "blocks": {
+          "icon": {
+           "type": "somna-icon",
+           "settings": {
+            "icon": "none",
+            "size": 54,
+            "color": "#000000",
+            "backdrop": "image",
+            "icon_offset": 10,
+            "image": "shopify://shop_images/somna-v2-mask-sleep-guide-2.png",
+            "backdrop_image": "shopify://shop_images/somna-v2-mask-gift-box.png",
+            "backdrop_color": "#f3feee",
+            "backdrop_size": 108
+           },
+           "blocks": {}
+          },
+          "label": {
+           "type": "text",
+           "settings": {
+            "text": "<p>Sleep Guide 2</p>",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "loose",
+            "case": "none",
+            "wrap": "pretty",
+            "text_color": "#f3feee"
+           },
+           "blocks": {}
+          }
+         },
+         "block_order": [
+          "icon",
+          "label"
+         ]
+        },
+        "g3": {
+         "type": "group",
+         "settings": {
+          "content_direction": "column",
+          "vertical_on_mobile": true,
+          "gap": 16,
+          "width": "custom",
+          "custom_width": 30,
+          "width_mobile": "fill",
+          "height": "fit",
+          "border_radius": 0,
+          "padding-block-start": 0,
+          "padding-block-end": 0,
+          "padding-inline-start": 0,
+          "padding-inline-end": 0,
+          "horizontal_alignment_flex_direction_column": "center",
+          "vertical_alignment_flex_direction_column": "center"
+         },
+         "blocks": {
+          "icon": {
+           "type": "somna-icon",
+           "settings": {
+            "icon": "none",
+            "size": 54,
+            "color": "#000000",
+            "backdrop": "image",
+            "icon_offset": 10,
+            "image": "shopify://shop_images/somna-v2-mask-tracker.png",
+            "backdrop_image": "shopify://shop_images/somna-v2-mask-gift-box.png",
+            "backdrop_color": "#f3feee",
+            "backdrop_size": 108
+           },
+           "blocks": {}
+          },
+          "label": {
+           "type": "text",
+           "settings": {
+            "text": "<p>30 Night sleep tracker</p>",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "loose",
+            "case": "none",
+            "wrap": "pretty",
+            "text_color": "#f3feee"
+           },
+           "blocks": {}
+          }
+         },
+         "block_order": [
+          "icon",
+          "label"
+         ]
+        }
+       },
+       "block_order": [
+        "g1",
+        "g2",
+        "g3"
+       ]
+      },
+      "button": {
+       "type": "button",
+       "settings": {
+        "label": "CLAIM MY 3 GIFTS →",
+        "link": "shopify://collections/all",
+        "style_class": "button-custom",
+        "custom_button_background": "#98a3de",
+        "custom_button_text": "#000000",
+        "custom_button_border": "#98a3de",
+        "width": "custom",
+        "custom_width": 100,
+        "width_mobile": "custom",
+        "custom_width_mobile": 100
+       },
+       "blocks": {}
+      }
+     },
+     "block_order": [
+      "icons",
+      "button"
+     ]
+    }
+   },
+   "block_order": [
+    "copy",
+    "offer"
+   ]
+  }
+ },
+ "order": [
+  "gifts"
+ ]
+}
