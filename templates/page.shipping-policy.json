@@ -1,0 +1,184 @@
+{
+  "sections": {
+    "policy_top": {
+      "type": "somna-policy-band",
+      "blocks": {
+        "link_1": {
+          "type": "link",
+          "settings": {
+            "label": "Shipping",
+            "link": "/pages/shipping-policy"
+          }
+        },
+        "link_2": {
+          "type": "link",
+          "settings": {
+            "label": "Returns & refunds",
+            "link": "/pages/return-refund-policy"
+          }
+        },
+        "link_3": {
+          "type": "link",
+          "settings": {
+            "label": "Subscriptions",
+            "link": "/pages/subscription-policy"
+          }
+        },
+        "link_4": {
+          "type": "link",
+          "settings": {
+            "label": "Order cancellation",
+            "link": "/pages/order-cancellation-policy"
+          }
+        },
+        "link_5": {
+          "type": "link",
+          "settings": {
+            "label": "Terms of service",
+            "link": "/pages/terms-of-service"
+          }
+        },
+        "link_6": {
+          "type": "link",
+          "settings": {
+            "label": "Privacy",
+            "link": "/pages/privacy-policy"
+          }
+        }
+      },
+      "block_order": [
+        "link_1",
+        "link_2",
+        "link_3",
+        "link_4",
+        "link_5",
+        "link_6"
+      ],
+      "settings": {
+        "size": "title",
+        "eyebrow": "Somna policies",
+        "heading": "",
+        "pills_label": "Policies",
+        "background": "#0b0f1d",
+        "text_color": "#f3feee",
+        "accent": "#afbdf8"
+      }
+    },
+    "wave_top": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#0b0f1d",
+        "bottom_color": "#afbdf8",
+        "shape": "drip-1",
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "policy": {
+      "type": "somna-policy",
+      "blocks": {
+        "item_1": {
+          "type": "item",
+          "settings": {
+            "heading": "1. Processing Time",
+            "text": "<p>All orders are processed within 1 to 2 business days (excluding weekends and holidays) after receiving your order confirmation email. You will receive another notification when your order has shipped.</p>"
+          }
+        },
+        "item_2": {
+          "type": "item",
+          "settings": {
+            "heading": "2. Shipping Rates and Estimatesa",
+            "text": "<p>We currently ship within the United States only.</p><p>Shipping is free on every order, with no minimum purchase required.</p><p>Delivery typically takes 7–9 business days from the date your order ships.</p>"
+          }
+        },
+        "item_3": {
+          "type": "item",
+          "settings": {
+            "heading": "3. How Do I Check the Status of My Order?",
+            "text": "<p>When your order has shipped, you will receive an email notification from us which will include a tracking number you can use to check its status. Please allow 48 hours for the tracking information to become available. You can also track your order directly on our Track Your Order page.</p>"
+          }
+        },
+        "item_4": {
+          "type": "item",
+          "settings": {
+            "heading": "4. Lost, Stolen, or Damaged Packages",
+            "text": "<p>Somna is not liable for any products damaged or lost during shipping. If you received your order damaged, please contact the shipment carrier to file a claim. Please save all packaging materials and damaged goods before filing a claim. We are not responsible for packages marked as \"Delivered\" by the carrier that are subsequently stolen from your property.</p>"
+          }
+        },
+        "item_5": {
+          "type": "item",
+          "settings": {
+            "heading": "5. Incorrect Shipping Addresses",
+            "text": "<p>Customers are responsible for providing the correct shipping address. If a package is returned to us due to an incorrect or incomplete address provided by the customer, the customer will be responsible for the return shipping cost as well as the redelivery cost.</p><p>Somna is not responsible for packages delivered to incorrect addresses provided by the customer.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "item_1",
+        "item_2",
+        "item_3",
+        "item_4",
+        "item_5"
+      ],
+      "settings": {
+        "show_toc": true,
+        "toc_label": "On this page",
+        "background": "#afbdf8",
+        "card": "#c9d3fb",
+        "accent": "#1d2fa8"
+      }
+    },
+    "wave_bottom": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#afbdf8",
+        "bottom_color": "#000000",
+        "shape": "drip-10",
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "policy_contact": {
+      "type": "somna-policy-band",
+      "settings": {
+        "size": "band",
+        "eyebrow": "",
+        "heading": "Still have a question?",
+        "text": "<p>Email us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> or send us a message.</p>",
+        "button_label": "CONTACT US →",
+        "button_link": "/pages/contact",
+        "pills_label": "Policies",
+        "background": "#000000",
+        "text_color": "#f3feee",
+        "accent": "#afbdf8"
+      }
+    },
+    "wave_footer": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#000000",
+        "bottom_color": "#f3feee",
+        "shape": "drip-11",
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    }
+  },
+  "order": [
+    "policy_top",
+    "wave_top",
+    "policy",
+    "wave_bottom",
+    "policy_contact",
+    "wave_footer"
+  ]
+}

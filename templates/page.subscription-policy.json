@@ -1,0 +1,192 @@
+{
+  "sections": {
+    "policy_top": {
+      "type": "somna-policy-band",
+      "blocks": {
+        "link_1": {
+          "type": "link",
+          "settings": {
+            "label": "Shipping",
+            "link": "/pages/shipping-policy"
+          }
+        },
+        "link_2": {
+          "type": "link",
+          "settings": {
+            "label": "Returns & refunds",
+            "link": "/pages/return-refund-policy"
+          }
+        },
+        "link_3": {
+          "type": "link",
+          "settings": {
+            "label": "Subscriptions",
+            "link": "/pages/subscription-policy"
+          }
+        },
+        "link_4": {
+          "type": "link",
+          "settings": {
+            "label": "Order cancellation",
+            "link": "/pages/order-cancellation-policy"
+          }
+        },
+        "link_5": {
+          "type": "link",
+          "settings": {
+            "label": "Terms of service",
+            "link": "/pages/terms-of-service"
+          }
+        },
+        "link_6": {
+          "type": "link",
+          "settings": {
+            "label": "Privacy",
+            "link": "/pages/privacy-policy"
+          }
+        }
+      },
+      "block_order": [
+        "link_1",
+        "link_2",
+        "link_3",
+        "link_4",
+        "link_5",
+        "link_6"
+      ],
+      "settings": {
+        "size": "title",
+        "eyebrow": "Somna policies",
+        "heading": "",
+        "pills_label": "Policies",
+        "background": "#0b0f1d",
+        "text_color": "#f3feee",
+        "accent": "#afbdf8"
+      }
+    },
+    "wave_top": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#0b0f1d",
+        "bottom_color": "#afbdf8",
+        "shape": "drip-1",
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "policy": {
+      "type": "somna-policy",
+      "blocks": {
+        "item_1": {
+          "type": "item",
+          "settings": {
+            "heading": "1. How Subscribe & Save Works",
+            "text": "<p>When you choose Subscribe & Save at checkout, your order is placed automatically on a recurring schedule at a discount off the one-time price (up to 50% off during our current sale). Your delivery frequency is set by the size you choose:</p><p>1 Bag / 1 Set — every month.</p><p>2 Bags / 2 Sets — every 2 months.</p><p>3+1 Bags / 3+1 Sets (4-month supply) — every 4 months.</p><p>The Colour Set and Season Bundle are delivered every 3 months.</p>"
+          }
+        },
+        "item_2": {
+          "type": "item",
+          "settings": {
+            "heading": "2. Managing Your Subscription",
+            "text": "<p>You can skip an upcoming order, change your product or colour, change your delivery frequency, update your quantity or tier, or update your payment and shipping details at any time from your account — no need to contact support. Visit [Manage my subscription →].</p>"
+          }
+        },
+        "item_3": {
+          "type": "item",
+          "settings": {
+            "heading": "3. Billing",
+            "text": "<p>Your payment method is charged automatically a few days before each scheduled order ships. If a payment fails, we will notify you by email and attempt to charge your payment method again before your subscription is affected.</p>"
+          }
+        },
+        "item_4": {
+          "type": "item",
+          "settings": {
+            "heading": "4. Pausing or Cancelling",
+            "text": "<p>You can pause or cancel your subscription at any time from your account, with no fees and no phone call required. A paused subscription can be restarted at any time. Cancelling stops all future orders immediately; it does not affect orders already placed or shipped.</p>"
+          }
+        },
+        "item_5": {
+          "type": "item",
+          "settings": {
+            "heading": "5. Price Changes",
+            "text": "<p>If the price of a product in your subscription changes, we will notify you by email before your next order processes at the new price. You are always free to cancel before that order ships.</p>"
+          }
+        },
+        "item_6": {
+          "type": "item",
+          "settings": {
+            "heading": "6. Order Adjustments",
+            "text": "<p>Skips, pauses, or other changes take effect immediately if made before your next order begins processing. Changes made after an order has begun processing will apply to the following cycle instead.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "item_1",
+        "item_2",
+        "item_3",
+        "item_4",
+        "item_5",
+        "item_6"
+      ],
+      "settings": {
+        "show_toc": true,
+        "toc_label": "On this page",
+        "background": "#afbdf8",
+        "card": "#c9d3fb",
+        "accent": "#1d2fa8"
+      }
+    },
+    "wave_bottom": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#afbdf8",
+        "bottom_color": "#000000",
+        "shape": "drip-10",
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "policy_contact": {
+      "type": "somna-policy-band",
+      "settings": {
+        "size": "band",
+        "eyebrow": "",
+        "heading": "Still have a question?",
+        "text": "<p>Email us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> or send us a message.</p>",
+        "button_label": "CONTACT US →",
+        "button_link": "/pages/contact",
+        "pills_label": "Policies",
+        "background": "#000000",
+        "text_color": "#f3feee",
+        "accent": "#afbdf8"
+      }
+    },
+    "wave_footer": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#000000",
+        "bottom_color": "#f3feee",
+        "shape": "drip-11",
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    }
+  },
+  "order": [
+    "policy_top",
+    "wave_top",
+    "policy",
+    "wave_bottom",
+    "policy_contact",
+    "wave_footer"
+  ]
+}
