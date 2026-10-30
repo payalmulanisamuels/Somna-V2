@@ -2411,68 +2411,110 @@
       }
     },
     "reviews": {
-      "type": "section",
-      "settings": {
-        "content_direction": "column",
-        "gap": 24,
-        "section_width": "page-width",
-        "background_color": "#000000",
-        "padding-block-start": 24,
-        "padding-block-end": 24,
-        "horizontal_alignment_flex_direction_column": "center"
-      },
+      "type": "somna-reviews",
       "blocks": {
-        "eyebrow": {
-          "type": "text",
+        "photo_1": {
+          "type": "photo",
           "settings": {
-            "text": "<p>Reviews</p>",
-            "width": "100%",
-            "max_width": "none",
-            "alignment": "center",
-            "type_preset": "custom",
-            "font": "var(--font-body--family)",
-            "font_size": "1.5rem",
-            "line_height": "normal",
-            "letter_spacing": "loose",
-            "case": "uppercase",
-            "wrap": "pretty",
-            "text_color": "#f3feee"
-          },
-          "blocks": {}
+            "image": "shopify://shop_images/somna-v2-review-photo-1.png",
+            "alt": ""
+          }
         },
-        "heading": {
-          "type": "text",
+        "photo_2": {
+          "type": "photo",
           "settings": {
-            "text": "<h2>What <em>sleepers</em> are saying</h2>",
-            "width": "100%",
-            "max_width": "none",
-            "alignment": "center",
-            "type_preset": "custom",
-            "font": "var(--font-accent--family)",
-            "font_size": "3.5rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "uppercase",
-            "wrap": "balance",
-            "text_color": "#f3feee",
-            "accent_color": "#afbdf8"
-          },
-          "blocks": {}
+            "image": "shopify://shop_images/somna-v2-review-photo-2.png",
+            "alt": ""
+          }
         },
-        "judgeme": {
-          "type": "shopify://apps/judge-me-reviews/blocks/review_widget_homepage/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+        "photo_3": {
+          "type": "photo",
           "settings": {
-            "product": "",
-            "max_width": 1200
+            "image": "shopify://shop_images/somna-v2-review-photo-3.png",
+            "alt": ""
+          }
+        },
+        "photo_4": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-review-photo-4.png",
+            "alt": ""
+          }
+        },
+        "photo_5": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-review-photo-5.png",
+            "alt": ""
+          }
+        },
+        "photo_6": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-review-photo-6.png",
+            "alt": ""
           }
         }
       },
       "block_order": [
-        "eyebrow",
-        "heading",
-        "judgeme"
+        "photo_1",
+        "photo_2",
+        "photo_3",
+        "photo_4",
+        "photo_5",
+        "photo_6"
       ],
-      "disabled": true
+      "settings": {
+        "eyebrow": "Reviews",
+        "heading": "<p>What <em>sleepers</em> are saying</p>",
+        "accent_color": "#afbdf8",
+        "background_color": "#000000",
+        "text_color": "#f3feee",
+        "card_color": "#f3feee",
+        "card_text_color": "#0b1a45",
+        "star_color": "#f5c242",
+        "max_width": 1000,
+        "show_edges": true,
+        "padding_top": 24,
+        "padding_bottom": 48,
+        "padding_top_mobile": 8,
+        "padding_bottom_mobile": 24,
+        "top_wave": false,
+        "bottom_wave": false,
+        "show_featured": true,
+        "featured_title": "Hooked from bag one.",
+        "featured_text": "I bought one bag to try. Now I'm on Autoship and I've sent a pack to my sister.",
+        "featured_name": "Priya S.",
+        "featured_avatar": "shopify://shop_images/somna-v2-review-avatar-1.png",
+        "featured_verified": "Verified buyer.",
+        "featured_product": "Sleep bundle",
+        "featured_rating": 5,
+        "show_summary": true,
+        "average": "4.6",
+        "show_summary_stars": true,
+        "count": "3600+ reviews",
+        "pct_5": 78,
+        "pct_4": 15,
+        "pct_3": 4,
+        "pct_2": 2,
+        "pct_1": 1,
+        "bar_color": "#98a3de",
+        "track_color": "#d8ddd4",
+        "show_gallery": true,
+        "gallery_limit": 6,
+        "sheet_url": "https://docs.google.com/spreadsheets/d/1pOrOzI06fWZ82O1l47xT8u4N2zk5FmM9/edit?gid=405744366#gid=405744366",
+        "initial_count": 4,
+        "batch_size": 4,
+        "show_filters": true,
+        "show_review_photos": true,
+        "show_verified": true,
+        "verified_label": "Verified Buyer",
+        "show_product": true,
+        "show_dates": true,
+        "name_format": "short",
+        "samples_in_preview": true,
+        "chip_active_color": "#afbdf8"
+      }
     },
     "wave_black_peri": {
       "type": "somna-wave",
@@ -2831,112 +2873,6 @@
         "height": 140,
         "height_mobile": 48
       }
-    },
-    "reviews_sheet": {
-      "type": "somna-reviews",
-      "blocks": {
-        "photo_1": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/somna-v2-review-photo-1.png",
-            "alt": ""
-          }
-        },
-        "photo_2": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/somna-v2-review-photo-2.png",
-            "alt": ""
-          }
-        },
-        "photo_3": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/somna-v2-review-photo-3.png",
-            "alt": ""
-          }
-        },
-        "photo_4": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/somna-v2-review-photo-4.png",
-            "alt": ""
-          }
-        },
-        "photo_5": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/somna-v2-review-photo-5.png",
-            "alt": ""
-          }
-        },
-        "photo_6": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/somna-v2-review-photo-6.png",
-            "alt": ""
-          }
-        }
-      },
-      "block_order": [
-        "photo_1",
-        "photo_2",
-        "photo_3",
-        "photo_4",
-        "photo_5",
-        "photo_6"
-      ],
-      "settings": {
-        "eyebrow": "Reviews",
-        "heading": "<p>What <em>sleepers</em> are saying</p>",
-        "accent_color": "#afbdf8",
-        "background_color": "#000000",
-        "text_color": "#f3feee",
-        "card_color": "#f3feee",
-        "card_text_color": "#0b1a45",
-        "star_color": "#f5c242",
-        "max_width": 1000,
-        "show_edges": true,
-        "padding_top": 24,
-        "padding_bottom": 48,
-        "padding_top_mobile": 8,
-        "padding_bottom_mobile": 24,
-        "top_wave": false,
-        "bottom_wave": false,
-        "show_featured": true,
-        "featured_title": "Hooked from bag one.",
-        "featured_text": "I bought one bag to try. Now I'm on Autoship and I've sent a pack to my sister.",
-        "featured_name": "Priya S.",
-        "featured_avatar": "shopify://shop_images/somna-v2-review-avatar-1.png",
-        "featured_verified": "Verified buyer.",
-        "featured_product": "Sleep bundle",
-        "featured_rating": 5,
-        "show_summary": true,
-        "average": "4.6",
-        "show_summary_stars": true,
-        "count": "3600+ reviews",
-        "pct_5": 78,
-        "pct_4": 15,
-        "pct_3": 4,
-        "pct_2": 2,
-        "pct_1": 1,
-        "bar_color": "#98a3de",
-        "track_color": "#d8ddd4",
-        "show_gallery": true,
-        "gallery_limit": 6,
-        "sheet_url": "https://docs.google.com/spreadsheets/d/1pOrOzI06fWZ82O1l47xT8u4N2zk5FmM9/edit?gid=405744366#gid=405744366",
-        "initial_count": 4,
-        "batch_size": 4,
-        "show_filters": true,
-        "show_review_photos": true,
-        "show_verified": true,
-        "verified_label": "Verified Buyer",
-        "show_product": true,
-        "show_dates": true,
-        "name_format": "short",
-        "samples_in_preview": true,
-        "chip_active_color": "#afbdf8"
-      }
     }
   },
   "order": [
@@ -2958,7 +2894,6 @@
     "faq",
     "wave_mint_black_3",
     "reviews",
-    "reviews_sheet",
     "wave_black_peri",
     "guarantee",
     "wave_peri_photo",
