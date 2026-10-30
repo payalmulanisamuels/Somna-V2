@@ -82,7 +82,7 @@
                   "settings": {
                     "menu": "",
                     "heading": "SHOP",
-                    "menu_spacing": 14,
+                    "menu_spacing": 8,
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
                     "link_preset": "paragraph"
@@ -124,7 +124,7 @@
                   "settings": {
                     "menu": "",
                     "heading": "SUPPORT",
-                    "menu_spacing": 14,
+                    "menu_spacing": 8,
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
                     "link_preset": "paragraph"
@@ -166,7 +166,7 @@
                   "settings": {
                     "menu": "",
                     "heading": "LEARN",
-                    "menu_spacing": 14,
+                    "menu_spacing": 8,
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
                     "link_preset": "paragraph"
@@ -199,7 +199,7 @@
                   "settings": {
                     "menu": "",
                     "heading": "CONNECT",
-                    "menu_spacing": 14,
+                    "menu_spacing": 8,
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
                     "link_preset": "paragraph"

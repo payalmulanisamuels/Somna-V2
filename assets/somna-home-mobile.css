@@ -280,7 +280,7 @@
     justify-content: flex-start !important;
     align-items: center !important;
     /* the guarantee wave hangs over the top of this section (135 units of a 560-unit crop) */
-    padding-block: calc(100vw * 135 / 560 + 24px) 0;
+    padding-block: calc(100vw * 135 / 560 + 8px) 0;
   }
 
   [id$='__final_cta'] .hero__content-wrapper > .group-block {
