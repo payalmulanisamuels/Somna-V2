@@ -1519,42 +1519,49 @@
         "wave_color": "#000000",
         "wave_shape": "drip-6",
         "padding_top": 16,
-        "padding_bottom": 24
+        "padding_bottom": 24,
+        "enabled": true,
+        "heading_size": 50,
+        "heading_size_mobile": 26,
+        "heading_gap": 20,
+        "padding_top_mobile": 8,
+        "padding_bottom_mobile": 8,
+        "caption_color": "#0a1a4a"
       },
       "blocks": {
         "card_1": {
           "type": "card",
           "settings": {
-            "image": "shopify://shop_images/somna-v2-ugc-1.png",
-            "caption": "My new bedtime habit"
+            "caption": "My new bedtime habit",
+            "video": "shopify://files/videos/0706(1)-1.mp4"
           }
         },
         "card_2": {
           "type": "card",
           "settings": {
-            "image": "shopify://shop_images/somna-v2-ugc-2.png",
-            "caption": "30 nights later"
+            "caption": "30 nights later",
+            "video": "shopify://files/videos/0706(2)-1.mp4"
           }
         },
         "card_3": {
           "type": "card",
           "settings": {
-            "image": "shopify://shop_images/somna-v2-ugc-1.png",
-            "caption": "How I put it on"
+            "caption": "How I put it on",
+            "video": "shopify://files/videos/0706(4)-1.mp4"
           }
         },
         "card_4": {
           "type": "card",
           "settings": {
-            "image": "shopify://shop_images/somna-v2-ugc-2.png",
-            "caption": "Why I switched"
+            "caption": "Why I switched",
+            "video": "shopify://files/videos/0706-1.mp4"
           }
         },
         "card_5": {
           "type": "card",
           "settings": {
-            "image": "shopify://shop_images/somna-v2-ugc-1.png",
-            "caption": ""
+            "caption": "",
+            "video": "shopify://files/videos/0706(3)-1.mp4"
           }
         },
         "card_6": {
