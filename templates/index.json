@@ -2888,7 +2888,7 @@
       ],
       "settings": {
         "eyebrow": "Reviews",
-        "heading": "<h2>What <em>sleepers</em> are saying</h2>",
+        "heading": "<p>What <em>sleepers</em> are saying</p>",
         "accent_color": "#afbdf8",
         "background_color": "#000000",
         "text_color": "#f3feee",
