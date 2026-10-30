@@ -375,7 +375,23 @@
   }
 
   [id$='__guarantee'] > * > .spacing-style.layout-panel-flex {
-    padding-block-end: 8px !important;
+    padding-block: 0 !important;
+  }
+
+  /* guarantee: shield box sized to the icon, readable eyebrow and sub-line */
+  [id$='__guarantee'] .somna-icon {
+    --somna-icon-box: 48px !important;
+    --somna-icon-size: 48px !important;
+  }
+
+  [id$='__guarantee'] [class*='__eyebrow'] p {
+    font-size: 0.75rem !important;
+    letter-spacing: 0.16em;
+  }
+
+  [id$='__guarantee'] [class*='__text'] p {
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
   }
 
   /* ---------- #SomnaNights: hashtag keeps its spelling, readable eyebrow, swipeable photo strip ---------- */
