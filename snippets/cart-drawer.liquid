@@ -235,7 +235,27 @@
   }
 
   #cart-drawer .theme-drawer__close-button {
+    border: 1px solid rgb(175 189 248 / 0.5);
+    border-radius: 50%;
+    background: transparent;
     color: #f3feee;
+  }
+
+  /* items, upsell and totals scroll together; the items list keeps its full height */
+  #cart-drawer .cart-drawer__items {
+    flex: none;
+    height: auto;
+    overflow: visible;
+  }
+
+  #cart-drawer .cart-drawer__summary {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #cart-drawer .cart-drawer__summary > * {
+    align-self: stretch;
+    width: 100%;
   }
 
   /* free-gift progress */
@@ -434,12 +454,24 @@
   }
 
   .hz-minicart-upsell__content .review_content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
     font-size: 0.75rem;
-    opacity: 0.8;
+    line-height: 1.2;
+    opacity: 0.85;
   }
 
-  .hz-minicart-upsell__content .review_content svg {
-    width: 12px;
+  .hz-minicart-upsell__content .review_content :is(p, div) {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+  }
+
+  .hz-minicart-upsell__content .review_content :is(svg, img) {
+    width: auto;
     height: 12px;
   }
 
