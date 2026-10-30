@@ -91,6 +91,7 @@
 
         if (sound) sound.addEventListener('click', function () {
           video.muted = !video.muted;
+          self.soundOn = !video.muted; // the next video keeps the customer's choice
           self.syncSound(sound, video);
         });
 
@@ -152,8 +153,8 @@
       video.hidden = false;
       video.loop = this.opt.loop;
       video.controls = this.opt.controls;
-      video.muted = auto ? true : (!this.opt.sound || this.opt.muted ? true : video.muted);
-      if (!this.opt.sound) video.muted = true;
+      if (auto || !this.opt.sound) video.muted = true;
+      else video.muted = this.soundOn != null ? !this.soundOn : this.opt.muted;
       if (!video.controls) video.setAttribute('tabindex', '0');
       card.classList.add('is-loading');
       var sound = card.querySelector('[data-sound]');
