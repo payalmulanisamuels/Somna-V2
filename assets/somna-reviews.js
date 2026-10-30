@@ -169,7 +169,7 @@
       this.initial = parseInt(d.initial, 10) || 4;
       this.batch = parseInt(d.batch, 10) || 4;
       this.opts = {
-        photos: d.photos === 'true',
+        photos: d.photos === 'true', // reviewer photos in the avatars + the “with photos” filter
         verified: d.verified === 'true',
         product: d.product === 'true',
         dates: d.dates === 'true',
@@ -296,9 +296,11 @@
       var li = el('li', 'somna-reviews__card');
       var name = r.name ? (o.shortNames ? shortName(r.name) : r.name) : '';
 
-      if (r.avatar) {
+      // Figma: the reviewer's photo sits in the round avatar; no photo → their initials
+      var pic = r.avatar || (o.photos ? r.photo : '');
+      if (pic) {
         var a = el('img', 'somna-reviews__avatar');
-        a.src = r.avatar; a.alt = ''; a.width = 40; a.height = 40; a.loading = 'lazy'; a.decoding = 'async';
+        a.src = pic; a.alt = name ? name : ''; a.width = 52; a.height = 52; a.loading = 'lazy'; a.decoding = 'async';
         a.addEventListener('error', function () { a.replaceWith(initials(name)); });
         li.appendChild(a);
       } else li.appendChild(initials(name));
@@ -317,12 +319,6 @@
       }
       if (meta.length) who.appendChild(el('span', 'somna-reviews__meta', (who.childNodes.length ? ' · ' : '') + meta.join(' · ')));
       if (who.childNodes.length) body.appendChild(who);
-      if (o.photos && r.photo) {
-        var p = el('img', 'somna-reviews__photo');
-        p.src = r.photo; p.alt = r.title ? 'Customer photo: ' + r.title : 'Customer photo'; p.width = 72; p.height = 72; p.loading = 'lazy'; p.decoding = 'async';
-        p.addEventListener('error', function () { p.remove(); });
-        body.appendChild(p);
-      }
       li.appendChild(body);
       li.appendChild(this.stars(r.rating));
       return li;
@@ -330,7 +326,9 @@
   }
 
   function initials(name) {
-    var span = el('span', 'somna-reviews__avatar somna-reviews__avatar--initials', (name || '?').trim().charAt(0) || '?');
+    var letters = (name || '').trim().split(/\s+/).filter(Boolean).map(function (w) { return w.charAt(0); });
+    var text = letters.length > 1 ? letters[0] + letters[letters.length - 1] : (letters[0] || '?');
+    var span = el('span', 'somna-reviews__avatar somna-reviews__avatar--initials', text.toUpperCase());
     span.setAttribute('aria-hidden', 'true');
     return span;
   }
