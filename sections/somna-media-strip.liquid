@@ -577,6 +577,15 @@
 
   /* final mobile design: left-aligned heading, two cards in view */
   @media screen and (max-width: 749px) {
+    /* swipe row without the grey browser scrollbar (not in Figma) */
+    .somna-strip__list {
+      scrollbar-width: none;
+    }
+
+    .somna-strip__list::-webkit-scrollbar {
+      display: none;
+    }
+
     .somna-strip {
       padding-block: var(--somna-strip-pt-m, 8px) var(--somna-strip-pb-m, 8px);
     }

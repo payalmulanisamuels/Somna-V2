@@ -629,6 +629,31 @@
 
   /* final mobile design: smaller heading, perks in a 2 × 2 grid */
   @media screen and (max-width: 749px) {
+    /* Subscribe bar: title on one line on phones */
+    .somna-bundle__bar {
+      gap: 12px;
+      padding: 12px 14px;
+    }
+
+    .somna-bundle__bar-icon {
+      width: 52px;
+      height: 52px;
+      margin-block: 0;
+    }
+
+    .somna-bundle__bar-icon svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .somna-bundle__bar-text strong {
+      font-size: 1.0625rem;
+    }
+
+    .somna-bundle__bar-text span {
+      font-size: 0.8125rem;
+    }
+
     /* mobile Figma: the bundle card and the Subscribe bar keep straight edges */
     .somna-bundle__featured.somna-edge-drip-bottom,
     .somna-bundle__bar.somna-edge-drip-bottom {
