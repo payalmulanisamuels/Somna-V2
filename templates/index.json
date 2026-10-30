@@ -2793,7 +2793,7 @@
             "custom_button_text": "#000000",
             "custom_button_border": "#afbdf8",
             "width": "custom",
-            "custom_width": 50,
+            "custom_width": 30,
             "width_mobile": "custom",
             "custom_width_mobile": 100
           },
@@ -2844,7 +2844,8 @@
           "settings": {
             "placeholder": "Your email",
             "button_label": "Subscribe →",
-            "width": 60
+            "width": 60,
+            "row_max_width": 1160
           },
           "blocks": {}
         }
