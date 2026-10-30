@@ -272,7 +272,8 @@
       this.list.appendChild(frag);
       this.shown += slice.length;
       this.list.setAttribute('aria-busy', 'false');
-      var none = !this.filtered.length;
+      // nothing to show at all (e.g. only sample rows on the live store): stay quiet
+      var none = !this.filtered.length && this.rows.length > 0;
       this.status.textContent = none ? (this.dataset.empty || '') : '';
       this.status.hidden = !none;
       this.more.hidden = this.shown >= this.filtered.length;
@@ -305,12 +306,6 @@
       var body = el('div', 'somna-reviews__body');
       if (r.title) body.appendChild(el('h3', 'somna-reviews__title', '“' + r.title + '”'));
       body.appendChild(el('p', 'somna-reviews__text', '“' + r.body + '”'));
-      if (o.photos && r.photo) {
-        var p = el('img', 'somna-reviews__photo');
-        p.src = r.photo; p.alt = r.title ? 'Customer photo: ' + r.title : 'Customer photo'; p.width = 72; p.height = 72; p.loading = 'lazy'; p.decoding = 'async';
-        p.addEventListener('error', function () { p.remove(); });
-        body.appendChild(p);
-      }
       var who = el('p', 'somna-reviews__who');
       if (name) who.appendChild(el('strong', '', name));
       if (o.verified && r.verified) who.appendChild(el('span', 'somna-reviews__verified', this.dataset.verifiedLabel || 'Verified Buyer'));
@@ -322,6 +317,12 @@
       }
       if (meta.length) who.appendChild(el('span', 'somna-reviews__meta', (who.childNodes.length ? ' · ' : '') + meta.join(' · ')));
       if (who.childNodes.length) body.appendChild(who);
+      if (o.photos && r.photo) {
+        var p = el('img', 'somna-reviews__photo');
+        p.src = r.photo; p.alt = r.title ? 'Customer photo: ' + r.title : 'Customer photo'; p.width = 72; p.height = 72; p.loading = 'lazy'; p.decoding = 'async';
+        p.addEventListener('error', function () { p.remove(); });
+        body.appendChild(p);
+      }
       li.appendChild(body);
       li.appendChild(this.stars(r.rating));
       return li;

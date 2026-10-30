@@ -76,7 +76,7 @@
             {%- if s.featured_verified != blank or s.featured_product != blank -%}
               <span class="somna-reviews__meta">
                 {%- if s.featured_verified != blank -%}<em>{{ s.featured_verified | escape }}</em>{%- endif -%}
-                {%- if s.featured_product != blank -%} {{ s.featured_product | escape }}{%- endif -%}
+                {%- if s.featured_product != blank -%}{% if s.featured_verified != blank %}&nbsp;{% endif %}{{ s.featured_product | escape }}{%- endif -%}
               </span>
             {%- endif -%}
           </p>
@@ -232,12 +232,12 @@
   }
 
   .somna-reviews__title--lg {
-    font-size: clamp(1.125rem, 1.7vw, 1.5rem);
+    font-size: clamp(1.125rem, 1.4vw, 1.25rem);
   }
 
   .somna-reviews__text {
     margin: 0;
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     line-height: 1.45;
     overflow-wrap: anywhere;
   }
