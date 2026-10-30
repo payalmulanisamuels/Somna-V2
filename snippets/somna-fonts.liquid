@@ -6,10 +6,13 @@
   Latin subset only (23 KB). Preloaded on the homepage, where it is above the fold.
 {%- endcomment -%}
 {%- assign boldonse_url = 'boldonse-latin-400.woff2' | asset_url -%}
+{%- comment -%} Inter semibold (600), used by Figma; the store font settings only load 400/700. {%- endcomment -%}
+{%- assign somna_body_600 = settings.type_body_font | font_modify: 'weight', '600' -%}
 {%- if template.name == 'index' -%}
   {{ boldonse_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
 {%- endif -%}
 <style>
+  {%- if somna_body_600 -%}{{ somna_body_600 | font_face: font_display: 'swap' }}{%- endif %}
   @font-face {
     font-family: 'Boldonse';
     src: url('{{ boldonse_url }}') format('woff2');

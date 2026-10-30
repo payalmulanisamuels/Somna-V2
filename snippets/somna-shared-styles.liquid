@@ -185,8 +185,23 @@
 
     [id$='__guarantee'] [class*='__text'] p {
       font-size: 1.625rem !important;
-      font-weight: 500 !important;
+      font-weight: 600 !important;
       letter-spacing: 0.02em !important;
     }
+  }
+
+  /* Figma font weights for Horizon text/button blocks on the homepage */
+  [id$='__still_cant_pick'] [class*='__text'] p,
+  [id$='__trust'] [class*='__label'] p {
+    font-weight: 600 !important;
+  }
+
+  :is([id$='__still_cant_pick'], [id$='__gifts']) .button-custom {
+    font-weight: 600 !important;
+  }
+
+  [id$='__gifts'] :is([class*='__label'], [class*='__text']) p,
+  [id$='__newsletter'] button {
+    font-weight: 500 !important;
   }
 {% endstylesheet %}
