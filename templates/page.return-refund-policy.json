@@ -1,0 +1,200 @@
+{
+  "sections": {
+    "policy_top": {
+      "type": "somna-policy-band",
+      "blocks": {
+        "link_1": {
+          "type": "link",
+          "settings": {
+            "label": "Shipping",
+            "link": "/pages/shipping-policy"
+          }
+        },
+        "link_2": {
+          "type": "link",
+          "settings": {
+            "label": "Returns & refunds",
+            "link": "/pages/return-refund-policy"
+          }
+        },
+        "link_3": {
+          "type": "link",
+          "settings": {
+            "label": "Subscriptions",
+            "link": "/pages/subscription-policy"
+          }
+        },
+        "link_4": {
+          "type": "link",
+          "settings": {
+            "label": "Order cancellation",
+            "link": "/pages/order-cancellation-policy"
+          }
+        },
+        "link_5": {
+          "type": "link",
+          "settings": {
+            "label": "Terms of service",
+            "link": "/pages/terms-of-service"
+          }
+        },
+        "link_6": {
+          "type": "link",
+          "settings": {
+            "label": "Privacy",
+            "link": "/pages/privacy-policy"
+          }
+        }
+      },
+      "block_order": [
+        "link_1",
+        "link_2",
+        "link_3",
+        "link_4",
+        "link_5",
+        "link_6"
+      ],
+      "settings": {
+        "size": "title",
+        "eyebrow": "Somna policies",
+        "heading": "",
+        "pills_label": "Policies",
+        "background": "#0b0f1d",
+        "text_color": "#f3feee",
+        "accent": "#afbdf8"
+      }
+    },
+    "wave_top": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#0b0f1d",
+        "bottom_color": "#afbdf8",
+        "shape": "drip-1",
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "policy": {
+      "type": "somna-policy",
+      "blocks": {
+        "item_1": {
+          "type": "item",
+          "settings": {
+            "heading": "1. Sleep Satisfaction Guarantee",
+            "text": "<p>We stand behind every Somna product. If you are not completely satisfied with your purchase, you may return it under our 30-Night Money-Back Guarantee, calculated from the confirmed date of delivery.</p>"
+          }
+        },
+        "item_2": {
+          "type": "item",
+          "settings": {
+            "heading": "2. Eligibility for Returns",
+            "text": "<p>To qualify for a refund under our satisfaction guarantee:</p><p>Initiation Window: The return request must be initiated within 30 nights of the delivery date.</p><p>Condition: For hygiene, safety, and health reasons, consumable items (Nasal Strips and Mouth Tape) must remain completely unused, sealed, and in their original, unopened packaging. Opened or partially used packs cannot be accepted.</p>"
+          }
+        },
+        "item_3": {
+          "type": "item",
+          "settings": {
+            "heading": "3. Return Process",
+            "text": "<p>Items marked as \"Final Sale,\" \"Clearance,\" or promotional free gifts are not eligible for returns or refunds.</p>"
+          }
+        },
+        "item_4": {
+          "type": "item",
+          "settings": {
+            "heading": "4. Return Shipping Costs",
+            "text": "<p>Customers are responsible for all return shipping costs. We recommend using a trackable shipping service or purchasing shipping insurance. We cannot guarantee that we will receive</p><p>your returned item and are not responsible for returns lost in transit. Original shipping charges are non-refundable.</p>"
+          }
+        },
+        "item_5": {
+          "type": "item",
+          "settings": {
+            "heading": "5. Refunds",
+            "text": "<p>Once your return is received and inspected, we will send you an email to notify you of the approval or rejection of your refund. If approved, your refund will be processed, and a credit will automatically be applied to your original method of payment within 5–10 business days.</p>"
+          }
+        },
+        "item_6": {
+          "type": "item",
+          "settings": {
+            "heading": "6. Late or Missing Refunds",
+            "text": "<p>If you haven't received a refund yet, first check your bank account again. Then contact your credit card company or bank, as it may take some time before your refund is officially posted. If you've done all of this and you still have not received your refund, please contact us at <a href=\"mailto:hello@somnasleep.com\" title=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a>.</p>"
+          }
+        },
+        "item_7": {
+          "type": "item",
+          "settings": {
+            "heading": "7. Final Sale Items",
+            "text": "<p>To initiate a return:</p><p>1. Email our support team at hello@somnasleep.com with your order number and reason for return.</p><p>2. If your return is approved, we will provide you with a Return Merchandise Authorization (RMA) number and instructions on where to send your package.</p><p>3. Do not send items back without first requesting an RMA. Items sent back without authorization will not be accepted or refunded.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "item_1",
+        "item_2",
+        "item_3",
+        "item_4",
+        "item_5",
+        "item_6",
+        "item_7"
+      ],
+      "settings": {
+        "show_toc": true,
+        "toc_label": "On this page",
+        "background": "#afbdf8",
+        "card": "#c9d3fb",
+        "accent": "#1d2fa8"
+      }
+    },
+    "wave_bottom": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#afbdf8",
+        "bottom_color": "#000000",
+        "shape": "drip-10",
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "policy_contact": {
+      "type": "somna-policy-band",
+      "settings": {
+        "size": "band",
+        "eyebrow": "",
+        "heading": "Still have a question?",
+        "text": "<p>Email us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> or send us a message.</p>",
+        "button_label": "CONTACT US →",
+        "button_link": "/pages/contact",
+        "pills_label": "Policies",
+        "background": "#000000",
+        "text_color": "#f3feee",
+        "accent": "#afbdf8"
+      }
+    },
+    "wave_footer": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#000000",
+        "bottom_color": "#f3feee",
+        "shape": "drip-11",
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    }
+  },
+  "order": [
+    "policy_top",
+    "wave_top",
+    "policy",
+    "wave_bottom",
+    "policy_contact",
+    "wave_footer"
+  ]
+}
