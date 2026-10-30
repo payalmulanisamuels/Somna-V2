@@ -8,6 +8,10 @@
 {%- liquid
   assign s = section.settings
   assign photo_blocks = section.blocks | where: 'type', 'photo'
+  assign joined = false
+  if s.show_edges and s.show_featured and s.show_summary
+    assign joined = true
+  endif
 -%}
 {%- capture star_svg -%}<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.6 7.7l5.8-.8z"/></svg>{%- endcapture -%}
 
@@ -60,7 +64,7 @@
     {%- if s.show_featured -%}
       {%- assign fr = s.featured_rating | times: 1.0 -%}
       <article
-        class="somna-reviews__featured{% if s.show_edges %} somna-edge-drip-bottom{% endif %}"
+        class="somna-reviews__featured{% if joined %} is-joined{% endif %}"
         style="{% if s.featured_bg != blank %}--somna-rv-card: {{ s.featured_bg }};{% endif %}{% if s.featured_fg != blank %} --somna-rv-card-fg: {{ s.featured_fg }};{% endif %}"
       >
         {%- if s.featured_title != blank -%}<h3 class="somna-reviews__title somna-reviews__title--lg">“{{ s.featured_title | escape }}”</h3>{%- endif -%}
@@ -87,9 +91,19 @@
       </article>
     {%- endif -%}
 
+    {%- if joined -%}
+      {%- comment -%} Figma: the black tear between the featured review and the summary, traced from the design {%- endcomment -%}
+      <div class="somna-reviews__tear" aria-hidden="true">
+        <svg viewBox="0 0 1000 109.5" preserveAspectRatio="none" focusable="false">
+          <path fill="{{ s.featured_bg | default: s.card_color }}" d="M0,0 L0.0,14.9 L6.6,14.9 L13.3,23.2 L19.9,29.9 L26.5,36.5 L33.2,41.5 L39.8,46.4 L46.4,49.8 L53.1,53.1 L59.7,54.7 L66.3,56.4 L73.0,54.7 L79.6,54.7 L86.2,53.1 L92.9,51.4 L99.5,48.1 L106.1,46.4 L112.8,43.1 L119.4,39.8 L126.0,36.5 L132.7,34.8 L139.3,33.2 L145.9,33.2 L152.6,38.1 L159.2,49.8 L165.8,58.0 L172.5,59.7 L179.1,56.4 L185.7,53.1 L192.4,46.4 L199.0,41.5 L205.6,36.5 L212.3,34.8 L218.9,33.2 L225.5,33.2 L232.2,34.8 L238.8,34.8 L245.4,34.8 L252.1,34.8 L258.7,33.2 L265.3,31.5 L272.0,28.2 L278.6,26.5 L285.2,23.2 L291.9,21.6 L298.5,26.5 L305.1,33.2 L311.8,38.1 L318.4,44.8 L325.0,48.1 L331.7,49.8 L338.3,48.1 L344.9,44.8 L351.6,41.5 L358.2,36.5 L364.8,33.2 L371.5,29.9 L378.1,28.2 L384.7,28.2 L391.4,28.2 L398.0,29.9 L404.6,31.5 L411.3,34.8 L417.9,34.8 L424.5,36.5 L431.2,36.5 L437.8,38.1 L444.4,38.1 L451.1,38.1 L457.7,36.5 L464.3,31.5 L471.0,21.6 L477.6,10.0 L484.2,8.3 L490.9,14.9 L497.5,21.6 L504.1,28.2 L510.8,33.2 L517.4,38.1 L524.0,43.1 L530.7,46.4 L537.3,48.1 L543.9,49.8 L550.6,49.8 L557.2,49.8 L563.8,48.1 L570.5,48.1 L577.1,44.8 L583.7,43.1 L590.4,41.5 L597.0,38.1 L603.6,34.8 L610.3,31.5 L616.9,28.2 L623.5,26.5 L630.2,24.9 L636.8,24.9 L643.4,31.5 L650.1,43.1 L656.7,51.4 L663.3,53.1 L670.0,53.1 L676.6,48.1 L683.3,43.1 L689.9,38.1 L696.5,33.2 L703.2,28.2 L709.8,26.5 L716.4,26.5 L723.1,26.5 L729.7,26.5 L736.3,26.5 L743.0,26.5 L749.6,26.5 L756.2,26.5 L762.9,24.9 L769.5,23.2 L776.1,19.9 L782.8,16.6 L789.4,13.3 L796.0,13.3 L802.7,18.2 L809.3,24.9 L815.9,31.5 L822.6,36.5 L829.2,41.5 L835.8,43.1 L842.5,43.1 L849.1,41.5 L855.7,36.5 L862.4,33.2 L869.0,28.2 L875.6,24.9 L882.3,21.6 L888.9,19.9 L895.5,19.9 L902.2,19.9 L908.8,21.6 L915.4,23.2 L922.1,26.5 L928.7,28.2 L935.3,28.2 L942.0,28.2 L948.6,29.9 L955.2,31.5 L961.9,31.5 L968.5,31.5 L975.1,29.9 L981.8,24.9 L988.4,16.6 L995.0,5.0 L1000,1.7 L1000,0 Z"/>
+          <path fill="{{ s.card_color }}" d="M0,109.5 L0.0,77.9 L6.6,81.3 L13.3,87.9 L19.9,92.9 L26.5,96.2 L33.2,99.5 L39.8,102.8 L46.4,104.5 L53.1,104.5 L59.7,104.5 L66.3,104.5 L73.0,102.8 L79.6,101.2 L86.2,97.8 L92.9,96.2 L99.5,92.9 L106.1,89.6 L112.8,86.2 L119.4,84.6 L126.0,81.3 L132.7,81.3 L139.3,81.3 L145.9,87.9 L152.6,99.5 L159.2,107.8 L165.8,109.5 L172.5,106.1 L179.1,101.2 L185.7,96.2 L192.4,91.2 L199.0,86.2 L205.6,82.9 L212.3,82.9 L218.9,82.9 L225.5,82.9 L232.2,82.9 L238.8,82.9 L245.4,82.9 L252.1,82.9 L258.7,81.3 L265.3,79.6 L272.0,76.3 L278.6,74.6 L285.2,74.6 L291.9,74.6 L298.5,74.6 L305.1,79.6 L311.8,86.2 L318.4,92.9 L325.0,96.2 L331.7,99.5 L338.3,97.8 L344.9,96.2 L351.6,91.2 L358.2,86.2 L364.8,82.9 L371.5,79.6 L378.1,76.3 L384.7,76.3 L391.4,76.3 L398.0,76.3 L404.6,77.9 L411.3,81.3 L417.9,82.9 L424.5,84.6 L431.2,84.6 L437.8,84.6 L444.4,86.2 L451.1,86.2 L457.7,87.9 L464.3,86.2 L471.0,82.9 L477.6,74.6 L484.2,74.6 L490.9,77.9 L497.5,84.6 L504.1,89.6 L510.8,94.5 L517.4,97.8 L524.0,101.2 L530.7,104.5 L537.3,104.5 L543.9,104.5 L550.6,104.5 L557.2,104.5 L563.8,102.8 L570.5,99.5 L577.1,97.8 L583.7,96.2 L590.4,92.9 L597.0,89.6 L603.6,86.2 L610.3,82.9 L616.9,81.3 L623.5,79.6 L630.2,79.6 L636.8,82.9 L643.4,91.2 L650.1,102.8 L656.7,109.5 L663.3,109.5 L670.0,106.1 L676.6,101.2 L683.3,94.5 L689.9,89.6 L696.5,84.6 L703.2,82.9 L709.8,81.3 L716.4,81.3 L723.1,81.3 L729.7,81.3 L736.3,81.3 L743.0,81.3 L749.6,81.3 L756.2,79.6 L762.9,77.9 L769.5,76.3 L776.1,74.6 L782.8,74.6 L789.4,74.6 L796.0,74.6 L802.7,74.6 L809.3,76.3 L815.9,82.9 L822.6,89.6 L829.2,94.5 L835.8,97.8 L842.5,97.8 L849.1,96.2 L855.7,92.9 L862.4,89.6 L869.0,84.6 L875.6,79.6 L882.3,76.3 L888.9,74.6 L895.5,74.6 L902.2,74.6 L908.8,74.6 L915.4,76.3 L922.1,77.9 L928.7,81.3 L935.3,81.3 L942.0,82.9 L948.6,82.9 L955.2,84.6 L961.9,84.6 L968.5,86.2 L975.1,86.2 L981.8,84.6 L988.4,81.3 L995.0,76.3 L1000,76.3 L1000,109.5 Z"/>
+        </svg>
+      </div>
+    {%- endif -%}
+
     {%- if s.show_summary -%}
       {%- assign avg = s.average | plus: 0.0 -%}
-      <div class="somna-reviews__summary{% if s.show_edges %} somna-edge-drip-top{% endif %}{% unless s.show_gallery and photo_blocks.size > 0 %} somna-reviews__summary--no-photos{% endunless %}">
+      <div class="somna-reviews__summary{% if joined %} is-joined{% endif %}{% unless s.show_gallery and photo_blocks.size > 0 %} somna-reviews__summary--no-photos{% endunless %}">
         <div class="somna-reviews__score">
           <p class="somna-reviews__average">{{ s.average | escape }}</p>
           {%- if s.show_summary_stars -%}
@@ -169,9 +183,10 @@
   }
 
   .somna-reviews__inner {
+    --somna-rv-gap: 20px;
     display: grid;
     justify-items: center;
-    gap: 20px;
+    gap: var(--somna-rv-gap);
   }
 
   .somna-reviews__head {
@@ -213,13 +228,29 @@
     padding: 18px 28px 20px;
   }
 
-  .somna-reviews__featured.somna-edge-drip-bottom {
-    --somna-drip-h: 44px;
-    padding-block-end: 8px;
+  .somna-reviews__featured.is-joined {
+    padding-block-end: 4px;
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
   }
 
-  .somna-reviews__summary.somna-edge-drip-top {
-    --somna-drip-h: 34px;
+  .somna-reviews__summary.is-joined {
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+  }
+
+  /* the tear sits flush between the two cards (cancels the grid gap; 1px overlap hides seams) */
+  .somna-reviews__tear {
+    width: 100%;
+    margin-block: calc(-1 * var(--somna-rv-gap) - 1px);
+    line-height: 0;
+  }
+
+  .somna-reviews__tear svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1000 / 109.5;
   }
 
   .somna-reviews__title {
@@ -322,8 +353,8 @@
 
   .somna-reviews__star {
     position: relative;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     color: var(--somna-rv-star, #f5c242);
   }
 
@@ -361,8 +392,8 @@
     padding: 24px 20px 18px;
   }
 
-  .somna-reviews__summary.somna-edge-drip-top {
-    padding-block-start: 12px;
+  .somna-reviews__summary.is-joined {
+    padding-block-start: 8px;
   }
 
   .somna-reviews__summary--no-photos {
@@ -507,7 +538,7 @@
 
   .somna-reviews__card .somna-reviews__avatar {
     grid-row: span 2;
-    align-self: center;
+    align-self: start;
   }
 
   .somna-reviews__body {
@@ -605,15 +636,15 @@
   }
 
   .somna-reviews__more {
-    min-width: min(100%, 264px);
-    min-height: 44px;
+    min-width: min(100%, 360px);
+    min-height: 52px;
     padding: 10px 28px;
     border: 0;
-    border-radius: 12px;
+    border-radius: 14px;
     background: var(--somna-rv-chip, #afbdf8);
     color: #000;
     font: inherit;
-    font-size: 0.875rem;
+    font-size: 1rem;
     font-weight: 700;
     letter-spacing: 0.03em;
     text-transform: uppercase;
@@ -628,7 +659,7 @@
 
   @media screen and (min-width: 990px) {
     .somna-reviews__inner {
-      gap: 22px;
+      --somna-rv-gap: 22px;
     }
 
     .somna-reviews__head {
@@ -655,7 +686,7 @@
     }
 
     .somna-reviews__inner {
-      gap: 14px;
+      --somna-rv-gap: 14px;
     }
 
     .somna-reviews__eyebrow {
@@ -666,13 +697,24 @@
       padding: 16px 16px 18px;
     }
 
-    .somna-reviews__featured.somna-edge-drip-bottom {
-      --somna-drip-h: 26px;
-      padding-block-end: 6px;
+    .somna-reviews__featured.is-joined {
+      padding-block-end: 2px;
     }
 
     .somna-reviews__byline {
       flex-wrap: wrap;
+    }
+
+    /* stars above the headline, as on the review cards */
+    .somna-reviews__featured {
+      position: relative;
+      padding-block-start: 44px;
+    }
+
+    .somna-reviews__featured .somna-reviews__byline .somna-reviews__stars {
+      position: absolute;
+      inset: 18px auto auto 16px;
+      margin: 0;
     }
 
     .somna-reviews__avatar--lg {
@@ -687,9 +729,8 @@
       padding: 16px;
     }
 
-    .somna-reviews__summary.somna-edge-drip-top {
-      --somna-drip-h: 22px;
-      padding-block-start: 8px;
+    .somna-reviews__summary.is-joined {
+      padding-block-start: 4px;
     }
 
     .somna-reviews__average {

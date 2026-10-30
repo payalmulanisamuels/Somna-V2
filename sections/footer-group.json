@@ -49,7 +49,7 @@
                 "alignment": "left",
                 "type_preset": "custom",
                 "font": "var(--font-body--family)",
-                "font_size": "5.5rem",
+                "font_size": "7rem",
                 "line_height": "tight",
                 "letter_spacing": "normal",
                 "case": "none",
@@ -71,8 +71,8 @@
                 "border_radius": 0,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
-                "padding-inline-start": 16,
-                "padding-inline-end": 16,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0,
                 "horizontal_alignment": "space-between",
                 "vertical_alignment": "flex-start"
               },
@@ -82,7 +82,7 @@
                   "settings": {
                     "menu": "",
                     "heading": "SHOP",
-                    "menu_spacing": 12,
+                    "menu_spacing": 14,
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
                     "link_preset": "paragraph"
@@ -124,7 +124,7 @@
                   "settings": {
                     "menu": "",
                     "heading": "SUPPORT",
-                    "menu_spacing": 12,
+                    "menu_spacing": 14,
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
                     "link_preset": "paragraph"
@@ -166,7 +166,7 @@
                   "settings": {
                     "menu": "",
                     "heading": "LEARN",
-                    "menu_spacing": 12,
+                    "menu_spacing": 14,
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
                     "link_preset": "paragraph"
@@ -199,7 +199,7 @@
                   "settings": {
                     "menu": "",
                     "heading": "CONNECT",
-                    "menu_spacing": 12,
+                    "menu_spacing": 14,
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
                     "link_preset": "paragraph"
@@ -285,7 +285,7 @@
                 "alignment": "center",
                 "type_preset": "custom",
                 "font": "var(--font-body--family)",
-                "font_size": "0.75rem",
+                "font_size": "0.8125rem",
                 "line_height": "loose",
                 "letter_spacing": "loose",
                 "case": "none",

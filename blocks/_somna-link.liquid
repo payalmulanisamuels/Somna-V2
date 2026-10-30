@@ -50,6 +50,38 @@
   .somna-link__icon--facebook {
     color: #1877f2;
   }
+
+  /* Somna footer (sections/footer-group.json · footer_somna): QA type scale and spacing */
+  [id$='__footer_somna'] .menu__heading {
+    padding-block: 0;
+    font-size: 0.9375rem;
+    letter-spacing: 0.1em;
+  }
+
+  [id$='__footer_somna'] .menu .details-content {
+    margin-block-start: 14px;
+  }
+
+  [id$='__footer_somna'] .menu__item,
+  [id$='__footer_somna'] .menu__item :is(a, span) {
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+  }
+
+  [id$='__footer_somna'] .text-block a {
+    white-space: nowrap;
+  }
+
+  @media screen and (max-width: 749px) {
+    [id$='__footer_somna'] .menu__item,
+    [id$='__footer_somna'] .menu__item :is(a, span) {
+      font-size: 0.9375rem;
+    }
+
+    [id$='__footer_somna'] .menu .details-content {
+      margin-block-start: 12px;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
