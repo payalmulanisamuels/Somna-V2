@@ -350,8 +350,8 @@
   }
 
   /* mobile Figma: titles in capitals with 1.35 line spacing (the buy box keeps "somna." lowercase) */
-  main :is(h1, h2):not(.somna-buy *),
-  main :is(h1, h2):not(.somna-buy *) :is(p, span, em, strong),
+  main :is(h1, h2):not(.somna-buy *, .somna-policy *),
+  main :is(h1, h2):not(.somna-buy *, .somna-policy *) :is(p, span, em, strong),
   main .text-block:has(> :is(h1, h2)) > p {
     text-transform: uppercase !important;
     line-height: 1.35 !important;

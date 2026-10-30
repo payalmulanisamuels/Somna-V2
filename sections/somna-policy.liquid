@@ -1,0 +1,202 @@
+{%- doc -%}
+  Somna V2 — policy page body: numbered sections (one block each: heading + text) with an
+  "On this page" list on desktop that jumps to each section. Background colour is a setting so the
+  waves above and below can match it.
+{%- enddoc -%}
+{%- assign s = section.settings -%}
+<div class="somna-policy" style="--sp-bg: {{ s.background }}; --sp-card: {{ s.card }}; --sp-accent: {{ s.accent }};">
+  <div class="somna-policy__grid{% if s.show_toc == false %} somna-policy__grid--single{% endif %}">
+    {%- if s.show_toc -%}
+      <aside class="somna-policy__toc" aria-label="{{ s.toc_label | escape }}">
+        <p>{{ s.toc_label | escape }}</p>
+        <ol role="list">
+          {%- for block in section.blocks -%}
+            {%- if block.settings.heading != blank -%}
+              <li><a href="#{{ block.settings.heading | handleize }}">{{ block.settings.heading | escape }}</a></li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ol>
+      </aside>
+    {%- endif -%}
+    <div class="somna-policy__article">
+      {%- for block in section.blocks -%}
+        {%- assign b = block.settings -%}
+        <div class="somna-policy__sec"{% if b.heading != blank %} id="{{ b.heading | handleize }}"{% endif %} {{ block.shopify_attributes }}>
+          {%- if b.heading != blank -%}<h2>{{ b.heading | escape }}</h2>{%- endif -%}
+          <div class="somna-policy__rte">{{ b.text }}</div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .somna-policy {
+    background: var(--sp-bg);
+    color: #0b0f1d;
+  }
+
+  .somna-policy__grid {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 720px);
+    justify-content: center;
+    align-items: start;
+    gap: 64px;
+    width: min(100% - 40px, 1160px);
+    margin-inline: auto;
+    padding-block: 24px 48px;
+  }
+
+  .somna-policy__grid--single {
+    grid-template-columns: minmax(0, 760px);
+  }
+
+  .somna-policy__toc {
+    position: sticky;
+    top: 96px;
+    padding: 20px;
+    border: 1px solid rgb(11 15 29 / 0.2);
+    border-radius: 14px;
+    background: var(--sp-card);
+  }
+
+  .somna-policy__toc p {
+    margin: 0 0 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sp-accent);
+  }
+
+  .somna-policy__toc ol {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-policy__toc a {
+    color: #0b0f1d;
+    font-size: 0.875rem;
+    line-height: 1.35;
+    text-decoration: none;
+  }
+
+  .somna-policy__toc a:hover {
+    color: var(--sp-accent);
+    text-decoration: underline;
+  }
+
+  .somna-policy__sec {
+    padding-block: 28px;
+    border-bottom: 1px solid rgb(11 15 29 / 0.25);
+    scroll-margin-top: 96px;
+  }
+
+  .somna-policy__sec:first-child {
+    padding-top: 8px;
+  }
+
+  .somna-policy__sec:last-child {
+    border-bottom: 0;
+  }
+
+  .somna-policy__sec h2 {
+    margin: 0 0 12px;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 1.375rem;
+    line-height: 1.35;
+    text-transform: none;
+    color: #0b0f1d;
+  }
+
+  .somna-policy__rte {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #1d2440;
+  }
+
+  .somna-policy__rte p {
+    margin: 0 0 12px;
+  }
+
+  .somna-policy__rte p:last-child {
+    margin-bottom: 0;
+  }
+
+  .somna-policy__rte :is(ul, ol) {
+    margin: 0 0 12px;
+    padding-left: 20px;
+  }
+
+  .somna-policy__rte a {
+    color: var(--sp-accent);
+  }
+
+  .somna-policy__rte strong {
+    font-weight: 600;
+  }
+
+  @media screen and (max-width: 989px) {
+    .somna-policy__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .somna-policy__toc {
+      position: static;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .somna-policy__grid {
+      width: min(100% - 32px, 1160px);
+    }
+
+    .somna-policy__toc {
+      display: none;
+    }
+
+    .somna-policy__sec {
+      padding-block: 20px;
+    }
+
+    .somna-policy__sec h2 {
+      font-size: 1.125rem;
+    }
+
+    .somna-policy__rte {
+      font-size: 0.9375rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna policy",
+  "tag": "section",
+  "class": "section-somna-policy",
+  "settings": [
+    { "type": "checkbox", "id": "show_toc", "label": "Show \"On this page\" list (desktop)", "default": true },
+    { "type": "text", "id": "toc_label", "label": "List title", "default": "On this page" },
+    { "type": "color", "id": "background", "label": "Background", "default": "#afbdf8" },
+    { "type": "color", "id": "card", "label": "List box", "default": "#c9d3fb" },
+    { "type": "color", "id": "accent", "label": "Links and labels", "default": "#1d2fa8" }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Policy section",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading" },
+        { "type": "richtext", "id": "text", "label": "Text" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Somna policy" }]
+}
+{% endschema %}
