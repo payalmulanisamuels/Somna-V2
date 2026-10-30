@@ -378,7 +378,7 @@
     padding-block: 0 !important;
   }
 
-  /* FAQ: 8px section padding like the other sections, left-aligned answers, readable questions */
+  /* FAQ: 8px section padding like the other sections, left-aligned answers, readable questions (QA) */
   [id$='__faq'] .section-content-wrapper.layout-panel-flex {
     padding-block: 8px !important;
     row-gap: 24px !important;
