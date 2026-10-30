@@ -53,7 +53,7 @@
     {%- if s.eyebrow != blank or s.heading != blank -%}
       <header class="somna-reviews__head">
         {%- if s.eyebrow != blank -%}<p class="somna-reviews__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
-        {%- if s.heading != blank -%}<div class="somna-reviews__heading somna-display">{{ s.heading }}</div>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="somna-reviews__heading somna-display">{{ s.heading | remove: '<p>' | replace: '</p>', '<br>' | remove: '<h2>' | remove: '</h2>' | strip | split: '<br>' | join: ' ' }}</h2>{%- endif -%}
       </header>
     {%- endif -%}
 
@@ -743,7 +743,7 @@
   "settings": [
     { "type": "header", "content": "Heading" },
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Reviews" },
-    { "type": "richtext", "id": "heading", "label": "Heading", "info": "Italic words use the accent colour.", "default": "<h2>What <em>sleepers</em> are saying</h2>" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "info": "Italic words use the accent colour.", "default": "<p>What <em>sleepers</em> are saying</p>" },
     { "type": "color", "id": "accent_color", "label": "Accent colour", "default": "#afbdf8" },
 
     { "type": "header", "content": "Layout" },
