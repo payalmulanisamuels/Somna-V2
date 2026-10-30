@@ -277,6 +277,16 @@
     scroll-snap-align: start;
   }
 
+  /* when every card fits, the row sits centred (equal space left and right, as in Figma);
+     when it doesn't, auto margins collapse and the row scrolls from the first card */
+  .somna-strip__item:first-child {
+    margin-inline-start: auto;
+  }
+
+  .somna-strip__item:last-child {
+    margin-inline-end: auto;
+  }
+
   /* carousel off: cards wrap onto rows */
   .somna-strip__viewport:not(.is-carousel) .somna-strip__list {
     flex-wrap: wrap;
