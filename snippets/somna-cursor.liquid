@@ -1,7 +1,7 @@
 {%- doc -%}
   Somna V2 — custom cursor (approved demo "D · Stardust trail"): the Figma crescent moon follows the
   pointer with soft easing and leaves a short trail of stardust (no pointer dot, no wave line).
-  On hover it tilts and little "z"s float up ("N · Sleepy Zzz").
+  On anything clickable the crescent fills into a full moon (approved demo "2 · Full moon").
 
   Rendered once from layout/theme.liquid. Turned on/off in Theme settings → Animations → "Somna cursor".
   Not loaded in the theme editor, so editing keeps the normal cursor.
@@ -115,9 +115,13 @@
     transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  /* hover ("N · Sleepy Zzz"): the crescent tilts and little "z"s float up from it */
+  /* hover ("2 · Full moon"): the shadow slides off, so the crescent fills into a full moon */
   .somna-cursor.is-hover .somna-cursor__moon svg {
-    transform: scale(1.1) rotate(-15deg);
+    transform: scale(1.1);
+  }
+
+  .somna-cursor.is-hover .somna-cursor__cut {
+    transform: translate(14px, -14px);
   }
 
   .somna-cursor__zzz {
@@ -139,35 +143,6 @@
     opacity: 0;
   }
 
-  .somna-cursor.is-hover .somna-cursor__zzz i {
-    animation: somna-cursor-zzz 2.1s ease-out infinite;
-  }
-
-  .somna-cursor.is-hover .somna-cursor__zzz i:nth-child(2) {
-    animation-delay: 0.7s;
-    font-size: 11px;
-  }
-
-  .somna-cursor.is-hover .somna-cursor__zzz i:nth-child(3) {
-    animation-delay: 1.4s;
-    font-size: 13px;
-  }
-
-  @keyframes somna-cursor-zzz {
-    0% {
-      transform: translate(0, 0);
-      opacity: 0;
-    }
-
-    20% {
-      opacity: 1;
-    }
-
-    100% {
-      transform: translate(14px, -22px);
-      opacity: 0;
-    }
-  }
 
   .somna-cursor.is-down .somna-cursor__moon svg {
     transform: scale(0.86) rotate(-6deg);
@@ -175,7 +150,7 @@
   }
 
   .somna-cursor.is-hover.is-down .somna-cursor__moon svg {
-    transform: scale(0.98) rotate(-15deg);
+    transform: scale(0.96);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -188,8 +163,5 @@
       display: none;
     }
 
-    .somna-cursor.is-hover .somna-cursor__zzz i {
-      animation: none;
-    }
   }
 {% endstylesheet %}
