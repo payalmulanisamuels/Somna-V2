@@ -73,6 +73,9 @@
       </span>
     </a>
   {%- else -%}
+    {%- if context == 'drawer' -%}
+      {% render 'cart-progressbar' %}
+    {%- endif -%}
     <span
       class="visually-hidden"
       ref="cartItemCount"
@@ -282,7 +285,7 @@
                       {%- endif -%}
 
                       {%- if item.selling_plan_allocation -%}
-                        <p>{{ item.selling_plan_allocation.selling_plan.name }}</p>
+                        <p class="selling_plan_allocation">{%- render 'somna-plan-label', selling_plan: item.selling_plan_allocation.selling_plan -%}</p>
                       {%- endif -%}
 
                       {%- if item.line_level_discount_allocations.size > 0 -%}
@@ -412,6 +415,15 @@
                   <text-component value="{{ price | strip_html }}"
                     ><bdi>{{ price }}</bdi></text-component
                   >
+                  {%- liquid
+                    assign somna_line_compare = item.variant.price | times: item.quantity
+                    if item.original_line_price > somna_line_compare
+                      assign somna_line_compare = item.original_line_price
+                    endif
+                  -%}
+                  {%- if context == 'drawer' and somna_line_compare > item.final_line_price -%}
+                    <s class="somna-line-compare">{{ somna_line_compare | money }}</s>
+                  {%- endif -%}
                   {%- if item.unit_price_measurement -%}
                     <div class="cart-items__price-unit cart-secondary-typography">
                       {% render 'unit-price', price: unit_price, measurement: item.unit_price_measurement %}

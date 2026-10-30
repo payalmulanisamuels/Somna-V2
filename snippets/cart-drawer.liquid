@@ -21,6 +21,11 @@
     src="{{ 'cart-drawer.js' | asset_url }}"
     fetchpriority="low"
   ></script>
+  <script
+    type="module"
+    src="{{ 'somna-cart-upsell.js' | asset_url }}"
+    fetchpriority="low"
+  ></script>
 
   {% capture empty_cart_drawer_content %}
     <div
@@ -40,9 +45,15 @@
     </div>
   {% endcapture %}
 
+  {%- comment -%}
+    Somna: `modal` = the cart always opens as a right-side overlay with a backdrop (assets/theme-drawer.js),
+    on desktop too, instead of squeezing the page. `no-persist` = it doesn't reopen on the next page.
+  {%- endcomment -%}
   <theme-drawer
     id="cart-drawer"
     data-skip-node-update
+    modal
+    no-persist
   >
     <dialog
       ref="panel"
@@ -81,11 +92,8 @@
               <span
                 class="theme-drawer__badge{% if cart.item_count == 0 %} visually-hidden{% endif %}"
                 aria-hidden="true"
-                {% if cart.item_count <= 99 %}
-                  data-maintain-ratio
-                {% endif %}
               >
-                {{- cart.item_count -}}
+                ({{- cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %})
               </span>
               {% if cart.item_count > 0 %}
                 <span class="visually-hidden">
@@ -113,6 +121,7 @@
                 <scroll-hint class="cart-drawer__items">
                   {% render 'cart-products', context: 'drawer' %}
                 </scroll-hint>
+                {% render 'cart-upsell' %}
 
                 <div class="cart-drawer__summary">
                   {% render 'cart-summary', section_id: 'cart-drawer-section' %}
@@ -136,6 +145,471 @@
 {%- endif -%}
 
 {% stylesheet %}
+  /* ---------- Somna V2 cart drawer (approved demo): live features, new design ---------- */
+
+  /* no page scrolling behind the open cart; on desktop the page scrolls inside .page-wrapper */
+  html:has(#cart-drawer[open]),
+  html:has(#cart-drawer[open]) body {
+    overflow: hidden;
+  }
+
+  @media screen and (min-width: 990px) {
+    html:has(#cart-drawer[open]) .page-wrapper {
+      overflow: hidden;
+      scrollbar-gutter: stable;
+    }
+  }
+
+  #cart-drawer .theme-drawer__dialog {
+    overscroll-behavior: contain;
+    max-width: min(440px, 100vw);
+    background: #f3feee;
+    color: #0b0f1d;
+  }
+
+  #cart-drawer .theme-drawer__dialog::backdrop {
+    background: rgb(0 0 0 / 0.45);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    #cart-drawer .theme-drawer__dialog--opening::backdrop {
+      animation: somna-cart-backdrop-in var(--animation-speed) var(--animation-timing-fade-in);
+    }
+
+    #cart-drawer .theme-drawer__dialog--closing::backdrop {
+      animation: somna-cart-backdrop-out var(--animation-speed) var(--animation-timing-fade-out) forwards;
+    }
+  }
+
+  @keyframes somna-cart-backdrop-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes somna-cart-backdrop-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  /* navy header with a small drip edge */
+  #cart-drawer .theme-drawer__header {
+    position: relative;
+    padding-block: 18px 30px;
+    background: #0b0f1d;
+    color: #f3feee;
+  }
+
+  #cart-drawer .theme-drawer__header::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 -1px;
+    height: 18px;
+    background: #f3feee;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 440 18' preserveAspectRatio='none'%3E%3Cpath d='M0 18V8c30 0 40 8 70 8s40-12 75-12 45 11 80 11 45-9 75-9 40 8 70 8 40-6 70-6v10z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 440 18' preserveAspectRatio='none'%3E%3Cpath d='M0 18V8c30 0 40 8 70 8s40-12 75-12 45 11 80 11 45-9 75-9 40 8 70 8 40-6 70-6v10z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  }
+
+  #cart-drawer .theme-drawer__title {
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 1.375rem;
+    line-height: 1.3;
+    text-transform: uppercase;
+    color: #f3feee;
+  }
+
+  #cart-drawer .theme-drawer__badge {
+    display: inline;
+    min-width: 0;
+    height: auto;
+    padding: 0 0 0 6px;
+    background: none;
+    color: #afbdf8;
+    font-family: var(--font-body--family);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: none;
+    aspect-ratio: auto;
+  }
+
+  #cart-drawer .theme-drawer__close-button {
+    color: #f3feee;
+  }
+
+  /* free-gift progress */
+  .somna-gifts {
+    display: grid;
+    gap: 12px;
+    margin-block: 4px 12px;
+    padding: 14px 16px 16px;
+    border-radius: 14px;
+    background: #afbdf8;
+    color: #0b0f1d;
+  }
+
+  .somna-gifts__msg {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+
+  .somna-gifts__msg b {
+    font-weight: 800;
+  }
+
+  .somna-gifts__icon,
+  .somna-gifts__end {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #0b0f1d;
+    color: #afbdf8;
+  }
+
+  .somna-gifts__icon svg,
+  .somna-gifts__end svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .somna-gifts__track {
+    position: relative;
+    height: 8px;
+    margin-inline-end: 12px;
+    border-radius: 99px;
+    background: rgb(11 15 29 / 0.18);
+  }
+
+  .somna-gifts__fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    border-radius: 99px;
+    background: #1d2fa8;
+  }
+
+  .somna-gifts__dot {
+    position: absolute;
+    top: 50%;
+    width: 18px;
+    height: 18px;
+    margin: -9px 0 0 -9px;
+    border: 3px solid #f3feee;
+    border-radius: 50%;
+    background: #1d2fa8;
+  }
+
+  .somna-gifts__end {
+    position: absolute;
+    top: 50%;
+    right: -14px;
+    margin-top: -14px;
+  }
+
+  .somna-gifts.is-done .somna-gifts__end {
+    background: #1d2fa8;
+    color: #f3feee;
+  }
+
+  .somna-gifts__steps {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.75;
+  }
+
+  /* line items as white cards */
+  #cart-drawer .cart-items__table-row {
+    margin-block-end: 12px;
+    padding: 10px;
+    border-radius: 12px;
+    background: #fff;
+  }
+
+  #cart-drawer .cart-items__title {
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 1rem;
+    line-height: 1.3;
+    color: #0b0f1d;
+  }
+
+  #cart-drawer .cart-items__unit-price-wrapper {
+    display: none;
+  }
+
+  #cart-drawer .cart-items__details .list-unstyled {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+  }
+
+  #cart-drawer .cart-items__details .list-unstyled li {
+    padding: 3px 8px;
+    border-radius: 99px;
+    background: #e4e9fd;
+    color: #1d2fa8;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  #cart-drawer .cart-items__price {
+    font-weight: 700;
+  }
+
+  .somna-line-compare {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 400;
+    opacity: 0.55;
+  }
+
+  /* upsell */
+  #cart-drawer .hz-minicart-upsell {
+    padding-inline: var(--cart-drawer-padding, 16px);
+    padding-block: 4px 12px;
+  }
+
+  #cart-drawer .upsell_heading {
+    margin: 6px 0 12px;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 1.0625rem;
+    line-height: 1.3;
+    text-transform: none;
+  }
+
+  .hz-minicart-upsell__list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .hz-minicart-upsell__card {
+    position: relative;
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 12px;
+    border: 1.5px solid #afbdf8;
+    border-radius: 12px;
+    background: #fff;
+  }
+
+  .hz-upsell-img {
+    display: block;
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  .hz-save-badge {
+    position: absolute;
+    top: -9px;
+    right: 10px;
+    padding: 3px 9px;
+    border-radius: 99px;
+    background: #0b0f1d;
+    color: #afbdf8;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+  }
+
+  .hz-minicart-upsell__content {
+    min-width: 0;
+  }
+
+  .hz-minicart-upsell__content .review_content {
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+
+  .hz-minicart-upsell__content .review_content svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .hz-minicart-upsell__title {
+    margin: 2px 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 0.9375rem;
+    line-height: 1.3;
+  }
+
+  .hz-minicart-upsell__title a {
+    color: #0b0f1d;
+    text-decoration: none;
+  }
+
+  .hz-minicart-upsell__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .hz-minicart-upsell__price {
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  .hz-minicart-upsell__compare {
+    margin-inline-end: 4px;
+    font-size: 0.8125rem;
+    opacity: 0.5;
+  }
+
+  .hz-upsell-add-btn {
+    padding: 9px 18px;
+    border: 0;
+    border-radius: 99px;
+    background: #0b0f1d;
+    color: #f3feee;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .hz-upsell-add-btn:disabled {
+    opacity: 0.6;
+  }
+
+  /* summary: Somna totals replace the theme's subtotal / discount rows in the drawer */
+  #cart-drawer .cart-drawer__summary {
+    background: #fff;
+    border-top: 1px solid #d6e4cf;
+  }
+
+  #cart-drawer .cart-totals > :not(.cart-totals__container),
+  #cart-drawer .cart-totals__container > :not(.cart-totals__tax-note),
+  #cart-drawer .additional-checkout-buttons {
+    display: none;
+  }
+
+  #cart-drawer .cart-totals {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .somna-cart-totals {
+    display: grid;
+    gap: 6px;
+    margin-block-end: 6px;
+  }
+
+  .somna-cart-totals__row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+  }
+
+  .somna-cart-totals__saved {
+    color: #2f7a45;
+    font-weight: 600;
+  }
+
+  .somna-cart-totals__code {
+    font-size: 0.8125rem;
+    opacity: 0.8;
+  }
+
+  .somna-cart-totals__total {
+    font-size: 1rem;
+    font-weight: 800;
+  }
+
+  #cart-drawer .cart-totals__tax-note {
+    justify-content: center;
+    font-size: 0.72rem;
+    text-align: center;
+  }
+
+  #cart-drawer .cart__checkout-button {
+    min-height: 54px;
+    border-radius: 12px;
+    background: #afbdf8;
+    color: #000;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    box-shadow: 0 6px 14px rgb(29 78 216 / 0.2);
+  }
+
+  #cart-drawer .cart__checkout-button .button-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .somna-lock {
+    display: none;
+    width: 16px;
+    height: 16px;
+  }
+
+  #cart-drawer .somna-lock {
+    display: block;
+  }
+
+  .hz-trust-badges-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  #cart-drawer .hz-trust-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: none !important;
+    color: #0b0f1d !important;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .hz-trust-pill__text p {
+    margin: 0;
+  }
+
+  .hz-trust-pill__img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .custom-payment-icons-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .custom-payment-icons-list .payment-icon {
+    display: block;
+    width: auto;
+    height: 20px;
+  }
+
   cart-drawer-component {
     --cart-drawer-padding: var(--theme-drawer-padding);
     --font-paragraph--line-height: 1;

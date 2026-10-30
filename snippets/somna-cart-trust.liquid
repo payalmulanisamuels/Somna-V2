@@ -1,0 +1,163 @@
+{%- doc -%}
+  Somna V2 — cart drawer trust badges and payment icons (moved from the live theme).
+  Settings: Theme settings → Cart Drawer.
+{%- enddoc -%}
+<div class="hz-trust-badges-wrapper">
+  {% comment %} Badge 1 {% endcomment %}
+  {% if settings.show_trust_badge_1 and settings.trust_badge_1_text != blank %}
+    <div 
+      class="hz-trust-pill"
+      style="background-color: {{ settings.trust_badge_bg }}; color: {{ settings.trust_badge_color }};"
+    >
+      {% if settings.trust_badge_1_image != blank %}
+        <img 
+          src="{{ settings.trust_badge_1_image | image_url: width: 40 }}" 
+          alt="" 
+          class="hz-trust-pill__img"
+          loading="lazy"
+          width="16"
+          height="16"
+        >
+      {% elsif settings.trust_badge_1_emoji != blank %}
+        <span class="hz-trust-pill__icon">{{ settings.trust_badge_1_emoji }}</span>
+      {% endif %}
+      <span class="hz-trust-pill__text">{{ settings.trust_badge_1_text }}</span>
+    </div>
+  {% endif %}
+
+  {% comment %} Badge 2 {% endcomment %}
+  {% if settings.show_trust_badge_2 and settings.trust_badge_2_text != blank %}
+    <div 
+      class="hz-trust-pill"
+      style="background-color: {{ settings.trust_badge_bg }}; color: {{ settings.trust_badge_color }};"
+    >
+      {% if settings.trust_badge_2_image != blank %}
+        <img 
+          src="{{ settings.trust_badge_2_image | image_url: width: 40 }}" 
+          alt="" 
+          class="hz-trust-pill__img"
+          loading="lazy"
+          width="16"
+          height="16"
+        >
+      {% elsif settings.trust_badge_2_emoji != blank %}
+        <span class="hz-trust-pill__icon">{{ settings.trust_badge_2_emoji }}</span>
+      {% endif %}
+      <span class="hz-trust-pill__text">{{ settings.trust_badge_2_text }}</span>
+    </div>
+  {% endif %}
+</div>
+
+
+
+
+
+<div class="custom-payment-icons-wrapper">
+
+  <ul class="custom-payment-icons-list" role="list">
+
+      {% comment %} Visa {% endcomment %}
+    {% if settings.show_payment_visa %}
+      <li class="custom-payment-icon-item">
+        {% if settings.payment_image_visa != blank %}
+          <img src="{{ settings.payment_image_visa | image_url: width: 120 }}" alt="Visa" class="payment-icon" loading="lazy" width="48" height="30">
+        {% else %}
+          {{ 'visa' | payment_type_svg_tag: class: 'payment-icon' }}
+        {% endif %}
+      </li>
+    {% endif %}
+
+      {% comment %} Mastercard {% endcomment %}
+    {% if settings.show_payment_mastercard %}
+      <li class="custom-payment-icon-item">
+        {% if settings.payment_image_mastercard != blank %}
+          <img src="{{ settings.payment_image_mastercard | image_url: width: 120 }}" alt="Mastercard" class="payment-icon" loading="lazy" width="48" height="30">
+        {% else %}
+          {{ 'master' | payment_type_svg_tag: class: 'payment-icon' }}
+        {% endif %}
+      </li>
+    {% endif %}
+    
+    
+    {% comment %} Amex {% endcomment %}
+    {% if settings.show_payment_amex %}
+      <li class="custom-payment-icon-item">
+        {% if settings.payment_image_amex != blank %}
+          <img src="{{ settings.payment_image_amex | image_url: width: 120 }}" alt="Amex" class="payment-icon" loading="lazy" width="48" height="30">
+        {% else %}
+          {{ 'american_express' | payment_type_svg_tag: class: 'payment-icon' }}
+        {% endif %}
+      </li>
+    {% endif %}
+
+    {% comment %} Apple Pay {% endcomment %}
+    {% if settings.show_payment_apple_pay %}
+      <li class="custom-payment-icon-item">
+        {% if settings.payment_image_apple_pay != blank %}
+          <img src="{{ settings.payment_image_apple_pay | image_url: width: 120 }}" alt="Apple Pay" class="payment-icon" loading="lazy" width="48" height="30">
+        {% else %}
+          {{ 'apple_pay' | payment_type_svg_tag: class: 'payment-icon' }}
+        {% endif %}
+      </li>
+    {% endif %}
+
+    {% comment %} Bancontact {% endcomment %}
+    {% if settings.show_payment_paypal %}
+      <li class="custom-payment-icon-item">
+        {% if settings.payment_image_paypal != blank %}
+          <img src="{{ settings.payment_image_paypal | image_url: width: 120 }}" alt="PayPal" class="payment-icon" loading="lazy" width="48" height="30">
+        {% else %}
+          {{ 'bancontact' | payment_type_svg_tag: class: 'payment-icon' }}
+        {% endif %}
+      </li>
+    {% endif %}
+
+    {% comment %} Diners Club {% endcomment %}
+    {% if settings.show_payment_diners_club %}
+      <li class="custom-payment-icon-item">
+        {% if settings.payment_image_diners_club != blank %}
+          <img src="{{ settings.payment_image_diners_club | image_url: width: 120 }}" alt="Diners Club" class="payment-icon" loading="lazy" width="48" height="30">
+        {% else %}
+          {{ 'diners_club' | payment_type_svg_tag: class: 'payment-icon' }}
+        {% endif %}
+      </li>
+    {% endif %}
+
+    {% comment %} Discover {% endcomment %}
+    {% if settings.show_payment_discover %}
+      <li class="custom-payment-icon-item">
+        {% if settings.payment_image_discover != blank %}
+          <img src="{{ settings.payment_image_discover | image_url: width: 120 }}" alt="Discover" class="payment-icon" loading="lazy" width="48" height="30">
+        {% else %}
+          {{ 'discover' | payment_type_svg_tag: class: 'payment-icon' }}
+        {% endif %}
+      </li>
+    {% endif %}
+
+    {% comment %} Google Pay {% endcomment %}
+    {% if settings.show_payment_google_pay %}
+      <li class="custom-payment-icon-item">
+        {% if settings.payment_image_google_pay != blank %}
+          <img src="{{ settings.payment_image_google_pay | image_url: width: 120 }}" alt="Google Pay" class="payment-icon" loading="lazy" width="48" height="30">
+        {% else %}
+          {{ 'google_pay' | payment_type_svg_tag: class: 'payment-icon' }}
+        {% endif %}
+      </li>
+    {% endif %}
+
+  
+
+    {% comment %} Shop Pay {% endcomment %}
+    {% if settings.show_payment_shop_pay %}
+      <li class="custom-payment-icon-item">
+        {% if settings.payment_image_shop_pay != blank %}
+          <img src="{{ settings.payment_image_shop_pay | image_url: width: 120 }}" alt="Shop Pay" class="payment-icon" loading="lazy" width="48" height="30">
+        {% else %}
+          {{ 'shopify_pay' | payment_type_svg_tag: class: 'payment-icon' }}
+        {% endif %}
+      </li>
+    {% endif %}
+
+  
+  </ul>
+</div>

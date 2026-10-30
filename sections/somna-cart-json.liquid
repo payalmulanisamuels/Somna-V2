@@ -1,0 +1,12 @@
+{%- comment -%}
+  Not a visible section. Rendered only through the Section Rendering API, together with the cart
+  drawer, by the cart upsell "Add" (assets/custom.js): it returns the updated cart (same shape as
+  /cart.js) in the /cart/add.js response, which saves a separate /cart.js request.
+{%- endcomment -%}
+<script type="application/json">{{ cart | json }}</script>
+
+{% schema %}
+{
+  "name": "Cart JSON"
+}
+{% endschema %}

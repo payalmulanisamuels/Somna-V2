@@ -1,0 +1,37 @@
+{%- doc -%}
+  Somna V2 — cart drawer totals (moved from the live theme): "You saved", any discount codes, and the
+  subtotal with the item count. "You saved" = variant prices minus what the shopper pays, so the sale,
+  codes and Autoship prices are all counted once.
+{%- enddoc -%}
+{%- liquid
+  assign original_total = 0
+  for item in cart.items
+    assign line_original = item.variant.price | times: item.quantity
+    if item.original_line_price > line_original
+      assign line_original = item.original_line_price
+    endif
+    assign original_total = original_total | plus: line_original
+  endfor
+  assign total_saved = original_total | minus: cart.total_price
+  if total_saved < 0
+    assign total_saved = 0
+  endif
+-%}
+<div class="somna-cart-totals">
+  {%- if total_saved > 0 -%}
+    <div class="somna-cart-totals__row somna-cart-totals__saved">
+      <span>You saved</span>
+      <text-component value="-{{ total_saved | money }}">-{{ total_saved | money }}</text-component>
+    </div>
+  {%- endif -%}
+  {%- for discount in cart.cart_level_discount_applications -%}
+    <div class="somna-cart-totals__row somna-cart-totals__code">
+      <span>Code {{ discount.title | escape }}</span>
+      <span>-{{ discount.total_allocated_amount | money }}</span>
+    </div>
+  {%- endfor -%}
+  <div class="somna-cart-totals__row somna-cart-totals__total">
+    <span>Subtotal ({{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %})</span>
+    <text-component value="{{ cart.total_price | money }}">{{ cart.total_price | money }}</text-component>
+  </div>
+</div>

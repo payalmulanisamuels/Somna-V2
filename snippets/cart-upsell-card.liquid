@@ -1,0 +1,125 @@
+{%- doc -%}
+  Renders one "Complete your sleep system" upsell card in the cart drawer.
+
+  @param {object} product - The product to recommend.
+  @param {string} [variant_setting] - Variant name (or part of it) or variant ID. Empty = first variant with a subscription plan.
+  @param {string} [title] - Title override. Empty = product title.
+  @param {string} [badge] - Badge text. Empty = subscription saving ("SAVE 33%").
+  @param {boolean} [is_last] - Last card in the list: always shows the "FREE GIFT" badge.
+{%- enddoc -%}
+
+{%- liquid
+  assign show_card = true
+  assign upsell_variant = nil
+
+  if product == blank or product.available == false
+    assign show_card = false
+  endif
+
+  # 1. Variant: from the setting (name or ID), else first available variant with a subscription plan
+  if show_card
+    assign variant_setting_clean = variant_setting | strip
+    if variant_setting_clean != blank
+      assign variant_setting_check = variant_setting_clean | downcase
+      for variant in product.variants
+        assign variant_id_string = variant.id | append: ''
+        assign variant_title_check = variant.title | downcase
+        if variant_id_string == variant_setting_clean or variant_title_check contains variant_setting_check
+          assign upsell_variant = variant
+          break
+        endif
+      endfor
+    endif
+
+    if upsell_variant == nil
+      for variant in product.variants
+        if variant.available and variant.selling_plan_allocations.size > 0
+          assign upsell_variant = variant
+          break
+        endif
+      endfor
+    endif
+
+    if upsell_variant == nil
+      assign upsell_variant = product.selected_or_first_available_variant
+    endif
+
+    if upsell_variant == nil or upsell_variant.available == false
+      assign show_card = false
+    endif
+  endif
+
+  if show_card
+    # 2. Price: subscription price (first plan) when enabled or required
+    assign upsell_price = upsell_variant.price
+    assign upsell_selling_plan = ''
+    if settings.upsell_add_as_subscription or product.requires_selling_plan
+      assign upsell_allocation = upsell_variant.selling_plan_allocations.first
+      if upsell_allocation
+        assign upsell_price = upsell_allocation.price
+        assign upsell_selling_plan = upsell_allocation.selling_plan.id
+      endif
+    endif
+    assign upsell_compare = upsell_variant.price
+    if upsell_variant.compare_at_price > upsell_compare
+      assign upsell_compare = upsell_variant.compare_at_price
+    endif
+
+    # 3. Badge: last card is always "FREE GIFT", else custom text, else saving percentage
+    assign upsell_badge = badge | strip
+    if is_last
+      assign upsell_badge = 'FREE GIFT'
+    elsif upsell_badge == blank and upsell_compare > upsell_price
+      assign upsell_save_percent = upsell_compare | minus: upsell_price | times: 100.0 | divided_by: upsell_compare | round
+      assign upsell_badge = 'SAVE ' | append: upsell_save_percent | append: '%'
+    endif
+
+    assign upsell_title = title | strip | default: product.title
+    assign upsell_image = upsell_variant.featured_image | default: product.featured_image
+
+    assign upsell_rating = product.metafields.custom.custom_review_rating_review_count.value
+    
+  endif
+-%}  
+
+{%- if show_card -%}
+  <div class="hz-minicart-upsell__card">
+    {%- if upsell_badge != blank -%}
+      <span class="hz-save-badge">{{ upsell_badge | escape }}</span>
+    {%- endif -%}
+
+    <a href="{{ upsell_variant.url }}" class="hz-minicart-upsell__media" tabindex="-1" aria-hidden="true">
+      {%- if upsell_image != blank -%}
+        {{ upsell_image | image_url: width: 200 | image_tag: loading: 'lazy', class: 'hz-upsell-img', alt: upsell_title }}
+      {%- endif -%}
+    </a>
+
+    <div class="hz-minicart-upsell__content">
+      {%- if settings.upsell_show_rating and upsell_rating != blank -%}
+        <div class="review_content">{{ upsell_rating }}</div>
+      {%- endif -%}
+
+      <h4 class="hz-minicart-upsell__title">
+        <a href="{{ upsell_variant.url }}">{{ upsell_title | escape }}</a>
+      </h4>
+
+      <div class="hz-minicart-upsell__bottom">
+        <div class="hz-minicart-upsell__price-wrap">
+          {%- if upsell_compare > upsell_price -%}
+            <s class="hz-minicart-upsell__compare">{{ upsell_compare | money }}</s>
+          {%- endif -%}
+          <span class="hz-minicart-upsell__price">{{ upsell_price | money }}</span>
+        </div>
+
+        <form action="{{ routes.cart_add_url }}" method="post" class="hz-upsell-form" data-ajax-form>
+          <input type="hidden" name="id" value="{{ upsell_variant.id }}">
+          {%- if upsell_selling_plan != blank -%}
+            <input type="hidden" name="selling_plan" value="{{ upsell_selling_plan }}">
+          {%- endif -%}
+          <input type="hidden" name="quantity" value="1">
+          <button type="submit" class="hz-upsell-add-btn">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{%- endif -%}

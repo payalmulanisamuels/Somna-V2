@@ -1,0 +1,48 @@
+{%- comment -%}
+  "Complete your sleep system" upsell in the cart drawer.
+  Settings: Theme settings → Cart Upsell Rules. Card markup: snippets/cart-upsell-card.liquid
+{%- endcomment -%}
+
+{%- liquid
+  if settings.upsell_mode == 'fixed_two'
+    capture upsell_cards
+      render 'cart-upsell-card', product: settings.fixed_product_1, variant_setting: settings.fixed_variant_1, title: settings.fixed_title_1, badge: settings.fixed_badge_1
+      render 'cart-upsell-card', product: settings.fixed_product_2, variant_setting: settings.fixed_variant_2, title: settings.fixed_title_2, badge: settings.fixed_badge_2, is_last: true
+    endcapture
+  else
+    # Rule-based: recommend the missing half of Strips + Tape, or the upgrade bundle
+    assign has_strips = false
+    assign has_tape = false
+    for item in cart.items
+      if item.product_id == settings.upsell_pair_strips_trigger.id
+        assign has_strips = true
+      endif
+      if item.product_id == settings.upsell_pair_tape_trigger.id
+        assign has_tape = true
+      endif
+    endfor
+
+    if has_tape and has_strips == false
+      assign upsell_product = settings.upsell_pair_tape_recommend
+    elsif has_strips and has_tape == false
+      assign upsell_product = settings.upsell_pair_strips_recommend
+    else
+      assign upsell_product = settings.upsell_pair_upgrade_recommend
+    endif
+
+    capture upsell_cards
+      render 'cart-upsell-card', product: upsell_product
+    endcapture
+  endif
+
+  assign upsell_cards = upsell_cards | strip
+-%}
+
+{%- if upsell_cards != blank -%}
+  <div class="hz-minicart-upsell">
+    <h2 class="upsell_heading">{{ settings.fixed_heading | default: 'Complete your sleep system' | escape }}</h2>
+    <div class="hz-minicart-upsell__list">
+      {{ upsell_cards }}
+    </div>
+  </div>
+{%- endif -%}
