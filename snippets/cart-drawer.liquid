@@ -241,8 +241,16 @@
     color: #f3feee;
   }
 
+  /* no fade at the edges of the scroll area: it greyed out the checkout button and the upsell heading */
   #cart-drawer .cart-drawer__content {
     background: #f3feee;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  #cart-drawer .cart-drawer__summary {
+    z-index: 2;
+    box-shadow: 0 -8px 16px rgb(11 15 29 / 0.06);
   }
 
   /* items, upsell and totals scroll together; the items list keeps its full height */
