@@ -153,4 +153,31 @@
       letter-spacing: 0.04em;
     }
   }
+
+  /* Guarantee ("Try for 30 nights"): QA — Figma button, sub-line below the title, tight spacing */
+  [id$='__guarantee'] .button-custom {
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    box-shadow: 0 6px 14px rgb(29 78 216 / 0.2);
+  }
+
+  [id$='__guarantee'] > * > .spacing-style.layout-panel-flex {
+    padding-block: 0 !important;
+  }
+
+  @media screen and (min-width: 750px) {
+    [id$='__guarantee'] .button-custom {
+      width: 440px !important;
+      max-width: 100%;
+      min-height: 60px;
+      font-size: 1.125rem;
+      border-radius: 16px;
+    }
+
+    [id$='__guarantee'] [class*='__text'] p {
+      font-size: 1.625rem !important;
+      font-weight: 500 !important;
+      letter-spacing: 0.02em !important;
+    }
+  }
 {% endstylesheet %}
