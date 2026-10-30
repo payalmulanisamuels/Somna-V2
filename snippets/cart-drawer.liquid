@@ -244,8 +244,9 @@
   /* no fade at the edges of the scroll area: it greyed out the checkout button and the upsell heading */
   #cart-drawer .cart-drawer__content {
     background: #f3feee;
-    -webkit-mask-image: none;
-    mask-image: none;
+    /* the theme sets the fade as an inline style, so this needs !important */
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
   }
 
   #cart-drawer .cart-drawer__summary {
