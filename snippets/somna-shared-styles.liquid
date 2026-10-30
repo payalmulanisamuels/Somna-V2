@@ -129,4 +129,28 @@
       font-size: 1rem;
     }
   }
+
+  /* Final CTA (desktop/tablet): tall enough that the pouches clear the wave hanging over the photo,
+     content centred in the visible part below the wave, Figma button (bold, 351px) */
+  @media screen and (min-width: 750px) {
+    [id$='__final_cta'] :is(.hero, .hero__container) {
+      min-height: max(45vw, 560px) !important;
+    }
+
+    [id$='__final_cta'] .hero__container {
+      padding-block-start: calc(40px + 135 * min(100vw, 1440px) / 1440) !important;
+    }
+
+    [id$='__final_cta'] img.hero__media {
+      object-position: 50% 30% !important;
+    }
+
+    [id$='__final_cta'] .button-custom {
+      width: 351px !important;
+      max-width: 100%;
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+  }
 {% endstylesheet %}
