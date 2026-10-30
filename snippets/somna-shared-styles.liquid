@@ -204,4 +204,36 @@
   [id$='__newsletter'] button {
     font-weight: 500 !important;
   }
+
+  /* FAQ ("Questions? We've got you."): Figma sizes — questions lead, heading a step smaller */
+  [id$='__faq'] .details__header {
+    font-weight: 400 !important;
+    letter-spacing: 0.04em;
+  }
+
+  [id$='__faq'] .details-content p {
+    color: #3a3a3a !important;
+  }
+
+  @media screen and (min-width: 750px) {
+    [id$='__faq'] [class*='__heading'] h2 {
+      font-size: 2.5rem !important;
+      line-height: normal !important;
+    }
+
+    [id$='__faq'] .details__header {
+      font-size: 1.25rem !important;
+      padding-block: 16px !important;
+    }
+
+    [id$='__faq'] .icon-plus {
+      width: 18px !important;
+      height: 18px !important;
+    }
+
+    [id$='__faq'] .details-content {
+      max-width: 62ch !important;
+      padding-block-end: 16px !important;
+    }
+  }
 {% endstylesheet %}

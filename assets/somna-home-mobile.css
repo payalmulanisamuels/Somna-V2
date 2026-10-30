@@ -378,6 +378,36 @@
     padding-block: 0 !important;
   }
 
+  /* FAQ: 8px section padding like the other sections, left-aligned answers, readable questions */
+  [id$='__faq'] .section-content-wrapper.layout-panel-flex {
+    padding-block: 8px !important;
+    row-gap: 24px !important;
+  }
+
+  main [id$='__faq'] [class*='__heading'] :is(h2, p) {
+    font-size: 1.75rem !important;
+    line-height: 1.5;
+  }
+
+  [id$='__faq'] .details__header {
+    font-size: 1.0625rem !important;
+    padding-block: 14px !important;
+    letter-spacing: 0.02em;
+  }
+
+  [id$='__faq'] .details-content {
+    padding-block-end: 14px !important;
+  }
+
+  [id$='__faq'] .details-content .text-block {
+    --text-align: left !important;
+    text-align: left;
+  }
+
+  [id$='__faq'] .details-content p {
+    font-size: 0.9375rem !important;
+  }
+
   /* guarantee: shield box sized to the icon, readable eyebrow and sub-line (QA) */
   [id$='__guarantee'] .somna-icon {
     --somna-icon-box: 48px !important;
