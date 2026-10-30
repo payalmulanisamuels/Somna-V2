@@ -378,7 +378,7 @@
     padding-block: 0 !important;
   }
 
-  /* guarantee: shield box sized to the icon, readable eyebrow and sub-line */
+  /* guarantee: shield box sized to the icon, readable eyebrow and sub-line (QA) */
   [id$='__guarantee'] .somna-icon {
     --somna-icon-box: 48px !important;
     --somna-icon-size: 48px !important;
