@@ -8,6 +8,10 @@
 {% render 'text-component-shimmer-styles' %}
 {% render 'cart-typography-styles' %}
 
+{%- if section_id == 'cart-drawer-section' -%}
+  {% render 'somna-cart-savings' %}
+{%- endif -%}
+
 <div class="cart-totals">
   {% # We need to keep this node in place to allow morphing to work properly # %}
   <div class="cart-totals__original-container cart-primary-typography">
@@ -264,6 +268,7 @@
     form="cart-form"
   >
     <span class="button-text">
+      <svg class="somna-lock" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>
       {{ 'content.checkout' | t }}
     </span>
   </button>
@@ -279,6 +284,10 @@
     </div>
   {% endif %}
 </div>
+
+{%- if section_id == 'cart-drawer-section' -%}
+  {% render 'somna-cart-trust' %}
+{%- endif -%}
 
 {% stylesheet %}
   .cart-actions {

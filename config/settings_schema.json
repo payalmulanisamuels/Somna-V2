@@ -2123,5 +2123,356 @@
         "default": "equal-width-buttons"
       }
     ]
+  },
+  {
+    "name": "Cart Drawer",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Badge 1 (e.g. Returns)"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_trust_badge_1",
+        "label": "Show Badge 1",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "trust_badge_1_image",
+        "label": "Badge 1 Custom Icon (Optional)"
+      },
+      {
+        "type": "text",
+        "id": "trust_badge_1_emoji",
+        "label": "Badge 1 Emoji / Icon Text (Fallback)",
+        "default": "🚚"
+      },
+      {
+        "type": "richtext",
+        "id": "trust_badge_1_text",
+        "label": "Badge 1 Text"
+      },
+      {
+        "type": "header",
+        "content": "Badge 2 (e.g. Secure Checkout)"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_trust_badge_2",
+        "label": "Show Badge 2",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "trust_badge_2_image",
+        "label": "Badge 2 Custom Icon (Optional)"
+      },
+      {
+        "type": "text",
+        "id": "trust_badge_2_emoji",
+        "label": "Badge 2 Emoji / Icon Text (Fallback)",
+        "default": "🔒"
+      },
+      {
+        "type": "text",
+        "id": "trust_badge_2_text",
+        "label": "Badge 2 Text",
+        "default": "Secure Checkout"
+      },
+      {
+        "type": "header",
+        "content": "Styling"
+      },
+      {
+        "type": "color",
+        "id": "trust_badge_bg",
+        "label": "Badge Background Color",
+        "default": "#f3f5f8"
+      },
+      {
+        "type": "color",
+        "id": "trust_badge_color",
+        "label": "Badge Text Color",
+        "default": "#18283d"
+      },
+      {
+        "type": "header",
+        "content": "Payment Icons"
+      },
+      {
+        "type": "header",
+        "content": "American Express"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_payment_amex",
+        "label": "Show American Express",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "payment_image_amex",
+        "label": "Custom Amex Icon"
+      },
+      {
+        "type": "header",
+        "content": "Apple Pay"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_payment_apple_pay",
+        "label": "Show Apple Pay",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "payment_image_apple_pay",
+        "label": "Custom Apple Pay Icon"
+      },
+      {
+        "type": "header",
+        "content": "PayPal"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_payment_paypal",
+        "label": "Show PayPal",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "payment_image_paypal",
+        "label": "Custom PayPal Icon"
+      },
+      {
+        "type": "header",
+        "content": "Diners Club"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_payment_diners_club",
+        "label": "Show Diners Club",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "payment_image_diners_club",
+        "label": "Custom Diners Club Icon"
+      },
+      {
+        "type": "header",
+        "content": "Discover"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_payment_discover",
+        "label": "Show Discover",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "payment_image_discover",
+        "label": "Custom Discover Icon"
+      },
+      {
+        "type": "header",
+        "content": "Google Pay"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_payment_google_pay",
+        "label": "Show Google Pay",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "payment_image_google_pay",
+        "label": "Custom Google Pay Icon"
+      },
+      {
+        "type": "header",
+        "content": "Mastercard"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_payment_mastercard",
+        "label": "Show Mastercard",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "payment_image_mastercard",
+        "label": "Custom Mastercard Icon"
+      },
+      {
+        "type": "header",
+        "content": "Shop Pay"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_payment_shop_pay",
+        "label": "Show Shop Pay",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "payment_image_shop_pay",
+        "label": "Custom Shop Pay Icon"
+      },
+      {
+        "type": "header",
+        "content": "Visa"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_payment_visa",
+        "label": "Show Visa",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "payment_image_visa",
+        "label": "Custom Visa Icon"
+      }
+    ]
+  },
+  {
+    "name": "Cart Upsell Rules",
+    "settings": [
+      {
+        "type": "select",
+        "id": "upsell_mode",
+        "label": "Upsell Display Mode",
+        "options": [
+          {
+            "value": "dynamic",
+            "label": "Dynamically Show (Rule-based)"
+          },
+          {
+            "value": "fixed_two",
+            "label": "Fixed 2 Bundle Show"
+          }
+        ],
+        "default": "dynamic"
+      },
+      {
+        "type": "text",
+        "id": "fixed_heading",
+        "label": "Heading",
+        "default": "Complete your sleep system"
+      },
+      {
+        "type": "checkbox",
+        "id": "upsell_add_as_subscription",
+        "label": "Add as Subscribe & Save",
+        "default": true,
+        "info": "Adds with the variant's first subscription plan and shows the subscription price"
+      },
+      {
+        "type": "checkbox",
+        "id": "upsell_show_rating",
+        "label": "Show star rating",
+        "default": true,
+        "info": "Uses the product's review metafields (Judge.me)"
+      },
+      {
+        "type": "header",
+        "content": "Fixed 2 Bundle Show"
+      },
+      {
+        "type": "header",
+        "content": "Product 1"
+      },
+      {
+        "type": "product",
+        "id": "fixed_product_1",
+        "label": "Product"
+      },
+      {
+        "type": "text",
+        "id": "fixed_variant_1",
+        "label": "Variant",
+        "default": "Breathe",
+        "info": "Variant name (or part of it, e.g. Breathe, Bold, Night) or variant ID. Leave empty to use the first variant with a subscription plan."
+      },
+      {
+        "type": "text",
+        "id": "fixed_title_1",
+        "label": "Title",
+        "info": "Leave empty to use the product title"
+      },
+      {
+        "type": "text",
+        "id": "fixed_badge_1",
+        "label": "Badge",
+        "info": "e.g. FREE GIFTS. Leave empty to show the subscription saving (SAVE 33%)."
+      },
+      {
+        "type": "header",
+        "content": "Product 2"
+      },
+      {
+        "type": "product",
+        "id": "fixed_product_2",
+        "label": "Product"
+      },
+      {
+        "type": "text",
+        "id": "fixed_variant_2",
+        "label": "Variant",
+        "default": "Bold",
+        "info": "Variant name (or part of it, e.g. Breathe, Bold, Night) or variant ID. Leave empty to use the first variant with a subscription plan."
+      },
+      {
+        "type": "text",
+        "id": "fixed_title_2",
+        "label": "Title",
+        "info": "Leave empty to use the product title"
+      },
+      {
+        "type": "text",
+        "id": "fixed_badge_2",
+        "label": "Badge",
+        "info": "e.g. FREE GIFTS. Leave empty to show the subscription saving (SAVE 33%)."
+      },
+      {
+        "type": "header",
+        "content": "Rule-based: Tape in cart → Strips"
+      },
+      {
+        "type": "product",
+        "id": "upsell_pair_tape_trigger",
+        "label": "Trigger Product (Tape)"
+      },
+      {
+        "type": "product",
+        "id": "upsell_pair_tape_recommend",
+        "label": "Recommended Product (Strips)"
+      },
+      {
+        "type": "header",
+        "content": "Rule-based: Strips in cart → Tape"
+      },
+      {
+        "type": "product",
+        "id": "upsell_pair_strips_trigger",
+        "label": "Trigger Product (Strips)"
+      },
+      {
+        "type": "product",
+        "id": "upsell_pair_strips_recommend",
+        "label": "Recommended Product (Tape)"
+      },
+      {
+        "type": "header",
+        "content": "Rule-based: both / bundle in cart → Upgrade"
+      },
+      {
+        "type": "product",
+        "id": "upsell_pair_upgrade_recommend",
+        "label": "Recommended Upgrade Product (Bundle)"
+      }
+    ]
   }
 ]

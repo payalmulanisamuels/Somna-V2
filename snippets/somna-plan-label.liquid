@@ -1,0 +1,48 @@
+{%- doc -%}
+  Outputs a selling plan's delivery wording in days, e.g. "Delivery every 30 days".
+
+  Reads the plan's option value first ("Deliver every 2 months"), then its name.
+  Conversion: day = 1, week = 7, month = 30, year = 365.
+  Falls back to the plan's own option value / name if no interval is found.
+
+  @param {object} selling_plan - The selling plan object.
+  @param {boolean} [days_only] - Output only the day count (number), or 0 if unknown.
+{%- enddoc -%}
+
+{%- liquid
+  assign plan_days = 0
+  assign interval_sources = selling_plan.options.first.value | append: '|' | append: selling_plan.name | downcase | split: '|'
+  for interval_text in interval_sources
+    assign unit_days = 0
+    if interval_text contains 'day'
+      assign unit_days = 1
+    elsif interval_text contains 'week'
+      assign unit_days = 7
+    elsif interval_text contains 'month'
+      assign unit_days = 30
+    elsif interval_text contains 'year'
+      assign unit_days = 365
+    endif
+    if unit_days > 0
+      assign interval_count = 1
+      assign interval_words = interval_text | split: ' '
+      for word in interval_words
+        assign word_num = word | plus: 0
+        if word_num > 0
+          assign interval_count = word_num
+          break
+        endif
+      endfor
+      assign plan_days = interval_count | times: unit_days
+      break
+    endif
+  endfor
+
+  if days_only
+    echo plan_days
+  elsif plan_days > 0
+    echo 'Delivery every ' | append: plan_days | append: ' days'
+  else
+    echo selling_plan.options.first.value | default: selling_plan.name
+  endif
+-%}
