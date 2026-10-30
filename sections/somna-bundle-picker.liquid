@@ -53,6 +53,7 @@
 <somna-bundle-picker
   class="somna-bundle"
   data-mode="{{ s.default_mode }}"
+  data-show-variants="{{ s.show_variant_picker }}"
   data-currency="{{ cart.currency.iso_code }}"
   data-locale="{{ request.locale.iso_code }}"
   style="background: {{ s.background_color }}; color: {{ s.text_color }}; --somna-accent: {{ s.accent_color }}; --somna-card: {{ s.card_color }}; --somna-chip: {{ s.chip_color }}; --somna-btn: {{ s.button_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
@@ -172,7 +173,7 @@
         const img = q('[data-f-image]');
         if (p.image) { img.src = p.image; img.alt = p.alt || ''; }
         const sel = q('[data-f-variant]');
-        q('[data-f-variant-wrap]').hidden = p.variants.length < 2;
+        q('[data-f-variant-wrap]').hidden = this.dataset.showVariants !== 'true' || p.variants.length < 2;
         sel.innerHTML = p.variants.map((x, i) => `<option value="${i}"${i === this.variantIndex[this.active] ? ' selected' : ''}${x.available ? '' : ' disabled'}>${x.title.replace(/</g, '&lt;')}</option>`).join('');
         q('[data-f-price]').textContent = this.money(pr.price);
         q('[data-f-compare]').textContent = pr.compare ? this.money(pr.compare) : '';
@@ -734,6 +735,7 @@
       ],
       "default": "sub"
     },
+    { "type": "checkbox", "id": "show_variant_picker", "label": "Show variant dropdown", "info": "Off matches the Figma design: the first available variant is added to cart.", "default": false },
     { "type": "text", "id": "variant_label", "label": "Variant label (screen readers)", "default": "Choose an option" },
     { "type": "text", "id": "note", "label": "Note under the price", "default": "Includes 3 free gifts on your first order." },
     { "type": "text", "id": "no_plan_label", "label": "Note when a product has no subscription", "default": "This product is one-time purchase only." },
