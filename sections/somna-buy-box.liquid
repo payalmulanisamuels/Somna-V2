@@ -581,10 +581,89 @@
     margin: 0;
   }
 
+  /* desktop: compact so the whole buy box fits in one screen — FAQ moves under the gallery */
   @media screen and (min-width: 990px) {
+    .somna-buy__tabs {
+      margin-bottom: 10px;
+    }
+
+    .somna-buy__tab {
+      min-height: 44px;
+      padding-inline: 36px;
+      font-size: 1.125rem;
+    }
+
     .somna-buy__grid {
-      grid-template-columns: minmax(0, 622px) minmax(0, 596px);
-      justify-content: space-between;
+      grid-template-columns: minmax(0, 540px) minmax(0, 560px);
+      grid-template-areas:
+        'gallery panel'
+        'faq panel';
+      justify-content: center;
+      gap: 12px 56px;
+    }
+
+    .somna-buy__gallery {
+      grid-area: gallery;
+    }
+
+    .somna-buy__side {
+      display: contents;
+    }
+
+    .somna-buy__panel {
+      grid-area: panel;
+      padding-bottom: 18px;
+    }
+
+    .somna-buy__panel.somna-edge-drip-top {
+      padding-top: 44px;
+    }
+
+    .somna-buy__faq {
+      grid-area: faq;
+      margin-top: 0;
+    }
+
+    .somna-buy__main {
+      aspect-ratio: 540 / 340;
+    }
+
+    .somna-buy__thumbs {
+      margin-top: 10px;
+    }
+
+    .somna-buy__thumb {
+      aspect-ratio: 100 / 66;
+      border-radius: 10px;
+    }
+
+    .somna-buy__points {
+      gap: 8px 24px;
+      margin-top: 12px;
+    }
+
+    .somna-buy__packs {
+      margin-block-start: 14px;
+    }
+
+    .somna-buy__pack {
+      padding: 12px 8px 6px;
+    }
+
+    .somna-buy__modes {
+      gap: 6px;
+      margin-top: 12px;
+      padding: 10px 18px;
+    }
+
+    .somna-buy__add {
+      min-height: 52px;
+      margin-top: 12px;
+    }
+
+    .somna-buy__q summary {
+      padding: 9px 0;
+      font-size: 0.9375rem;
     }
   }
 
