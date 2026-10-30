@@ -1,49 +1,222 @@
 {%- comment -%}
-  Somna V2 — horizontal strip of media cards (customer videos / UGC).
-  A card with a video link shows a play button and opens the video; without a link it is a plain image.
-  Scrolls horizontally with scroll-snap when the cards don't fit.
+  Somna V2 — "Hear it from them": a horizontal strip of customer video cards (Figma 4298:4549).
+  Each card shows a poster with a play button. Shopify-hosted videos (or a direct .mp4/.webm link)
+  play inside the card: the video file is only requested when the customer presses play, only one
+  video plays at a time, and a playing video pauses when it scrolls out of view. Other links
+  (YouTube, Instagram…) open in a new tab. A card without a video is a plain image.
+  Behaviour lives in assets/somna-media-strip.js.
 {%- endcomment -%}
 {%- render 'somna-shared-styles' -%}
 {%- liquid
   assign s = section.settings
+  assign heading_align = s.heading_align
 -%}
-<div
-  class="somna-strip"
-  style="background: {{ s.background_color }}; color: {{ s.text_color }}; --somna-strip-card: {{ s.card_width }}px; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+{%- if s.enabled or request.design_mode -%}
+<somna-media-strip
+  class="somna-strip{% unless s.enabled %} somna-strip--hidden-preview{% endunless %}"
+  style="
+    background: {{ s.background_color }};
+    color: {{ s.text_color }};
+    --somna-strip-card: {{ s.card_width }}px;
+    --somna-strip-ratio: {{ s.card_ratio }};
+    --somna-strip-radius: {{ s.card_radius }}px;
+    --somna-strip-gap: {{ s.gap }}px;
+    --somna-strip-gap-m: {{ s.gap_mobile }}px;
+    --somna-strip-fit: {{ s.image_fit }};
+    --somna-strip-play: {{ s.play_size }}px;
+    --somna-strip-play-bg: {{ s.play_bg }};
+    --somna-strip-play-fg: {{ s.play_fg }};
+    --somna-strip-overlay: {{ s.overlay_opacity | divided_by: 100.0 }};
+    --somna-strip-card-bg: {{ s.card_bg }};
+    --somna-strip-caption: {{ s.caption_color }};
+    --somna-strip-heading: {{ s.heading_color }};
+    --somna-strip-pt: {{ s.padding_top }}px;
+    --somna-strip-pb: {{ s.padding_bottom }}px;
+    --somna-strip-pt-m: {{ s.padding_top_mobile }}px;
+    --somna-strip-pb-m: {{ s.padding_bottom_mobile }}px;
+    --somna-strip-h: {{ s.heading_size }};
+    --somna-strip-h-m: {{ s.heading_size_mobile }};
+    --somna-strip-h-gap: {{ s.heading_gap }}px;
+    --somna-content-width: {{ s.max_width }}px;
+    --somna-strip-per-d: {{ s.per_view_desktop }};
+    --somna-strip-per-t: {{ s.per_view_tablet }};
+    --somna-strip-per-m: {{ s.per_view_mobile }};
+    --somna-strip-arrow-fg: {{ s.arrow_color }};
+    --somna-strip-arrow-bg: {{ s.arrow_bg }};
+    --somna-strip-dot: {{ s.dot_color }};
+    --somna-strip-dot-active: {{ s.dot_active_color }};
+  "
+  data-sizing="{{ s.card_sizing }}"
+  data-scroll-by="{{ s.slides_to_scroll }}"
+  data-loop="{{ s.carousel_loop }}"
+  data-drag="{{ s.drag }}"
+  data-sound="{{ s.allow_sound }}"
+  data-start-muted="{{ s.start_muted }}"
+  data-controls="{{ s.native_controls }}"
+  data-autoplay="{{ s.autoplay }}"
+  data-video-loop="{{ s.video_loop }}"
+  data-preload="{{ s.preload }}"
+  data-one-at-a-time="{{ s.one_at_a_time }}"
+  data-pause-offscreen="{{ s.pause_offscreen }}"
+  data-mute-label="{{ s.mute_label | escape }}"
+  data-unmute-label="{{ s.unmute_label | escape }}"
+  data-pause-label="{{ s.pause_label | escape }}"
 >
-  <div class="somna-strip__head somna-container">
-    {%- if s.eyebrow != blank -%}<p class="somna-strip__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
-    {%- if s.heading != blank -%}<h2 class="somna-strip__heading">{{ s.heading }}</h2>{%- endif -%}
+  {%- if s.eyebrow != blank or s.heading != blank or s.subtitle != blank -%}
+    <div class="somna-strip__head somna-container somna-strip__head--{{ heading_align }}">
+      {%- if s.eyebrow != blank -%}<p class="somna-strip__eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+      {%- if s.heading != blank -%}<h2 class="somna-strip__heading">{{ s.heading | escape }}</h2>{%- endif -%}
+      {%- if s.subtitle != blank -%}<div class="somna-strip__subtitle">{{ s.subtitle }}</div>{%- endif -%}
+    </div>
+  {%- endif -%}
+
+  <div class="somna-strip__viewport{% if s.carousel %} is-carousel{% endif %}">
+    <ul
+      class="somna-strip__list"
+      role="list"
+      data-track
+      {% if s.carousel %}tabindex="0" aria-label="{{ s.heading | default: s.eyebrow | escape }}"{% endif %}
+    >
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign b = block.settings
+          if b.enabled == false
+            continue
+          endif
+          assign label = b.title | default: b.caption | default: b.image.alt | default: s.heading
+          assign ext = b.video_url | downcase | split: '?' | first
+          assign ext_inline = false
+          if b.video_url != blank
+            if ext contains '.mp4' or ext contains '.webm' or ext contains '.mov'
+              assign ext_inline = true
+            endif
+          endif
+          assign has_video = false
+          if b.video != blank or ext_inline
+            assign has_video = true
+          endif
+          assign poster = b.image
+          if poster == blank and b.video != blank
+            assign poster = b.video.preview_image
+          endif
+          assign link = b.video_link
+          if link == blank and b.video_url != blank and ext_inline == false
+            assign link = b.video_url
+          endif
+        -%}
+        <li class="somna-strip__item" {{ block.shopify_attributes }}>
+          <div class="somna-strip__card{% if has_video %} has-video{% endif %}" data-card>
+            {%- if poster != blank -%}
+              {{ poster | image_url: width: 640 | image_tag: widths: '240, 360, 480, 640', sizes: '(max-width: 749px) 50vw, var(--somna-strip-card)', loading: 'lazy', class: 'somna-strip__img', alt: label }}
+            {%- else -%}
+              {{ 'image' | placeholder_svg_tag: 'somna-strip__img' }}
+            {%- endif -%}
+
+            {%- if has_video -%}
+              {%- capture sources -%}
+                {%- if b.video != blank -%}
+                  {%- liquid
+                    assign mp4 = b.video.sources | where: 'mime_type', 'video/mp4' | sort: 'height'
+                    assign best = mp4 | last
+                    for src in mp4
+                      if src.height >= 720
+                        assign best = src
+                        break
+                      endif
+                    endfor
+                  -%}
+                  {%- if best -%}{{ best.url }}|video/mp4{%- endif -%}
+                {%- else -%}
+                  {{- b.video_url -}}|{% if ext contains '.webm' %}video/webm{% else %}video/mp4{% endif %}
+                {%- endif -%}
+              {%- endcapture -%}
+              <video
+                class="somna-strip__video"
+                playsinline
+                preload="none"
+                {% if poster != blank %}poster="{{ poster | image_url: width: 640 }}"{% endif %}
+                data-sources="{{ sources | strip | escape }}"
+                {% if b.video != blank %}width="{{ b.video.preview_image.width | default: 1080 }}" height="{{ b.video.preview_image.height | default: 1920 }}"{% endif %}
+                aria-label="{{ label | escape }}"
+                hidden
+              ></video>
+              <button type="button" class="somna-strip__play" data-play aria-label="{{ s.play_label | escape }}: {{ label | escape }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>
+              </button>
+              {%- if s.allow_sound -%}
+                <button type="button" class="somna-strip__sound" data-sound hidden aria-pressed="false" aria-label="{{ s.unmute_label | escape }}">
+                  <svg class="somna-strip__icon-muted" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 9.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                  <svg class="somna-strip__icon-sound" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                </button>
+              {%- endif -%}
+            {%- elsif link != blank -%}
+              <a class="somna-strip__play somna-strip__play--link" href="{{ link }}" target="_blank" rel="noopener" aria-label="{{ s.play_label | escape }}: {{ label | escape }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>
+              </a>
+            {%- endif -%}
+
+            {%- if b.duration != blank -%}<span class="somna-strip__duration">{{ b.duration | escape }}</span>{%- endif -%}
+          </div>
+
+          {%- if b.caption != blank or b.title != blank or b.name != blank or b.text != blank or b.product != blank -%}
+            <div class="somna-strip__meta">
+              {%- if b.caption != blank -%}<p class="somna-strip__caption">{{ b.caption | escape }}</p>{%- endif -%}
+              {%- if b.title != blank -%}<p class="somna-strip__title">{{ b.title | escape }}</p>{%- endif -%}
+              {%- if b.text != blank -%}<p class="somna-strip__text">{{ b.text | escape }}</p>{%- endif -%}
+              {%- if b.name != blank -%}<p class="somna-strip__name">{{ b.name | escape }}</p>{%- endif -%}
+              {%- if b.product != blank -%}
+                {%- if b.product_link != blank -%}
+                  <a class="somna-strip__product" href="{{ b.product_link }}">{{ b.product | escape }}</a>
+                {%- else -%}
+                  <p class="somna-strip__product">{{ b.product | escape }}</p>
+                {%- endif -%}
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    {%- if s.carousel and s.show_arrows -%}
+      <div class="somna-strip__arrows somna-container" data-arrows>
+        <button type="button" class="somna-strip__arrow" data-prev aria-label="{{ s.prev_label | escape }}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="somna-strip__arrow" data-next aria-label="{{ s.next_label | escape }}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    {%- endif -%}
+    {%- if s.carousel and s.show_dots -%}
+      <div class="somna-strip__dots" data-dots role="group" aria-label="{{ s.dots_label | escape }}"></div>
+    {%- endif -%}
   </div>
-  <ul class="somna-strip__list" role="list">
-    {%- for block in section.blocks -%}
-      {%- liquid
-        assign b = block.settings
-        assign label = b.caption | default: b.image.alt | default: s.heading
-      -%}
-      <li class="somna-strip__item" {{ block.shopify_attributes }}>
-        {%- if b.video_link != blank -%}<a class="somna-strip__card" href="{{ b.video_link }}" target="_blank" rel="noopener" aria-label="{{ s.play_label | escape }}: {{ label | escape }}">{%- else -%}<div class="somna-strip__card">{%- endif -%}
-          {%- if b.image != blank -%}
-            {{ b.image | image_url: width: 600 | image_tag: widths: '240, 360, 480, 600', sizes: 'var(--somna-strip-card)', loading: 'lazy', class: 'somna-strip__img' }}
-          {%- else -%}
-            {{ 'image' | placeholder_svg_tag: 'somna-strip__img' }}
-          {%- endif -%}
-          {%- if b.video_link != blank -%}
-            <span class="somna-strip__play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg></span>
-          {%- endif -%}
-        {%- if b.video_link != blank -%}</a>{%- else -%}</div>{%- endif -%}
-        {%- if b.caption != blank -%}<p class="somna-strip__caption">{{ b.caption }}</p>{%- endif -%}
-      </li>
-    {%- endfor -%}
-  </ul>
-</div>
-{%- if section.settings.wave_color != blank -%}
-  {%- render 'somna-wave', top: section.settings.background_color, bottom: section.settings.wave_color, shape: section.settings.wave_shape -%}
+</somna-media-strip>
+{%- if s.wave_color != blank -%}
+  {%- render 'somna-wave', top: s.background_color, bottom: s.wave_color, shape: s.wave_shape -%}
+{%- endif -%}
+<script src="{{ 'somna-media-strip.js' | asset_url }}" defer></script>
 {%- endif -%}
 
 {% stylesheet %}
+  .somna-strip {
+    display: block;
+    padding-block: var(--somna-strip-pt, 24px) var(--somna-strip-pb, 48px);
+  }
+
+  .somna-strip--hidden-preview {
+    opacity: 0.4;
+  }
+
   .somna-strip__head {
+    display: grid;
+    gap: 4px;
+    margin-block-end: var(--somna-strip-h-gap, 20px);
     text-align: center;
+  }
+
+  .somna-strip__head--left {
+    text-align: start;
+  }
+
+  .somna-strip__head--right {
+    text-align: end;
   }
 
   .somna-strip__eyebrow {
@@ -54,24 +227,49 @@
   }
 
   .somna-strip__heading {
-    margin: 4px 0 0;
+    margin: 0;
     font-family: var(--font-accent--family);
     font-weight: var(--font-accent--weight);
-    font-size: clamp(2rem, 3.47vw, 3.125rem);
+    font-size: clamp(min(2rem, calc(var(--somna-strip-h, 50) * 1px)), 3.47vw, calc(var(--somna-strip-h, 50) * 1px));
     line-height: 1.3;
-    color: inherit;
+    color: var(--somna-strip-heading, inherit);
+  }
+
+  .somna-strip__subtitle {
+    font-size: 0.9375rem;
+    opacity: 0.8;
+  }
+
+  .somna-strip__subtitle p {
+    margin: 0;
+  }
+
+  .somna-strip__viewport {
+    position: relative;
   }
 
   .somna-strip__list {
     display: flex;
-    gap: 26px;
-    margin: 20px 0 0;
+    gap: var(--somna-strip-gap, 26px);
+    margin: 0;
     padding: 0 22px 8px;
     list-style: none;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-padding-inline: 22px;
     scrollbar-width: thin;
+    overscroll-behavior-x: contain;
+  }
+
+  .somna-strip__list:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+  }
+
+  .somna-strip__list.is-dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+    user-select: none;
   }
 
   .somna-strip__item {
@@ -79,66 +277,306 @@
     scroll-snap-align: start;
   }
 
+  /* carousel off: cards wrap onto rows */
+  .somna-strip__viewport:not(.is-carousel) .somna-strip__list {
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow: visible;
+  }
+
+  /* "fit N per view": cards share the visible width */
+  [data-sizing='fit'] .somna-strip__item {
+    flex-basis: calc((100% - var(--somna-strip-gap, 26px) * (var(--somna-strip-per-d, 6) - 1)) / var(--somna-strip-per-d, 6));
+  }
+
   .somna-strip__card {
     position: relative;
     display: block;
-    aspect-ratio: 207 / 342;
-    border-radius: 16px;
+    aspect-ratio: var(--somna-strip-ratio, 0.605);
+    border-radius: var(--somna-strip-radius, 15px);
     overflow: hidden;
+    background: var(--somna-strip-card-bg, #000);
     color: #fff;
+    isolation: isolate;
   }
 
-  .somna-strip__card:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 3px;
+  .somna-strip__card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: var(--somna-strip-overlay, 0);
+    pointer-events: none;
+    transition: opacity 0.25s ease;
   }
 
-  .somna-strip__img {
+  .somna-strip__card.is-playing::after {
+    opacity: 0;
+  }
+
+  .somna-strip__img,
+  .somna-strip__video {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: var(--somna-strip-fit, cover);
+  }
+
+  .somna-strip__video {
+    z-index: 1;
+    background: #000;
+  }
+
+  .somna-strip__video[hidden] {
+    display: none;
   }
 
   .somna-strip__play {
     position: absolute;
     inset: 50% auto auto 50%;
+    z-index: 2;
     display: grid;
     place-items: center;
-    width: 44px;
-    height: 44px;
+    width: var(--somna-strip-play, 44px);
+    height: var(--somna-strip-play, 44px);
+    padding: 0;
+    border: 0;
     border-radius: 50%;
-    background: #000;
+    background: var(--somna-strip-play-bg, #000);
+    color: var(--somna-strip-play-fg, #fff);
     translate: -50% -50%;
-    transition: scale 0.2s;
+    cursor: pointer;
+    transition: scale 0.2s ease, opacity 0.2s ease;
+  }
+
+  /* bigger tap area than the visible button */
+  .somna-strip__play::before {
+    content: '';
+    position: absolute;
+    inset: -10px;
   }
 
   .somna-strip__play svg {
-    width: 22px;
-    height: 22px;
-    margin-left: 2px;
+    width: 50%;
+    height: 50%;
+    margin-left: 6%;
   }
 
-  .somna-strip__card:hover .somna-strip__play {
+  .somna-strip__card:hover .somna-strip__play,
+  .somna-strip__play:focus-visible {
     scale: 1.08;
   }
 
-  .somna-strip__caption {
+  .somna-strip__play:focus-visible,
+  .somna-strip__sound:focus-visible,
+  .somna-strip__arrow:focus-visible,
+  .somna-strip__dot:focus-visible {
+    outline: 2px solid var(--somna-strip-play-fg, #fff);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 5px rgb(0 0 0 / 0.6);
+  }
+
+  .somna-strip__card.is-playing .somna-strip__play {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .somna-strip__card.is-loading .somna-strip__play {
+    animation: somna-strip-pulse 1s ease-in-out infinite alternate;
+  }
+
+  @keyframes somna-strip-pulse {
+    to {
+      opacity: 0.55;
+    }
+  }
+
+  .somna-strip__sound {
+    position: absolute;
+    inset: 10px 10px auto auto;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(0 0 0 / 0.55);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .somna-strip__sound[hidden] {
+    display: none;
+  }
+
+  .somna-strip__sound svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .somna-strip__sound[aria-pressed='true'] .somna-strip__icon-muted,
+  .somna-strip__sound[aria-pressed='false'] .somna-strip__icon-sound {
+    display: none;
+  }
+
+  .somna-strip__duration {
+    position: absolute;
+    inset: auto auto 10px 10px;
+    z-index: 2;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgb(0 0 0 / 0.55);
+    color: #fff;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .somna-strip__card.is-playing .somna-strip__duration {
+    display: none;
+  }
+
+  .somna-strip__meta {
+    display: grid;
+    gap: 2px;
     margin: 10px 2px 0;
+    color: var(--somna-strip-caption, inherit);
+  }
+
+  .somna-strip__meta p {
+    margin: 0;
+  }
+
+  .somna-strip__caption {
     font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.08em;
   }
 
+  .somna-strip__title {
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  .somna-strip__text {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    opacity: 0.85;
+  }
+
+  .somna-strip__name {
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .somna-strip__product {
+    font-size: 0.75rem;
+    color: inherit;
+    opacity: 0.75;
+  }
+
+  a.somna-strip__product {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* carousel controls (off by default: not in the Figma design) */
+  .somna-strip__arrows {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-block-start: 12px;
+  }
+
+  .somna-strip__arrow {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--somna-strip-arrow-bg, #000);
+    color: var(--somna-strip-arrow-fg, #fff);
+    cursor: pointer;
+  }
+
+  .somna-strip__arrow:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .somna-strip__arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .somna-strip__dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-block-start: 12px;
+  }
+
+  .somna-strip__dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--somna-strip-dot, #c9cfc4);
+    cursor: pointer;
+  }
+
+  .somna-strip__dot::before {
+    content: '';
+    display: block;
+    margin: -10px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .somna-strip__dot[aria-current='true'] {
+    background: var(--somna-strip-dot-active, #000);
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .somna-strip__play {
+    .somna-strip__play,
+    .somna-strip__card::after {
       transition: none;
+    }
+
+    .somna-strip__card.is-loading .somna-strip__play {
+      animation: none;
+    }
+
+    .somna-strip__list {
+      scroll-behavior: auto;
+    }
+  }
+
+  /* tablet */
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    [data-sizing='fit'] .somna-strip__item {
+      flex-basis: calc((100% - var(--somna-strip-gap, 26px) * (var(--somna-strip-per-t, 3) - 1)) / var(--somna-strip-per-t, 3));
     }
   }
 
   /* final mobile design: left-aligned heading, two cards in view */
   @media screen and (max-width: 749px) {
+    .somna-strip {
+      padding-block: var(--somna-strip-pt-m, 8px) var(--somna-strip-pb-m, 8px);
+    }
+
     .somna-strip__head {
       text-align: start;
+    }
+
+    .somna-strip__head--center-mobile {
+      text-align: center;
     }
 
     .somna-strip__eyebrow {
@@ -146,39 +584,109 @@
     }
 
     .somna-strip__heading {
-      font-size: 1.875rem;
+      font-size: calc(var(--somna-strip-h-m, 30) * 1px);
     }
 
     .somna-strip__list {
-      gap: 20px;
+      gap: var(--somna-strip-gap-m, 20px);
       padding-inline: 26px;
       scroll-padding-inline: 26px;
     }
 
-    .somna-strip__item {
-      flex-basis: min(var(--somna-strip-card), calc(50vw - 36px));
+    .somna-strip__item,
+    [data-sizing='fit'] .somna-strip__item {
+      flex-basis: calc((100% - 52px - var(--somna-strip-gap-m, 20px) * (var(--somna-strip-per-m, 2) - 1)) / var(--somna-strip-per-m, 2));
+    }
+
+    [data-sizing='fixed'] .somna-strip__item {
+      flex-basis: min(var(--somna-strip-card), calc((100% - 52px - var(--somna-strip-gap-m, 20px) * (var(--somna-strip-per-m, 2) - 1)) / var(--somna-strip-per-m, 2)));
     }
 
     .somna-strip__caption {
       font-size: 0.6875rem;
+    }
+
+    .somna-strip__sound {
+      width: 40px;
+      height: 40px;
     }
   }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "Somna media strip",
+  "name": "Somna video strip",
   "tag": "section",
   "class": "section-somna-strip",
   "settings": [
+    { "type": "checkbox", "id": "enabled", "label": "Show section", "default": true },
+
+    { "type": "header", "content": "Heading" },
     { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
     { "type": "text", "id": "heading", "label": "Heading" },
-    { "type": "text", "id": "play_label", "label": "Play label (screen readers)", "default": "Play video" },
-    { "type": "range", "id": "card_width", "label": "Card width", "min": 140, "max": 320, "step": 4, "unit": "px", "default": 208 },
+    { "type": "richtext", "id": "subtitle", "label": "Subtitle" },
+    { "type": "select", "id": "heading_align", "label": "Heading alignment (desktop)", "info": "On mobile the heading is left-aligned, as in the Figma mobile design, unless “Centre (also on mobile)” is chosen.", "options": [{ "value": "center", "label": "Centre" }, { "value": "center-mobile", "label": "Centre (also on mobile)" }, { "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }], "default": "center" },
+    { "type": "color", "id": "heading_color", "label": "Heading colour", "info": "Leave empty to use the text colour." },
+    { "type": "range", "id": "heading_size", "label": "Heading size (desktop)", "min": 24, "max": 80, "step": 1, "unit": "px", "default": 50 },
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size (mobile)", "min": 18, "max": 48, "step": 1, "unit": "px", "default": 26 },
+    { "type": "range", "id": "heading_gap", "label": "Space under the heading", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 20 },
+
+    { "type": "header", "content": "Layout" },
     { "type": "color", "id": "background_color", "label": "Background", "default": "#f3feee" },
     { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },
-    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
-    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "max_width", "label": "Maximum width of the heading area", "min": 600, "max": 1600, "step": 20, "unit": "px", "default": 1160 },
+    { "type": "range", "id": "padding_top", "label": "Top padding (desktop)", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding (desktop)", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "padding_top_mobile", "label": "Top padding (mobile)", "min": 0, "max": 120, "step": 2, "unit": "px", "default": 8 },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "Bottom padding (mobile)", "min": 0, "max": 120, "step": 2, "unit": "px", "default": 8 },
+
+    { "type": "header", "content": "Video cards" },
+    { "type": "select", "id": "card_sizing", "label": "Card size", "options": [{ "value": "fixed", "label": "Fixed width (as in Figma)" }, { "value": "fit", "label": "Fit a number of cards per view" }], "default": "fixed" },
+    { "type": "range", "id": "card_width", "label": "Card width (fixed size)", "min": 140, "max": 360, "step": 4, "unit": "px", "default": 208 },
+    { "type": "range", "id": "per_view_desktop", "label": "Cards per view: desktop", "min": 1, "max": 8, "step": 1, "default": 6 },
+    { "type": "range", "id": "per_view_tablet", "label": "Cards per view: tablet", "min": 1, "max": 6, "step": 1, "default": 3 },
+    { "type": "range", "id": "per_view_mobile", "label": "Cards per view: mobile", "info": "Also applies with a fixed card width.", "min": 1, "max": 3, "step": 1, "default": 2 },
+    { "type": "select", "id": "card_ratio", "label": "Card shape", "options": [{ "value": "0.605", "label": "Figma (207 × 342)" }, { "value": "0.5625", "label": "9:16 (phone video)" }, { "value": "0.8", "label": "4:5" }, { "value": "1", "label": "Square" }, { "value": "1.7778", "label": "16:9" }], "default": "0.605" },
+    { "type": "range", "id": "card_radius", "label": "Corner radius", "min": 0, "max": 40, "step": 1, "unit": "px", "default": 15 },
+    { "type": "range", "id": "gap", "label": "Gap between cards (desktop)", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 26 },
+    { "type": "range", "id": "gap_mobile", "label": "Gap between cards (mobile)", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 20 },
+    { "type": "select", "id": "image_fit", "label": "Poster and video fit", "options": [{ "value": "cover", "label": "Fill the card (crop)" }, { "value": "contain", "label": "Show all (letterbox)" }], "default": "cover" },
+    { "type": "color", "id": "card_bg", "label": "Card background", "default": "#000000" },
+    { "type": "range", "id": "overlay_opacity", "label": "Poster darkening", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 0 },
+    { "type": "color", "id": "caption_color", "label": "Caption text", "default": "#0a1a4a" },
+    { "type": "range", "id": "play_size", "label": "Play button size", "min": 32, "max": 80, "step": 1, "unit": "px", "default": 44 },
+    { "type": "color", "id": "play_bg", "label": "Play button background", "default": "#000000" },
+    { "type": "color", "id": "play_fg", "label": "Play button icon", "default": "#ffffff" },
+
+    { "type": "header", "content": "Playback" },
+    { "type": "checkbox", "id": "allow_sound", "label": "Allow sound (show a mute / unmute button)", "default": true },
+    { "type": "checkbox", "id": "start_muted", "label": "Start muted", "info": "Customers turn sound on with the speaker button.", "default": true },
+    { "type": "checkbox", "id": "native_controls", "label": "Show the browser's video controls", "default": false },
+    { "type": "checkbox", "id": "autoplay", "label": "Autoplay the first video when the section is on screen", "info": "Always muted. Off by default; skipped for visitors who prefer reduced motion.", "default": false },
+    { "type": "checkbox", "id": "video_loop", "label": "Loop videos", "default": false },
+    { "type": "select", "id": "preload", "label": "Preload", "info": "“None” downloads a video only when it is played (fastest page).", "options": [{ "value": "none", "label": "None" }, { "value": "metadata", "label": "Video details only" }], "default": "none" },
+    { "type": "checkbox", "id": "one_at_a_time", "label": "Pause other videos when one starts", "default": true },
+    { "type": "checkbox", "id": "pause_offscreen", "label": "Pause a video when it scrolls out of view", "default": true },
+    { "type": "text", "id": "play_label", "label": "Play label (screen readers)", "default": "Play video" },
+    { "type": "text", "id": "pause_label", "label": "Pause label (screen readers)", "default": "Pause video" },
+    { "type": "text", "id": "unmute_label", "label": "Unmute label (screen readers)", "default": "Turn sound on" },
+    { "type": "text", "id": "mute_label", "label": "Mute label (screen readers)", "default": "Turn sound off" },
+
+    { "type": "header", "content": "Carousel" },
+    { "type": "checkbox", "id": "carousel", "label": "Swipe / scroll sideways", "info": "Off: cards wrap onto more rows.", "default": true },
+    { "type": "checkbox", "id": "drag", "label": "Drag with the mouse on desktop", "default": true },
+    { "type": "checkbox", "id": "show_arrows", "label": "Show arrows", "default": false },
+    { "type": "checkbox", "id": "show_dots", "label": "Show dots", "default": false },
+    { "type": "range", "id": "slides_to_scroll", "label": "Cards moved per arrow click", "min": 1, "max": 6, "step": 1, "default": 1 },
+    { "type": "checkbox", "id": "carousel_loop", "label": "Arrows loop back to the start", "default": false },
+    { "type": "color", "id": "arrow_color", "label": "Arrow icon", "default": "#ffffff" },
+    { "type": "color", "id": "arrow_bg", "label": "Arrow background", "default": "#000000" },
+    { "type": "color", "id": "dot_color", "label": "Dot", "default": "#c9cfc4" },
+    { "type": "color", "id": "dot_active_color", "label": "Active dot", "default": "#000000" },
+    { "type": "text", "id": "prev_label", "label": "Previous label (screen readers)", "default": "Previous videos" },
+    { "type": "text", "id": "next_label", "label": "Next label (screen readers)", "default": "Next videos" },
+    { "type": "text", "id": "dots_label", "label": "Dots label (screen readers)", "default": "Choose video" },
+
     { "type": "header", "content": "Bottom wave" },
     { "type": "color", "id": "wave_color", "label": "Colour below the wave", "info": "Draws a wave into the next section. Leave empty for a straight edge." },
     { "type": "select", "id": "wave_shape", "label": "Wave shape", "info": "Drip and Soft shapes are traced from the Figma design.", "options": [{ "value": "drip-1", "label": "Drip 1" }, { "value": "drip-2", "label": "Drip 2" }, { "value": "drip-3", "label": "Drip 3" }, { "value": "drip-4", "label": "Drip 4" }, { "value": "drip-5", "label": "Drip 5" }, { "value": "drip-6", "label": "Drip 6" }, { "value": "drip-7", "label": "Drip 7" }, { "value": "drip-8", "label": "Drip 8" }, { "value": "drip-9", "label": "Drip 9" }, { "value": "drip-10", "label": "Drip 10" }, { "value": "drip-11", "label": "Drip 11" }, { "value": "soft-1", "label": "Soft 1" }, { "value": "soft-2", "label": "Soft 2" }, { "value": "sine", "label": "Rolling wave (animated)" }], "default": "drip-1" }
@@ -186,16 +694,25 @@
   "blocks": [
     {
       "type": "card",
-      "name": "Card",
+      "name": "Video card",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Image" },
-        { "type": "url", "id": "video_link", "label": "Video link", "info": "Adds a play button. Leave empty for a plain image." },
-        { "type": "text", "id": "caption", "label": "Caption" }
+        { "type": "checkbox", "id": "enabled", "label": "Show this card", "default": true },
+        { "type": "video", "id": "video", "label": "Video (Shopify Files)" },
+        { "type": "url", "id": "video_url", "label": "Or a video link", "info": "A direct .mp4 / .webm link plays in the card. Other links (YouTube, Instagram…) open in a new tab." },
+        { "type": "image_picker", "id": "image", "label": "Poster image", "info": "Shown before the video plays. Leave empty to use the video's own preview frame." },
+        { "type": "text", "id": "caption", "label": "Caption", "info": "Bold line under the card, as in Figma." },
+        { "type": "text", "id": "title", "label": "Video title" },
+        { "type": "text", "id": "name", "label": "Customer name" },
+        { "type": "textarea", "id": "text", "label": "Short quote" },
+        { "type": "text", "id": "product", "label": "Product name" },
+        { "type": "url", "id": "product_link", "label": "Product link" },
+        { "type": "text", "id": "duration", "label": "Duration", "info": "e.g. 0:32" },
+        { "type": "url", "id": "video_link", "label": "Legacy: external video page", "info": "Used only when no video is set above; opens in a new tab." }
       ]
     }
   ],
   "presets": [
-    { "name": "Somna media strip", "blocks": [{ "type": "card" }, { "type": "card" }, { "type": "card" }, { "type": "card" }] }
+    { "name": "Somna video strip", "blocks": [{ "type": "card" }, { "type": "card" }, { "type": "card" }, { "type": "card" }] }
   ]
 }
 {% endschema %}
