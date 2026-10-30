@@ -581,7 +581,7 @@
     margin: 0;
   }
 
-  /* desktop: compact so the whole buy box fits in one screen — FAQ moves under the gallery */
+  /* desktop: compact buy box; questions sit under the black panel, as in Figma */
   @media screen and (min-width: 990px) {
     .somna-buy__tabs {
       margin-bottom: 10px;
@@ -597,7 +597,7 @@
       grid-template-columns: minmax(0, 540px) minmax(0, 560px);
       grid-template-areas:
         'gallery panel'
-        'faq panel';
+        'gallery faq';
       justify-content: center;
       gap: 12px 56px;
     }
