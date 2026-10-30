@@ -161,11 +161,20 @@
     box-shadow: 0 6px 14px rgb(29 78 216 / 0.2);
   }
 
-  [id$='__guarantee'] > * > .spacing-style.layout-panel-flex {
+  [id$='__guarantee'] .section-content-wrapper.layout-panel-flex {
     padding-block: 0 !important;
   }
 
   @media screen and (min-width: 750px) {
+    [id$='__guarantee'] .somna-icon {
+      --somna-icon-box: 80px !important;
+      --somna-icon-size: 80px !important;
+    }
+
+    [id$='__guarantee'] .section-content-wrapper.layout-panel-flex {
+      gap: 12px;
+    }
+
     [id$='__guarantee'] .button-custom {
       width: 440px !important;
       max-width: 100%;
