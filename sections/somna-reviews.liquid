@@ -1,0 +1,831 @@
+{%- comment -%}
+  Somna V2 — reviews: heading, a featured review and a rating summary (both set in the theme
+  editor), then customer reviews loaded from a Google Sheet (assets/somna-reviews.js) with
+  filters and "Show more". The sheet only feeds the review list; the featured review, the
+  summary numbers and the photo gallery never change from it.
+{%- endcomment -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  assign photo_blocks = section.blocks | where: 'type', 'photo'
+-%}
+{%- capture star_svg -%}<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.6 7.7l5.8-.8z"/></svg>{%- endcapture -%}
+
+{%- if s.top_wave and s.top_wave_color != blank -%}
+  {%- render 'somna-wave', top: s.top_wave_color, bottom: s.background_color, shape: s.top_wave_shape -%}
+{%- endif -%}
+
+<somna-reviews
+  class="somna-reviews"
+  style="
+    --somna-rv-bg: {{ s.background_color }};
+    --somna-rv-fg: {{ s.text_color }};
+    --somna-accent: {{ s.accent_color }};
+    --somna-rv-card: {{ s.card_color }};
+    --somna-rv-card-fg: {{ s.card_text_color }};
+    --somna-rv-star: {{ s.star_color }};
+    --somna-rv-bar: {{ s.bar_color }};
+    --somna-rv-track: {{ s.track_color }};
+    --somna-rv-chip: {{ s.chip_active_color }};
+    --somna-content-width: {{ s.max_width }}px;
+    --somna-rv-pt: {{ s.padding_top }}px;
+    --somna-rv-pb: {{ s.padding_bottom }}px;
+    --somna-rv-pt-m: {{ s.padding_top_mobile }}px;
+    --somna-rv-pb-m: {{ s.padding_bottom_mobile }}px;
+  "
+  data-src="{{ s.sheet_url | escape }}"
+  data-initial="{{ s.initial_count }}"
+  data-batch="{{ s.batch_size }}"
+  data-photos="{{ s.show_review_photos }}"
+  data-verified="{{ s.show_verified }}"
+  data-product="{{ s.show_product }}"
+  data-dates="{{ s.show_dates }}"
+  data-names="{{ s.name_format }}"
+  data-samples="{{ s.samples_in_preview }}"
+  data-verified-label="{{ s.verified_label | escape }}"
+  data-empty="{{ s.empty_text | escape }}"
+  data-error="{{ s.error_text | escape }}"
+  data-retry="{{ s.retry_label | escape }}"
+  data-sample-note="{{ s.sample_note | escape }}"
+  data-more="{{ s.more_label | escape }}"
+>
+  <div class="somna-container somna-reviews__inner">
+    {%- if s.eyebrow != blank or s.heading != blank -%}
+      <header class="somna-reviews__head">
+        {%- if s.eyebrow != blank -%}<p class="somna-reviews__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<div class="somna-reviews__heading somna-display">{{ s.heading }}</div>{%- endif -%}
+      </header>
+    {%- endif -%}
+
+    {%- if s.show_featured -%}
+      {%- assign fr = s.featured_rating | times: 1.0 -%}
+      <article
+        class="somna-reviews__featured{% if s.show_edges %} somna-edge-drip-bottom{% endif %}"
+        style="{% if s.featured_bg != blank %}--somna-rv-card: {{ s.featured_bg }};{% endif %}{% if s.featured_fg != blank %} --somna-rv-card-fg: {{ s.featured_fg }};{% endif %}"
+      >
+        {%- if s.featured_title != blank -%}<h3 class="somna-reviews__title somna-reviews__title--lg">“{{ s.featured_title | escape }}”</h3>{%- endif -%}
+        {%- if s.featured_text != blank -%}<p class="somna-reviews__text">“{{ s.featured_text | escape }}”</p>{%- endif -%}
+        <div class="somna-reviews__byline">
+          {%- if s.featured_avatar != blank -%}
+            {{ s.featured_avatar | image_url: width: 120, height: 120, crop: 'center' | image_tag: class: 'somna-reviews__avatar somna-reviews__avatar--lg', alt: s.featured_name, loading: 'lazy', width: 56, height: 56 }}
+          {%- elsif s.featured_name != blank -%}
+            <span class="somna-reviews__avatar somna-reviews__avatar--lg somna-reviews__avatar--initials" aria-hidden="true">{{ s.featured_name | slice: 0 }}</span>
+          {%- endif -%}
+          <p class="somna-reviews__who">
+            {%- if s.featured_name != blank -%}<strong>{{ s.featured_name | escape }}</strong>{%- endif -%}
+            {%- if s.featured_verified != blank or s.featured_product != blank -%}
+              <span class="somna-reviews__meta">
+                {%- if s.featured_verified != blank -%}<em>{{ s.featured_verified | escape }}</em>{%- endif -%}
+                {%- if s.featured_product != blank -%} {{ s.featured_product | escape }}{%- endif -%}
+              </span>
+            {%- endif -%}
+          </p>
+          <span class="somna-reviews__stars" role="img" aria-label="{{ fr }} out of 5 stars">
+            {%- for i in (1..5) -%}<span class="somna-reviews__star{% if fr < i %}{% assign below = i | minus: 1 %}{% if fr > below %} is-half{% else %} is-empty{% endif %}{% endif %}">{{ star_svg }}</span>{%- endfor -%}
+          </span>
+        </div>
+      </article>
+    {%- endif -%}
+
+    {%- if s.show_summary -%}
+      {%- assign avg = s.average | plus: 0.0 -%}
+      <div class="somna-reviews__summary{% if s.show_edges %} somna-edge-drip-top{% endif %}{% unless s.show_gallery and photo_blocks.size > 0 %} somna-reviews__summary--no-photos{% endunless %}">
+        <div class="somna-reviews__score">
+          <p class="somna-reviews__average">{{ s.average | escape }}</p>
+          {%- if s.show_summary_stars -%}
+            <span class="somna-reviews__stars" role="img" aria-label="{{ avg }} out of 5 stars">
+              {%- for i in (1..5) -%}<span class="somna-reviews__star{% if avg < i %}{% assign below = i | minus: 1 %}{% if avg > below %} is-half{% else %} is-empty{% endif %}{% endif %}">{{ star_svg }}</span>{%- endfor -%}
+            </span>
+          {%- endif -%}
+          {%- if s.count != blank -%}<p class="somna-reviews__count">{{ s.count | escape }}</p>{%- endif -%}
+        </div>
+
+        <ul class="somna-reviews__bars" role="list">
+          {%- for i in (1..5) -%}
+            {%- assign stars = 6 | minus: i -%}
+            {%- assign key = 'pct_' | append: stars -%}
+            {%- assign p = s[key] -%}
+            <li>
+              <span class="somna-reviews__bar-label">{{ stars }}★</span>
+              <span class="somna-reviews__bar" aria-hidden="true"><span style="width: {{ p }}%;"></span></span>
+              <span class="somna-reviews__bar-pct">{{ p }}%<span class="visually-hidden"> of reviews are {{ stars }} stars</span></span>
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        {%- if s.show_gallery and photo_blocks.size > 0 -%}
+          <ul class="somna-reviews__gallery" role="list">
+            {%- for block in photo_blocks limit: s.gallery_limit -%}
+              {%- if block.settings.image != blank -%}
+                <li {{ block.shopify_attributes }}>
+                  {{ block.settings.image | image_url: width: 240, height: 240, crop: 'center' | image_tag: loading: 'lazy', alt: block.settings.alt | default: block.settings.image.alt, width: 120, height: 120 }}
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if s.show_filters -%}
+      <div class="somna-reviews__chips" role="group" aria-label="{{ s.filters_label | escape }}" hidden data-chips>
+        <button type="button" class="somna-reviews__chip" data-filter="all" aria-pressed="true">{{ s.chip_all | escape }}</button>
+        <button type="button" class="somna-reviews__chip" data-filter="5" aria-pressed="false">{{ s.chip_5 | escape }}</button>
+        <button type="button" class="somna-reviews__chip" data-filter="4" aria-pressed="false">{{ s.chip_4 | escape }}</button>
+        <button type="button" class="somna-reviews__chip" data-filter="low" aria-pressed="false">{{ s.chip_low | escape }}</button>
+        {%- if s.show_review_photos -%}<button type="button" class="somna-reviews__chip" data-filter="photos" aria-pressed="false">{{ s.chip_photos | escape }}</button>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <p class="somna-reviews__note" data-note hidden></p>
+    <ul class="somna-reviews__list" role="list" data-list aria-live="polite" aria-busy="true">
+      {%- if s.sheet_url != blank -%}
+        {%- for i in (1..2) -%}<li class="somna-reviews__card somna-reviews__card--skeleton" aria-hidden="true"><span></span><span></span></li>{%- endfor -%}
+      {%- endif -%}
+    </ul>
+    <p class="somna-reviews__status" data-status role="status" hidden></p>
+    <button type="button" class="somna-reviews__more" data-more hidden>{{ s.more_label | escape }}</button>
+    {%- if s.sheet_url == blank and request.design_mode -%}
+      <p class="somna-reviews__status">Add the Google Sheet link in “Customer reviews (Google Sheet)” to show reviews here.</p>
+    {%- endif -%}
+  </div>
+</somna-reviews>
+
+{%- if s.bottom_wave and s.bottom_wave_color != blank -%}
+  {%- render 'somna-wave', top: s.background_color, bottom: s.bottom_wave_color, shape: s.bottom_wave_shape -%}
+{%- endif -%}
+
+{%- if s.sheet_url != blank -%}
+  <template data-somna-review-star>{{ star_svg }}</template>
+  <script src="{{ 'somna-reviews.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{% stylesheet %}
+  .somna-reviews {
+    display: block;
+    background: var(--somna-rv-bg, #000);
+    color: var(--somna-rv-fg, #f3feee);
+    padding-block: var(--somna-rv-pt, 24px) var(--somna-rv-pb, 48px);
+  }
+
+  .somna-reviews__inner {
+    display: grid;
+    justify-items: center;
+    gap: 20px;
+  }
+
+  .somna-reviews__head {
+    display: grid;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .somna-reviews__eyebrow {
+    margin: 0;
+    font-size: 0.875rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  .somna-reviews__heading {
+    font-size: clamp(1.625rem, 4.2vw, 3.75rem);
+  }
+
+  .somna-reviews__heading :is(h2, p) {
+    margin: 0;
+    font: inherit;
+  }
+
+  /* cards */
+  .somna-reviews__featured,
+  .somna-reviews__summary,
+  .somna-reviews__card {
+    width: 100%;
+    background: var(--somna-rv-card, #f3feee);
+    color: var(--somna-rv-card-fg, #0b1a45);
+    border-radius: 6px;
+  }
+
+  .somna-reviews__featured {
+    display: grid;
+    gap: 6px;
+    padding: 18px 28px 20px;
+  }
+
+  .somna-reviews__featured.somna-edge-drip-bottom {
+    --somna-drip-h: 44px;
+    padding-block-end: 8px;
+  }
+
+  .somna-reviews__summary.somna-edge-drip-top {
+    --somna-drip-h: 34px;
+  }
+
+  .somna-reviews__title {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 1.125rem;
+    line-height: 1.35;
+    color: inherit;
+  }
+
+  .somna-reviews__title--lg {
+    font-size: clamp(1.125rem, 1.7vw, 1.5rem);
+  }
+
+  .somna-reviews__text {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  .somna-reviews__byline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-block-start: 8px;
+  }
+
+  .somna-reviews__avatar {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.12);
+  }
+
+  .somna-reviews__avatar--lg {
+    width: 56px;
+    height: 56px;
+  }
+
+  .somna-reviews__avatar--initials {
+    display: grid;
+    place-items: center;
+    background: var(--somna-accent, #afbdf8);
+    color: #0b1a45;
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+  }
+
+  .somna-reviews__who {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    font-size: 0.875rem;
+    min-width: 0;
+  }
+
+  .somna-reviews__who strong {
+    letter-spacing: 0.04em;
+  }
+
+  .somna-reviews__meta {
+    font-size: 0.8125rem;
+    opacity: 0.6;
+  }
+
+  .somna-reviews__byline .somna-reviews__stars {
+    margin-inline-start: auto;
+  }
+
+  .somna-reviews__stars {
+    display: inline-flex;
+    gap: 3px;
+    flex: none;
+  }
+
+  .somna-reviews__star {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    color: var(--somna-rv-star, #f5c242);
+  }
+
+  .somna-reviews__star svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+  }
+
+  .somna-reviews__star.is-empty {
+    color: rgb(0 0 0 / 0.15);
+  }
+
+  .somna-reviews__star.is-half {
+    background: linear-gradient(90deg, var(--somna-rv-star, #f5c242) 50%, rgb(0 0 0 / 0.15) 50%);
+    -webkit-mask: var(--somna-rv-star-mask) center / contain no-repeat;
+    mask: var(--somna-rv-star-mask) center / contain no-repeat;
+  }
+
+  .somna-reviews__star.is-half svg {
+    opacity: 0;
+  }
+
+  .somna-reviews {
+    --somna-rv-star-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 1.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.6 7.7l5.8-.8z'/%3E%3C/svg%3E");
+  }
+
+  /* summary */
+  .somna-reviews__summary {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 20px 32px;
+    padding: 24px 20px 18px;
+  }
+
+  .somna-reviews__summary.somna-edge-drip-top {
+    padding-block-start: 12px;
+  }
+
+  .somna-reviews__summary--no-photos {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .somna-reviews__score {
+    display: grid;
+    justify-items: start;
+    gap: 4px;
+  }
+
+  .somna-reviews__average {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: clamp(3.5rem, 6vw, 5.5rem);
+    line-height: 1;
+  }
+
+  .somna-reviews__count {
+    margin: 0;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    opacity: 0.6;
+  }
+
+  .somna-reviews__bars {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.8125rem;
+  }
+
+  .somna-reviews__bars li {
+    display: grid;
+    grid-template-columns: 2.2em minmax(0, 1fr) 3em;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .somna-reviews__bar-label {
+    font-weight: 700;
+  }
+
+  .somna-reviews__bar {
+    height: 5px;
+    border-radius: 3px;
+    background: var(--somna-rv-track, #d8ddd4);
+    overflow: hidden;
+  }
+
+  .somna-reviews__bar > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--somna-rv-bar, #98a3de);
+  }
+
+  .somna-reviews__bar-pct {
+    text-align: end;
+    font-size: 0.6875rem;
+    opacity: 0.7;
+  }
+
+  .somna-reviews__gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 72px);
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-reviews__gallery img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  /* filters */
+  .somna-reviews__chips {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    max-width: 100%;
+    margin-block: 4px;
+  }
+
+  .somna-reviews__chips[hidden] {
+    display: none;
+  }
+
+  .somna-reviews__chip {
+    flex: none;
+    min-height: 32px;
+    padding: 6px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--somna-rv-card, #f3feee);
+    color: #0b1a45;
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .somna-reviews__chip[aria-pressed='true'] {
+    background: var(--somna-rv-chip, #afbdf8);
+    box-shadow: 0 0 0 2px var(--somna-rv-bg, #000), 0 0 0 3px var(--somna-rv-chip, #afbdf8);
+  }
+
+  .somna-reviews__chip:focus-visible {
+    outline: 2px solid var(--somna-rv-chip, #afbdf8);
+    outline-offset: 3px;
+  }
+
+  /* review list */
+  .somna-reviews__list {
+    display: grid;
+    gap: 12px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-reviews__card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 4px 14px;
+    padding: 16px 20px;
+  }
+
+  .somna-reviews__card .somna-reviews__avatar {
+    grid-row: span 2;
+  }
+
+  .somna-reviews__body {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .somna-reviews__card .somna-reviews__who {
+    font-size: 0.6875rem;
+    margin-block-start: 4px;
+    display: block;
+  }
+
+  .somna-reviews__card .somna-reviews__who strong {
+    margin-inline-end: 4px;
+  }
+
+  .somna-reviews__card .somna-reviews__verified {
+    color: #498525;
+  }
+
+  .somna-reviews__card .somna-reviews__meta {
+    font-size: inherit;
+  }
+
+  .somna-reviews__photo {
+    display: block;
+    width: 72px;
+    height: 72px;
+    margin-block-start: 6px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
+  .somna-reviews__card--skeleton {
+    min-height: 92px;
+    grid-template-columns: 40px 1fr;
+    opacity: 0.5;
+  }
+
+  .somna-reviews__card--skeleton span {
+    border-radius: 6px;
+    background: linear-gradient(90deg, rgb(0 0 0 / 0.06), rgb(0 0 0 / 0.12), rgb(0 0 0 / 0.06));
+    background-size: 200% 100%;
+    animation: somna-rv-pulse 1.4s linear infinite;
+  }
+
+  .somna-reviews__card--skeleton span:first-child {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+
+  .somna-reviews__card--skeleton span:last-child {
+    height: 52px;
+  }
+
+  @keyframes somna-rv-pulse {
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  .somna-reviews__note,
+  .somna-reviews__status {
+    margin: 0;
+    font-size: 0.8125rem;
+    text-align: center;
+    opacity: 0.8;
+  }
+
+  .somna-reviews__note {
+    padding: 4px 12px;
+    border: 1px dashed currentColor;
+    border-radius: 999px;
+    font-size: 0.75rem;
+  }
+
+  .somna-reviews__note[hidden],
+  .somna-reviews__status[hidden],
+  .somna-reviews__more[hidden] {
+    display: none;
+  }
+
+  .somna-reviews__status button {
+    margin-inline-start: 8px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .somna-reviews__more {
+    min-width: min(100%, 264px);
+    min-height: 44px;
+    padding: 10px 28px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--somna-rv-chip, #afbdf8);
+    color: #000;
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgb(0 0 0 / 0.25);
+  }
+
+  .somna-reviews__more:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  @media screen and (min-width: 990px) {
+    .somna-reviews__inner {
+      gap: 22px;
+    }
+
+    .somna-reviews__head {
+      margin-block-end: 8px;
+    }
+  }
+
+  /* tablet */
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-reviews__summary {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .somna-reviews__gallery {
+      grid-column: 1 / -1;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+
+  /* mobile */
+  @media screen and (max-width: 749px) {
+    .somna-reviews {
+      padding-block: var(--somna-rv-pt-m, 16px) var(--somna-rv-pb-m, 32px);
+    }
+
+    .somna-reviews__inner {
+      gap: 14px;
+    }
+
+    .somna-reviews__eyebrow {
+      font-size: 0.6875rem;
+    }
+
+    .somna-reviews__featured {
+      padding: 16px 16px 18px;
+    }
+
+    .somna-reviews__featured.somna-edge-drip-bottom {
+      --somna-drip-h: 26px;
+      padding-block-end: 6px;
+    }
+
+    .somna-reviews__byline {
+      flex-wrap: wrap;
+    }
+
+    .somna-reviews__avatar--lg {
+      width: 44px;
+      height: 44px;
+    }
+
+    .somna-reviews__summary,
+    .somna-reviews__summary--no-photos {
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .somna-reviews__summary.somna-edge-drip-top {
+      --somna-drip-h: 22px;
+      padding-block-start: 8px;
+    }
+
+    .somna-reviews__average {
+      font-size: 3.25rem;
+    }
+
+    .somna-reviews__bars li {
+      gap: 8px;
+    }
+
+    .somna-reviews__gallery {
+      grid-column: 1 / -1;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    /* chips scroll sideways inside the screen instead of wrapping */
+    .somna-reviews__chips {
+      justify-content: flex-start;
+      width: calc(100% + var(--page-margin, 16px) * 2);
+      margin-inline: calc(var(--page-margin, 16px) * -1);
+      padding: 4px var(--page-margin, 16px);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .somna-reviews__chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .somna-reviews__card {
+      grid-template-columns: auto minmax(0, 1fr);
+      padding: 14px;
+    }
+
+    .somna-reviews__card > .somna-reviews__stars {
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: start;
+    }
+
+    .somna-reviews__card .somna-reviews__body {
+      grid-column: 2;
+    }
+
+    .somna-reviews__more {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-reviews__card--skeleton span {
+      animation: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna reviews",
+  "tag": "section",
+  "class": "somna-reviews-section",
+  "blocks": [
+    {
+      "type": "photo",
+      "name": "Summary photo",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Photo" },
+        { "type": "text", "id": "alt", "label": "Description (alt text)", "info": "Leave empty to use the image's own alt text." }
+      ]
+    }
+  ],
+  "settings": [
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Reviews" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "info": "Italic words use the accent colour.", "default": "<h2>What <em>sleepers</em> are saying</h2>" },
+    { "type": "color", "id": "accent_color", "label": "Accent colour", "default": "#afbdf8" },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#000000" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#f3feee" },
+    { "type": "color", "id": "card_color", "label": "Cards", "default": "#f3feee" },
+    { "type": "color", "id": "card_text_color", "label": "Card text", "default": "#0b1a45" },
+    { "type": "color", "id": "star_color", "label": "Stars", "default": "#f5c242" },
+    { "type": "range", "id": "max_width", "label": "Maximum content width", "min": 600, "max": 1400, "step": 20, "unit": "px", "default": 1000 },
+    { "type": "checkbox", "id": "show_edges", "label": "Wavy edge between the featured review and the summary", "default": true },
+    { "type": "range", "id": "padding_top", "label": "Top padding (desktop)", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding (desktop)", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "padding_top_mobile", "label": "Top padding (mobile)", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 8 },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "Bottom padding (mobile)", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 24 },
+
+    { "type": "header", "content": "Waves", "info": "Only needed when this section is used without separate wave sections around it." },
+    { "type": "checkbox", "id": "top_wave", "label": "Wave above", "default": false },
+    { "type": "color", "id": "top_wave_color", "label": "Colour above the wave" },
+    { "type": "select", "id": "top_wave_shape", "label": "Shape above", "options": [{ "value": "drip-10", "label": "Drip 10" }, { "value": "drip-7", "label": "Drip 7" }, { "value": "drip-1", "label": "Drip 1" }], "default": "drip-10" },
+    { "type": "checkbox", "id": "bottom_wave", "label": "Wave below", "default": false },
+    { "type": "color", "id": "bottom_wave_color", "label": "Colour below the wave" },
+    { "type": "select", "id": "bottom_wave_shape", "label": "Shape below", "options": [{ "value": "drip-7", "label": "Drip 7" }, { "value": "drip-10", "label": "Drip 10" }, { "value": "drip-1", "label": "Drip 1" }], "default": "drip-7" },
+
+    { "type": "header", "content": "Featured review" },
+    { "type": "checkbox", "id": "show_featured", "label": "Show featured review", "default": true },
+    { "type": "text", "id": "featured_title", "label": "Headline", "default": "Hooked from bag one." },
+    { "type": "textarea", "id": "featured_text", "label": "Review", "default": "I bought one bag to try. Now I'm on Autoship and I've sent a pack to my sister." },
+    { "type": "text", "id": "featured_name", "label": "Customer name", "default": "Priya S." },
+    { "type": "image_picker", "id": "featured_avatar", "label": "Customer photo" },
+    { "type": "text", "id": "featured_verified", "label": "Verified buyer label", "default": "Verified buyer." },
+    { "type": "text", "id": "featured_product", "label": "Product", "default": "Sleep bundle" },
+    { "type": "range", "id": "featured_rating", "label": "Stars", "min": 1, "max": 5, "step": 0.5, "default": 5 },
+    { "type": "color", "id": "featured_bg", "label": "Background", "info": "Leave empty to use the card colour." },
+    { "type": "color", "id": "featured_fg", "label": "Text", "info": "Leave empty to use the card text colour." },
+
+    { "type": "header", "content": "Review summary" },
+    { "type": "checkbox", "id": "show_summary", "label": "Show summary", "default": true },
+    { "type": "text", "id": "average", "label": "Average rating", "default": "4.6" },
+    { "type": "checkbox", "id": "show_summary_stars", "label": "Show stars under the rating", "default": true },
+    { "type": "text", "id": "count", "label": "Review count", "default": "3600+ reviews" },
+    { "type": "range", "id": "pct_5", "label": "5★ (%)", "min": 0, "max": 100, "step": 1, "default": 78 },
+    { "type": "range", "id": "pct_4", "label": "4★ (%)", "min": 0, "max": 100, "step": 1, "default": 15 },
+    { "type": "range", "id": "pct_3", "label": "3★ (%)", "min": 0, "max": 100, "step": 1, "default": 4 },
+    { "type": "range", "id": "pct_2", "label": "2★ (%)", "min": 0, "max": 100, "step": 1, "default": 2 },
+    { "type": "range", "id": "pct_1", "label": "1★ (%)", "min": 0, "max": 100, "step": 1, "default": 1 },
+    { "type": "color", "id": "bar_color", "label": "Bar colour", "default": "#98a3de" },
+    { "type": "color", "id": "track_color", "label": "Bar track colour", "default": "#d8ddd4" },
+    { "type": "checkbox", "id": "show_gallery", "label": "Show customer photos", "info": "Add photos as “Summary photo” blocks; drag them to change the order.", "default": true },
+    { "type": "range", "id": "gallery_limit", "label": "Photos to show", "min": 1, "max": 12, "step": 1, "default": 6 },
+
+    { "type": "header", "content": "Customer reviews (Google Sheet)" },
+    { "type": "url", "id": "sheet_url", "label": "Google Sheet link", "info": "The sheet's share link (anyone with the link can view), or a published CSV / Apps Script JSON URL. Columns are matched by header: reviewer_name, review_title, review_body, rating, reviewer_photo, product_title, and optional date, verified, avatar." },
+    { "type": "range", "id": "initial_count", "label": "Reviews shown first", "min": 1, "max": 20, "step": 1, "default": 4 },
+    { "type": "range", "id": "batch_size", "label": "Reviews added by “Show more”", "min": 1, "max": 20, "step": 1, "default": 4 },
+    { "type": "checkbox", "id": "show_filters", "label": "Show filters", "default": true },
+    { "type": "checkbox", "id": "show_review_photos", "label": "Show review photos (and the “with photos” filter)", "default": true },
+    { "type": "checkbox", "id": "show_verified", "label": "Show verified buyer label", "info": "Only for rows whose “verified” column is yes / true / 1.", "default": true },
+    { "type": "text", "id": "verified_label", "label": "Verified buyer label", "default": "Verified Buyer" },
+    { "type": "checkbox", "id": "show_product", "label": "Show product name", "default": true },
+    { "type": "checkbox", "id": "show_dates", "label": "Show review dates", "info": "Only when the sheet has a date column.", "default": true },
+    { "type": "select", "id": "name_format", "label": "Customer names", "options": [{ "value": "short", "label": "First name + initial (Sarah M.)" }, { "value": "full", "label": "As in the sheet" }], "default": "short" },
+    { "type": "checkbox", "id": "samples_in_preview", "label": "Show sample rows in theme previews", "info": "Rows whose sample_status mentions sample, fictional or test are never shown on the live store.", "default": true },
+
+    { "type": "header", "content": "Review list text" },
+    { "type": "text", "id": "filters_label", "label": "Filters label (screen readers)", "default": "Filter reviews" },
+    { "type": "text", "id": "chip_all", "label": "Filter: all", "default": "ALL" },
+    { "type": "text", "id": "chip_5", "label": "Filter: 5 stars", "default": "5★" },
+    { "type": "text", "id": "chip_4", "label": "Filter: 4 stars", "default": "4★" },
+    { "type": "text", "id": "chip_low", "label": "Filter: 3 and below", "default": "3 & below" },
+    { "type": "text", "id": "chip_photos", "label": "Filter: with photos", "default": "with photos" },
+    { "type": "text", "id": "more_label", "label": "Show more button", "default": "Show more reviews ↓" },
+    { "type": "text", "id": "empty_text", "label": "No matching reviews", "default": "No reviews match this filter yet." },
+    { "type": "text", "id": "error_text", "label": "Reviews didn't load", "default": "Reviews couldn't be loaded right now." },
+    { "type": "text", "id": "retry_label", "label": "Try again link", "default": "Try again" },
+    { "type": "text", "id": "sample_note", "label": "Sample data note (previews only)", "default": "Sample reviews (theme preview only — not shown on the live store)" },
+    { "type": "color", "id": "chip_active_color", "label": "Active filter and button colour", "default": "#afbdf8" }
+  ],
+  "presets": [
+    {
+      "name": "Somna reviews",
+      "blocks": [{ "type": "photo" }, { "type": "photo" }, { "type": "photo" }]
+    }
+  ]
+}
+{% endschema %}
