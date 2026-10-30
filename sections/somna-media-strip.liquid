@@ -595,11 +595,11 @@
 
     .somna-strip__item,
     [data-sizing='fit'] .somna-strip__item {
-      flex-basis: calc((100% - 52px - var(--somna-strip-gap-m, 20px) * (var(--somna-strip-per-m, 2) - 1)) / var(--somna-strip-per-m, 2));
+      flex-basis: calc((100% - var(--somna-strip-gap-m, 20px) * (var(--somna-strip-per-m, 2) - 1)) / var(--somna-strip-per-m, 2));
     }
 
     [data-sizing='fixed'] .somna-strip__item {
-      flex-basis: min(var(--somna-strip-card), calc((100% - 52px - var(--somna-strip-gap-m, 20px) * (var(--somna-strip-per-m, 2) - 1)) / var(--somna-strip-per-m, 2)));
+      flex-basis: min(var(--somna-strip-card), calc((100% - var(--somna-strip-gap-m, 20px) * (var(--somna-strip-per-m, 2) - 1)) / var(--somna-strip-per-m, 2)));
     }
 
     .somna-strip__caption {
