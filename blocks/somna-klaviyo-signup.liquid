@@ -15,6 +15,7 @@
   data-ok="{{ s.success | escape }}"
   data-err="{{ s.error | escape }}"
   data-bad="{{ s.invalid | escape }}"
+  data-signup="{{ uid }}"
   style="--signup-width: {{ s.width }}%; --signup-input-bg: {{ s.input_background }}; --signup-input-text: {{ s.input_text }}; --signup-btn-bg: {{ s.button_background }}; --signup-btn-text: {{ s.button_text }}; --signup-note: {{ s.note_color }};"
   {{ block.shopify_attributes }}
 >
@@ -37,6 +38,18 @@
   <p class="somna-signup__msg" id="{{ uid }}-msg" role="status" aria-live="polite" data-msg></p>
   {%- if s.consent != blank -%}<div class="somna-signup__consent">{{ s.consent }}</div>{%- endif -%}
 </somna-klaviyo-signup>
+{%- if s.row_max_width > 0 -%}
+  {%- comment -%} keeps the row this signup sits in (e.g. heading + form) within the page's content width on desktop {%- endcomment -%}
+  <style>
+    @media screen and (min-width: 750px) {
+      .layout-panel-flex:has(> [data-signup='{{ uid }}']) {
+        width: 100%;
+        max-width: {{ s.row_max_width }}px;
+        margin-inline: auto;
+      }
+    }
+  </style>
+{%- endif -%}
 
 <script type="module">
   if (!customElements.get('somna-klaviyo-signup')) {
@@ -201,6 +214,7 @@
     { "type": "text", "id": "invalid", "label": "Invalid email message", "default": "Enter a valid email address." },
     { "type": "richtext", "id": "consent", "label": "Consent text" },
     { "type": "range", "id": "width", "label": "Width", "min": 30, "max": 100, "step": 1, "unit": "%", "default": 100 },
+    { "type": "range", "id": "row_max_width", "label": "Row maximum width (desktop)", "info": "Keeps the heading and form together within this width on wide screens. 0 = full width.", "min": 0, "max": 1600, "step": 20, "unit": "px", "default": 0 },
     { "type": "color", "id": "input_background", "label": "Field background", "default": "#ffffff" },
     { "type": "color", "id": "input_text", "label": "Field text", "default": "#000000" },
     { "type": "color", "id": "button_background", "label": "Button background", "default": "#afbdf8" },

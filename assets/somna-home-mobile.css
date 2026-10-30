@@ -378,6 +378,37 @@
     padding-block-end: 8px !important;
   }
 
+  /* ---------- #SomnaNights: hashtag keeps its spelling, readable eyebrow, swipeable photo strip ---------- */
+  main [id$='__somna_nights'] h2,
+  main [id$='__somna_nights'] h2 :is(p, span, em, strong) {
+    text-transform: none !important;
+  }
+
+  [id$='__somna_nights'] [class*='__eyebrow'] p {
+    font-size: 0.75rem !important;
+    letter-spacing: 0.2em;
+  }
+
+  [id$='__somna_nights'] .image-block[class*='__strip'] {
+    display: block !important;
+    width: calc(100% + 2 * var(--page-margin, 16px)) !important;
+    margin-inline: calc(-1 * var(--page-margin, 16px)) !important;
+    padding-inline: var(--page-margin, 16px);
+    overflow-x: auto;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+
+  [id$='__somna_nights'] .image-block[class*='__strip']::-webkit-scrollbar {
+    display: none;
+  }
+
+  [id$='__somna_nights'] .image-block[class*='__strip'] img {
+    width: 820px !important;
+    max-width: none !important;
+    height: auto !important;
+  }
+
   /* ---------- Footer: menus in two columns ---------- */
   [id$='__footer_somna'] .group-block-content:has(> .menu ~ .menu ~ .menu) {
     display: grid !important;
