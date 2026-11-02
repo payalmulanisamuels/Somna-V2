@@ -14,7 +14,7 @@
  * element that already has a CSS animation, translate or scale.
  *
  * Desktop + tablet only (>= 750px; mobile design pending). Off for prefers-reduced-motion.
- * No library; two IntersectionObservers for the whole page.
+ * No library; one passive scroll listener for the whole page (checks only tracked elements).
  */
 (() => {
   if (window.SomnaReveal) return;
@@ -41,9 +41,9 @@
   const BASE = { heading: 0, line: 0, text: 0.15, image: 0.1, item: 0.25, button: 0.4 };
 
   const all = new Map(); // element -> { type, section }
-  let enterIO, leaveIO;
-  let queue = [];
+  let pending = false;
   let raf = 0;
+  let timer = 0;
 
   const skippable = (el, section) => {
     if (el.closest(SKIP)) return true;
@@ -133,7 +133,8 @@
       // lazy images: wait for the picture (max 1.5s) so the fade isn't spent on an empty box
       if (el.tagName === 'IMG' && !(el.complete && el.naturalWidth)) {
         let fired = false;
-        const once = () => { if (!fired) { fired = true; go(); } };
+        el.somnaWaiting = true;
+        const once = () => { if (!fired) { fired = true; el.somnaWaiting = false; go(); } };
         el.addEventListener('load', once, { once: true });
         el.addEventListener('error', once, { once: true });
         setTimeout(once, 1500);
@@ -141,11 +142,37 @@
     });
   }
 
-  function flush() {
-    raf = 0;
-    const batch = queue.filter((el) => el.classList.contains('somna-r') && !el.classList.contains('is-in'));
-    queue = [];
-    if (batch.length) reveal(batch);
+  /* One cheap check per frame while scrolling (reads first, then writes). Every armed element whose top
+     has passed 85% of the screen is revealed — including ones skipped over by a fast scroll — so nothing
+     can stay hidden; shown elements are re-armed only when completely below the screen. */
+  function check() {
+    pending = false;
+    cancelAnimationFrame(raf);
+    clearTimeout(timer);
+    const vh = innerHeight;
+    const line = vh * 0.85;
+    const show = [];
+    const hide = [];
+    for (const el of all.keys()) {
+      const r = el.getBoundingClientRect();
+      if (!r.width && !r.height) continue; // not rendered (closed tab, collapsed) — leave it
+      const armed = el.classList.contains('somna-r');
+      const playing = el.classList.contains('is-in');
+      if (armed && !playing) {
+        if (r.top < line && !el.somnaWaiting) show.push(el);
+      } else if (r.top >= vh) {
+        hide.push(el);
+      }
+    }
+    hide.forEach(arm);
+    if (show.length) reveal(show);
+  }
+
+  function schedule() {
+    if (pending) return;
+    pending = true;
+    raf = requestAnimationFrame(check);
+    timer = setTimeout(check, 120); // whichever comes first
   }
 
   function observe(section) {
@@ -153,11 +180,9 @@
     section.dataset.somnaReveal = '1';
     collect(section).forEach(({ el, type }) => {
       all.set(el, { type, section });
-      const r = el.getBoundingClientRect();
-      if (r.top >= innerHeight) arm(el); // below the fold: hide until it scrolls in; on screen: leave as is
-      enterIO.observe(el);
-      leaveIO.observe(el);
+      if (el.getBoundingClientRect().top >= innerHeight) arm(el); // below the fold: hidden until it scrolls in
     });
+    schedule();
   }
 
   function unobserve(section) {
@@ -165,8 +190,6 @@
     delete section.dataset.somnaReveal;
     for (const [el, info] of all) {
       if (info.section !== section) continue;
-      enterIO.unobserve(el);
-      leaveIO.unobserve(el);
       clean(el);
       all.delete(el);
     }
@@ -174,18 +197,15 @@
 
   function init() {
     if (!MQ.matches) return;
-    // reveal when the element's top passes 85% of the screen
-    enterIO = new IntersectionObserver((entries) => {
-      for (const e of entries) if (e.isIntersecting && e.target.classList.contains('somna-r')) queue.push(e.target);
-      // one batch per observer callback (entries that arrive together are staggered together)
-      if (queue.length && !raf) { raf = 1; queueMicrotask(flush); }
-    }, { rootMargin: '0px 0px -15% 0px' });
-    // reset only once the element is completely below the screen
-    leaveIO = new IntersectionObserver((entries) => {
-      for (const e of entries) if (!e.isIntersecting && e.boundingClientRect.top >= (e.rootBounds?.height || innerHeight)) arm(e.target);
-    });
     const sections = [...document.querySelectorAll('main .shopify-section')];
     sections.slice(1).forEach(observe); // the first section (hero) keeps its own entrance
+    // scroll events from any scroller (the page may scroll inside .page-wrapper)
+    document.addEventListener('scroll', schedule, { capture: true, passive: true });
+    addEventListener('resize', schedule, { passive: true });
+    // tabs / accordions / late content change layout without scrolling
+    document.addEventListener('click', () => setTimeout(schedule, 60), { capture: true, passive: true });
+    const main = document.querySelector('main');
+    if (main && 'ResizeObserver' in window) new ResizeObserver(schedule).observe(main);
     document.addEventListener('shopify:section:load', (e) => observe(e.target));
     document.addEventListener('shopify:section:unload', (e) => unobserve(e.target));
   }
