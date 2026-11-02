@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
@@ -34,15 +43,15 @@
         "text": "<p>Two small essentials, one simple routine. Here's how to use each one properly.</p>",
         "image": "shopify://shop_images/group-sttap.png",
         "image_position": "object-position: center",
+        "image_fit": "contain",
+        "media_color": "#f3feee",
         "image_side": "left",
         "drip_edge": true,
         "background_color": "#afbdf8",
         "panel_color": "#0b0f1d",
         "accent_color": "#afbdf8",
         "padding_top": 24,
-        "padding_bottom": 48,
-        "image_fit": "contain",
-        "media_color": "#f3feee"
+        "padding_bottom": 48
       }
     },
     "wave_hero_strips": {
@@ -61,30 +70,6 @@
     },
     "strips": {
       "type": "somna-guide",
-      "settings": {
-        "image_position": "object-position: 72% 50%",
-        "media_side": "left",
-        "eyebrow": "For your nose",
-        "heading": "Nasal <em>Strips</em>",
-        "label": "How it works",
-        "text": "<p>Flexible fabric backing, a gentle spring structure, and a hypoallergenic adhesive layer designed to stay comfortable through the night without irritating skin.</p>",
-        "button_label": "Shop Nasal Strips",
-        "button_link": "/products/nasal-strips",
-        "steps_heading": "How to apply",
-        "note": "<p>Remove gently in the morning, starting from one edge. Use a fresh strip each night.</p>",
-        "note_icon": "moon",
-        "background_color": "#f3feee",
-        "text_color": "#000000",
-        "card_color": "#0b0f1d",
-        "card_text_color": "#f3feee",
-        "accent_color": "#afbdf8",
-        "note_color": "#afbdf8",
-        "note_text_color": "#000000",
-        "padding_top": 24,
-        "padding_bottom": 56,
-        "image": "shopify://shop_images/slim-strip.jpg",
-        "anchor": "nasal-strips"
-      },
       "blocks": {
         "step_1": {
           "type": "step",
@@ -118,7 +103,31 @@
         "step_1",
         "step_2",
         "step_3"
-      ]
+      ],
+      "settings": {
+        "anchor": "nasal-strips",
+        "image": "shopify://shop_images/slim-strip.jpg",
+        "image_position": "object-position: 72% 50%",
+        "media_side": "left",
+        "eyebrow": "For your nose",
+        "heading": "Nasal <em>Strips</em>",
+        "label": "How it works",
+        "text": "<p>Flexible fabric backing, a gentle spring structure, and a hypoallergenic adhesive layer designed to stay comfortable through the night without irritating skin.</p>",
+        "button_label": "Shop Nasal Strips",
+        "button_link": "/products/nasal-strips",
+        "steps_heading": "How to apply",
+        "note": "<p>Remove gently in the morning, starting from one edge. Use a fresh strip each night.</p>",
+        "note_icon": "moon",
+        "background_color": "#f3feee",
+        "text_color": "#000000",
+        "card_color": "#0b0f1d",
+        "card_text_color": "#f3feee",
+        "accent_color": "#afbdf8",
+        "note_color": "#afbdf8",
+        "note_text_color": "#000000",
+        "padding_top": 24,
+        "padding_bottom": 56
+      }
     },
     "wave_strips_tape": {
       "type": "somna-wave",
@@ -136,30 +145,6 @@
     },
     "tape": {
       "type": "somna-guide",
-      "settings": {
-        "image_position": "object-position: 26% 50%",
-        "media_side": "right",
-        "eyebrow": "For your lips",
-        "heading": "Mouth <em>Tape</em>",
-        "label": "How it works",
-        "text": "<p>A soft, breathable fabric with a gentle adhesive layer, designed to stay comfortable through the night without pulling at the skin.</p>",
-        "button_label": "Shop Mouth Tape",
-        "button_link": "/products/mouth-tape",
-        "steps_heading": "How to apply",
-        "note": "<p>Remove gently in the morning. If you have a cold, congestion, or any breathing condition, check with a doctor before use.</p>",
-        "note_icon": "shield",
-        "background_color": "#0b0f1d",
-        "text_color": "#f3feee",
-        "card_color": "#f3feee",
-        "card_text_color": "#000000",
-        "accent_color": "#afbdf8",
-        "note_color": "#afbdf8",
-        "note_text_color": "#000000",
-        "padding_top": 24,
-        "padding_bottom": 56,
-        "image": "shopify://shop_images/slim-tape.jpg",
-        "anchor": "mouth-tape"
-      },
       "blocks": {
         "step_1": {
           "type": "step",
@@ -193,7 +178,31 @@
         "step_1",
         "step_2",
         "step_3"
-      ]
+      ],
+      "settings": {
+        "anchor": "mouth-tape",
+        "image": "shopify://shop_images/slim-tape.jpg",
+        "image_position": "object-position: 26% 50%",
+        "media_side": "right",
+        "eyebrow": "For your lips",
+        "heading": "Mouth <em>Tape</em>",
+        "label": "How it works",
+        "text": "<p>A soft, breathable fabric with a gentle adhesive layer, designed to stay comfortable through the night without pulling at the skin.</p>",
+        "button_label": "Shop Mouth Tape",
+        "button_link": "/products/mouth-tape",
+        "steps_heading": "How to apply",
+        "note": "<p>Remove gently in the morning. If you have a cold, congestion, or any breathing condition, check with a doctor before use.</p>",
+        "note_icon": "shield",
+        "background_color": "#0b0f1d",
+        "text_color": "#f3feee",
+        "card_color": "#f3feee",
+        "card_text_color": "#000000",
+        "accent_color": "#afbdf8",
+        "note_color": "#afbdf8",
+        "note_text_color": "#000000",
+        "padding_top": 24,
+        "padding_bottom": 56
+      }
     },
     "wave_tape_together": {
       "type": "somna-wave",
@@ -212,6 +221,8 @@
     "together": {
       "type": "somna-guide",
       "settings": {
+        "anchor": "",
+        "image": "shopify://shop_images/contact-banner.jpg",
         "image_position": "object-position: 50% 60%",
         "media_side": "left",
         "eyebrow": "Better together",
@@ -231,24 +242,11 @@
         "note_color": "#afbdf8",
         "note_text_color": "#000000",
         "padding_top": 24,
-        "padding_bottom": 24,
-        "image": "shopify://shop_images/contact-banner.jpg",
-        "anchor": ""
-      },
-      "blocks": {},
-      "block_order": []
+        "padding_bottom": 24
+      }
     },
     "settling": {
       "type": "section",
-      "settings": {
-        "content_direction": "column",
-        "gap": 16,
-        "section_width": "page-width",
-        "background_color": "#f3feee",
-        "padding-block-start": 16,
-        "padding-block-end": 56,
-        "horizontal_alignment_flex_direction_column": "center"
-      },
       "blocks": {
         "icon": {
           "type": "somna-icon",
@@ -303,7 +301,16 @@
         "icon",
         "heading",
         "text"
-      ]
+      ],
+      "settings": {
+        "content_direction": "column",
+        "horizontal_alignment_flex_direction_column": "center",
+        "gap": 16,
+        "section_width": "page-width",
+        "background_color": "#f3feee",
+        "padding-block-start": 16,
+        "padding-block-end": 56
+      }
     },
     "wave_settling_guarantee": {
       "type": "somna-wave",
@@ -321,15 +328,6 @@
     },
     "guarantee": {
       "type": "section",
-      "settings": {
-        "content_direction": "column",
-        "gap": 16,
-        "section_width": "page-width",
-        "background_color": "#afbdf8",
-        "padding-block-start": 16,
-        "padding-block-end": 32,
-        "horizontal_alignment_flex_direction_column": "center"
-      },
       "blocks": {
         "icon": {
           "type": "somna-icon",
@@ -420,7 +418,16 @@
         "heading",
         "text",
         "button"
-      ]
+      ],
+      "settings": {
+        "content_direction": "column",
+        "horizontal_alignment_flex_direction_column": "center",
+        "gap": 16,
+        "section_width": "page-width",
+        "background_color": "#afbdf8",
+        "padding-block-start": 16,
+        "padding-block-end": 32
+      }
     },
     "wave_guarantee_faq": {
       "type": "somna-wave",
@@ -438,22 +445,14 @@
     },
     "faq": {
       "type": "section",
-      "settings": {
-        "content_direction": "row",
-        "gap": 56,
-        "section_width": "page-width",
-        "background_color": "#f3feee",
-        "padding-block-start": 24,
-        "padding-block-end": 24,
-        "horizontal_alignment": "space-between",
-        "vertical_alignment": "flex-start"
-      },
       "blocks": {
         "intro": {
           "type": "group",
           "settings": {
             "content_direction": "column",
             "vertical_on_mobile": true,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
             "gap": 16,
             "width": "custom",
             "custom_width": 38,
@@ -463,9 +462,7 @@
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
-            "padding-inline-end": 0,
-            "horizontal_alignment_flex_direction_column": "flex-start",
-            "vertical_alignment_flex_direction_column": "flex-start"
+            "padding-inline-end": 0
           },
           "blocks": {
             "heading": {
@@ -684,7 +681,17 @@
       "block_order": [
         "intro",
         "accordion"
-      ]
+      ],
+      "settings": {
+        "content_direction": "row",
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "flex-start",
+        "gap": 56,
+        "section_width": "page-width",
+        "background_color": "#f3feee",
+        "padding-block-start": 24,
+        "padding-block-end": 24
+      }
     },
     "wave_faq_newsletter": {
       "type": "somna-wave",
@@ -702,16 +709,6 @@
     },
     "newsletter": {
       "type": "section",
-      "settings": {
-        "content_direction": "row",
-        "gap": 40,
-        "section_width": "page-width",
-        "background_color": "#000000",
-        "padding-block-start": 24,
-        "padding-block-end": 32,
-        "horizontal_alignment": "space-between",
-        "vertical_alignment": "center"
-      },
       "blocks": {
         "heading": {
           "type": "text",
@@ -746,19 +743,29 @@
       "block_order": [
         "heading",
         "signup"
-      ]
+      ],
+      "settings": {
+        "content_direction": "row",
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "center",
+        "gap": 40,
+        "section_width": "page-width",
+        "background_color": "#000000",
+        "padding-block-start": 24,
+        "padding-block-end": 32
+      }
     },
     "wave_newsletter_footer": {
       "type": "somna-wave",
       "settings": {
         "top_color": "#000000",
         "bottom_color": "#f3feee",
+        "shape": "drip-11",
         "flip": false,
         "drops": true,
         "animate": true,
         "height": 140,
-        "height_mobile": 48,
-        "shape": "drip-11"
+        "height_mobile": 48
       }
     }
   },

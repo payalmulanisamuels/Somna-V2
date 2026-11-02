@@ -18,6 +18,7 @@
           "type": "_announcement",
           "settings": {
             "text": "☾ Up to 60% off + 3 free gifts on your first order",
+            "link": "",
             "font": "var(--font-body--family)",
             "font_size": "0.875rem",
             "weight": "700",
@@ -34,9 +35,9 @@
       "name": "t:names.announcement_bar",
       "settings": {
         "display_style": "scroll",
+        "speed": 5,
         "scroll_speed": 30,
         "scroll_gap": 64,
-        "speed": 5,
         "section_width": "full-width",
         "background_color": "#afbdf8",
         "divider_width": 0,
@@ -52,14 +53,14 @@
           "type": "_header-logo",
           "static": true,
           "settings": {
-            "hide_logo_on_home_page": false,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
             "logo_text": "somna.",
             "logo_text_size": 32,
             "logo_text_size_mobile": 24,
             "logo_text_weight": "800",
-            "logo_text_color": "#98a3de"
+            "logo_text_color": "#98a3de",
+            "hide_logo_on_home_page": false,
+            "padding-block-start": 0,
+            "padding-block-end": 0
           },
           "blocks": {}
         },
@@ -68,6 +69,10 @@
           "static": true,
           "settings": {
             "menu": "somna-v2-header",
+            "active_link_style": "underline",
+            "active_link_underline_color": "#98a3de",
+            "background_color": "{{ settings.color_palette.background }}",
+            "text_color": "",
             "type_font_primary_size": "1rem",
             "menu_font_style": "inverse",
             "type_font_primary_link": "subheading",
@@ -77,11 +82,11 @@
             "featured_collections_aspect_ratio": "16 / 9",
             "image_border_radius": 0,
             "navigation_bar": false,
+            "background_color_navigation_bar": "{{ settings.color_palette.background }}",
+            "text_color_navigation_bar": "",
             "drawer_accordion": false,
             "drawer_accordion_expand_first": false,
-            "drawer_dividers": false,
-            "active_link_style": "underline",
-            "active_link_underline_color": "#98a3de"
+            "drawer_dividers": false
           },
           "blocks": {}
         }
@@ -90,6 +95,7 @@
         "logo_position": "left",
         "menu_position": "center",
         "menu_row": "top",
+        "customer_account_menu": "customer-account-main-menu",
         "show_search": true,
         "search_position": "right",
         "search_row": "top",
@@ -105,17 +111,31 @@
         "enable_sticky_header": "always",
         "divider_width": 0,
         "divider_size": "page-width",
+        "divider_color": "",
         "border_width": 0,
-        "background_color_top": "#0b0f1d",
-        "enable_transparent_header_home": true,
-        "enable_transparent_header_product": false,
-        "enable_transparent_header_collection": false,
+        "bottom_border_color": "",
         "actions_display_style": "icon",
+        "actions_icon_size": 28,
+        "actions_font_size": "0.875rem",
+        "actions_font": "body",
+        "actions_text_case": "none",
+        "background_color_top": "#0b0f1d",
         "text_color_top": "#ffffff",
+        "background_color_bottom": "",
+        "text_color_bottom": "",
+        "bubble_style": "default",
+        "bubble_background_color": "",
+        "bubble_text_color": "",
+        "enable_transparent_header_home": true,
         "home_inverse_logo": false,
         "text_color_transparent_home": "#ffffff",
-        "actions_icon_size": 28,
-        "transparent_header_tint": "linear-gradient(90deg, rgba(0, 0, 0, 0.16) 0%, rgba(102, 102, 102, 0.16) 100%)"
+        "enable_transparent_header_product": false,
+        "product_inverse_logo": false,
+        "text_color_transparent_product": "",
+        "enable_transparent_header_collection": false,
+        "collection_inverse_logo": false,
+        "text_color_transparent_collection": "",
+        "transparent_header_tint": "linear-gradient(90deg, rgba(0, 0, 0, 0.16), rgba(102, 102, 102, 0.16) 100%)"
       }
     }
   },
