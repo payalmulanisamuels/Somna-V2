@@ -82,6 +82,7 @@
       disconnectedCallback() {
         this.form?.removeEventListener('submit', this.onSubmit);
         this.observer?.disconnect();
+        this.out?.disconnect();
         this.flipAnim?.cancel();
       }
       /* Product flips once in place (small lift + one side turn) when the section comes into view, then floats.
@@ -96,6 +97,14 @@
           this.flipAnim = this.product.animate([{ opacity: 0 }], { fill: 'both' });
         };
         hide();
+        // reset only once the section is completely below the screen, so the product never vanishes while visible
+        this.out = new IntersectionObserver(([entry]) => {
+          if (!entry.isIntersecting && entry.boundingClientRect.top > 0 && this.flipped) {
+            this.flipped = false;
+            hide();
+          }
+        });
+        this.out.observe(this);
         this.observer = new IntersectionObserver(([entry]) => {
           if (entry.isIntersecting && !this.flipped) {
             this.flipped = true;
@@ -107,11 +116,8 @@
               { transform: 'translate3d(0, 0, 0) rotateY(360deg) scale(1)', opacity: 1, offset: 1 },
             ], { duration: 1200, easing: 'cubic-bezier(0.45, 0, 0.55, 1)', fill: 'both' });
             this.flipAnim.finished.then(() => this.flipped && this.product.classList.add('is-floating')).catch(() => {});
-          } else if (!entry.isIntersecting && entry.boundingClientRect.top > 0) {
-            this.flipped = false;
-            hide();
           }
-        }, { rootMargin: '0px 0px -30% 0px' });
+        }, { rootMargin: '0px 0px -25% 0px' });
         this.observer.observe(this);
       }
       onSubmit = async (e) => {

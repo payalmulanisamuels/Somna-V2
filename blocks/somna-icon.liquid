@@ -192,23 +192,35 @@
         const g = { svgs: [...sec.querySelectorAll('.somna-icon__drawing--pen')], played: false, raf: 0 };
         groups.set(sec, g);
         g.svgs.forEach(arm);
-        new IntersectionObserver(
+        g.io = new IntersectionObserver(
           ([entry]) => {
             if (entry.isIntersecting && !g.played) {
               g.played = true;
               play(g);
-            } else if (!entry.isIntersecting && entry.boundingClientRect.top > 0) {
-              reset(g);
             }
           },
           { rootMargin: '0px 0px -25% 0px' }
-        ).observe(sec);
+        );
+        // reset only when the section is completely below the screen (never un-draw visible icons)
+        g.out = new IntersectionObserver(([entry]) => {
+          if (!entry.isIntersecting && entry.boundingClientRect.top > 0) reset(g);
+        });
+        g.io.observe(sec);
+        g.out.observe(sec);
       });
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
     document.addEventListener('shopify:section:load', init);
+    document.addEventListener('shopify:section:unload', (e) => {
+      const g = groups.get(e.target);
+      if (!g) return;
+      cancelAnimationFrame(g.raf);
+      g.io?.disconnect();
+      g.out?.disconnect();
+      groups.delete(e.target);
+    });
   })();
 {% endjavascript %}
 
