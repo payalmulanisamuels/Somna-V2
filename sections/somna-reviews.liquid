@@ -738,6 +738,7 @@
 
   .somna-reviews__app .jdgm-widget .jm-reviewer-info__details {
     grid-area: name;
+    display: flex !important;
     flex-direction: row !important;
     flex-wrap: wrap;
     align-items: baseline;
@@ -817,6 +818,12 @@
   .somna-reviews__app .jdgm-widget .jm-review-item > .jm-stack,
   .somna-reviews__app .jdgm-widget .jm-review-item__body {
     gap: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .somna-reviews__app .jdgm-widget .jm-review-item__body > :not(.jm-review-item__content):empty {
+    display: none !important;
   }
 
   .somna-reviews__app .jdgm-widget .jm-review-item {
