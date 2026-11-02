@@ -418,11 +418,15 @@
     align-items: start;
   }
 
+  /* the thumbnail column never makes the gallery taller than the main image; extra thumbs scroll */
   .somna-pdp-hero__thumbs {
+    --somna-thumbs-offset: 72px;
     display: grid;
+    align-content: start;
     gap: 8px;
-    max-height: 614px;
-    margin: 72px 0 0;
+    height: 0;
+    min-height: calc(100% - var(--somna-thumbs-offset));
+    margin: var(--somna-thumbs-offset) 0 0;
     padding: 0;
     overflow-y: auto;
     list-style: none;
@@ -931,7 +935,7 @@
     }
 
     .somna-pdp-hero__thumbs {
-      margin-top: 48px;
+      --somna-thumbs-offset: 48px;
     }
 
     .somna-pdp-hero__thumb {
