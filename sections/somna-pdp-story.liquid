@@ -94,7 +94,28 @@
         {%- if s.how_animation -%}</somna-pdp-how>{%- else -%}</div>{%- endif -%}
 
       {%- when 'layers' -%}
-        {%- if image -%}<div class="somna-pdp-story__product">{{ image | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500, 750, 1000', sizes: '(min-width: 990px) 483px, 60vw' }}</div>{%- endif -%}
+        {%- liquid
+          assign layer_images = true
+          if features == blank or features.size < 2
+            assign layer_images = false
+          endif
+          for f in features
+            if f.image == blank
+              assign layer_images = false
+            endif
+          endfor
+        -%}
+        {%- if layer_images -%}
+          {%- comment -%} each layer is its own full-size transparent image; stacked they make the Figma picture {%- endcomment -%}
+          {%- assign first_layer = features.first.image.value -%}
+          {%- if s.layers_animation -%}<somna-pdp-layers class="somna-pdp-story__product somna-pdp-story__stack" style="aspect-ratio: {{ first_layer.width }} / {{ first_layer.height }};">{%- else -%}<div class="somna-pdp-story__product somna-pdp-story__stack" style="aspect-ratio: {{ first_layer.width }} / {{ first_layer.height }};">{%- endif -%}
+            {%- for f in features -%}
+              {%- assign li = f.image.value -%}
+              {%- assign probe = li | image_url: width: 120 -%}
+              {{ li | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500, 750, 1000', sizes: '(min-width: 990px) 483px, 60vw', class: 'somna-pdp-story__layer', alt: f.title.value, data-probe: probe }}
+            {%- endfor -%}
+          {%- if s.layers_animation -%}</somna-pdp-layers>{%- else -%}</div>{%- endif -%}
+        {%- elsif image -%}<div class="somna-pdp-story__product">{{ image | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500, 750, 1000', sizes: '(min-width: 990px) 483px, 60vw' }}</div>{%- endif -%}
         {%- if features != blank -%}
           <ol class="somna-pdp-story__layers">
             {%- for f in features -%}
@@ -130,6 +151,126 @@
 {%- if section.settings.wave_color != blank -%}
   {%- render 'somna-wave', top: section.settings.background_color, bottom: section.settings.wave_color, shape: section.settings.wave_shape -%}
 {%- endif -%}
+{%- endif -%}
+
+{%- if s.layout == 'layers' and s.layers_animation and c != blank -%}
+<script src="{{ 'gsap.min.js' | asset_url }}" defer></script>
+<script src="{{ 'gsap-scroll-trigger.min.js' | asset_url }}" defer></script>
+<script type="module">
+  /* "How it works" -> "What it's made of" (approved demo N · Peel apart, Slow).
+     Scroll-linked (scrub 1.2, ~630px on desktop, no pin): the "How it works" product leaves its spot,
+     flips and travels down-right into this section, turns into the stacked layers, the layers peel
+     apart one after another (first up-left, last down-right), then the descriptions appear 1 -> n.
+     Reverses on scroll up. Desktop + tablet only (mobile design pending); off for reduced motion.
+     Layer offsets are measured from the layer images themselves, so it works for 3 or 4 layers. */
+  if (!customElements.get('somna-pdp-layers')) {
+    customElements.define('somna-pdp-layers', class extends HTMLElement {
+      async connectedCallback() {
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches || innerWidth < 750) return;
+        this.layers = [...this.querySelectorAll('.somna-pdp-story__layer')];
+        const section = this.closest('.somna-pdp-story');
+        this.items = section ? [...section.querySelectorAll('.somna-pdp-story__layers li')] : [];
+        if (this.layers.length < 2 || !(await this.ready())) return;
+        let centres;
+        try { centres = await Promise.all(this.layers.map((img) => this.centre(img.dataset.probe))); } catch (e) { return; }
+        if (!this.isConnected) return;
+        this.build(section, centres);
+      }
+      disconnectedCallback() {
+        this.st?.kill();
+        this.tl?.kill();
+        this.traveller?.remove();
+        if (this.source) this.source.style.opacity = '';
+      }
+      ready() {
+        return new Promise((resolve) => {
+          let n = 0;
+          const check = () => (window.gsap && window.ScrollTrigger ? resolve(true) : ++n > 100 ? resolve(false) : setTimeout(check, 50));
+          check();
+        });
+      }
+      /* centre of the visible part of one layer image, in % of the image box */
+      async centre(src) {
+        const im = new Image();
+        im.crossOrigin = 'anonymous';
+        im.src = src;
+        await im.decode();
+        const c = document.createElement('canvas');
+        c.width = im.naturalWidth;
+        c.height = im.naturalHeight;
+        const x = c.getContext('2d', { willReadFrequently: true });
+        x.drawImage(im, 0, 0);
+        const d = x.getImageData(0, 0, c.width, c.height).data;
+        let sx = 0, sy = 0, n = 0;
+        for (let i = 3; i < d.length; i += 4) if (d[i] > 160) { const p = (i - 3) / 4; sx += p % c.width; sy += Math.floor(p / c.width); n++; }
+        return n ? { x: (sx / n / c.width) * 100, y: (sy / n / c.height) * 100 } : { x: 50, y: 50 };
+      }
+      build(section, centres) {
+        const { gsap, ScrollTrigger } = window;
+        gsap.registerPlugin(ScrollTrigger);
+        const mid = { x: centres.reduce((a, c) => a + c.x, 0) / centres.length, y: centres.reduce((a, c) => a + c.y, 0) / centres.length };
+        const box = () => this.getBoundingClientRect();
+        // the "How it works" picture that travels into this section (optional)
+        this.source = document.querySelector('.somna-pdp-story--how .somna-pdp-story__product img');
+        // the page may scroll inside .page-wrapper instead of the window
+        const pw = document.querySelector('.page-wrapper');
+        this.scroller = pw && /(auto|scroll)/.test(getComputedStyle(pw).overflowY) && pw.scrollHeight > pw.clientHeight ? pw : window;
+        // the traveller lives in <main> (or the body), positioned relative to it, so it scrolls with the page
+        const host = section.closest('main') || document.body;
+        if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+        const doc = (r) => { const h = host.getBoundingClientRect(); return { x: r.left - h.left, y: r.top - h.top, w: r.width, h: r.height }; };
+        if (this.source) {
+          this.traveller = document.createElement('div');
+          this.traveller.className = 'somna-pdp-layers-traveller';
+          this.traveller.setAttribute('aria-hidden', 'true');
+          const img = this.source.cloneNode();
+          img.removeAttribute('loading');
+          img.alt = '';
+          this.traveller.appendChild(img);
+          host.appendChild(this.traveller);
+        }
+        const last = this.layers.length - 1;
+        const off = (i) => ({ x: ((mid.x - centres[i].x) / 100) * box().width, y: ((mid.y - centres[i].y) / 100) * box().height });
+        gsap.set(this.layers, { opacity: 0, scale: 0.96, x: (i) => off(i).x, y: (i) => off(i).y });
+        gsap.set(this.items, { opacity: 0, y: 16 });
+        const tl = gsap.timeline({ defaults: { ease: 'none' } });
+        let T = 0;
+        if (this.traveller) {
+          const start = () => doc(this.source.getBoundingClientRect());
+          const endW = () => box().width * 0.8;
+          const end = () => { const b = doc(box()); return { x: b.x + (b.w * mid.x) / 100 - endW() / 2, y: b.y + (b.h * mid.y) / 100 - endW() / 2 }; };
+          gsap.set(this.traveller, { x: () => start().x, y: () => start().y, width: () => start().w, opacity: 0 });
+          tl.set(this.traveller, { opacity: 1 }, 0)
+            .set(this.source, { opacity: 0 }, 0)
+            .to(this.traveller, { x: () => end().x, y: () => end().y, width: endW, rotationY: 360, rotationZ: 100, duration: 0.45, ease: 'power2.inOut' }, 0)
+            .to(this.traveller, { opacity: 0, duration: 0.07 }, 0.45);
+          T = 0.44;
+        }
+        // stacked layers appear, then peel apart: first up-left, middle ones settle, last down-right
+        tl.to(this.layers, { opacity: 1, duration: 0.07 }, T);
+        const t3 = T + 0.08;
+        const s = () => box().width / 100;
+        this.layers.forEach((l, i) => {
+          const at = t3 + i * (0.16 / Math.max(1, last));
+          if (i === 0 || i === last) {
+            const dir = i === 0 ? -1 : 1;
+            tl.to(l, { keyframes: [
+              { x: () => dir * 14 * s(), y: () => dir * 6 * s(), rotation: dir * 8, scale: 1.02, duration: 0.1, ease: 'sine.out' },
+              { x: 0, y: 0, rotation: 0, scale: 1, duration: 0.1, ease: 'sine.inOut' },
+            ] }, at);
+          } else {
+            tl.to(l, { x: 0, y: 0, scale: 1, duration: 0.16, ease: 'power2.out' }, at);
+          }
+        });
+        const t4 = t3 + 0.32;
+        this.items.forEach((it, i) => tl.to(it, { opacity: 1, y: 0, duration: 0.1, ease: 'power2.out' }, t4 + i * 0.1));
+        this.tl = tl;
+        this.st = ScrollTrigger.create({ animation: tl, trigger: section, scroller: this.scroller, start: 'top 88%', endTrigger: this, end: 'center 45%', scrub: 1.2, invalidateOnRefresh: true });
+        addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+      }
+    });
+  }
+</script>
 {%- endif -%}
 
 {%- if s.layout == 'how' and s.how_animation and c != blank -%}
@@ -720,6 +861,42 @@
       animation: none;
     }
   }
+  /* layers built from separate layer images (stacked = the Figma picture) */
+  .somna-pdp-story__stack {
+    position: relative;
+    display: block;
+    width: 100%;
+  }
+
+  .somna-pdp-story__stack .somna-pdp-story__layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  somna-pdp-layers .somna-pdp-story__layer {
+    will-change: transform, opacity;
+  }
+
+  .somna-pdp-layers-traveller {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0;
+    transform-style: preserve-3d;
+    will-change: transform, opacity;
+  }
+
+  .somna-pdp-layers-traveller img {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 18px 16px rgb(0 0 0 / 0.2));
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -743,6 +920,7 @@
       "default": "problem"
     },
     { "type": "product", "id": "preview_product", "label": "Product for the theme editor", "info": "Only used where there is no product." },
+    { "type": "checkbox", "id": "layers_animation", "label": "Animate \"What it's made of\"", "info": "When every layer has its own image: the How it works product travels in and peels into the layers as you scroll. Desktop and tablet; off for reduced motion.", "default": true },
     { "type": "checkbox", "id": "how_animation", "label": "Animate \"How it works\"", "info": "Hop-flip of the product and icons 1 → 4 when the section comes on screen. Off for visitors who prefer reduced motion.", "default": true },
     { "type": "select", "id": "accent_line", "label": "Heading line in the accent colour", "options": [{ "value": "first", "label": "First line" }, { "value": "second", "label": "Second line" }], "default": "first" },
     { "type": "color", "id": "background_color", "label": "Background", "default": "#0b0f1d" },
