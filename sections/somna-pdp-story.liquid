@@ -107,7 +107,7 @@
         -%}
         {%- if layer_images -%}
           {%- comment -%} each layer is its own full-size transparent image; stacked they make the Figma picture {%- endcomment -%}
-          {%- assign first_layer = features.first.image.value -%}
+          {%- for f in features limit: 1 -%}{%- assign first_layer = f.image.value -%}{%- endfor -%}
           {%- if s.layers_animation -%}<somna-pdp-layers class="somna-pdp-story__product somna-pdp-story__stack" style="aspect-ratio: {{ first_layer.width }} / {{ first_layer.height }};">{%- else -%}<div class="somna-pdp-story__product somna-pdp-story__stack" style="aspect-ratio: {{ first_layer.width }} / {{ first_layer.height }};">{%- endif -%}
             {%- for f in features -%}
               {%- assign li = f.image.value -%}
