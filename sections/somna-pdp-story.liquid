@@ -54,8 +54,10 @@
       {%- when 'problem' -%}
         <div class="somna-pdp-story__media">
           {%- if c.label != blank -%}<p class="somna-pdp-story__tag">{{ c.label.value }}</p>{%- endif -%}
-          <div class="somna-pdp-story__frame">
-            {%- if image -%}{{ image | image_url: width: 1500 | image_tag: loading: 'lazy', widths: '600, 900, 1200, 1500', sizes: '(min-width: 990px) 753px, 100vw' }}{%- endif -%}
+          {%- assign image_after = c.image_after.value -%}
+          <div class="somna-pdp-story__frame{% if image and image_after %} has-after{% endif %}">
+            {%- if image -%}{{ image | image_url: width: 1500 | image_tag: loading: 'lazy', widths: '600, 900, 1200, 1500', sizes: '(min-width: 990px) 753px, 100vw', class: 'somna-pdp-story__before' }}{%- endif -%}
+            {%- if image and image_after -%}{{ image_after | image_url: width: 1500 | image_tag: loading: 'lazy', widths: '600, 900, 1200, 1500', sizes: '(min-width: 990px) 753px, 100vw', class: 'somna-pdp-story__after' }}{%- endif -%}
             {%- if features != blank -%}
               <ul class="somna-pdp-story__bullets" role="list">
                 {%- for f in features -%}
@@ -220,7 +222,51 @@
     height: auto;
   }
 
+  /* problem -> solution: the two pictures cross-fade in a loop with a slow zoom (7s) */
+  .somna-pdp-story__frame.has-after .somna-pdp-story__after {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @keyframes somnaStoryBefore {
+    0%, 42% { opacity: 1; transform: scale(1.06); }
+    50%, 92% { opacity: 0; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.06); }
+  }
+
+  @keyframes somnaStoryAfter {
+    0%, 42% { opacity: 0; transform: scale(1.04); }
+    50%, 92% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.04); }
+  }
+
+  .somna-pdp-story__frame.has-after .somna-pdp-story__before {
+    animation: somnaStoryBefore 7s ease-in-out infinite;
+  }
+
+  .somna-pdp-story__frame.has-after .somna-pdp-story__after {
+    animation: somnaStoryAfter 7s ease-in-out infinite;
+  }
+
+  .somna-pdp-story__frame.has-after .somna-pdp-story__bullets {
+    animation: somnaStoryBefore 7s ease-in-out infinite;
+    transform-origin: 0 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-pdp-story__frame.has-after :is(.somna-pdp-story__before, .somna-pdp-story__bullets) {
+      animation: none;
+    }
+
+    .somna-pdp-story__frame.has-after .somna-pdp-story__after {
+      display: none;
+    }
+  }
+
   .somna-pdp-story__bullets {
+    z-index: 1;
     position: absolute;
     left: 20px;
     bottom: 22px;
