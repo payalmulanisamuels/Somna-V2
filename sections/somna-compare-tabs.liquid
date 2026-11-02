@@ -12,8 +12,9 @@
   assign row_blocks = section.blocks | where: 'type', 'row'
   assign uid = section.id | replace: '_', '-'
   assign only_tab = 0
-  if s.match_product and closest.product != blank
-    assign product_name = closest.product.title | downcase | strip
+  assign match_source = closest.product | default: product
+  if s.match_product and match_source != blank
+    assign product_name = match_source.title | downcase | strip
     for tab in tab_blocks
       assign tab_name = tab.settings.name | downcase | strip
       if tab_name == product_name
