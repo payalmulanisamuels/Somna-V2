@@ -13,6 +13,80 @@
   if app_blocks.size > 0
     assign use_app = true
   endif
+
+  # Real Judge.me numbers / featured review for this product (metafield kept up to date by Judge.me)
+  assign rv_product = product | default: closest.product
+  assign jm = nil
+  if rv_product
+    assign jm = rv_product.metafields.judgeme.review_widget_data.value
+  endif
+  assign jm_ok = false
+  if jm and jm.number_of_reviews > 0
+    assign jm_ok = true
+  endif
+
+  assign sum_avg = s.average
+  assign sum_count = s.count
+  assign sum_p5 = s.pct_5
+  assign sum_p4 = s.pct_4
+  assign sum_p3 = s.pct_3
+  assign sum_p2 = s.pct_2
+  assign sum_p1 = s.pct_1
+  if s.summary_source == 'judgeme' and jm_ok
+    assign sum_avg = jm.average_rating | times: 1.0 | round: 1
+    assign sum_count = s.count_label | default: '[count] reviews' | replace: '[count]', jm.number_of_reviews
+    for h in jm.histogram
+      case h.rating
+        when 5
+          assign sum_p5 = h.percentage
+        when 4
+          assign sum_p4 = h.percentage
+        when 3
+          assign sum_p3 = h.percentage
+        when 2
+          assign sum_p2 = h.percentage
+        when 1
+          assign sum_p1 = h.percentage
+      endcase
+    endfor
+  endif
+
+  assign f_title = s.featured_title
+  assign f_text = s.featured_text
+  assign f_name = s.featured_name
+  assign f_avatar = s.featured_avatar
+  assign f_verified = s.featured_verified
+  assign f_product = s.featured_product
+  assign f_rating = s.featured_rating
+  if s.featured_source == 'judgeme' and jm_ok
+    assign f_pick = nil
+    for rv in jm.reviews
+      if rv.rating >= 5 and rv.is_anonymous_reviewer != true
+        assign f_pick = rv
+        break
+      endif
+    endfor
+    if f_pick == nil
+      assign f_pick = jm.reviews | first
+    endif
+    if f_pick
+      assign f_title = f_pick.title
+      assign f_text = f_pick.body
+      assign f_parts = f_pick.reviewer_name | strip | split: ' '
+      assign f_name = f_parts | first
+      if f_parts.size > 1
+        assign f_last = f_parts | last | slice: 0 | upcase
+        assign f_name = f_name | append: ' ' | append: f_last | append: '.'
+      endif
+      assign f_avatar = nil
+      assign f_verified = ''
+      if f_pick.verified_buyer
+        assign f_verified = s.featured_verified | default: 'Verified buyer.'
+      endif
+      assign f_product = rv_product.title
+      assign f_rating = f_pick.rating
+    endif
+  endif
   assign joined = false
   if s.show_edges and s.show_featured and s.show_summary
     assign joined = true
@@ -67,25 +141,25 @@
     {%- endif -%}
 
     {%- if s.show_featured -%}
-      {%- assign fr = s.featured_rating | times: 1.0 -%}
+      {%- assign fr = f_rating | times: 1.0 -%}
       <article
         class="somna-reviews__featured{% if joined %} is-joined{% endif %}"
         style="{% if s.featured_bg != blank %}--somna-rv-card: {{ s.featured_bg }};{% endif %}{% if s.featured_fg != blank %} --somna-rv-card-fg: {{ s.featured_fg }};{% endif %}"
       >
-        {%- if s.featured_title != blank -%}<h3 class="somna-reviews__title somna-reviews__title--lg">“{{ s.featured_title | escape }}”</h3>{%- endif -%}
-        {%- if s.featured_text != blank -%}<p class="somna-reviews__text">“{{ s.featured_text | escape }}”</p>{%- endif -%}
+        {%- if f_title != blank -%}<h3 class="somna-reviews__title somna-reviews__title--lg">“{{ f_title | strip_html }}”</h3>{%- endif -%}
+        {%- if f_text != blank -%}<p class="somna-reviews__text">“{{ f_text | strip_html }}”</p>{%- endif -%}
         <div class="somna-reviews__byline">
-          {%- if s.featured_avatar != blank -%}
-            {{ s.featured_avatar | image_url: width: 120, height: 120, crop: 'center' | image_tag: class: 'somna-reviews__avatar somna-reviews__avatar--lg', alt: s.featured_name, loading: 'lazy', width: 56, height: 56 }}
-          {%- elsif s.featured_name != blank -%}
-            <span class="somna-reviews__avatar somna-reviews__avatar--lg somna-reviews__avatar--initials" aria-hidden="true">{{ s.featured_name | slice: 0 }}</span>
+          {%- if f_avatar != blank -%}
+            {{ f_avatar | image_url: width: 120, height: 120, crop: 'center' | image_tag: class: 'somna-reviews__avatar somna-reviews__avatar--lg', alt: f_name, loading: 'lazy', width: 56, height: 56 }}
+          {%- elsif f_name != blank -%}
+            <span class="somna-reviews__avatar somna-reviews__avatar--lg somna-reviews__avatar--initials" aria-hidden="true">{{ f_name | slice: 0 }}</span>
           {%- endif -%}
           <p class="somna-reviews__who">
-            {%- if s.featured_name != blank -%}<strong>{{ s.featured_name | escape }}</strong>{%- endif -%}
-            {%- if s.featured_verified != blank or s.featured_product != blank -%}
+            {%- if f_name != blank -%}<strong>{{ f_name | escape }}</strong>{%- endif -%}
+            {%- if f_verified != blank or f_product != blank -%}
               <span class="somna-reviews__meta">
-                {%- if s.featured_verified != blank -%}<em>{{ s.featured_verified | escape }}</em>{%- endif -%}
-                {%- if s.featured_product != blank -%}{% if s.featured_verified != blank %}&nbsp;{% endif %}{{ s.featured_product | escape }}{%- endif -%}
+                {%- if f_verified != blank -%}<em>{{ f_verified | escape }}</em>{%- endif -%}
+                {%- if f_product != blank -%}{% if f_verified != blank %}&nbsp;{% endif %}{{ f_product | escape }}{%- endif -%}
               </span>
             {%- endif -%}
           </p>
@@ -107,23 +181,22 @@
     {%- endif -%}
 
     {%- if s.show_summary -%}
-      {%- assign avg = s.average | plus: 0.0 -%}
+      {%- assign avg = sum_avg | plus: 0.0 -%}
       <div class="somna-reviews__summary{% if joined %} is-joined{% endif %}{% unless s.show_gallery and photo_blocks.size > 0 %} somna-reviews__summary--no-photos{% endunless %}">
         <div class="somna-reviews__score">
-          <p class="somna-reviews__average">{{ s.average | escape }}</p>
+          <p class="somna-reviews__average">{{ sum_avg | escape }}</p>
           {%- if s.show_summary_stars -%}
             <span class="somna-reviews__stars" role="img" aria-label="{{ avg }} out of 5 stars">
               {%- for i in (1..5) -%}<span class="somna-reviews__star{% if avg < i %}{% assign below = i | minus: 1 %}{% if avg > below %} is-half{% else %} is-empty{% endif %}{% endif %}">{{ star_svg }}</span>{%- endfor -%}
             </span>
           {%- endif -%}
-          {%- if s.count != blank -%}<p class="somna-reviews__count">{{ s.count | escape }}</p>{%- endif -%}
+          {%- if sum_count != blank -%}<p class="somna-reviews__count">{{ sum_count | escape }}</p>{%- endif -%}
         </div>
 
         <ul class="somna-reviews__bars" role="list">
           {%- for i in (1..5) -%}
             {%- assign stars = 6 | minus: i -%}
-            {%- assign key = 'pct_' | append: stars -%}
-            {%- assign p = s[key] -%}
+            {%- case stars -%}{%- when 5 -%}{%- assign p = sum_p5 -%}{%- when 4 -%}{%- assign p = sum_p4 -%}{%- when 3 -%}{%- assign p = sum_p3 -%}{%- when 2 -%}{%- assign p = sum_p2 -%}{%- else -%}{%- assign p = sum_p1 -%}{%- endcase -%}
             <li>
               <span class="somna-reviews__bar-label">{{ stars }}★</span>
               <span class="somna-reviews__bar" aria-hidden="true"><span style="width: {{ p }}%;"></span></span>
@@ -146,7 +219,7 @@
       </div>
     {%- endif -%}
 
-    {%- if s.show_filters -%}
+    {%- if s.show_filters and use_app == false -%}
       <div class="somna-reviews__chips" role="group" aria-label="{{ s.filters_label | escape }}" hidden data-chips>
         <button type="button" class="somna-reviews__chip" data-filter="all" aria-pressed="true">{{ s.chip_all | escape }}</button>
         <button type="button" class="somna-reviews__chip" data-filter="5" aria-pressed="false">{{ s.chip_5 | escape }}</button>
@@ -528,6 +601,220 @@
     outline-offset: 3px;
   }
 
+  /* ---------- Judge.me review widget, styled like the Figma review list ---------- */
+  .somna-reviews__app {
+    width: 100%;
+    color: var(--somna-rv-fg, #f3feee);
+  }
+
+  .somna-reviews__app .jdgm-widget {
+    margin: 0;
+    padding: 0;
+    background: none;
+    font-family: var(--font-body--family);
+    color: inherit;
+  }
+
+  /* header: our summary above already shows the real rating, so keep only the buttons, centred like the Figma chips */
+  .somna-reviews__app :is(.jm-review-widget-minimal-header__title, .jm-average-rating-display) {
+    display: none;
+  }
+
+  .somna-reviews__app .jm-review-widget__header,
+  .somna-reviews__app .jm-review-widget-minimal-header,
+  .somna-reviews__app .jm-review-widget-minimal-header__button-and-filters {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .somna-reviews__app .jm-button {
+    min-height: 32px;
+    padding: 6px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--somna-rv-card, #f3feee);
+    color: #0b1a45;
+    font-family: var(--font-body--family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    box-shadow: none;
+  }
+
+  .somna-reviews__app .jm-button--primary {
+    background: var(--somna-rv-chip, #afbdf8);
+    color: #000;
+  }
+
+  .somna-reviews__app .jm-button :is(svg, path) {
+    color: currentColor;
+    fill: currentColor;
+  }
+
+  .somna-reviews__app .jm-button:focus-visible {
+    outline: 2px solid var(--somna-rv-chip, #afbdf8);
+    outline-offset: 3px;
+  }
+
+  /* review cards */
+  .somna-reviews__app .jm-review-widget__body > .jm-stack,
+  .somna-reviews__app .jm-review-widget__body {
+    gap: 12px;
+  }
+
+  .somna-reviews__app .jm-review-item {
+    padding: 18px 28px 18px 26px;
+    border: 0;
+    border-radius: 6px;
+    background: var(--somna-rv-card, #f3feee);
+    color: var(--somna-rv-card-fg, #0b1a45);
+  }
+
+  .somna-reviews__app .jm-review-item + .jm-review-item {
+    margin-top: 0;
+  }
+
+  .somna-reviews__app .jm-review-item__content {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'avatar title stars'
+      'avatar body body'
+      'avatar name name';
+    align-items: start;
+    gap: 4px 18px;
+  }
+
+  .somna-reviews__app :is(.jm-reviewer-info, .jm-review-content) {
+    display: contents;
+  }
+
+  .somna-reviews__app .jm-review-item__content > .jm-cluster:first-child {
+    grid-area: stars;
+  }
+
+  .somna-reviews__app .jm-reviewer-avatar {
+    grid-area: avatar;
+    width: 52px;
+    height: 52px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: var(--somna-accent, #afbdf8);
+    color: #0b1a45;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.12);
+  }
+
+  .somna-reviews__app .jm-reviewer-avatar__initial,
+  .somna-reviews__app .jm-reviewer-avatar__initial .jm-text {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background: none;
+    color: inherit;
+    font-size: 1.125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .somna-reviews__app .jm-reviewer-info__details {
+    grid-area: name;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 8px;
+    margin-top: 4px;
+    font-size: 0.75rem;
+  }
+
+  .somna-reviews__app .jm-reviewer-info__details .jm-text {
+    font-size: 0.75rem;
+    color: inherit;
+    opacity: 0.6;
+  }
+
+  .somna-reviews__app .jm-reviewer-info__name.jm-text {
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    opacity: 1;
+  }
+
+  .somna-reviews__app .jm-review-content__title-wrapper {
+    grid-area: title;
+    min-width: 0;
+  }
+
+  .somna-reviews__app .jm-review-content__title,
+  .somna-reviews__app .jm-review-content__title .jm-text {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 1rem;
+    line-height: 1.35;
+    color: inherit;
+  }
+
+  .somna-reviews__app .jm-review-body-wrapper,
+  .somna-reviews__app .jm-review-content > :not(.jm-review-content__title-wrapper) {
+    grid-column: 2 / -1;
+    min-width: 0;
+  }
+
+  .somna-reviews__app .jm-review-body-wrapper {
+    grid-area: body;
+  }
+
+  .somna-reviews__app :is(.jm-review-content__body, .jm-review-content__body .jm-text, .jdgm-review-content__body-content p) {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: inherit;
+    overflow-wrap: anywhere;
+  }
+
+  .somna-reviews__app .jm-review-content__expand-button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .somna-reviews__app .jm-star-rating,
+  .somna-reviews__app .jm-star-rating__font-icon {
+    color: var(--somna-rv-star, #f5c242);
+    font-size: 18px;
+  }
+
+  /* pagination: lavender pills under the list, like the Figma "Show more" button */
+  .somna-reviews__app .jm-pagination-controls {
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .somna-reviews__app .jm-pagination-controls__button {
+    min-width: 36px;
+    min-height: 36px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--somna-rv-card, #f3feee);
+    color: #0b1a45;
+  }
+
+  .somna-reviews__app .jm-pagination-controls__button--active {
+    background: var(--somna-rv-chip, #afbdf8);
+    color: #000;
+  }
+
+  .somna-reviews__app .jm-pagination-controls__ellipsis {
+    color: inherit;
+  }
+
   /* review list */
   .somna-reviews__list {
     display: grid;
@@ -874,6 +1161,7 @@
 
     { "type": "header", "content": "Featured review" },
     { "type": "checkbox", "id": "show_featured", "label": "Show featured review", "default": true },
+    { "type": "select", "id": "featured_source", "label": "Featured review from", "options": [{ "value": "settings", "label": "The fields below" }, { "value": "judgeme", "label": "Judge.me (latest 5★ review of this product)" }], "default": "settings", "info": "Judge.me falls back to the fields below when the product has no reviews." },
     { "type": "text", "id": "featured_title", "label": "Headline", "default": "Hooked from bag one." },
     { "type": "textarea", "id": "featured_text", "label": "Review", "default": "I bought one bag to try. Now I'm on Autoship and I've sent a pack to my sister." },
     { "type": "text", "id": "featured_name", "label": "Customer name", "default": "Priya S." },
@@ -886,6 +1174,8 @@
 
     { "type": "header", "content": "Review summary" },
     { "type": "checkbox", "id": "show_summary", "label": "Show summary", "default": true },
+    { "type": "select", "id": "summary_source", "label": "Rating, count and bars from", "options": [{ "value": "settings", "label": "The fields below" }, { "value": "judgeme", "label": "Judge.me (this product's real numbers)" }], "default": "settings" },
+    { "type": "text", "id": "count_label", "label": "Judge.me count text", "default": "[count] reviews", "info": "[count] is the number of Judge.me reviews." },
     { "type": "text", "id": "average", "label": "Average rating", "default": "4.6" },
     { "type": "checkbox", "id": "show_summary_stars", "label": "Show stars under the rating", "default": true },
     { "type": "text", "id": "count", "label": "Review count", "default": "3600+ reviews" },
