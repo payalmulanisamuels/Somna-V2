@@ -177,6 +177,7 @@
         this.build(section, centres);
       }
       disconnectedCallback() {
+        this.ro?.disconnect();
         this.st?.kill();
         this.tl?.kill();
         this.traveller?.remove();
@@ -219,6 +220,14 @@
         const host = section.closest('main') || document.body;
         if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
         const doc = (r) => { const h = host.getBoundingClientRect(); return { x: r.left - h.left, y: r.top - h.top, w: r.width, h: r.height }; };
+        // layout position of an element relative to the host, ignoring transforms (the "How it works"
+        // product may be mid hop-flip or floating when this is measured)
+        const layout = (el) => {
+          let x = 0, y = 0, e = el;
+          while (e && e !== host) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; }
+          if (e !== host) return doc(el.getBoundingClientRect());
+          return { x, y, w: el.offsetWidth, h: el.offsetHeight };
+        };
         if (this.source) {
           this.traveller = document.createElement('div');
           this.traveller.className = 'somna-pdp-layers-traveller';
@@ -236,15 +245,23 @@
         const tl = gsap.timeline({ defaults: { ease: 'none' } });
         let T = 0;
         if (this.traveller) {
-          const start = () => doc(this.source.getBoundingClientRect());
+          const start = () => layout(this.source);
           const endW = () => box().width * 0.8;
           const end = () => { const b = doc(box()); return { x: b.x + (b.w * mid.x) / 100 - endW() / 2, y: b.y + (b.h * mid.y) / 100 - endW() / 2 }; };
-          gsap.set(this.traveller, { x: () => start().x, y: () => start().y, width: () => start().w, opacity: 0 });
-          tl.set(this.traveller, { opacity: 1 }, 0)
-            .set(this.source, { opacity: 0 }, 0)
-            .to(this.traveller, { x: () => end().x, y: () => end().y, width: endW, rotationY: 360, rotationZ: 100, duration: 0.45, ease: 'power2.inOut' }, 0)
-            .to(this.traveller, { opacity: 0, duration: 0.07 }, 0.45);
+          gsap.set(this.traveller, { x: () => start().x, y: () => start().y, width: () => start().w });
+          tl.to(this.traveller, { x: () => end().x, y: () => end().y, width: endW, rotationY: 360, rotationZ: 100, duration: 0.45, ease: 'power2.inOut' }, 0);
           T = 0.44;
+          // Hand-off between the real picture and its travelling copy, decided from the timeline's own time
+          // (no zero-time .set(), which GSAP leaves applied at progress 0). At time 0 — before the
+          // transition and after scrolling back up — the real picture is always the visible one.
+          const handoff = () => {
+            const t = tl.time();
+            const travelling = t > 0.001;
+            this.source.style.opacity = travelling ? '0' : '';
+            this.traveller.style.opacity = travelling ? String(Math.max(0, Math.min(1, (T + 0.08 - t) / 0.08))) : '0';
+          };
+          tl.eventCallback('onUpdate', handoff);
+          this.handoff = handoff;
         }
         // stacked layers appear, then peel apart: first up-left, middle ones settle, last down-right
         tl.to(this.layers, { opacity: 1, duration: 0.07 }, T);
@@ -265,8 +282,17 @@
         const t4 = t3 + 0.32;
         this.items.forEach((it, i) => tl.to(it, { opacity: 1, y: 0, duration: 0.1, ease: 'power2.out' }, t4 + i * 0.1));
         this.tl = tl;
-        this.st = ScrollTrigger.create({ animation: tl, trigger: section, scroller: this.scroller, start: 'top 88%', endTrigger: this, end: 'center 45%', scrub: 1.2, invalidateOnRefresh: true });
-        addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+        this.st = ScrollTrigger.create({
+          animation: tl, trigger: section, scroller: this.scroller,
+          start: 'top 80%', endTrigger: this, end: 'center 45%',
+          scrub: 0.6, invalidateOnRefresh: true,
+          onRefresh: () => this.handoff?.(),
+        });
+        this.handoff?.();
+        // keep trigger positions right when content above changes height (lazy images, reviews app)
+        let timer;
+        this.ro = new ResizeObserver(() => { clearTimeout(timer); timer = setTimeout(() => ScrollTrigger.refresh(), 200); });
+        this.ro.observe(host);
       }
     });
   }
@@ -290,16 +316,16 @@
         this.points = order.map((n) => this.querySelector('.somna-pdp-story__point--' + n.trim())).filter(Boolean);
         this.anims = [];
         this.classList.add('is-pending');
-        this.io = new IntersectionObserver((entries) => {
-          for (const e of entries) {
-            if (e.isIntersecting) this.play();
-            else if (e.boundingClientRect.top > 0) this.reset();
-          }
-        }, { rootMargin: '0px 0px -35% 0px' });
+        // play when the visual is a third of the way up the screen…
+        this.io = new IntersectionObserver(([e]) => e.isIntersecting && this.play(), { rootMargin: '0px 0px -30% 0px' });
+        // …and reset only once it is completely below the screen, so nothing vanishes while visible
+        this.out = new IntersectionObserver(([e]) => !e.isIntersecting && e.boundingClientRect.top > 0 && this.reset());
         this.io.observe(this);
+        this.out.observe(this);
       }
       disconnectedCallback() {
         this.io?.disconnect();
+        this.out?.disconnect();
         this.anims?.forEach((a) => a.cancel());
       }
       startX() {
