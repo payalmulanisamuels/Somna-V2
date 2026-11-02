@@ -255,7 +255,7 @@
               {%- if s.sub_points != blank -%}
                 <ul class="somna-pdp-hero__sub-points" role="list">
                   {%- assign points = s.sub_points | newline_to_br | split: '<br />' -%}
-                  {%- for t in points -%}{%- assign t = t | strip | replace: '[price]', '<span data-sub-each></span>' | replace: '[interval]', '<span data-sub-interval></span>' -%}{%- if t != blank -%}<li><span class="somna-check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>{{ t }}</li>{%- endif -%}{%- endfor -%}
+                  {%- for t in points -%}{%- assign pt = t | strip | replace: '[price]', '<span data-sub-each></span>' | replace: '[interval]', '<span data-sub-interval></span>' -%}{%- if pt != blank -%}<li><span class="somna-check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>{{ pt }}</li>{%- endif -%}{%- endfor -%}
                 </ul>
               {%- endif -%}
               {%- assign group = product.selling_plan_groups | first -%}
