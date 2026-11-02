@@ -60,21 +60,26 @@
   assign f_rating = s.featured_rating
   if s.featured_source == 'judgeme' and jm_ok
     assign f_pick = nil
+    assign f_tagged = nil
     for rv in jm.reviews
       assign rv_body = rv.body | strip_html
       if rv.rating >= 5 and rv.is_anonymous_reviewer != true
-        unless rv_body contains '(Review #'
+        if rv_body contains '(Review #'
+          if f_tagged == nil
+            assign f_tagged = rv
+          endif
+        else
           assign f_pick = rv
           break
-        endunless
+        endif
       endif
     endfor
     if f_pick == nil
-      assign f_pick = jm.reviews | first
+      assign f_pick = f_tagged | default: jm.reviews.first
     endif
     if f_pick
       assign f_title = f_pick.title
-      assign f_text = f_pick.body
+      assign f_text = f_pick.body | strip_html | split: '(Review #' | first | strip
       assign f_parts = f_pick.reviewer_name | strip | split: ' '
       assign f_name = f_parts | first
       if f_parts.size > 1
