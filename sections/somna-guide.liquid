@@ -1,0 +1,434 @@
+{%- doc -%}
+  Somna V2 — "How to use" product guide. One section per product: photo (packaging + product),
+  eyebrow, heading, how-it-works text and a shop link; then the application steps (one block per
+  step: photo, title, text) numbered 01, 02, 03; then a note (removal / safety guidance).
+  Step cards follow the PDP "Three steps" look.
+{%- enddoc -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  assign steps = section.blocks | where: 'type', 'step'
+-%}
+<div
+  {% if s.anchor != blank %}id="{{ s.anchor | handleize }}"{% endif %}
+  class="somna-guide somna-guide--media-{{ s.media_side }}"
+  style="--sg-bg: {{ s.background_color }}; --sg-fg: {{ s.text_color }}; --sg-card: {{ s.card_color }}; --sg-card-fg: {{ s.card_text_color }}; --sg-accent: {{ s.accent_color }}; --sg-note: {{ s.note_color }}; --sg-note-fg: {{ s.note_text_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+>
+  <div class="somna-container">
+    <div class="somna-guide__intro">
+      <div class="somna-guide__media">
+        {%- if s.image != blank -%}
+          {{
+            s.image
+            | image_url: width: 1400
+            | image_tag:
+              widths: '480, 720, 960, 1200, 1400',
+              sizes: '(min-width: 750px) 50vw, 100vw',
+              loading: 'lazy',
+              class: 'somna-guide__image',
+              style: s.image_position
+          }}
+        {%- else -%}
+          {{ 'image' | placeholder_svg_tag: 'somna-guide__image' }}
+        {%- endif -%}
+      </div>
+      <div class="somna-guide__copy">
+        {%- if s.eyebrow != blank -%}<p class="somna-guide__eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="somna-guide__heading somna-accent">{{ s.heading }}</h2>{%- endif -%}
+        {%- if s.label != blank -%}<p class="somna-guide__label">{{ s.label | escape }}</p>{%- endif -%}
+        {%- if s.text != blank -%}<div class="somna-guide__text">{{ s.text }}</div>{%- endif -%}
+        {%- if s.button_label != blank and s.button_link != blank -%}
+          <a class="somna-guide__button" href="{{ s.button_link }}">{{ s.button_label | escape }} <span aria-hidden="true">→</span></a>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- if steps.size > 0 -%}
+      {%- if s.steps_heading != blank -%}<h3 class="somna-guide__steps-heading">{{ s.steps_heading | escape }}</h3>{%- endif -%}
+      <ol class="somna-guide__steps" role="list">
+        {%- for block in steps -%}
+          {%- assign b = block.settings -%}
+          <li class="somna-guide__step" {{ block.shopify_attributes }}>
+            <div class="somna-guide__photo">
+              {%- if b.image != blank -%}
+                {{ b.image | image_url: width: 480 | image_tag: widths: '240, 360, 480', sizes: '160px', loading: 'lazy', class: 'somna-guide__photo-img', style: b.image_position }}
+              {%- endif -%}
+            </div>
+            <div class="somna-guide__step-body">
+              <p class="somna-guide__num">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</p>
+              <h4 class="somna-guide__step-title">{{ b.title | escape }}</h4>
+              {%- if b.text != blank -%}<p class="somna-guide__step-text">{{ b.text | escape }}</p>{%- endif -%}
+            </div>
+          </li>
+        {%- endfor -%}
+      </ol>
+    {%- endif -%}
+
+    {%- if s.note != blank -%}
+      <div class="somna-guide__note">
+        <span class="somna-guide__note-icon">{%- render 'somna-line-icon', name: s.note_icon, class: 'somna-guide__svg', stroke: 1.6 -%}</span>
+        <div class="somna-guide__note-text">{{ s.note }}</div>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .somna-guide {
+    scroll-margin-top: 90px;
+    background: var(--sg-bg);
+    color: var(--sg-fg);
+  }
+
+  .somna-guide__intro {
+    display: grid;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .somna-guide__media {
+    overflow: hidden;
+    border-radius: 12px;
+  }
+
+  .somna-guide__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 240px;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .somna-guide__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .somna-guide__eyebrow {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .somna-guide__heading {
+    --somna-accent: var(--sg-accent);
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-size: clamp(2rem, 3.6vw, 3.25rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.3;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .somna-guide__label {
+    margin: 4px 0 0;
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.125rem, 1.6vw, 1.5rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.35;
+    text-transform: uppercase;
+    color: var(--sg-accent);
+  }
+
+  .somna-guide__text {
+    max-width: 36em;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    line-height: 1.45;
+  }
+
+  .somna-guide__text p {
+    margin: 0;
+  }
+
+  .somna-guide__button {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    min-height: 52px;
+    margin-top: 6px;
+    padding: 0 26px;
+    border-radius: 12px;
+    background: var(--sg-accent);
+    color: #000;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+
+  .somna-guide__button:hover {
+    background: #0b0f1d;
+    color: #f3feee;
+    transform: translateY(-2px);
+  }
+
+  .somna-guide__button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  .somna-guide__steps-heading {
+    margin: 40px 0 18px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .somna-guide__steps {
+    display: grid;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: none;
+  }
+
+  .somna-guide__step {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    padding: 18px;
+    border-radius: 12px;
+    background: var(--sg-card);
+    color: var(--sg-card-fg);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .somna-guide__photo {
+    overflow: hidden;
+    flex: none;
+    width: 104px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--sg-accent);
+  }
+
+  .somna-guide__photo-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-guide__step-body {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .somna-guide__num {
+    justify-self: start;
+    margin: 0 0 4px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--sg-accent);
+    color: #000;
+    font-family: var(--font-accent--family);
+    font-size: 1rem;
+    font-weight: var(--font-accent--weight);
+    line-height: 1.2;
+  }
+
+  .somna-guide__step-title {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.25rem, 1.8vw, 1.625rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .somna-guide__step-text {
+    margin: 0;
+    font-size: 0.9375rem;
+    letter-spacing: 0.04em;
+    line-height: 1.45;
+  }
+
+  .somna-guide__note {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-top: 20px;
+    padding: 18px 20px;
+    border-radius: 12px;
+    background: var(--sg-note);
+    color: var(--sg-note-fg);
+  }
+
+  .somna-guide__note-icon {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--sg-note-fg);
+    color: var(--sg-note);
+  }
+
+  .somna-guide__svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .somna-guide__note-text {
+    align-self: center;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    line-height: 1.45;
+  }
+
+  .somna-guide__note-text p {
+    margin: 0;
+  }
+
+  .somna-guide__note-text p + p {
+    margin-top: 6px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .somna-guide__intro {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: clamp(28px, 4.5vw, 72px);
+    }
+
+    .somna-guide--media-right .somna-guide__media {
+      order: 2;
+    }
+
+    .somna-guide__image {
+      aspect-ratio: 5 / 4;
+    }
+
+    .somna-guide__eyebrow {
+      font-size: clamp(15px, 1.25vw, 18px);
+    }
+
+    .somna-guide__text {
+      font-size: clamp(1rem, 1.37vw, 1.2rem);
+    }
+
+    .somna-guide__steps-heading {
+      margin-top: clamp(40px, 5vw, 72px);
+    }
+
+    .somna-guide__steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .somna-guide__step {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      padding: clamp(20px, 2.2vw, 32px);
+    }
+
+    .somna-guide__photo {
+      width: clamp(120px, 11vw, 160px);
+    }
+
+    .somna-guide__step:hover {
+      box-shadow: 0 14px 30px rgb(11 15 29 / 0.16);
+      transform: translateY(-4px);
+    }
+
+    .somna-guide__step:hover .somna-guide__photo-img {
+      transform: scale(1.06);
+    }
+
+    .somna-guide__note {
+      align-items: center;
+      margin-top: 24px;
+      padding: 20px 28px;
+    }
+
+    .somna-guide__note-text {
+      font-size: clamp(1rem, 1.25vw, 1.125rem);
+    }
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-guide__step {
+      padding: 18px;
+    }
+
+    .somna-guide__photo {
+      width: 104px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-guide__step,
+    .somna-guide__photo-img,
+    .somna-guide__button {
+      transition: none;
+      transform: none !important;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna how-to guide",
+  "tag": "section",
+  "class": "somna-guide-section",
+  "settings": [
+    { "type": "text", "id": "anchor", "label": "Anchor", "info": "Link to this section with #anchor, e.g. nasal-strips." },
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "Packaging + product photo." },
+    { "type": "text", "id": "image_position", "label": "Image focal point", "default": "object-position: center", "info": "CSS, e.g. object-position: 70% 50%" },
+    { "type": "select", "id": "media_side", "label": "Image side", "options": [{ "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }], "default": "left" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "info": "Italic words take the accent colour." },
+    { "type": "text", "id": "label", "label": "Label", "default": "How it works" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "text", "id": "steps_heading", "label": "Steps heading", "default": "How to apply" },
+    { "type": "richtext", "id": "note", "label": "Note", "info": "Removal or safety guidance under the steps." },
+    {
+      "type": "select",
+      "id": "note_icon",
+      "label": "Note icon",
+      "options": [{ "value": "moon", "label": "Moon" }, { "value": "shield", "label": "Shield" }, { "value": "clock", "label": "Clock" }, { "value": "question", "label": "Question" }],
+      "default": "moon"
+    },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#f3feee" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },
+    { "type": "color", "id": "card_color", "label": "Step card", "default": "#0b0f1d" },
+    { "type": "color", "id": "card_text_color", "label": "Step card text", "default": "#f3feee" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#afbdf8" },
+    { "type": "color", "id": "note_color", "label": "Note background", "default": "#afbdf8" },
+    { "type": "color", "id": "note_text_color", "label": "Note text", "default": "#000000" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "limit": 4,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Photo" },
+        { "type": "text", "id": "image_position", "label": "Photo focal point", "default": "object-position: center" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Step" },
+        { "type": "textarea", "id": "text", "label": "Text" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Somna how-to guide", "blocks": [{ "type": "step" }, { "type": "step" }, { "type": "step" }] }]
+}
+{% endschema %}

@@ -258,6 +258,56 @@
       grid-template-columns: repeat(var(--sc-cols), minmax(0, 1fr));
     }
 
+    /* A single card runs full width: icon, copy, then the link as a button on the right. */
+    .somna-cards--cards .somna-cards__item:only-child .somna-cards__card {
+      flex-direction: row;
+      align-items: center;
+      gap: clamp(20px, 2.5vw, 36px);
+    }
+
+    .somna-cards--cards .somna-cards__item:only-child .somna-cards__icon {
+      width: clamp(72px, 7vw, 104px);
+      height: clamp(72px, 7vw, 104px);
+    }
+
+    .somna-cards--cards .somna-cards__item:only-child .somna-cards__svg {
+      width: 50%;
+      height: 50%;
+    }
+
+    .somna-cards--cards .somna-cards__item:only-child .somna-cards__body {
+      flex: 1;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      column-gap: 32px;
+    }
+
+    .somna-cards--cards .somna-cards__item:only-child .somna-cards__title {
+      flex-basis: 100%;
+      font-size: clamp(1.5rem, 2.4vw, 2.25rem);
+    }
+
+    .somna-cards--cards .somna-cards__item:only-child .somna-cards__desc {
+      flex: 1 1 280px;
+      font-size: clamp(1rem, 1.37vw, 1.2rem);
+    }
+
+    .somna-cards--cards .somna-cards__item:only-child .somna-cards__more {
+      margin: 0;
+      padding: 16px 28px;
+      border-radius: 12px;
+      background: var(--sc-accent);
+      color: #000;
+      font-size: 1rem;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .somna-cards--cards .somna-cards__item:only-child a.somna-cards__card:hover .somna-cards__more {
+      background: #f3feee;
+      color: #0b0f1d;
+    }
+
     .somna-cards--badges .somna-cards__icon {
       transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
     }
