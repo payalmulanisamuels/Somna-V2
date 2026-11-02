@@ -107,15 +107,20 @@
   }
 
   function reveal(batch) {
+    // anything already scrolled past (above the screen) is simply shown — no animation nobody would see
+    batch = batch.filter((el) => (el.getBoundingClientRect().bottom > 0 ? true : (clean(el), false)));
     // order: heading/lines -> text & image -> items -> button, then document order
     batch.sort((a, b) => TYPE[all.get(a).type].rank - TYPE[all.get(b).type].rank || (a.compareDocumentPosition(b) & 4 ? -1 : 1));
-    const n = {};
+    const n = new Map(); // stagger counters per section + type, so a fast scroll doesn't pile up delays
     batch.forEach((el) => {
-      const { type } = all.get(el);
+      const { type, section } = all.get(el);
       const t = TYPE[type];
-      const i = (n[type] = (n[type] ?? -1) + 1);
-      const step = type === 'item' ? 0.12 : type === 'line' ? 0.12 : 0.08;
-      const delay = Math.min(1, BASE[type] + i * step);
+      const key = type;
+      const counts = n.get(section) || {};
+      n.set(section, counts);
+      const i = (counts[key] = (counts[key] ?? -1) + 1);
+      const step = type === 'item' || type === 'line' ? 0.12 : 0.08;
+      const delay = Math.min(0.6, BASE[type] + i * step);
       const go = () => {
         el.style.setProperty('--somna-r-d', t.d + 's');
         el.style.setProperty('--somna-r-delay', delay + 's');
