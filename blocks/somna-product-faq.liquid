@@ -1,0 +1,70 @@
+{%- comment -%}
+  Somna V2 — FAQ accordion filled from the product's FAQ metafield (custom.faq, list of FAQ
+  metaobjects: question + answer_content). Same markup, styles and behaviour as the theme's
+  Accordion block, so it looks exactly like the homepage FAQ; only the rows come from the product.
+  Nothing is shown when the product has no FAQ entries.
+{%- endcomment -%}
+{%- liquid
+  assign block_settings = block.settings
+  assign product = closest.product
+  assign rows = product.metafields.custom.faq.value
+-%}
+{%- if rows != blank -%}
+  <div
+    class="accordion accordion--{{ block.id }} accordion--{{ block_settings.icon }} spacing-style{% if block_settings.dividers %} accordion--dividers{% endif %}"
+    style="
+      --summary-font-family: var(--font-{{ block_settings.type_preset }}--family);
+      --summary-font-style: var(--font-{{ block_settings.type_preset }}--style);
+      --summary-font-weight: var(--font-{{ block_settings.type_preset }}--weight);
+      --summary-font-size: var(--font-{{ block_settings.type_preset }}--size);
+      --summary-font-line-height: var(--font-{{ block_settings.type_preset }}--line-height);
+      --summary-font-case: var(--font-{{ block_settings.type_preset }}--case);
+      {% if block_settings.text_color != blank %}color: {{ block_settings.text_color }};{% endif %}
+      {% if block_settings.divider_color != blank %}--color-border: {{ block_settings.divider_color }};{% endif %}
+    "
+    {{ block.shopify_attributes }}
+  >
+    {%- for row in rows -%}
+      {%- capture accordion_row_children -%}
+        <details class="details">
+          <summary class="details__header">
+            {{ row.question.value }}
+            <span class="svg-wrapper icon-caret icon-animated">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+            <span class="svg-wrapper icon-plus">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+          </summary>
+          <div class="details-content"><p>{{ row.answer_content.value }}</p></div>
+        </details>
+      {%- endcapture -%}
+      {% render 'accordion-custom-component', children: accordion_row_children %}
+    {%- endfor -%}
+  </div>
+  {% render 'accordion-styles' %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Product FAQ",
+  "tag": null,
+  "class": "accordion",
+  "settings": [
+    { "type": "paragraph", "content": "Questions come from the product's FAQ metafield." },
+    { "type": "select", "id": "icon", "label": "Icon", "options": [{ "value": "caret", "label": "Caret" }, { "value": "plus", "label": "Plus" }], "default": "plus" },
+    { "type": "checkbox", "id": "dividers", "label": "Dividers", "default": true },
+    { "type": "color", "id": "divider_color", "label": "Divider colour" },
+    {
+      "type": "select",
+      "id": "type_preset",
+      "label": "Question style",
+      "options": [
+        { "value": "paragraph", "label": "Paragraph" },
+        { "value": "h4", "label": "Heading 4" },
+        { "value": "h5", "label": "Heading 5" },
+        { "value": "h6", "label": "Heading 6" }
+      ],
+      "default": "paragraph"
+    },
+    { "type": "color", "id": "text_color", "label": "Text" }
+  ],
+  "presets": [{ "name": "Product FAQ" }]
+}
+{% endschema %}

@@ -1,0 +1,276 @@
+{%- comment -%}
+  Somna V2 — closing "Small change. Softer nights." call to action on the product page.
+  Adds the chosen pack of this product (subscription when the product has a plan) through
+  assets/somna-cart.js. Prices are the product's real ones: [price] = the button price,
+  [night] = that price per night. The image defaults to the product's "How it works" photo.
+{%- endcomment -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  assign product = closest.product
+  if product == blank
+    assign product = all_products[s.preview_product.handle]
+  endif
+-%}
+{%- if product != blank -%}
+{%- liquid
+  assign index = s.pack_position | minus: 1
+  assign v = product.variants[index] | default: product.selected_or_first_available_variant
+  unless v.available
+    assign v = product.selected_or_first_available_variant
+  endunless
+  assign alloc = v.selling_plan_allocations | first
+  assign plan_id = ''
+  assign price = v.price
+  if s.use_subscription and alloc
+    assign price = alloc.price
+    assign plan_id = alloc.selling_plan.id
+  endif
+  assign bags = v.title | split: ' ' | first | plus: 0
+  if bags < 1
+    assign bags = 1
+  endif
+  assign night = 0
+  if s.nights_per_bag > 0
+    assign night = price | divided_by: bags | divided_by: s.nights_per_bag
+  endif
+  assign image = s.image | default: product.metafields.custom.pdp_how.value.image.value
+-%}
+{%- capture price_money -%}{{ price | money }}{%- endcapture -%}
+{%- capture night_money -%}{{ night | money }}{%- endcapture -%}
+
+<somna-pdp-cta class="somna-pdp-cta" data-id="{{ v.id }}" data-plan="{{ plan_id }}" style="--somna-cta-bg: {{ s.background_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;">
+  <div class="somna-pdp-cta__inner somna-container">
+    <div class="somna-pdp-cta__copy">
+      <h2 class="somna-pdp-cta__heading">
+        <span style="color: {{ s.line_1_color }};">{{ s.line_1 }}</span>
+        <span style="color: {{ s.line_2_color }};">{{ s.line_2 }}</span>
+      </h2>
+      {%- if s.text != blank -%}<p class="somna-pdp-cta__text">{{ s.text | replace: '[price]', price_money }}</p>{%- endif -%}
+      <form action="{{ routes.cart_add_url }}" method="post" class="somna-pdp-cta__form">
+        <input type="hidden" name="id" value="{{ v.id }}">
+        {%- if plan_id != blank -%}<input type="hidden" name="selling_plan" value="{{ plan_id }}">{%- endif -%}
+        <button type="submit" class="somna-pdp-cta__button"{% unless v.available %} disabled{% endunless %}>
+          {%- if v.available -%}{{ s.button_label }} · {{ price_money }}{%- else -%}{{ s.sold_out_label }}{%- endif -%}
+        </button>
+        <p class="somna-pdp-cta__status" role="status"></p>
+      </form>
+      {%- if s.note != blank -%}<p class="somna-pdp-cta__note">{{ s.note }}</p>{%- endif -%}
+    </div>
+    <div class="somna-pdp-cta__media">
+      {%- if image -%}{{ image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300, 450, 600', sizes: '(min-width: 750px) 290px, 60vw' }}{%- endif -%}
+      {%- if s.sticker != blank and night > 0 -%}<p class="somna-pdp-cta__sticker">{{ s.sticker | replace: '[night]', night_money }}</p>{%- endif -%}
+    </div>
+  </div>
+</somna-pdp-cta>
+
+<script type="module">
+  import { somnaAddToCart } from '{{ 'somna-cart.js' | asset_url }}';
+
+  if (!customElements.get('somna-pdp-cta')) {
+    customElements.define('somna-pdp-cta', class extends HTMLElement {
+      connectedCallback() {
+        this.form = this.querySelector('form');
+        this.form?.addEventListener('submit', this.onSubmit);
+      }
+      disconnectedCallback() {
+        this.form?.removeEventListener('submit', this.onSubmit);
+      }
+      onSubmit = async (e) => {
+        e.preventDefault();
+        const btn = this.form.querySelector('button');
+        const status = this.form.querySelector('[role="status"]');
+        if (btn.disabled) return;
+        btn.disabled = true;
+        btn.setAttribute('aria-busy', 'true');
+        status.textContent = '';
+        try {
+          await somnaAddToCart(this, { id: this.dataset.id, quantity: 1, selling_plan: this.dataset.plan || null });
+          status.textContent = {{ s.added_label | json }};
+        } catch (err) {
+          status.textContent = err && err.message ? err.message : {{ s.error_label | json }};
+        } finally {
+          btn.disabled = false;
+          btn.removeAttribute('aria-busy');
+        }
+      };
+    });
+  }
+</script>
+{%- endif -%}
+
+{% stylesheet %}
+  somna-pdp-cta {
+    display: block;
+    background: var(--somna-cta-bg);
+    color: #0b0f1d;
+  }
+
+  .somna-pdp-cta__inner {
+    --somna-content-width: 1100px;
+    display: grid;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .somna-pdp-cta__heading {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-size: clamp(2rem, 3.6vw, 3.25rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.25;
+    text-transform: uppercase;
+  }
+
+  .somna-pdp-cta__heading span {
+    display: block;
+  }
+
+  .somna-pdp-cta__text,
+  .somna-pdp-cta__note {
+    margin: 8px 0 0;
+    font-size: 0.9375rem;
+    letter-spacing: 0.02em;
+  }
+
+  .somna-pdp-cta__form {
+    margin-top: 32px;
+  }
+
+  .somna-pdp-cta__button {
+    min-width: min(100%, 497px);
+    min-height: 99px;
+    padding: 0 32px;
+    border: 0;
+    border-radius: 18px;
+    background: #000;
+    color: #fff;
+    box-shadow: 0 8px 18px rgb(0 0 0 / 0.25);
+    font: inherit;
+    font-size: 1.875rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: translate 0.2s;
+  }
+
+  .somna-pdp-cta__button:hover {
+    translate: 0 -2px;
+  }
+
+  .somna-pdp-cta__button[aria-busy='true'] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .somna-pdp-cta__button:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 3px;
+  }
+
+  .somna-pdp-cta__status {
+    min-height: 1.2em;
+    margin: 6px 0 0;
+    font-size: 0.8125rem;
+  }
+
+  .somna-pdp-cta__status:empty {
+    display: none;
+  }
+
+  .somna-pdp-cta__media {
+    position: relative;
+    justify-self: center;
+    width: min(100%, 290px);
+  }
+
+  .somna-pdp-cta__media img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .somna-pdp-cta__sticker {
+    position: absolute;
+    left: -36%;
+    bottom: 12%;
+    margin: 0;
+    padding: 8px 14px;
+    border: 2px solid #000;
+    border-radius: 999px;
+    background: #f3feee;
+    box-shadow: 3px 4px 0 #000;
+    font-family: var(--font-accent--family);
+    font-size: 1rem;
+    line-height: 1.4;
+    text-transform: uppercase;
+    white-space: nowrap;
+    rotate: -4deg;
+  }
+
+  @media screen and (min-width: 750px) {
+    .somna-pdp-cta__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+    }
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-pdp-cta__button {
+      min-height: 72px;
+      font-size: 1.375rem;
+    }
+
+    .somna-pdp-cta__sticker {
+      left: -20%;
+    }
+  }
+
+  /* mobile: design to come (Figma pending) */
+  @media screen and (max-width: 749px) {
+    .somna-pdp-cta__button {
+      width: 100%;
+      min-height: 60px;
+      font-size: 1.125rem;
+    }
+
+    .somna-pdp-cta__media {
+      width: 200px;
+    }
+
+    .somna-pdp-cta__sticker {
+      left: -30%;
+      font-size: 0.8125rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna product closing CTA",
+  "tag": "section",
+  "class": "section-somna-pdp-cta",
+  "enabled_on": { "templates": ["product"] },
+  "settings": [
+    { "type": "product", "id": "preview_product", "label": "Product for the theme editor", "info": "Only used where there is no product." },
+    { "type": "text", "id": "line_1", "label": "Heading line 1", "default": "Small change." },
+    { "type": "color", "id": "line_1_color", "label": "Line 1 colour", "default": "#f3feee" },
+    { "type": "text", "id": "line_2", "label": "Heading line 2", "default": "Softer nights." },
+    { "type": "color", "id": "line_2_color", "label": "Line 2 colour", "default": "#0b0f1d" },
+    { "type": "text", "id": "text", "label": "Text", "info": "[price] is the button price.", "default": "Subscribe & Save from [price]. 30-Night Money-Back Guarantee." },
+    { "type": "range", "id": "pack_position", "label": "Pack to add", "min": 1, "max": 6, "step": 1, "default": 1 },
+    { "type": "checkbox", "id": "use_subscription", "label": "Add as a subscription", "info": "When the product has a subscription plan.", "default": true },
+    { "type": "text", "id": "button_label", "label": "Button", "default": "Add to cart" },
+    { "type": "text", "id": "sold_out_label", "label": "Sold out label", "default": "Sold out" },
+    { "type": "text", "id": "added_label", "label": "Added message", "default": "Added to your cart." },
+    { "type": "text", "id": "error_label", "label": "Error message", "default": "Couldn’t add to cart. Please try again." },
+    { "type": "text", "id": "note", "label": "Small print" },
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "Defaults to the product's \"How it works\" image." },
+    { "type": "text", "id": "sticker", "label": "Sticker", "info": "[night] is the price per night.", "default": "[night] a night" },
+    { "type": "number", "id": "nights_per_bag", "label": "Nights per bag", "default": 30 },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#afbdf8" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 40 }
+  ],
+  "presets": [{ "name": "Somna product closing CTA" }]
+}
+{% endschema %}

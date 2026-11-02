@@ -1,0 +1,1112 @@
+{%- comment -%}
+  Somna V2 — product page hero (Figma 4557:857 Nasal Strips / 4557:44 Mouth Tape).
+  Everything product-specific comes from the product: media, variants (packs), selling plans,
+  and the metafields custom.pdp_tagline, custom.pdp_hero_features (PDP feature metaobjects),
+  custom.pdp_quote (PDP quote metaobject) and custom.custom_review_rating_review_count.
+  The buy panel is a real /cart/add form (works without JavaScript); with JavaScript it adds through
+  assets/somna-cart.js so the cart drawer opens, and prices follow the chosen pack and plan.
+  Shared look (packs, plan box, button) reuses the .somna-buy__* rules of the homepage buy box.
+{%- endcomment -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  assign product = closest.product
+  if product == blank
+    assign product = all_products[s.preview_product.handle]
+  endif
+  assign video_blocks = section.blocks | where: 'type', 'video'
+  assign perk_blocks = section.blocks | where: 'type', 'perk'
+  assign sticker_blocks = section.blocks | where: 'type', 'sticker'
+-%}
+{%- if product != blank -%}
+{%- liquid
+  assign mf = product.metafields.custom
+  assign images = product.media | where: 'media_type', 'image'
+  assign first_image = images | first
+  assign selected_index = s.selected_position | minus: 1
+  assign current = product.selected_variant
+  if current == blank
+    assign current = product.variants[selected_index] | default: product.selected_or_first_available_variant
+  endif
+  assign has_plans = false
+  if product.selling_plan_groups.size > 0
+    assign has_plans = true
+  endif
+  assign mode = s.default_mode
+  if has_plans == false
+    assign mode = 'once'
+  endif
+  assign alloc = current.selling_plan_allocations | first
+  if mode == 'sub' and alloc
+    assign price = alloc.price
+  else
+    assign price = current.price
+  endif
+  assign compare = current.compare_at_price | default: 0
+  if compare <= price
+    assign compare = 0
+  endif
+
+  assign rating = ''
+  assign rating_count = ''
+  assign rating_raw = mf.custom_review_rating_review_count.value | strip_html | strip
+  if rating_raw != blank
+    assign rating = rating_raw | split: ' ' | first
+    if rating_raw contains '('
+      assign rating_count = rating_raw | split: '(' | last | split: ')' | first | strip
+    endif
+  endif
+-%}
+
+<somna-pdp-buy
+  class="somna-pdp-hero"
+  data-currency="{{ cart.currency.iso_code }}"
+  data-locale="{{ request.locale.iso_code }}"
+  data-nights="{{ s.nights_per_bag }}"
+  data-gift-min="{{ s.gift_min_bags }}"
+  style="--somna-pdp-bg: {{ s.background_color }}; --somna-panel: {{ s.panel_color }}; --somna-mint: {{ s.mint_color }}; --somna-chip: {{ s.chip_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+>
+  <script type="application/json" data-variants>
+    [
+    {%- for v in product.variants -%}
+      { "id": {{ v.id }}, "title": {{ v.title | json }}, "available": {{ v.available | json }}, "price": {{ v.price }}, "compare": {{ v.compare_at_price | default: 0 }}, "plans": [
+        {%- for a in v.selling_plan_allocations -%}{ "id": {{ a.selling_plan.id }}, "price": {{ a.price }} }{% unless forloop.last %},{% endunless %}{%- endfor -%}
+      ] }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+    ]
+  </script>
+
+  <div class="somna-pdp-hero__inner somna-container">
+    <div class="somna-pdp-hero__gallery">
+      {%- if images.size > 1 -%}
+        <ul class="somna-pdp-hero__thumbs" role="list">
+          {%- for m in images limit: 8 -%}
+            <li>
+              <button type="button" class="somna-pdp-hero__thumb" data-media="{{ forloop.index0 }}" data-src="{{ m | image_url: width: 1100 }}" data-srcset="{{ m | image_url: width: 600 }} 600w, {{ m | image_url: width: 900 }} 900w, {{ m | image_url: width: 1100 }} 1100w" aria-label="{{ m.alt | default: product.title | escape }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}">
+                {{ m | image_url: width: 200 | image_tag: loading: 'lazy', alt: '', width: 96, height: 104 }}
+              </button>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      <div class="somna-pdp-hero__main{% if s.drip_edges %} somna-edge-drip-top{% endif %}">
+        {%- if first_image -%}
+          {{ first_image | image_url: width: 1100 | image_tag: data-main: '', loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 990px) 445px, (min-width: 750px) 45vw, 100vw', widths: '600, 900, 1100', alt: first_image.alt | default: product.title }}
+        {%- endif -%}
+      </div>
+
+      {%- if s.badge_text != blank -%}<p class="somna-pdp-hero__badge"><span>{{ s.badge_text }}</span></p>{%- endif -%}
+      {%- if s.sticker_text != blank -%}<p class="somna-pdp-hero__sticker">{{ s.sticker_text }}</p>{%- endif -%}
+    </div>
+
+    <div class="somna-pdp-hero__side">
+      {%- assign quote = mf.pdp_quote.value -%}
+      {%- if quote != blank -%}
+        <figure class="somna-pdp-hero__quote">
+          {%- if quote.avatar.value != blank -%}{{ quote.avatar.value | image_url: width: 160 | image_tag: loading: 'lazy', alt: '', width: 79, height: 79, class: 'somna-pdp-hero__avatar' }}{%- endif -%}
+          <div>
+            {%- assign stars = quote.rating.value | default: 5 -%}
+            <p class="somna-pdp-hero__stars" aria-label="{{ stars }} / 5">{% for i in (1..stars) %}★{% endfor %}</p>
+            <blockquote>“{{ quote.quote.value }}”</blockquote>
+            <figcaption><strong>{{ quote.author.value }}</strong>{% if quote.verified.value %} <span>{{ s.verified_label }}</span>{% endif %}</figcaption>
+          </div>
+        </figure>
+      {%- endif -%}
+
+      {%- if video_blocks.size > 0 -%}
+        <div class="somna-pdp-hero__videos">
+          {%- if s.videos_heading != blank -%}<h2 class="somna-pdp-hero__videos-title">{{ s.videos_heading }}</h2>{%- endif -%}
+          <ul class="somna-pdp-hero__video-list" role="list">
+            {%- for block in video_blocks -%}
+              {%- liquid
+                assign b = block.settings
+                assign poster = b.poster | default: b.video.preview_image
+                assign src = ''
+                if b.video != blank
+                  assign mp4 = b.video.sources | where: 'mime_type', 'video/mp4' | sort: 'height'
+                  assign src = mp4.first.url
+                  for m in mp4
+                    if m.height <= 720
+                      assign src = m.url
+                    endif
+                  endfor
+                endif
+              -%}
+              <li class="somna-pdp-hero__video" {{ block.shopify_attributes }}>
+                {%- if src != blank -%}
+                  <button type="button" class="somna-pdp-hero__play" data-video="{{ src }}" aria-label="{{ s.play_label | escape }}{% if b.caption != blank %}: {{ b.caption | escape }}{% endif %}">
+                    {%- if poster -%}{{ poster | image_url: width: 400 | image_tag: loading: 'lazy', alt: '', width: 181, height: 299 }}{%- endif -%}
+                    <span class="somna-pdp-hero__play-icon">{% render 'somna-pdp-icon', name: 'play' %}</span>
+                  </button>
+                {%- elsif poster -%}
+                  {{ poster | image_url: width: 400 | image_tag: loading: 'lazy', alt: b.caption, width: 181, height: 299 }}
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="somna-pdp-hero__panel{% if s.drip_edges %} somna-edge-drip-bottom{% endif %}">
+      {%- if rating != blank -%}
+        <p class="somna-pdp-hero__rating">
+          <span class="somna-pdp-hero__rating-stars" aria-hidden="true">★★★★★</span>
+          {{ s.rating_format | replace: '[rating]', rating | replace: '[count]', rating_count }}
+        </p>
+      {%- endif -%}
+      <h1 class="somna-pdp-hero__title"><span class="somna-pdp-hero__brand">{{ s.brand }}</span> {{ product.title }}</h1>
+      {%- if mf.pdp_tagline != blank -%}<p class="somna-pdp-hero__tagline">{{ mf.pdp_tagline.value | newline_to_br }}</p>{%- endif -%}
+
+      {%- assign features = mf.pdp_hero_features.value -%}
+      {%- if features != blank -%}
+        <ul class="somna-pdp-hero__features" role="list">
+          {%- for f in features -%}
+            <li><span class="somna-pdp-hero__feature-icon">{% render 'somna-pdp-icon', name: f.icon.value %}</span>{{ f.title.value }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      <p class="somna-pdp-hero__price">
+        <span class="somna-pdp-hero__price-now" data-price>{{ price | money }}</span>
+        <s data-compare{% if compare == 0 %} hidden{% endif %}>{{ compare | money_without_trailing_zeros }}</s>
+        {%- assign pct = 0 -%}
+        {%- if compare > 0 -%}{%- assign pct = compare | minus: price | times: 100 | divided_by: compare -%}{%- endif -%}
+        <span class="somna-pdp-hero__save" data-save{% if pct == 0 %} hidden{% endif %}>{{ s.save_label | replace: '[percent]', pct }}</span>
+      </p>
+
+      {%- form 'product', product, class: 'somna-pdp-hero__form', data-form: '' -%}
+        <input type="hidden" name="id" value="{{ current.id }}" data-id>
+        <input type="hidden" name="selling_plan" value="{% if mode == 'sub' and alloc %}{{ alloc.selling_plan.id }}{% endif %}" data-plan-input>
+
+        <fieldset class="somna-buy__packs somna-pdp-hero__packs">
+          <legend>{{ s.packs_label }}</legend>
+          <div class="somna-buy__pack-list">
+            {%- for v in product.variants -%}
+              {%- liquid
+                assign v_alloc = v.selling_plan_allocations | first
+                if mode == 'sub' and v_alloc
+                  assign v_price = v_alloc.price
+                else
+                  assign v_price = v.price
+                endif
+                assign bags = v.title | split: ' ' | first | plus: 0
+                if bags < 1
+                  assign bags = 1
+                endif
+              -%}
+              <label class="somna-buy__pack{% unless v.available %} is-sold-out{% endunless %}">
+                {%- if forloop.index == s.badge_position and s.badge_label != blank -%}<span class="somna-buy__pack-badge">{{ s.badge_label }}</span>{%- endif -%}
+                <input type="radio" name="{{ section.id }}-pack" value="{{ forloop.index0 }}" data-pack{% if v.id == current.id %} checked{% endif %}{% unless v.available %} disabled{% endunless %}>
+                <span class="somna-buy__pack-name">{{ v.title }}</span>
+                <span class="somna-buy__pack-price" data-pack-price>{{ v_price | money }}</span>
+                <s data-pack-compare>{% if v.compare_at_price > v_price %}{{ v.compare_at_price | money_without_trailing_zeros }}{% endif %}</s>
+                {%- if bags >= s.gift_min_bags and s.gift_label != blank -%}
+                  <span class="somna-pdp-hero__gift">{{ s.gift_label }}</span>
+                {%- elsif s.nights_per_bag > 0 -%}
+                  <span class="somna-buy__pack-night" data-pack-night>{{ v_price | divided_by: bags | divided_by: s.nights_per_bag | money }}{{ s.night_label }}</span>
+                {%- endif -%}
+              </label>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+
+        <fieldset class="somna-buy__modes somna-pdp-hero__modes">
+          <legend class="visually-hidden">{{ s.mode_label }}</legend>
+          {%- if has_plans -%}
+            <div class="somna-pdp-hero__mode-box" data-mode-box="sub">
+              <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="sub" data-mode-input{% if mode == 'sub' %} checked{% endif %}> <span class="somna-buy__mode-label"><strong>{{ s.sub_label }}</strong><span data-sub-pct></span></span> <span class="somna-buy__mode-price" data-price-sub>{% if alloc %}{{ alloc.price | money }}{% endif %}</span></label>
+              {%- if s.sub_points != blank -%}
+                <ul class="somna-pdp-hero__sub-points" role="list">
+                  {%- assign points = s.sub_points | newline_to_br | split: '<br />' -%}
+                  {%- for t in points -%}{%- assign t = t | strip -%}{%- if t != blank -%}<li><span class="somna-check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>{{ t }}</li>{%- endif -%}{%- endfor -%}
+                </ul>
+              {%- endif -%}
+              {%- assign group = product.selling_plan_groups | first -%}
+              {%- if group.selling_plans.size > 1 -%}
+                <label class="visually-hidden" for="{{ section.id }}-plan">{{ s.plan_label }}</label>
+                <select class="somna-pdp-hero__plan" id="{{ section.id }}-plan" data-plan>
+                  {%- for plan in group.selling_plans -%}
+                    <option value="{{ plan.id }}"{% if alloc and plan.id == alloc.selling_plan.id %} selected{% endif %}>{{ plan.name }}</option>
+                  {%- endfor -%}
+                </select>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+          <label class="somna-buy__mode somna-pdp-hero__once"><input type="radio" name="{{ section.id }}-mode" value="once" data-mode-input{% if mode == 'once' %} checked{% endif %}> <span class="somna-buy__mode-label">{{ s.once_label }}<span data-once-pct></span></span> <span class="somna-buy__mode-price" data-price-once>{{ current.price | money }}</span></label>
+        </fieldset>
+
+        <button type="submit" name="add" class="somna-buy__add somna-pdp-hero__add" data-add{% unless current.available %} disabled{% endunless %}>
+          <span data-add-label>{% if current.available %}{{ s.add_label }} · {{ price | money }}{% else %}{{ s.sold_out_label }}{% endif %}</span>
+        </button>
+        <p class="somna-buy__status" role="status" data-status></p>
+      {%- endform -%}
+
+      {%- if perk_blocks.size > 0 -%}
+        <ul class="somna-pdp-hero__perks" role="list">
+          {%- for block in perk_blocks -%}
+            <li {{ block.shopify_attributes }}>{% render 'somna-pdp-icon', name: block.settings.icon %}<span>{{ block.settings.text }}</span></li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- if sticker_blocks.size > 0 -%}
+    <ul class="somna-pdp-hero__stickers somna-container" role="list">
+      {%- for block in sticker_blocks -%}
+        <li style="--somna-tilt: {{ block.settings.tilt }}deg;" {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+
+  <script type="application/ld+json">{{ product | structured_data }}</script>
+</somna-pdp-buy>
+
+<script type="module">
+  import { somnaAddToCart, somnaMoney } from '{{ 'somna-cart.js' | asset_url }}';
+
+  if (!customElements.get('somna-pdp-buy')) {
+    customElements.define('somna-pdp-buy', class extends HTMLElement {
+      connectedCallback() {
+        try { this.variants = JSON.parse(this.querySelector('[data-variants]').textContent); } catch (e) { this.variants = []; }
+        this.form = this.querySelector('[data-form]');
+        if (!this.form || !this.variants.length) return;
+        const checked = this.querySelector('[data-pack]:checked');
+        this.v = checked ? Number(checked.value) : 0;
+        this.mode = this.querySelector('[data-mode-input]:checked')?.value || 'once';
+        this.planSelect = this.querySelector('[data-plan]');
+        this.nights = Number(this.dataset.nights) || 0;
+        this.giftMin = Number(this.dataset.giftMin) || 99;
+        this.labels = { add: {{ s.add_label | json }}, soldOut: {{ s.sold_out_label | json }}, added: {{ s.added_label | json }}, error: {{ s.error_label | json }}, night: {{ s.night_label | json }}, save: {{ s.save_label | json }}, pct: {{ s.percent_suffix | json }} };
+        this.money = (c) => somnaMoney(c, this.dataset.currency, this.dataset.locale);
+        this.addEventListener('change', this.onChange);
+        this.addEventListener('click', this.onClick);
+        this.form.addEventListener('submit', this.onSubmit);
+        this.update();
+      }
+      disconnectedCallback() {
+        this.removeEventListener('change', this.onChange);
+        this.removeEventListener('click', this.onClick);
+        this.form?.removeEventListener('submit', this.onSubmit);
+      }
+      bags(v) { const n = parseInt(String(v.title).replace(/[^0-9]/g, ''), 10); return n > 0 ? n : 1; }
+      plan(v) {
+        if (this.mode !== 'sub' || !v.plans.length) return null;
+        const id = Number(this.planSelect?.value);
+        return v.plans.find((p) => p.id === id) || v.plans[0];
+      }
+      priceOf(v, mode = this.mode) { const p = mode === 'sub' && v.plans.length ? (this.plan(v) || v.plans[0]) : null; return p ? p.price : v.price; }
+      pct(price, v) { const base = v.compare > price ? v.compare : 0; return base ? Math.round((1 - price / base) * 100) : 0; }
+      update() {
+        const v = this.variants[this.v];
+        const q = (s) => this.querySelector(s);
+        if (this.mode === 'sub' && !v.plans.length) this.mode = 'once';
+        const price = this.priceOf(v);
+        const plan = this.plan(v);
+        q('[data-id]').value = v.id;
+        q('[data-plan-input]').value = plan ? plan.id : '';
+        q('[data-price]').textContent = this.money(price);
+        const compare = v.compare > price ? v.compare : 0;
+        const c = q('[data-compare]'); c.hidden = !compare; c.textContent = compare ? this.money(compare).replace(/[.,]00(?=\D*$)/, '') : '';
+        const pct = this.pct(price, v);
+        const save = q('[data-save]'); save.hidden = !pct; save.textContent = this.labels.save.replace('[percent]', pct);
+        this.querySelectorAll('[data-pack]').forEach((input) => {
+          const x = this.variants[Number(input.value)];
+          const pr = this.priceOf(x);
+          const label = input.closest('label');
+          label.querySelector('[data-pack-price]').textContent = this.money(pr);
+          label.querySelector('[data-pack-compare]').textContent = x.compare > pr ? this.money(x.compare).replace(/[.,]00(?=\D*$)/, '') : '';
+          const night = label.querySelector('[data-pack-night]');
+          if (night && this.nights) night.textContent = this.money(Math.round(pr / (this.bags(x) * this.nights))) + this.labels.night;
+        });
+        this.querySelectorAll('[data-mode-input]').forEach((r) => { r.checked = r.value === this.mode; r.disabled = r.value === 'sub' && !v.plans.length; });
+        this.querySelector('[data-mode-box]')?.classList.toggle('is-active', this.mode === 'sub');
+        const subPrice = v.plans.length ? this.priceOf(v, 'sub') : 0;
+        const subEl = q('[data-price-sub]'); if (subEl) subEl.textContent = subPrice ? this.money(subPrice) : '';
+        const subPct = subPrice ? this.pct(subPrice, v) : 0;
+        const subPctEl = q('[data-sub-pct]'); if (subPctEl) subPctEl.textContent = subPct ? this.labels.pct.replace('[percent]', subPct) : '';
+        q('[data-price-once]').textContent = this.money(v.price);
+        const oncePct = this.pct(v.price, v);
+        q('[data-once-pct]').textContent = oncePct ? this.labels.pct.replace('[percent]', oncePct) : '';
+        if (this.planSelect) this.planSelect.disabled = this.mode !== 'sub';
+        const add = q('[data-add]');
+        add.disabled = !v.available;
+        q('[data-add-label]').textContent = v.available ? `${this.labels.add} · ${this.money(price)}` : this.labels.soldOut;
+      }
+      onChange = (e) => {
+        const t = e.target;
+        if (t.matches('[data-pack]')) { this.v = Number(t.value); this.update(); }
+        else if (t.matches('[data-mode-input]')) { this.mode = t.value; this.update(); }
+        else if (t.matches('[data-plan]')) { this.mode = 'sub'; this.update(); }
+      };
+      onClick = (e) => {
+        const thumb = e.target.closest('[data-media]');
+        if (thumb) {
+          const img = this.querySelector('[data-main]');
+          if (img) { img.srcset = thumb.dataset.srcset; img.src = thumb.dataset.src; img.alt = thumb.getAttribute('aria-label') || ''; }
+          this.querySelectorAll('[data-media]').forEach((b) => b.setAttribute('aria-current', String(b === thumb)));
+          return;
+        }
+        const play = e.target.closest('[data-video]');
+        if (play) {
+          this.querySelectorAll('.somna-pdp-hero__video video').forEach((v) => v.pause());
+          const video = document.createElement('video');
+          video.src = play.dataset.video;
+          video.controls = true;
+          video.playsInline = true;
+          video.autoplay = true;
+          const poster = play.querySelector('img');
+          if (poster) video.poster = poster.currentSrc || poster.src;
+          play.replaceWith(video);
+          video.play().catch(() => {});
+          video.addEventListener('play', () => this.querySelectorAll('.somna-pdp-hero__video video').forEach((o) => { if (o !== video) o.pause(); }));
+        }
+      };
+      onSubmit = async (e) => {
+        e.preventDefault();
+        if (this.busy) return;
+        const v = this.variants[this.v];
+        if (!v.available) return;
+        const btn = this.querySelector('[data-add]');
+        const status = this.querySelector('[data-status]');
+        this.busy = true;
+        btn.setAttribute('aria-busy', 'true');
+        btn.disabled = true;
+        status.textContent = '';
+        try {
+          await somnaAddToCart(this, { id: v.id, quantity: 1, selling_plan: this.plan(v)?.id || null });
+          status.textContent = this.labels.added;
+        } catch (err) {
+          status.textContent = err && err.message ? err.message : this.labels.error;
+        } finally {
+          this.busy = false;
+          btn.removeAttribute('aria-busy');
+          btn.disabled = !v.available;
+        }
+      };
+    });
+  }
+</script>
+{%- endif -%}
+
+{% stylesheet %}
+  somna-pdp-buy {
+    display: block;
+    background: var(--somna-pdp-bg);
+    color: #000;
+  }
+
+  .somna-pdp-hero__inner {
+    --somna-content-width: 1330px;
+    display: grid;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .somna-pdp-hero__gallery {
+    position: relative;
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 34px;
+    align-items: start;
+  }
+
+  .somna-pdp-hero__thumbs {
+    display: grid;
+    gap: 8px;
+    max-height: 614px;
+    margin: 72px 0 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+    scrollbar-width: none;
+  }
+
+  .somna-pdp-hero__thumb {
+    display: block;
+    width: 96px;
+    aspect-ratio: 96 / 104;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #0b0f1d;
+    cursor: pointer;
+  }
+
+  .somna-pdp-hero__thumb[aria-current='true'] {
+    border-color: #0b0f1d;
+  }
+
+  .somna-pdp-hero__thumb img,
+  .somna-pdp-hero__main img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .somna-pdp-hero__main {
+    aspect-ratio: 445 / 614;
+    overflow: hidden;
+    background: #0b0f1d;
+  }
+
+  .somna-pdp-hero__main.somna-edge-drip-top {
+    --somna-drip-h: 56px;
+  }
+
+  .somna-pdp-hero__badge {
+    position: absolute;
+    top: -6px;
+    left: 90px;
+    display: grid;
+    place-items: center;
+    width: 118px;
+    aspect-ratio: 1;
+    margin: 0;
+    border-radius: 50%;
+    background: #0b0f1d;
+    color: #f3feee;
+    rotate: -10.7deg;
+  }
+
+  .somna-pdp-hero__badge span {
+    max-width: 84px;
+    font-family: var(--font-accent--family);
+    font-size: 1.125rem;
+    line-height: 1.35;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .somna-pdp-hero__sticker,
+  .somna-pdp-hero__stickers li {
+    padding: 8px 18px;
+    border: 2px solid #000;
+    border-radius: 999px;
+    background: #f3feee;
+    color: #000;
+    box-shadow: 3px 4px 0 #000;
+    font-family: var(--font-accent--family);
+    font-size: 1.0625rem;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  .somna-pdp-hero__sticker {
+    position: absolute;
+    right: -6px;
+    bottom: 22px;
+    margin: 0;
+    rotate: -3deg;
+  }
+
+  .somna-pdp-hero__side {
+    display: grid;
+    gap: 24px;
+  }
+
+  .somna-pdp-hero__quote {
+    display: flex;
+    gap: 22px;
+    align-items: center;
+    margin: 0;
+    padding: 18px 20px;
+    border-radius: 10px;
+    background: var(--somna-mint);
+    box-shadow: 0 4px 4px rgb(0 0 0 / 0.12);
+  }
+
+  .somna-pdp-hero__avatar {
+    flex: none;
+    width: 79px;
+    height: 79px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .somna-pdp-hero__stars {
+    margin: 0 0 4px;
+    color: #f5c242;
+    font-size: 1.125rem;
+    letter-spacing: 0.08em;
+    line-height: 1;
+  }
+
+  .somna-pdp-hero__quote blockquote {
+    margin: 0;
+    font-size: 1.1875rem;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .somna-pdp-hero__quote figcaption {
+    margin-top: 6px;
+    color: #282d25;
+    font-size: 0.9375rem;
+  }
+
+  .somna-pdp-hero__quote figcaption span {
+    color: #498525;
+  }
+
+  .somna-pdp-hero__videos-title {
+    margin: 0 0 16px;
+    font-family: var(--font-accent--family);
+    font-size: 2rem;
+    line-height: 1.3;
+    color: #000;
+  }
+
+  .somna-pdp-hero__video-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-pdp-hero__video {
+    position: relative;
+    aspect-ratio: 181 / 299;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #0b0f1d;
+  }
+
+  .somna-pdp-hero__video :is(img, video, .somna-pdp-hero__play) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .somna-pdp-hero__play {
+    position: relative;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  .somna-pdp-hero__play-icon {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgb(243 254 238 / 0.9);
+    color: #0b0f1d;
+    translate: -50% -50%;
+    transition: scale 0.2s;
+  }
+
+  .somna-pdp-hero__play:hover .somna-pdp-hero__play-icon {
+    scale: 1.08;
+  }
+
+  .somna-pdp-hero__play-icon svg {
+    width: 22px;
+    margin-left: 3px;
+  }
+
+  .somna-pdp-hero__panel {
+    padding: 14px 34px 28px;
+    border-radius: 12px;
+    background: var(--somna-panel);
+    color: #fff;
+  }
+
+  .somna-pdp-hero__panel.somna-edge-drip-bottom {
+    --somna-drip-h: 60px;
+  }
+
+  .somna-pdp-hero__rating {
+    margin: 0;
+    color: #9a9a9a;
+    font-size: 1.25rem;
+  }
+
+  .somna-pdp-hero__rating-stars {
+    color: #f5c242;
+    letter-spacing: 0.04em;
+  }
+
+  .somna-pdp-hero__title {
+    margin: 10px 0 0;
+    color: #f3feee;
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.75rem, 2.6vw, 2.375rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .somna-pdp-hero__brand {
+    font-family: var(--font-body--family);
+    font-weight: 800;
+    text-transform: none;
+  }
+
+  .somna-pdp-hero__tagline {
+    max-width: 440px;
+    margin: 6px 0 0;
+    font-size: 0.9375rem;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+
+  .somna-pdp-hero__features {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    margin: 18px 0 0;
+    padding: 16px 0;
+    border-block: 1px solid rgb(255 255 255 / 0.3);
+    list-style: none;
+    font-size: 1.125rem;
+  }
+
+  .somna-pdp-hero__features li {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .somna-pdp-hero__features li + li {
+    border-left: 1px solid rgb(255 255 255 / 0.4);
+  }
+
+  .somna-pdp-hero__feature-icon {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--somna-chip);
+    color: #0b0f1d;
+  }
+
+  .somna-pdp-hero__feature-icon svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .somna-pdp-hero__price {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin: 22px 0 0;
+  }
+
+  .somna-pdp-hero__price-now {
+    font-family: var(--font-accent--family);
+    font-size: 2.25rem;
+    line-height: 1.2;
+  }
+
+  .somna-pdp-hero__price s {
+    color: #d9d9d9;
+    font-family: var(--font-accent--family);
+    font-size: 1.375rem;
+  }
+
+  .somna-pdp-hero__save {
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--somna-chip);
+    color: #000;
+    font-family: var(--font-accent--family);
+    font-size: 1.0625rem;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .somna-pdp-hero__packs legend {
+    font-size: 1.25rem;
+  }
+
+  .somna-pdp-hero__packs .somna-buy__pack-list {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 21px;
+  }
+
+  .somna-pdp-hero__packs .somna-buy__pack {
+    padding: 20px 8px 12px;
+    border: 2px solid #f3feee;
+    border-radius: 10px;
+    background: #2a2d33;
+  }
+
+  .somna-pdp-hero__packs .somna-buy__pack:has(input:checked) {
+    border-color: var(--somna-chip);
+    background: var(--somna-mint);
+  }
+
+  .somna-pdp-hero__packs .somna-buy__pack-badge {
+    top: -14px;
+    padding: 4px 22px;
+    border-radius: 6px;
+    background: var(--somna-chip);
+    font-size: 0.75rem;
+  }
+
+  .somna-pdp-hero__packs .somna-buy__pack-name {
+    font-size: 1rem;
+  }
+
+  .somna-pdp-hero__packs .somna-buy__pack-price {
+    font-size: 1.625rem;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+
+  .somna-pdp-hero__packs .somna-buy__pack s:empty {
+    display: none;
+  }
+
+  .somna-pdp-hero__gift {
+    color: var(--somna-chip);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .somna-buy__pack:has(input:checked) .somna-pdp-hero__gift {
+    color: #1d2fa8;
+  }
+
+  .somna-pdp-hero__modes {
+    gap: 12px;
+    padding: 18px 20px;
+    border-radius: 16px;
+  }
+
+  .somna-pdp-hero__mode-box {
+    display: grid;
+    gap: 10px;
+  }
+
+  .somna-pdp-hero__modes .somna-buy__mode {
+    font-size: 1rem;
+  }
+
+  .somna-pdp-hero__modes .somna-buy__mode-label strong {
+    font-weight: 700;
+  }
+
+  .somna-pdp-hero__once:has(input:not(:checked)) {
+    color: #7a7a7a;
+  }
+
+  .somna-pdp-hero__sub-points {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0 0 0 4px;
+    list-style: none;
+    font-size: 0.9375rem;
+    letter-spacing: 0.03em;
+  }
+
+  .somna-pdp-hero__sub-points li {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .somna-pdp-hero__plan {
+    width: 100%;
+    min-height: 38px;
+    padding: 0 10px;
+    border: 1px solid #000;
+    border-radius: 4px;
+    background: #fff;
+    color: #000;
+    font: inherit;
+    font-size: 0.9375rem;
+  }
+
+  .somna-pdp-hero__plan:disabled {
+    opacity: 0.5;
+  }
+
+  .somna-pdp-hero__add {
+    min-height: 76px;
+    font-size: 1.625rem;
+    font-weight: 800;
+  }
+
+  .somna-pdp-hero__perks {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 16px;
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.875rem;
+    text-align: center;
+  }
+
+  .somna-pdp-hero__perks li {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+  }
+
+  .somna-pdp-hero__perks svg {
+    width: 40px;
+    height: 40px;
+    stroke-width: 1.2;
+  }
+
+  .somna-pdp-hero__stickers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 32px;
+    justify-content: center;
+    margin-block: 40px 0;
+    list-style: none;
+  }
+
+  .somna-pdp-hero__stickers li {
+    rotate: var(--somna-tilt, 0deg);
+  }
+
+  /* desktop (Figma 1440): gallery + quote + videos on the left, buy panel on the right */
+  @media screen and (min-width: 990px) {
+    .somna-pdp-hero__inner {
+      grid-template-columns: minmax(0, 577px) minmax(0, 742px);
+      grid-template-areas:
+        'gallery panel'
+        'side panel';
+      justify-content: center;
+      gap: 32px 36px;
+    }
+
+    .somna-pdp-hero__gallery {
+      grid-area: gallery;
+    }
+
+    .somna-pdp-hero__side {
+      grid-area: side;
+    }
+
+    .somna-pdp-hero__panel {
+      grid-area: panel;
+    }
+  }
+
+  /* tablet: gallery beside the quote and videos, buy panel full width below */
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-pdp-hero__inner {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      grid-template-areas:
+        'gallery side'
+        'panel panel';
+      gap: 28px 24px;
+    }
+
+    .somna-pdp-hero__gallery {
+      grid-area: gallery;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .somna-pdp-hero__thumbs {
+      margin-top: 48px;
+    }
+
+    .somna-pdp-hero__thumb {
+      width: 72px;
+    }
+
+    .somna-pdp-hero__badge {
+      left: 52px;
+      width: 96px;
+    }
+
+    .somna-pdp-hero__badge span {
+      font-size: 0.9375rem;
+    }
+
+    .somna-pdp-hero__side {
+      grid-area: side;
+      align-content: start;
+    }
+
+    .somna-pdp-hero__quote {
+      gap: 14px;
+      padding: 14px;
+    }
+
+    .somna-pdp-hero__quote blockquote {
+      font-size: 1rem;
+    }
+
+    .somna-pdp-hero__videos-title {
+      font-size: 1.5rem;
+    }
+
+    .somna-pdp-hero__panel {
+      grid-area: panel;
+      padding-inline: 28px;
+    }
+
+    .somna-pdp-hero__features {
+      font-size: 1rem;
+    }
+
+    .somna-pdp-hero__packs .somna-buy__pack-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .somna-pdp-hero__add {
+      min-height: 64px;
+      font-size: 1.375rem;
+    }
+  }
+
+  /* mobile: design to come (Figma pending) — simple stacked fallback only */
+  @media screen and (max-width: 749px) {
+    .somna-pdp-hero__gallery {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .somna-pdp-hero__thumbs {
+      display: none;
+    }
+
+    .somna-pdp-hero__badge {
+      left: 4px;
+      width: 88px;
+    }
+
+    .somna-pdp-hero__badge span {
+      font-size: 0.8125rem;
+    }
+
+    .somna-pdp-hero__panel {
+      padding-inline: 18px;
+    }
+
+    .somna-pdp-hero__features {
+      font-size: 0.8125rem;
+    }
+
+    .somna-pdp-hero__features li {
+      flex-direction: column;
+      gap: 6px;
+      text-align: center;
+    }
+
+    .somna-pdp-hero__feature-icon {
+      width: 48px;
+      height: 48px;
+    }
+
+    .somna-pdp-hero__packs .somna-buy__pack-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .somna-pdp-hero__add {
+      min-height: 56px;
+      font-size: 1.125rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna product hero",
+  "tag": "section",
+  "class": "section-somna-pdp-hero",
+  "enabled_on": { "templates": ["product"] },
+  "settings": [
+    { "type": "paragraph", "content": "Product content comes from the product: images, packs (variants), subscription plans and the metafields Tagline, Hero features, Hero quote and Review rating." },
+    { "type": "product", "id": "preview_product", "label": "Product for the theme editor", "info": "Only used where there is no product (e.g. a preview)." },
+    { "type": "checkbox", "id": "drip_edges", "label": "Drippy edges", "default": true },
+    { "type": "header", "content": "Gallery" },
+    { "type": "text", "id": "badge_text", "label": "Round badge", "default": "Up to 60% off" },
+    { "type": "text", "id": "sticker_text", "label": "Sticker on the image", "default": "Bestseller" },
+    { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified Buyer" },
+    { "type": "text", "id": "videos_heading", "label": "Videos heading", "default": "Real Nights, On Camera" },
+    { "type": "text", "id": "play_label", "label": "Play label (screen readers)", "default": "Play video" },
+    { "type": "header", "content": "Buy panel" },
+    { "type": "text", "id": "rating_format", "label": "Rating text", "info": "[rating] and [count] come from the product's review metafield.", "default": "[rating]/5 · [count] reviews" },
+    { "type": "text", "id": "brand", "label": "Brand before the title", "default": "somna." },
+    { "type": "text", "id": "save_label", "label": "Save badge", "info": "[percent] is worked out from the compare-at price.", "default": "Save [percent]%" },
+    { "type": "text", "id": "percent_suffix", "label": "Discount after the plan names", "default": " · [percent]% off" },
+    { "type": "text", "id": "packs_label", "label": "Pack label", "default": "Choose Your Pack" },
+    { "type": "range", "id": "selected_position", "label": "Pack selected by default", "min": 1, "max": 6, "step": 1, "default": 1 },
+    { "type": "range", "id": "badge_position", "label": "Pack with the badge", "min": 1, "max": 6, "step": 1, "default": 1 },
+    { "type": "text", "id": "badge_label", "label": "Pack badge", "default": "Recommended" },
+    { "type": "text", "id": "gift_label", "label": "Gift note on bigger packs", "default": "+3 free gifts" },
+    { "type": "number", "id": "gift_min_bags", "label": "Gift note from this many bags", "default": 2 },
+    { "type": "number", "id": "nights_per_bag", "label": "Nights per bag", "info": "Used for the per-night price. 0 hides it.", "default": 30 },
+    { "type": "text", "id": "night_label", "label": "Per-night suffix", "default": "/night" },
+    { "type": "text", "id": "mode_label", "label": "Purchase option label (screen readers)", "default": "Purchase option" },
+    { "type": "select", "id": "default_mode", "label": "Selected by default", "options": [{ "value": "sub", "label": "Subscribe" }, { "value": "once", "label": "One-time" }], "default": "sub" },
+    { "type": "text", "id": "sub_label", "label": "Subscribe label", "default": "Subscribe & Save" },
+    { "type": "textarea", "id": "sub_points", "label": "Subscribe points", "info": "One per line.", "default": "Delivered on your schedule\n3 free gifts on 2+ packs\nSkip, pause or cancel anytime" },
+    { "type": "text", "id": "plan_label", "label": "Delivery frequency label (screen readers)", "default": "Delivery frequency" },
+    { "type": "text", "id": "once_label", "label": "One-time label", "default": "One-time purchase" },
+    { "type": "text", "id": "add_label", "label": "Add to cart label", "default": "Add to cart" },
+    { "type": "text", "id": "added_label", "label": "Added message", "default": "Added to your cart." },
+    { "type": "text", "id": "error_label", "label": "Error message", "default": "Couldn’t add to cart. Please try again." },
+    { "type": "text", "id": "sold_out_label", "label": "Sold out label", "default": "Sold out" },
+    { "type": "header", "content": "Colours and spacing" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#afbdf8" },
+    { "type": "color", "id": "panel_color", "label": "Panel background", "default": "#0b0f1d" },
+    { "type": "color", "id": "mint_color", "label": "Plan box and quote", "default": "#f3feee" },
+    { "type": "color", "id": "chip_color", "label": "Accent / button", "default": "#afbdf8" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 }
+  ],
+  "blocks": [
+    {
+      "type": "video",
+      "name": "Video",
+      "limit": 3,
+      "settings": [
+        { "type": "video", "id": "video", "label": "Video (Shopify Files)" },
+        { "type": "image_picker", "id": "poster", "label": "Cover image", "info": "Defaults to the video's own preview." },
+        { "type": "text", "id": "caption", "label": "Description (screen readers)" }
+      ]
+    },
+    {
+      "type": "perk",
+      "name": "Perk under the button",
+      "limit": 4,
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "options": [{ "value": "shipping", "label": "Shipping" }, { "value": "delivery", "label": "Delivery" }, { "value": "cancel-anytime", "label": "Cancel anytime" }, { "value": "moon", "label": "Moon" }, { "value": "check", "label": "Check" }], "default": "shipping" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Free shipping" }
+      ]
+    },
+    {
+      "type": "sticker",
+      "name": "Trust sticker",
+      "limit": 6,
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "30-Night Guarantee" },
+        { "type": "range", "id": "tilt", "label": "Tilt", "min": -6, "max": 6, "step": 1, "unit": "°", "default": 0 }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Somna product hero" }]
+}
+{% endschema %}
