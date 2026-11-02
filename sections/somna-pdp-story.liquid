@@ -82,7 +82,7 @@
         </div>
 
       {%- when 'how' -%}
-        <div class="somna-pdp-story__visual">
+        {%- if s.how_animation -%}<somna-pdp-how class="somna-pdp-story__visual" data-order="1,2,4,3">{%- else -%}<div class="somna-pdp-story__visual">{%- endif -%}
           {%- if image -%}<div class="somna-pdp-story__product">{{ image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350, 500, 700', sizes: '(min-width: 990px) 335px, 50vw' }}</div>{%- endif -%}
           {%- for f in features limit: 4 -%}
             <div class="somna-pdp-story__point somna-pdp-story__point--{{ forloop.index }}">
@@ -91,7 +91,7 @@
               {%- if f.text != blank -%}<p>{{ f.text.value }}</p>{%- endif -%}
             </div>
           {%- endfor -%}
-        </div>
+        {%- if s.how_animation -%}</somna-pdp-how>{%- else -%}</div>{%- endif -%}
 
       {%- when 'layers' -%}
         {%- if image -%}<div class="somna-pdp-story__product">{{ image | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500, 750, 1000', sizes: '(min-width: 990px) 483px, 60vw' }}</div>{%- endif -%}
@@ -130,6 +130,79 @@
 {%- if section.settings.wave_color != blank -%}
   {%- render 'somna-wave', top: section.settings.background_color, bottom: section.settings.wave_color, shape: section.settings.wave_shape -%}
 {%- endif -%}
+{%- endif -%}
+
+{%- if s.layout == 'how' and s.how_animation and c != blank -%}
+<script type="module">
+  /* "How it works" — I3 long hop + side flip (approved demo). Plays once when the section comes on
+     screen (no scroll scrubbing, no pin), resets when the section is scrolled back below the fold.
+     Product hops from just right of the text (or the left column on tablet), flips left -> right
+     around its vertical axis, lands in the Figma spot and floats; then icon 1 -> 4 (TL, TR, BR, BL),
+     each followed by its heading and text. Web Animations API only — no library. */
+  if (!customElements.get('somna-pdp-how')) {
+    customElements.define('somna-pdp-how', class extends HTMLElement {
+      connectedCallback() {
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        this.product = this.querySelector('.somna-pdp-story__product');
+        if (!this.product) return;
+        const order = (this.dataset.order || '1,2,3,4').split(',');
+        this.points = order.map((n) => this.querySelector('.somna-pdp-story__point--' + n.trim())).filter(Boolean);
+        this.anims = [];
+        this.classList.add('is-pending');
+        this.io = new IntersectionObserver((entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) this.play();
+            else if (e.boundingClientRect.top > 0) this.reset();
+          }
+        }, { rootMargin: '0px 0px -35% 0px' });
+        this.io.observe(this);
+      }
+      disconnectedCallback() {
+        this.io?.disconnect();
+        this.anims?.forEach((a) => a.cancel());
+      }
+      startX() {
+        const p = this.product.getBoundingClientRect();
+        const copy = this.closest('.somna-pdp-story__inner')?.querySelector('.somna-pdp-story__copy')?.getBoundingClientRect();
+        const centre = p.left + p.width / 2;
+        if (copy && copy.right < p.left) return copy.right + 30 + p.width / 2 - centre; // desktop: from just after the text
+        const v = this.getBoundingClientRect();
+        return v.left + v.width * 0.17 - centre; // tablet: from the left column
+      }
+      reset() {
+        if (!this.played) return;
+        this.anims.forEach((a) => a.cancel());
+        this.anims = [];
+        this.played = false;
+        this.classList.remove('is-done');
+        this.classList.add('is-pending');
+      }
+      play() {
+        if (this.played) return;
+        this.played = true;
+        const x = this.startX();
+        const add = (el, kf, opt) => { const a = el.animate(kf, { fill: 'both', ...opt }); this.anims.push(a); return a; };
+        this.classList.remove('is-pending');
+        add(this.product, [
+          { transform: `translate3d(${x}px, 0, 0) rotateY(0deg)`, opacity: 0, offset: 0 },
+          { opacity: 1, offset: 0.12 },
+          { transform: `translate3d(${x * 0.45}px, -110px, 0) rotateY(180deg)`, offset: 0.5 },
+          { transform: 'translate3d(0, 0, 0) rotateY(360deg)', opacity: 1, offset: 1 },
+        ], { duration: 1300, easing: 'cubic-bezier(0.45, 0, 0.55, 1)' });
+        const img = this.product.querySelector('img');
+        if (img) add(img, [
+          { transform: 'scale(1, 1)' }, { transform: 'scale(1.05, 0.94)' }, { transform: 'scale(0.99, 1.02)' }, { transform: 'scale(1, 1)' },
+        ], { duration: 400, delay: 1250, easing: 'ease-out', fill: 'none' }).finished.then(() => this.played && this.classList.add('is-done')).catch(() => {});
+        this.points.forEach((pt, i) => {
+          const at = 1550 + i * 300;
+          const icon = pt.querySelector('.somna-pdp-story__point-icon');
+          if (icon) add(icon, [{ opacity: 0, transform: 'scale(0.5)' }, { opacity: 1, transform: 'scale(1.08)', offset: 0.7 }, { opacity: 1, transform: 'scale(1)' }], { duration: 350, delay: at, easing: 'ease-out' });
+          pt.querySelectorAll('h3, p').forEach((t, j) => add(t, [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 350, delay: at + 150 + j * 70, easing: 'ease-out' }));
+        });
+      }
+    });
+  }
+</script>
 {%- endif -%}
 
 {% stylesheet %}
@@ -619,6 +692,34 @@
       font-size: 1.125rem;
     }
   }
+  /* "How it works" hop-flip: hidden until it plays; float once landed */
+  somna-pdp-how {
+    perspective: 1100px;
+  }
+
+  somna-pdp-how .somna-pdp-story__product {
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  somna-pdp-how.is-pending :is(.somna-pdp-story__product, .somna-pdp-story__point-icon, .somna-pdp-story__point h3, .somna-pdp-story__point p) {
+    opacity: 0;
+  }
+
+  somna-pdp-how.is-done .somna-pdp-story__product img {
+    animation: somnaHowFloat 4s ease-in-out infinite;
+  }
+
+  @keyframes somnaHowFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    somna-pdp-how.is-done .somna-pdp-story__product img {
+      animation: none;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -642,6 +743,7 @@
       "default": "problem"
     },
     { "type": "product", "id": "preview_product", "label": "Product for the theme editor", "info": "Only used where there is no product." },
+    { "type": "checkbox", "id": "how_animation", "label": "Animate \"How it works\"", "info": "Hop-flip of the product and icons 1 → 4 when the section comes on screen. Off for visitors who prefer reduced motion.", "default": true },
     { "type": "select", "id": "accent_line", "label": "Heading line in the accent colour", "options": [{ "value": "first", "label": "First line" }, { "value": "second", "label": "Second line" }], "default": "first" },
     { "type": "color", "id": "background_color", "label": "Background", "default": "#0b0f1d" },
     { "type": "color", "id": "text_color", "label": "Text", "default": "#f3feee" },
