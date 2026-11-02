@@ -30,7 +30,7 @@
         "night_label": "/night",
         "default_mode": "sub",
         "sub_label": "Subscribe & Save",
-        "sub_points": "Delivered on your schedule\n3 free gifts on 2+ packs\nSkip, pause or cancel anytime",
+        "sub_points": "[price] [interval]\n3 free gifts on 2+ packs\nSkip, pause or cancel anytime",
         "once_label": "One-time purchase",
         "add_label": "Add to cart",
         "background_color": "#afbdf8",
