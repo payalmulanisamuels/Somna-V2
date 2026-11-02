@@ -145,6 +145,12 @@
     font-size: 1.25rem;
     text-transform: uppercase;
     cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  .somna-signup__button:hover:not([aria-busy='true']) {
+    background: #f3feee;
+    color: #0b0f1d;
   }
 
   .somna-signup__button[aria-busy='true'] {

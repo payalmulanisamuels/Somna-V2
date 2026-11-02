@@ -195,11 +195,14 @@
     font-weight: 800;
     text-transform: uppercase;
     cursor: pointer;
-    transition: translate 0.2s;
+    transition: translate 0.2s, background-color 0.2s, color 0.2s, box-shadow 0.2s;
   }
 
   .somna-pdp-cta__button:hover {
     translate: 0 -2px;
+    background: #f3feee;
+    color: #000;
+    box-shadow: inset 0 0 0 2px #000, 0 10px 20px rgb(0 0 0 / 0.25);
   }
 
   .somna-pdp-cta__button[aria-busy='true'] {
@@ -276,6 +279,17 @@
   }
 
   @media screen and (min-width: 750px) {
+    /* Figma: heading 50px, button Inter Bold */
+    .somna-pdp-cta__heading {
+      font-size: clamp(2rem, 3.47vw, 3.125rem);
+      line-height: 1.38;
+    }
+
+    .somna-pdp-cta__button {
+      font-weight: 700;
+      font-size: clamp(1.375rem, 1.98vw, 1.75rem);
+    }
+
     .somna-pdp-cta__inner {
       grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
     }

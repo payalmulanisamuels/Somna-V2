@@ -492,6 +492,18 @@
     text-transform: uppercase;
     cursor: pointer;
     box-shadow: 0 0 24px rgb(175 189 248 / 0.4);
+    transition: background-color 0.2s, color 0.2s, translate 0.2s;
+  }
+
+  .somna-buy__add:hover:not(:disabled) {
+    background: #f3feee;
+    color: #0b0f1d;
+    translate: 0 -2px;
+  }
+
+  .somna-buy__pack:not(:has(input:checked)):hover {
+    border-color: var(--somna-chip, #afbdf8);
+    background: #363a46;
   }
 
   .somna-buy__add[aria-busy='true'] {
