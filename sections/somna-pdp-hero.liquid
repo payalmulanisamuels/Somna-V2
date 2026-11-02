@@ -10,7 +10,7 @@
 {%- render 'somna-shared-styles' -%}
 {%- liquid
   assign s = section.settings
-  if closest.product != blank
+  if product == blank
     assign product = closest.product
   endif
   if product == blank

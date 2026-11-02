@@ -7,7 +7,7 @@
 {%- render 'somna-shared-styles' -%}
 {%- liquid
   assign s = section.settings
-  if closest.product != blank
+  if product == blank
     assign product = closest.product
   endif
   if product == blank
@@ -16,7 +16,6 @@
   assign pair = product.metafields.custom.pdp_pair_product.value
   assign trend = s.trending_product
 -%}
-<!-- somna-pair-debug: [{{ product.handle }}] [{{ product.metafields.custom.pdp_pair_product }}] [{{ product.metafields.custom.pdp_pair_product.value.handle }}] [{{ product.metafields.custom.pdp_tagline }}] -->
 {%- if pair != blank or trend != blank -%}
 <div class="somna-pdp-pair" style="--somna-pair-bg: {{ s.background_color }}; --somna-pair-accent: {{ s.accent_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;">
   <div class="somna-pdp-pair__inner somna-container">

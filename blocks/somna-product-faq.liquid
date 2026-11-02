@@ -6,7 +6,7 @@
 {%- endcomment -%}
 {%- liquid
   assign block_settings = block.settings
-  if closest.product != blank
+  if product == blank
     assign product = closest.product
   endif
   assign rows = product.metafields.custom.faq.value
