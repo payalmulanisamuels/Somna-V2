@@ -22,7 +22,7 @@
     <div class="somna-pdp-pair__copy">
       {%- if pair != blank -%}
         <h2 class="somna-pdp-pair__heading">{{ s.heading }} <span>{{ pair.title }}</span></h2>
-        <svg class="somna-pdp-pair__arrow" viewBox="0 0 180 140" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 4c-4 46 8 96 66 106 26 4 48-6 48-24 0-17-22-22-30-8-10 18 18 34 82 24"/><path d="M158 88l18 14-22 10" fill="currentColor"/></svg>
+        <svg class="somna-pdp-pair__arrow" viewBox="0 0 180 140" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="somna-pdp-pair__arrow-line" pathLength="420" d="M8 4c-4 46 8 96 66 106 26 4 48-6 48-24 0-17-22-22-30-8-10 18 18 34 82 24"/><path class="somna-pdp-pair__arrow-head" d="M158 88l18 14-22 10" fill="currentColor"/></svg>
       {%- endif -%}
 
       {%- if trend != blank -%}
@@ -103,6 +103,44 @@
     justify-self: end;
     width: 180px;
     margin-right: 6%;
+  }
+
+  /* arrow: the line draws itself, the head pokes towards the product, then it redraws (approved demo 5B) */
+  .somna-pdp-pair__arrow-line {
+    stroke-dasharray: 420;
+    stroke-dashoffset: 420;
+    animation: somnaPairDraw 4.5s ease-in-out infinite;
+  }
+
+  .somna-pdp-pair__arrow-head {
+    opacity: 0;
+    animation: somnaPairHead 4.5s ease-in-out infinite;
+  }
+
+  .somna-pdp-pair__inner:hover :is(.somna-pdp-pair__arrow-line, .somna-pdp-pair__arrow-head) {
+    animation-duration: 2.6s;
+  }
+
+  @keyframes somnaPairDraw {
+    0% { stroke-dashoffset: 420; }
+    40%, 85% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: -420; }
+  }
+
+  @keyframes somnaPairHead {
+    0%, 35% { opacity: 0; transform: translate(-6px, -2px); }
+    42%, 82% { opacity: 1; transform: translate(0, 0); }
+    60% { transform: translate(6px, 2px); }
+    90%, 100% { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-pdp-pair__arrow-line,
+    .somna-pdp-pair__arrow-head {
+      animation: none;
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
   }
 
   .somna-pdp-pair__trend-label {
