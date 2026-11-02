@@ -104,6 +104,33 @@
 
     <div class="somna-pdp-hero__side">
       {%- assign quote = mf.pdp_quote.value -%}
+      {%- if quote == blank and s.quote_from_judgeme -%}
+        {%- comment -%} Figma quote card: fall back to a real Judge.me review (short, 5★, named, no import tag) {%- endcomment -%}
+        {%- assign jm = product.metafields.judgeme.review_widget_data.value -%}
+        {%- assign jm_pick = nil -%}
+        {%- for rv in jm.reviews -%}
+          {%- assign rv_body = rv.body | strip_html | strip -%}
+          {%- if rv.rating >= 5 and rv.is_anonymous_reviewer != true and rv_body.size <= 110 -%}
+            {%- unless rv_body contains '(Review #' -%}
+              {%- assign jm_pick = rv -%}
+              {%- break -%}
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if jm_pick -%}
+          {%- assign jq_parts = jm_pick.reviewer_name | strip | split: ' ' -%}
+          {%- assign jq_name = jq_parts | first -%}
+          {%- if jq_parts.size > 1 -%}{%- assign jq_last = jq_parts | last | slice: 0 | upcase -%}{%- assign jq_name = jq_name | append: ' ' | append: jq_last | append: '.' -%}{%- endif -%}
+          <figure class="somna-pdp-hero__quote">
+            <span class="somna-pdp-hero__avatar somna-pdp-hero__avatar--initial" aria-hidden="true">{{ jq_name | slice: 0 }}</span>
+            <div>
+              <p class="somna-pdp-hero__stars" aria-label="{{ jm_pick.rating }} / 5">{% for i in (1..jm_pick.rating) %}★{% endfor %}</p>
+              <blockquote>“{{ jm_pick.body | strip_html | strip }}”</blockquote>
+              <figcaption><strong>{{ jq_name }}</strong>{% if jm_pick.verified_buyer %} <span>{{ s.verified_label }}</span>{% endif %}</figcaption>
+            </div>
+          </figure>
+        {%- endif -%}
+      {%- endif -%}
       {%- if quote != blank -%}
         <figure class="somna-pdp-hero__quote">
           {%- if quote.avatar.value != blank -%}{{ quote.avatar.value | image_url: width: 160 | image_tag: loading: 'lazy', alt: '', width: 79, height: 79, class: 'somna-pdp-hero__avatar' }}{%- endif -%}
@@ -535,6 +562,16 @@
     height: 79px;
     border-radius: 50%;
     object-fit: cover;
+  }
+
+  .somna-pdp-hero__avatar--initial {
+    display: grid;
+    place-items: center;
+    background: #afbdf8;
+    color: #0b1a45;
+    font-size: 1.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
   }
 
   .somna-pdp-hero__stars {
@@ -1072,6 +1109,7 @@
     { "type": "text", "id": "badge_text", "label": "Round badge", "default": "Up to 60% off" },
     { "type": "text", "id": "sticker_text", "label": "Sticker on the image", "default": "Bestseller" },
     { "type": "select", "id": "badge_motion", "label": "Badge and sticker animation", "info": "A short shake every few seconds. Off for visitors who prefer reduced motion.", "options": [{ "value": "none", "label": "None" }, { "value": "wiggle", "label": "Wiggle" }, { "value": "swing", "label": "Tilt-swing" }, { "value": "pop", "label": "Pop-jiggle" }], "default": "pop" },
+    { "type": "checkbox", "id": "quote_from_judgeme", "label": "Quote card: use a Judge.me review when the product has no Hero quote", "info": "Picks a short, named 5★ review of this product.", "default": true },
     { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified Buyer" },
     { "type": "text", "id": "videos_heading", "label": "Videos heading", "default": "Real Nights, On Camera" },
     { "type": "text", "id": "play_label", "label": "Play label (screen readers)", "default": "Play video" },
