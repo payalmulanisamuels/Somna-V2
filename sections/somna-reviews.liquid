@@ -682,8 +682,8 @@
   }
 
   .somna-reviews__app .jdgm-widget .jm-review-item {
-    padding: 18px 28px 18px 26px;
-    border: 0;
+    padding: 18px 28px 18px 26px !important;
+    border: 0 !important;
     border-radius: 6px;
     background: var(--somna-rv-card, #f3feee);
     color: var(--somna-rv-card-fg, #0b1a45);
@@ -738,7 +738,7 @@
 
   .somna-reviews__app .jdgm-widget .jm-reviewer-info__details {
     grid-area: name;
-    flex-direction: row;
+    flex-direction: row !important;
     flex-wrap: wrap;
     align-items: baseline;
     gap: 4px 8px;
@@ -804,8 +804,38 @@
 
   .somna-reviews__app .jdgm-widget .jm-star-rating,
   .somna-reviews__app .jdgm-widget .jm-star-rating__font-icon {
-    color: var(--somna-rv-star, #f5c242);
-    font-size: 18px;
+    color: var(--somna-rv-star, #f5c242) !important;
+    font-size: 17px !important;
+    line-height: 1 !important;
+  }
+
+  .somna-reviews__app .jdgm-widget .jm-star-rating .jm-cluster {
+    gap: 3px !important;
+  }
+
+  /* no extra space under the name line */
+  .somna-reviews__app .jdgm-widget .jm-review-item > .jm-stack,
+  .somna-reviews__app .jdgm-widget .jm-review-item__body {
+    gap: 0 !important;
+  }
+
+  .somna-reviews__app .jdgm-widget .jm-review-item {
+    padding-bottom: 18px !important;
+  }
+
+  /* filter + sort controls look like the Figma chips */
+  .somna-reviews__app .jdgm-widget :is(.jm-sort-filter, .jm-custom-answer-filter, .jm-button--secondary) {
+    min-height: 32px;
+    padding: 6px 14px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: var(--somna-rv-card, #f3feee) !important;
+    color: #0b1a45 !important;
+  }
+
+  .somna-reviews__app .jdgm-widget .jm-button--disabled {
+    opacity: 0.4;
+    background: var(--somna-rv-card, #f3feee) !important;
   }
 
   /* pagination: lavender pills under the list, like the Figma "Show more" button */
