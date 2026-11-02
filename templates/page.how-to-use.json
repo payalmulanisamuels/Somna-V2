@@ -137,7 +137,7 @@
     "tape": {
       "type": "somna-guide",
       "settings": {
-        "image_position": "object-position: 70% 50%",
+        "image_position": "object-position: 26% 50%",
         "media_side": "right",
         "eyebrow": "For your lips",
         "heading": "Mouth <em>Tape</em>",
@@ -164,7 +164,7 @@
         "step_1": {
           "type": "step",
           "settings": {
-            "image": "shopify://shop_images/somna-pdp-mouth-tape-step-wipe.png",
+            "image": "shopify://shop_images/tape-1.png",
             "image_position": "object-position: center",
             "title": "Prepare",
             "text": "Apply to clean, dry lips shortly before bed."
@@ -173,7 +173,7 @@
         "step_2": {
           "type": "step",
           "settings": {
-            "image": "shopify://shop_images/somna-pdp-mouth-tape-step-place.png",
+            "image": "shopify://shop_images/tap-2.png",
             "image_position": "object-position: center",
             "title": "Position",
             "text": "Place the tape over closed lips."
@@ -182,7 +182,7 @@
         "step_3": {
           "type": "step",
           "settings": {
-            "image": "shopify://shop_images/somna-pdp-step-sleep-v2.png",
+            "image": "shopify://shop_images/tape-3.png",
             "image_position": "object-position: center",
             "title": "Secure",
             "text": "Press gently to secure the tape. It should feel snug, never tight."
