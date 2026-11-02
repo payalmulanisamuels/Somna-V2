@@ -840,6 +840,11 @@
       justify-content: space-between;
     }
 
+    /* Figma: the strip is much taller, so the four features spread further apart */
+    .somna-pdp-story--how .somna-pdp-story__visual {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr) minmax(0, 1fr);
+    }
+
     .somna-pdp-story--layers .somna-pdp-story__inner {
       grid-template-columns: minmax(0, 440px) minmax(0, 460px) minmax(0, 320px);
       gap: 24px;
