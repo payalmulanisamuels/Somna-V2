@@ -45,6 +45,9 @@
     assign price = current.price
   endif
   assign compare = current.compare_at_price | default: 0
+  if price < current.price and current.price > compare
+    assign compare = current.price
+  endif
   if compare <= price
     assign compare = 0
   endif
@@ -198,7 +201,8 @@
       {%- endif -%}
 
       <p class="somna-pdp-hero__price">
-        <span class="somna-pdp-hero__price-now" data-price>{{ price | money }}</span>
+        {%- assign price_parts = price | money | split: '.' -%}
+        <span class="somna-pdp-hero__price-now" data-price>{{ price_parts[0] }}{% if price_parts[1] %}<sup>{{ price_parts[1] }}</sup>{% endif %}</span>
         <s data-compare{% if compare == 0 %} hidden{% endif %}>{{ compare | money_without_trailing_zeros }}</s>
         {%- assign pct = 0 -%}
         {%- if compare > 0 -%}{%- assign pct = compare | minus: price | times: 100 | divided_by: compare -%}{%- endif -%}
@@ -230,7 +234,9 @@
                 <input type="radio" name="{{ section.id }}-pack" value="{{ forloop.index0 }}" data-pack{% if v.id == current.id %} checked{% endif %}{% unless v.available %} disabled{% endunless %}>
                 <span class="somna-buy__pack-name">{{ v.title }}</span>
                 <span class="somna-buy__pack-price" data-pack-price>{{ v_price | money }}</span>
-                <s data-pack-compare>{% if v.compare_at_price > v_price %}{{ v.compare_at_price | money_without_trailing_zeros }}{% endif %}</s>
+                {%- assign v_compare = v.compare_at_price | default: 0 -%}
+                {%- if v_price < v.price and v.price > v_compare -%}{%- assign v_compare = v.price -%}{%- endif -%}
+                <s data-pack-compare>{% if v_compare > v_price %}{{ v_compare | money_without_trailing_zeros }}{% endif %}</s>
                 {%- if bags >= s.gift_min_bags and s.gift_label != blank -%}
                   <span class="somna-pdp-hero__gift">{{ s.gift_label }}</span>
                 {%- elsif s.nights_per_bag > 0 -%}
@@ -249,7 +255,7 @@
               {%- if s.sub_points != blank -%}
                 <ul class="somna-pdp-hero__sub-points" role="list">
                   {%- assign points = s.sub_points | newline_to_br | split: '<br />' -%}
-                  {%- for t in points -%}{%- assign t = t | strip -%}{%- if t != blank -%}<li><span class="somna-check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>{{ t }}</li>{%- endif -%}{%- endfor -%}
+                  {%- for t in points -%}{%- assign t = t | strip | replace: '[price]', '<span data-sub-each></span>' | replace: '[interval]', '<span data-sub-interval></span>' -%}{%- if t != blank -%}<li><span class="somna-check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>{{ t }}</li>{%- endif -%}{%- endfor -%}
                 </ul>
               {%- endif -%}
               {%- assign group = product.selling_plan_groups | first -%}
@@ -257,7 +263,7 @@
                 <label class="visually-hidden" for="{{ section.id }}-plan">{{ s.plan_label }}</label>
                 <select class="somna-pdp-hero__plan" id="{{ section.id }}-plan" data-plan>
                   {%- for plan in group.selling_plans -%}
-                    <option value="{{ plan.id }}"{% if alloc and plan.id == alloc.selling_plan.id %} selected{% endif %}>{{ plan.name }}</option>
+                    <option value="{{ plan.id }}"{% if alloc and plan.id == alloc.selling_plan.id %} selected{% endif %}>{{ plan.options.first.value | default: plan.name }}</option>
                   {%- endfor -%}
                 </select>
               {%- endif -%}
@@ -330,7 +336,9 @@
         return v.plans.find((p) => p.id === id) || v.plans[0];
       }
       priceOf(v, mode = this.mode) { const p = mode === 'sub' && v.plans.length ? (this.plan(v) || v.plans[0]) : null; return p ? p.price : v.price; }
-      pct(price, v) { const base = v.compare > price ? v.compare : 0; return base ? Math.round((1 - price / base) * 100) : 0; }
+      base(v, price) { return Math.max(v.compare || 0, price < v.price ? v.price : 0); }
+      pct(price, v) { const base = this.base(v, price); return base > price ? Math.round((1 - price / base) * 100) : 0; }
+      priceHTML(p) { const [a, b] = this.money(p).split('.'); return b ? `${a}<sup>${b}</sup>` : a; }
       update() {
         const v = this.variants[this.v];
         const q = (s) => this.querySelector(s);
@@ -339,8 +347,8 @@
         const plan = this.plan(v);
         q('[data-id]').value = v.id;
         q('[data-plan-input]').value = plan ? plan.id : '';
-        q('[data-price]').textContent = this.money(price);
-        const compare = v.compare > price ? v.compare : 0;
+        q('[data-price]').innerHTML = this.priceHTML(price);
+        const compare = this.base(v, price) > price ? this.base(v, price) : 0;
         const c = q('[data-compare]'); c.hidden = !compare; c.textContent = compare ? this.money(compare).replace(/[.,]00(?=\D*$)/, '') : '';
         const pct = this.pct(price, v);
         const save = q('[data-save]'); save.hidden = !pct; save.textContent = this.labels.save.replace('[percent]', pct);
@@ -349,7 +357,8 @@
           const pr = this.priceOf(x);
           const label = input.closest('label');
           label.querySelector('[data-pack-price]').textContent = this.money(pr);
-          label.querySelector('[data-pack-compare]').textContent = x.compare > pr ? this.money(x.compare).replace(/[.,]00(?=\D*$)/, '') : '';
+          const xb = this.base(x, pr);
+          label.querySelector('[data-pack-compare]').textContent = xb > pr ? this.money(xb).replace(/[.,]00(?=\D*$)/, '') : '';
           const night = label.querySelector('[data-pack-night]');
           if (night && this.nights) night.textContent = this.money(Math.round(pr / (this.bags(x) * this.nights))) + this.labels.night;
         });
@@ -359,6 +368,10 @@
         const subEl = q('[data-price-sub]'); if (subEl) subEl.textContent = subPrice ? this.money(subPrice) : '';
         const subPct = subPrice ? this.pct(subPrice, v) : 0;
         const subPctEl = q('[data-sub-pct]'); if (subPctEl) subPctEl.textContent = subPct ? this.labels.pct.replace('[percent]', subPct) : '';
+        this.querySelectorAll('[data-sub-each]').forEach((el) => { el.textContent = subPrice ? this.money(subPrice) : ''; });
+        const subPlan = v.plans.length ? (this.plan(v) || v.plans[0]) : null;
+        const opt = this.planSelect && subPlan ? [...this.planSelect.options].find((o) => Number(o.value) === subPlan.id) : null;
+        this.querySelectorAll('[data-sub-interval]').forEach((el) => { el.textContent = opt ? opt.textContent.trim().replace(/^Deliver(y)?\s+/i, '') : ''; });
         q('[data-price-once]').textContent = this.money(v.price);
         const oncePct = this.pct(v.price, v);
         q('[data-once-pct]').textContent = oncePct ? this.labels.pct.replace('[percent]', oncePct) : '';
@@ -757,14 +770,26 @@
 
   .somna-pdp-hero__price-now {
     font-family: var(--font-accent--family);
-    font-size: 2.25rem;
+    font-size: 2.125rem;
     line-height: 1.2;
+    letter-spacing: 0.03em;
   }
 
+  /* Figma: cents as a small raised figure next to the dollars ($19⁹⁵) */
+  .somna-pdp-hero__price-now sup {
+    margin-left: 2px;
+    font-size: 0.56em;
+    line-height: 1;
+    vertical-align: 0.75em;
+  }
+
+  /* Figma: struck price in Inter Medium, mint, wide tracking */
   .somna-pdp-hero__price s {
-    color: #d9d9d9;
-    font-family: var(--font-accent--family);
+    color: #f3feee;
+    font-family: var(--font-body--family);
     font-size: 1.375rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
   }
 
   .somna-pdp-hero__save {
@@ -1129,7 +1154,7 @@
     { "type": "text", "id": "mode_label", "label": "Purchase option label (screen readers)", "default": "Purchase option" },
     { "type": "select", "id": "default_mode", "label": "Selected by default", "options": [{ "value": "sub", "label": "Subscribe" }, { "value": "once", "label": "One-time" }], "default": "sub" },
     { "type": "text", "id": "sub_label", "label": "Subscribe label", "default": "Subscribe & Save" },
-    { "type": "textarea", "id": "sub_points", "label": "Subscribe points", "info": "One per line.", "default": "Delivered on your schedule\n3 free gifts on 2+ packs\nSkip, pause or cancel anytime" },
+    { "type": "textarea", "id": "sub_points", "label": "Subscribe points", "info": "One per line. [price] = the subscription price, [interval] = the chosen delivery frequency (e.g. every month).", "default": "Delivered on your schedule\n3 free gifts on 2+ packs\nSkip, pause or cancel anytime" },
     { "type": "text", "id": "plan_label", "label": "Delivery frequency label (screen readers)", "default": "Delivery frequency" },
     { "type": "text", "id": "once_label", "label": "One-time label", "default": "One-time purchase" },
     { "type": "text", "id": "add_label", "label": "Add to cart label", "default": "Add to cart" },
