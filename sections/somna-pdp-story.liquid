@@ -248,8 +248,12 @@
           const start = () => layout(this.source);
           const endW = () => box().width * 0.8;
           const end = () => { const b = doc(box()); return { x: b.x + (b.w * mid.x) / 100 - endW() / 2, y: b.y + (b.h * mid.y) / 100 - endW() / 2 }; };
-          gsap.set(this.traveller, { x: () => start().x, y: () => start().y, width: () => start().w });
-          tl.to(this.traveller, { x: () => end().x, y: () => end().y, width: endW, rotationY: 360, rotationZ: 100, duration: 0.45, ease: 'power2.inOut' }, 0);
+          // fromTo with function values: start and end are re-measured on every refresh (invalidateOnRefresh),
+          // so the copy always matches the real picture's spot and size, even if it loaded after this ran
+          tl.fromTo(this.traveller,
+            { x: () => start().x, y: () => start().y, width: () => start().w, rotationY: 0, rotationZ: 0 },
+            { x: () => end().x, y: () => end().y, width: endW, rotationY: 360, rotationZ: 100, duration: 0.45, ease: 'power2.inOut', immediateRender: true },
+            0);
           T = 0.44;
           // Hand-off between the real picture and its travelling copy, decided from the timeline's own time
           // (no zero-time .set(), which GSAP leaves applied at progress 0). At time 0 — before the
@@ -293,6 +297,10 @@
         let timer;
         this.ro = new ResizeObserver(() => { clearTimeout(timer); timer = setTimeout(() => ScrollTrigger.refresh(), 200); });
         this.ro.observe(host);
+        // the How-it-works picture is lazy-loaded: measure again once it has its real size
+        if (this.source && !(this.source.complete && this.source.naturalWidth)) {
+          this.source.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+        }
       }
     });
   }
