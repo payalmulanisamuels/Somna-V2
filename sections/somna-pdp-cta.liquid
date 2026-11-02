@@ -7,7 +7,9 @@
 {%- render 'somna-shared-styles' -%}
 {%- liquid
   assign s = section.settings
-  assign product = closest.product
+  if closest.product != blank
+    assign product = closest.product
+  endif
   if product == blank
     assign product = all_products[s.preview_product.handle]
   endif
