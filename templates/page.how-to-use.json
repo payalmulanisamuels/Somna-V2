@@ -1,0 +1,782 @@
+{
+  "sections": {
+    "hero": {
+      "type": "somna-page-hero",
+      "blocks": {
+        "b1": {
+          "type": "button",
+          "settings": {
+            "label": "Nasal Strips guide",
+            "link": "#nasal-strips",
+            "style": "primary"
+          }
+        },
+        "b2": {
+          "type": "button",
+          "settings": {
+            "label": "Mouth Tape guide",
+            "link": "#mouth-tape",
+            "style": "secondary"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2"
+      ],
+      "settings": {
+        "show_breadcrumb": true,
+        "home_label": "Home",
+        "breadcrumb_label": "",
+        "eyebrow": "",
+        "heading": "How to <em>use</em>",
+        "tagline": "Getting the most from your first night.",
+        "text": "<p>Two small essentials, one simple routine. Here's how to use each one properly.</p>",
+        "image": "shopify://shop_images/group-sttap.png",
+        "image_position": "object-position: center",
+        "image_side": "left",
+        "drip_edge": true,
+        "background_color": "#afbdf8",
+        "panel_color": "#0b0f1d",
+        "accent_color": "#afbdf8",
+        "padding_top": 24,
+        "padding_bottom": 48,
+        "image_fit": "contain",
+        "media_color": "#f3feee"
+      }
+    },
+    "wave_hero_strips": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#afbdf8",
+        "bottom_color": "#f3feee",
+        "shape": "drip-8",
+        "overlap": false,
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "strips": {
+      "type": "somna-guide",
+      "settings": {
+        "image_position": "object-position: 72% 50%",
+        "media_side": "left",
+        "eyebrow": "For your nose",
+        "heading": "Nasal <em>Strips</em>",
+        "label": "How it works",
+        "text": "<p>Flexible fabric backing, a gentle spring structure, and a hypoallergenic adhesive layer designed to stay comfortable through the night without irritating skin.</p>",
+        "button_label": "Shop Nasal Strips",
+        "button_link": "/products/nasal-strips",
+        "steps_heading": "How to apply",
+        "note": "<p>Remove gently in the morning, starting from one edge. Use a fresh strip each night.</p>",
+        "note_icon": "moon",
+        "background_color": "#f3feee",
+        "text_color": "#000000",
+        "card_color": "#0b0f1d",
+        "card_text_color": "#f3feee",
+        "accent_color": "#afbdf8",
+        "note_color": "#afbdf8",
+        "note_text_color": "#000000",
+        "padding_top": 24,
+        "padding_bottom": 56,
+        "image": "shopify://shop_images/slim-strip.jpg",
+        "anchor": "nasal-strips"
+      },
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/tape1.png",
+            "image_position": "object-position: center",
+            "title": "Clean & prepare",
+            "text": "Clean and dry the bridge of your nose."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/tape2.png",
+            "image_position": "object-position: center",
+            "title": "Position the strip",
+            "text": "Centre the strip and smooth each side outward."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/tape3.png",
+            "image_position": "object-position: center",
+            "title": "Secure",
+            "text": "Press gently along the edges until it holds."
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3"
+      ]
+    },
+    "wave_strips_tape": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#f3feee",
+        "bottom_color": "#0b0f1d",
+        "shape": "soft-1",
+        "overlap": false,
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "tape": {
+      "type": "somna-guide",
+      "settings": {
+        "image_position": "object-position: 70% 50%",
+        "media_side": "right",
+        "eyebrow": "For your lips",
+        "heading": "Mouth <em>Tape</em>",
+        "label": "How it works",
+        "text": "<p>A soft, breathable fabric with a gentle adhesive layer, designed to stay comfortable through the night without pulling at the skin.</p>",
+        "button_label": "Shop Mouth Tape",
+        "button_link": "/products/mouth-tape",
+        "steps_heading": "How to apply",
+        "note": "<p>Remove gently in the morning. If you have a cold, congestion, or any breathing condition, check with a doctor before use.</p>",
+        "note_icon": "shield",
+        "background_color": "#0b0f1d",
+        "text_color": "#f3feee",
+        "card_color": "#f3feee",
+        "card_text_color": "#000000",
+        "accent_color": "#afbdf8",
+        "note_color": "#afbdf8",
+        "note_text_color": "#000000",
+        "padding_top": 24,
+        "padding_bottom": 56,
+        "image": "shopify://shop_images/slim-tape.jpg",
+        "anchor": "mouth-tape"
+      },
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/somna-pdp-mouth-tape-step-wipe.png",
+            "image_position": "object-position: center",
+            "title": "Prepare",
+            "text": "Apply to clean, dry lips shortly before bed."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/somna-pdp-mouth-tape-step-place.png",
+            "image_position": "object-position: center",
+            "title": "Position",
+            "text": "Place the tape over closed lips."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/somna-pdp-step-sleep-v2.png",
+            "image_position": "object-position: center",
+            "title": "Secure",
+            "text": "Press gently to secure the tape. It should feel snug, never tight."
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3"
+      ]
+    },
+    "wave_tape_together": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#0b0f1d",
+        "bottom_color": "#f3feee",
+        "shape": "drip-6",
+        "overlap": false,
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "together": {
+      "type": "somna-guide",
+      "settings": {
+        "image_position": "object-position: 50% 60%",
+        "media_side": "left",
+        "eyebrow": "Better together",
+        "heading": "Using them <em>together</em>",
+        "label": "",
+        "text": "<p>Clean, dry skin — nose and lips. Apply the strip, then the tape, as the last step before lights out. Give it a few nights to feel like routine, not a new habit.</p>",
+        "button_label": "Shop Somna",
+        "button_link": "/collections/all",
+        "steps_heading": "",
+        "note": "",
+        "note_icon": "moon",
+        "background_color": "#f3feee",
+        "text_color": "#000000",
+        "card_color": "#0b0f1d",
+        "card_text_color": "#f3feee",
+        "accent_color": "#afbdf8",
+        "note_color": "#afbdf8",
+        "note_text_color": "#000000",
+        "padding_top": 24,
+        "padding_bottom": 24,
+        "image": "shopify://shop_images/contact-banner.jpg",
+        "anchor": ""
+      },
+      "blocks": {},
+      "block_order": []
+    },
+    "settling": {
+      "type": "section",
+      "settings": {
+        "content_direction": "column",
+        "gap": 16,
+        "section_width": "page-width",
+        "background_color": "#f3feee",
+        "padding-block-start": 16,
+        "padding-block-end": 56,
+        "horizontal_alignment_flex_direction_column": "center"
+      },
+      "blocks": {
+        "icon": {
+          "type": "somna-icon",
+          "settings": {
+            "icon": "moon",
+            "size": 72,
+            "color": "#000000",
+            "backdrop": "none",
+            "icon_offset": 0
+          },
+          "blocks": {}
+        },
+        "heading": {
+          "type": "text",
+          "settings": {
+            "text": "<h2>Settling in</h2>",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-accent--family)",
+            "font_size": "3.5rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "uppercase",
+            "wrap": "balance",
+            "text_color": "#000000",
+            "accent_color": "#98a3de"
+          },
+          "blocks": {}
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Most people notice it feels routine within the first week. If anything feels wrong — too tight, too irritating, not holding — reposition or size down before deciding it's not for you. You have 30 nights to find out either way.</p>",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "1.25rem",
+            "line_height": "normal",
+            "letter_spacing": "loose",
+            "case": "none",
+            "wrap": "pretty",
+            "text_color": "#000000"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "icon",
+        "heading",
+        "text"
+      ]
+    },
+    "wave_settling_guarantee": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#f3feee",
+        "bottom_color": "#afbdf8",
+        "shape": "soft-2",
+        "overlap": false,
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "guarantee": {
+      "type": "section",
+      "settings": {
+        "content_direction": "column",
+        "gap": 16,
+        "section_width": "page-width",
+        "background_color": "#afbdf8",
+        "padding-block-start": 16,
+        "padding-block-end": 32,
+        "horizontal_alignment_flex_direction_column": "center"
+      },
+      "blocks": {
+        "icon": {
+          "type": "somna-icon",
+          "settings": {
+            "icon": "shield",
+            "size": 104,
+            "color": "#000000",
+            "backdrop": "none",
+            "icon_offset": 0
+          },
+          "blocks": {}
+        },
+        "eyebrow": {
+          "type": "text",
+          "settings": {
+            "text": "<p>30-Night Money-Back Guarantee</p>",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "1.5rem",
+            "line_height": "normal",
+            "letter_spacing": "loose",
+            "case": "uppercase",
+            "wrap": "pretty",
+            "text_color": "#000000"
+          },
+          "blocks": {}
+        },
+        "heading": {
+          "type": "text",
+          "settings": {
+            "text": "<h2>Try for 30 nights</h2>",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-accent--family)",
+            "font_size": "3.5rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "uppercase",
+            "wrap": "balance",
+            "text_color": "#000000",
+            "accent_color": "#98a3de"
+          },
+          "blocks": {}
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Not for you? We’ll refund you. Simple as that.</p>",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "2rem",
+            "line_height": "normal",
+            "letter_spacing": "loose",
+            "case": "none",
+            "wrap": "pretty",
+            "text_color": "#000000"
+          },
+          "blocks": {}
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "label": "TRY SOMNA RISK-FREE",
+            "link": "shopify://collections/all",
+            "style_class": "button-custom",
+            "custom_button_background": "#ffffff",
+            "custom_button_text": "#000000",
+            "custom_button_border": "#ffffff",
+            "width": "custom",
+            "custom_width": 36,
+            "width_mobile": "custom",
+            "custom_width_mobile": 100
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "icon",
+        "eyebrow",
+        "heading",
+        "text",
+        "button"
+      ]
+    },
+    "wave_guarantee_faq": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#afbdf8",
+        "bottom_color": "#f3feee",
+        "shape": "soft-1",
+        "overlap": false,
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "faq": {
+      "type": "section",
+      "settings": {
+        "content_direction": "row",
+        "gap": 56,
+        "section_width": "page-width",
+        "background_color": "#f3feee",
+        "padding-block-start": 24,
+        "padding-block-end": 24,
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "flex-start"
+      },
+      "blocks": {
+        "intro": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "gap": 16,
+            "width": "custom",
+            "custom_width": 38,
+            "width_mobile": "fill",
+            "height": "fit",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start"
+          },
+          "blocks": {
+            "heading": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Questions?<br>We've Got You.</h2>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-accent--family)",
+                "font_size": "3rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "balance",
+                "text_color": "#000000",
+                "accent_color": "#98a3de"
+              },
+              "blocks": {}
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Can’t find your answer? Visit our <a href=\"/pages/support\">support hub</a> or <a href=\"/pages/contact\">contact us</a>.</p>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#000000"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "heading",
+            "text"
+          ]
+        },
+        "accordion": {
+          "type": "accordion",
+          "settings": {
+            "icon": "plus",
+            "dividers": true,
+            "divider_color": "#afbdf8",
+            "type_preset": "paragraph",
+            "text_color": "#000000"
+          },
+          "blocks": {
+            "row_1": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "What is the return policy?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Every product is covered by our 30-Night Money-Back Guarantee, counted from the confirmed delivery date. For hygiene reasons, Nasal Strips and Mouth Tape must be unused and in their original, sealed packaging. <a href=\"/pages/return-refund-policy\">Read the full policy</a>.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            },
+            "row_2": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Are any purchases final sale?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Yes — items marked “Final Sale” or “Clearance”, and promotional free gifts, are not eligible for returns or refunds.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            },
+            "row_3": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "When will I get my order?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Orders are processed within 1–2 business days. Delivery typically takes 7–9 business days from the day your order ships, and you’ll get an email with tracking once it’s on its way.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            },
+            "row_4": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Where are your products manufactured?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Our products are manufactured both locally and globally. We carefully select our manufacturing partners to ensure our products are high quality and a fair value.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            },
+            "row_5": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "How much does shipping cost?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Shipping is free on every order, with no minimum purchase. We currently ship within the United States only.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            }
+          },
+          "block_order": [
+            "row_1",
+            "row_2",
+            "row_3",
+            "row_4",
+            "row_5"
+          ]
+        }
+      },
+      "block_order": [
+        "intro",
+        "accordion"
+      ]
+    },
+    "wave_faq_newsletter": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#f3feee",
+        "bottom_color": "#000000",
+        "shape": "drip-11",
+        "overlap": false,
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "newsletter": {
+      "type": "section",
+      "settings": {
+        "content_direction": "row",
+        "gap": 40,
+        "section_width": "page-width",
+        "background_color": "#000000",
+        "padding-block-start": 24,
+        "padding-block-end": 32,
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "center"
+      },
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "settings": {
+            "text": "<h2>Get <em>10% off</em><br>your first order</h2>",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-accent--family)",
+            "font_size": "2.5rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "uppercase",
+            "wrap": "balance",
+            "text_color": "#ffffff",
+            "accent_color": "#98a3de"
+          },
+          "blocks": {}
+        },
+        "signup": {
+          "type": "somna-klaviyo-signup",
+          "settings": {
+            "placeholder": "Your email",
+            "button_label": "Subscribe →",
+            "width": 60,
+            "row_max_width": 1160
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "heading",
+        "signup"
+      ]
+    },
+    "wave_newsletter_footer": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#000000",
+        "bottom_color": "#f3feee",
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48,
+        "shape": "drip-11"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "wave_hero_strips",
+    "strips",
+    "wave_strips_tape",
+    "tape",
+    "wave_tape_together",
+    "together",
+    "settling",
+    "wave_settling_guarantee",
+    "guarantee",
+    "wave_guarantee_faq",
+    "faq",
+    "wave_faq_newsletter",
+    "newsletter",
+    "wave_newsletter_footer"
+  ]
+}
