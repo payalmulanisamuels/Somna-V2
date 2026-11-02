@@ -1,5 +1,7 @@
 {%- doc -%}
-  Somna V2 — line icons for the product page (24×24, drawn with currentColor).
+  Somna V2 — line icons for the product page (24×24, drawn with currentColor), redrawn after the
+  Figma PDP icons: two leaves (Drug-free), crescent (Gentle on skin / Moon), lips, feather (Gentle
+  adhesive), heart sticker (Easy peel), stacked layers (Layer).
   The names match the "Icon" choices of the PDP feature metaobject (case and spaces don't matter),
   so merchants pick an icon in admin and the theme draws it.
 
@@ -11,7 +13,7 @@
 <svg class="somna-pdp-icon {{ class }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
   {%- case key -%}
     {%- when 'drug-free' -%}
-      <path d="M5 19c8 0 14-5 14-14-9 0-14 5-14 14z"/><path d="M5 19l7-7M9.5 14.5h3.5M12 12V8.5"/>
+      <path d="M6 20c0-7.5 4.5-12.5 14-14 .5 8.5-4.5 13.5-14 14z"/><path d="M6 20l8.5-8.5"/><path d="M9.6 9.8C8.7 6.4 6.6 4.4 3 3.8c-.4 4 1.2 6.8 4.5 8.1"/><path d="M3 3.8l5.2 6"/>
     {%- when 'gentle-on-skin' or 'moon' -%}
       <path d="M19 14.5A7.5 7.5 0 1 1 9.5 5a6 6 0 0 0 9.5 9.5z"/>
     {%- when 'gentle-adhesive' -%}
@@ -19,13 +21,13 @@
     {%- when 'sits-outside' -%}
       <circle cx="12" cy="12" r="8.5"/><path d="M12 16.5s-4-2.4-4-5.1A2.2 2.2 0 0 1 12 10a2.2 2.2 0 0 1 4 1.4c0 2.7-4 5.1-4 5.1z"/>
     {%- when 'made-for-lips' -%}
-      <path d="M2.5 11.5C5 8 7.5 6.5 9.5 7.5L12 8.5l2.5-1C16.5 6.5 19 8 21.5 11.5 18.5 16 15.5 17.5 12 17.5s-6.5-1.5-9.5-6z"/><path d="M2.5 11.5h19"/>
+      <path d="M2.5 12c2.6-3.1 5-4.6 7-4.1 1.1.3 1.8 1 2.5 1s1.4-.7 2.5-1c2-.5 4.4 1 7 4.1-2.5 3.4-5.6 5-9.5 5s-7-1.6-9.5-5z"/><path d="M2.5 12c3.4.8 6.4.8 9.5.3 3.1.5 6.1.5 9.5-.3"/>
     {%- when 'pairs-with' -%}
       <rect x="3" y="7" width="9" height="10" rx="3"/><rect x="12" y="7" width="9" height="10" rx="3"/><path d="M7.5 10.5v3M6 12h3M15 12h3"/>
     {%- when 'easy-peel' -%}
-      <path d="M4 20V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v7l-7 7H6a2 2 0 0 1-2-2"/><path d="M13 20v-5a2 2 0 0 1 2-2h5"/>
+      <path d="M20.1 15.3A8.6 8.6 0 1 0 15.3 20.1"/><path d="M15.3 20.1c-.5-2.7 2.1-5.3 4.8-4.8"/><circle cx="12" cy="12" r="5.6"/><path d="M12 14.6s-2.6-1.6-2.6-3.3a1.4 1.4 0 0 1 2.6-.8 1.4 1.4 0 0 1 2.6.8c0 1.7-2.6 3.3-2.6 3.3z"/>
     {%- when 'layer' -%}
-      <path d="M12 4l9 4.5-9 4.5-9-4.5z"/><path d="M3 12.5l9 4.5 9-4.5M3 16.5l9 4.5 9-4.5"/>
+      <path d="M12 3.5l8.5 4.6L12 12.7 3.5 8.1z"/><path d="M3.5 12l8.5 4.6 8.5-4.6M3.5 15.9l8.5 4.6 8.5-4.6"/>
     {%- when 'shipping' -%}
       <path d="M2.5 6.5h11v9h-11zM13.5 9.5h4l3 3.5v2.5h-7z"/><circle cx="6.5" cy="17" r="1.8"/><circle cx="17" cy="17" r="1.8"/>
     {%- when 'delivery' -%}
