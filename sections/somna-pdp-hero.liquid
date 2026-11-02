@@ -61,6 +61,13 @@
       assign rating_count = rating_raw | split: '(' | last | split: ')' | first | strip
     endif
   endif
+  if s.rating_source == 'judgeme'
+    assign jm_sum = product.metafields.judgeme.review_widget_data.value
+    if jm_sum and jm_sum.number_of_reviews > 0
+      assign rating = jm_sum.average_rating | times: 1.0 | round: 1
+      assign rating_count = jm_sum.number_of_reviews
+    endif
+  endif
 -%}
 
 <somna-pdp-buy
@@ -1134,6 +1141,7 @@
     { "type": "text", "id": "badge_text", "label": "Round badge", "default": "Up to 60% off" },
     { "type": "text", "id": "sticker_text", "label": "Sticker on the image", "default": "Bestseller" },
     { "type": "select", "id": "badge_motion", "label": "Badge and sticker animation", "info": "A short shake every few seconds. Off for visitors who prefer reduced motion.", "options": [{ "value": "none", "label": "None" }, { "value": "wiggle", "label": "Wiggle" }, { "value": "swing", "label": "Tilt-swing" }, { "value": "pop", "label": "Pop-jiggle" }], "default": "pop" },
+    { "type": "select", "id": "rating_source", "label": "Rating line from", "options": [{ "value": "metafield", "label": "Product rating metafield" }, { "value": "judgeme", "label": "Judge.me (same numbers as the Reviews section)" }], "default": "metafield", "info": "Judge.me falls back to the metafield when the product has no reviews." },
     { "type": "checkbox", "id": "quote_from_judgeme", "label": "Quote card: use a Judge.me review when the product has no Hero quote", "info": "Picks a short, named 5★ review of this product.", "default": true },
     { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified Buyer" },
     { "type": "text", "id": "videos_heading", "label": "Videos heading", "default": "Real Nights, On Camera" },
