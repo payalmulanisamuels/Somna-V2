@@ -1,145 +1,290 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */{
+{
   "sections": {
-    "main": {
-      "type": "main-page",
+    "hero": {
+      "type": "somna-page-hero",
       "blocks": {
-        "title": {
-          "type": "text",
-          "name": "t:names.title",
+        "message": {
+          "type": "button",
           "settings": {
-            "text": "<h1>{{ closest.page.title }}</h1>",
-            "width": "100%",
-            "max_width": "normal",
-            "alignment": "center",
-            "type_preset": "h2",
-            "font": "var(--font-body--family)",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
+            "label": "Send a message",
+            "link": "#contact-form",
+            "style": "primary"
+          }
         },
-        "content": {
-          "type": "text",
-          "name": "t:names.content",
+        "faq": {
+          "type": "button",
           "settings": {
-            "text": "{{ closest.page.content }}",
-            "width": "100%",
-            "max_width": "narrow",
-            "alignment": "center",
-            "type_preset": "rte",
-            "font": "var(--font-body--family)",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
+            "label": "Read the FAQs",
+            "link": "/pages/support",
+            "style": "secondary"
+          }
         }
       },
       "block_order": [
-        "title",
-        "content"
+        "message",
+        "faq"
       ],
       "settings": {
-        "content_direction": "column",
-        "gap": 32,
-        "background_color": "{{ settings.color_palette.background }}",
-        "padding-block-start": 40,
-        "padding-block-end": 0
+        "show_breadcrumb": true,
+        "home_label": "Home",
+        "breadcrumb_label": "",
+        "eyebrow": "",
+        "heading": "Contact <em>us</em>",
+        "tagline": "We're here to help.",
+        "text": "<p>Questions about your order, your subscription, or how to use your Somna? Send us a message — we read every one.</p>",
+        "image": "shopify://shop_images/contact-banner.jpg",
+        "image_position": "object-position: 50% 60%",
+        "image_side": "left",
+        "drip_edge": true,
+        "background_color": "#afbdf8",
+        "panel_color": "#0b0f1d",
+        "accent_color": "#afbdf8",
+        "padding_top": 24,
+        "padding_bottom": 48
+      }
+    },
+    "wave_hero_help": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#afbdf8",
+        "bottom_color": "#f3feee",
+        "shape": "drip-8",
+        "overlap": false,
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "quick_help": {
+      "type": "somna-cards",
+      "blocks": {
+        "track": {
+          "type": "card",
+          "settings": {
+            "icon": "truck",
+            "title": "Track your order",
+            "text": "See where your order is and when it's due to arrive.",
+            "link": "/pages/track-order",
+            "link_label": "Track order"
+          }
+        },
+        "subscription": {
+          "type": "card",
+          "settings": {
+            "icon": "refresh",
+            "title": "Manage your subscription",
+            "text": "Skip, pause, swap or cancel your Subscribe & Save deliveries.",
+            "link": "/pages/manage-subscriptions",
+            "link_label": "Manage subscription"
+          }
+        },
+        "faq": {
+          "type": "card",
+          "settings": {
+            "icon": "question",
+            "title": "Read the FAQs",
+            "text": "Quick answers on products, orders, shipping and returns.",
+            "link": "/pages/support",
+            "link_label": "Visit support hub"
+          }
+        }
+      },
+      "block_order": [
+        "track",
+        "subscription",
+        "faq"
+      ],
+      "settings": {
+        "layout": "cards",
+        "eyebrow": "Quick answers",
+        "heading": "Get to what you need <em>faster</em>",
+        "text": "<p>Check the links below before sending a message.</p>",
+        "background_color": "#f3feee",
+        "text_color": "#000000",
+        "card_color": "#0b0f1d",
+        "card_text_color": "#f3feee",
+        "accent_color": "#afbdf8",
+        "padding_top": 16,
+        "padding_bottom": 56
       }
     },
     "form": {
-      "type": "section",
+      "type": "somna-contact",
+      "settings": {
+        "anchor": "contact-form",
+        "eyebrow": "Contact form",
+        "heading": "Send us a <em>message</em>",
+        "text": "<p>Tell us what you need and we'll reply by email. If it's about an order, add your order number so we can help faster.</p>",
+        "direct_label": "Or email us directly",
+        "email": "hello@somnasleep.com",
+        "response_time": "Typically within 1 business day.",
+        "form_heading": "How can we help?",
+        "drip_edge": true,
+        "background_color": "#f3feee",
+        "panel_color": "#0b0f1d",
+        "card_color": "#afbdf8",
+        "accent_color": "#afbdf8",
+        "padding_top": 16,
+        "padding_bottom": 72
+      }
+    },
+    "wave_form_trust": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#f3feee",
+        "bottom_color": "#afbdf8",
+        "shape": "soft-2",
+        "overlap": false,
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "trust": {
+      "type": "somna-cards",
       "blocks": {
-        "contact_form_UwiCkQ": {
-          "type": "contact-form",
+        "shipping": {
+          "type": "card",
           "settings": {
-            "width": "custom",
-            "custom_width": 50,
-            "width_mobile": "custom",
-            "custom_width_mobile": 100,
-            "input_style": "default",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {
-            "submit-button": {
-              "type": "contact-form-submit-button",
-              "static": true,
-              "settings": {
-                "label": "Submit",
-                "style_class": "button",
-                "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": []
+            "icon": "box",
+            "title": "Free shipping",
+            "text": "On every order, no minimum."
+          }
+        },
+        "guarantee": {
+          "type": "card",
+          "settings": {
+            "icon": "shield",
+            "title": "30-night guarantee",
+            "text": "Counted from the day it's delivered."
+          }
+        },
+        "delivery": {
+          "type": "card",
+          "settings": {
+            "icon": "truck",
+            "title": "Delivered in 7–9 business days",
+            "text": "From the day your order ships."
+          }
+        },
+        "payment": {
+          "type": "card",
+          "settings": {
+            "icon": "lock",
+            "title": "Secure payment",
+            "text": ""
+          }
         }
       },
       "block_order": [
-        "contact_form_UwiCkQ"
+        "shipping",
+        "guarantee",
+        "delivery",
+        "payment"
       ],
-      "name": "t:names.contact_form",
       "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 32,
+        "layout": "badges",
+        "eyebrow": "",
+        "heading": "",
+        "text": "",
+        "background_color": "#afbdf8",
+        "text_color": "#000000",
+        "card_color": "#0b0f1d",
+        "card_text_color": "#f3feee",
+        "accent_color": "#afbdf8",
+        "padding_top": 8,
+        "padding_bottom": 40
+      }
+    },
+    "wave_trust_newsletter": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#afbdf8",
+        "bottom_color": "#000000",
+        "shape": "drip-11",
+        "overlap": false,
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "newsletter": {
+      "type": "section",
+      "settings": {
+        "content_direction": "row",
+        "gap": 40,
         "section_width": "page-width",
-        "section_height_custom": 50,
-        "background_media": "none",
-        "background_color": "{{ settings.color_palette.background }}",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_radius": 0,
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "padding-block-start": 32,
-        "padding-block-end": 84
+        "background_color": "#000000",
+        "padding-block-start": 24,
+        "padding-block-end": 32,
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "center"
+      },
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "settings": {
+            "text": "<h2>Get <em>10% off</em><br>your first order</h2>",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-accent--family)",
+            "font_size": "2.5rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "uppercase",
+            "wrap": "balance",
+            "text_color": "#ffffff",
+            "accent_color": "#98a3de"
+          },
+          "blocks": {}
+        },
+        "signup": {
+          "type": "somna-klaviyo-signup",
+          "settings": {
+            "placeholder": "Your email",
+            "button_label": "Subscribe →",
+            "width": 60,
+            "row_max_width": 1160
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "heading",
+        "signup"
+      ]
+    },
+    "wave_newsletter_footer": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#000000",
+        "bottom_color": "#f3feee",
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48,
+        "shape": "drip-11"
       }
     }
   },
   "order": [
-    "main",
-    "form"
+    "hero",
+    "wave_hero_help",
+    "quick_help",
+    "form",
+    "wave_form_trust",
+    "trust",
+    "wave_trust_newsletter",
+    "newsletter",
+    "wave_newsletter_footer"
   ]
 }
