@@ -744,6 +744,10 @@
     "reviews": {
       "type": "somna-reviews",
       "blocks": {
+        "judgeme_widget": {
+          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {}
+        },
         "photo_1": {
           "type": "photo",
           "settings": {
@@ -788,6 +792,7 @@
         }
       },
       "block_order": [
+        "judgeme_widget",
         "photo_1",
         "photo_2",
         "photo_3",
