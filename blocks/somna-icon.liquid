@@ -17,7 +17,16 @@
   style="--somna-icon-size: {{ size }}px; --somna-icon-box: {{ box }}px; --somna-icon-color: {{ s.color | default: 'currentColor' }}; --somna-icon-backdrop: {{ s.backdrop_color | default: 'transparent' }};{% if s.backdrop == 'image' and s.backdrop_image != blank %} --somna-icon-backdrop-mask: url('{{ s.backdrop_image | image_url: width: 300 }}');{% endif %} --somna-icon-offset: {{ s.icon_offset }}px;"
   {{ block.shopify_attributes }}
 >
-  {%- if s.image != blank -%}
+  {%- if s.drawing != blank and s.drawing != 'none' -%}
+    {%- if s.backdrop == 'image' -%}<span class="somna-icon__patch" aria-hidden="true"></span>{%- endif -%}
+    {%- liquid
+      assign draw_class = 'somna-icon__glyph somna-icon__drawing'
+      if s.draw_animation
+        assign draw_class = draw_class | append: ' somna-icon__drawing--pen'
+      endif
+    -%}
+    {%- render 'somna-gift-drawing', name: s.drawing, class: draw_class -%}
+  {%- elsif s.image != blank -%}
     {%- if s.backdrop == 'image' -%}<span class="somna-icon__patch" aria-hidden="true"></span>{%- endif -%}
     <span
       class="somna-icon__glyph somna-icon__glyph--mask"
@@ -88,12 +97,120 @@
     background: var(--somna-icon-backdrop);
   }
 
+  .somna-icon__drawing {
+    display: block;
+    overflow: visible;
+  }
+
   .somna-icon__glyph--mask {
     background: currentColor;
     -webkit-mask: var(--somna-icon-mask) center / contain no-repeat;
     mask: var(--somna-icon-mask) center / contain no-repeat;
   }
 {% endstylesheet %}
+
+{% javascript %}
+  /* Pen draw: line drawings in one section draw one after another (0.8s each) with a small pen tip,
+     when the section scrolls into view. Desktop/tablet only; reduced motion shows them complete. */
+  (() => {
+    const SLOT = 800;
+    const MIN = 25;
+    const groups = new WeakMap();
+
+    function arm(svg) {
+      svg.querySelectorAll('path').forEach((p) => {
+        const L = p.getTotalLength();
+        p._len = L;
+        p.style.strokeDasharray = `${L} ${L + 20}`;
+        p.style.strokeDashoffset = L;
+        p.style.opacity = 0;
+      });
+    }
+
+    function plan(svgs) {
+      const items = [];
+      svgs.forEach((svg, i) => {
+        const paths = [...svg.querySelectorAll('path')];
+        const total = paths.reduce((sum, p) => sum + Math.max(p._len, MIN), 0);
+        let t = i * SLOT;
+        paths.forEach((p) => {
+          const d = (SLOT * Math.max(p._len, MIN)) / total;
+          items.push({ p, nib: svg.querySelector('.somna-icon__nib'), t, d });
+          t += d;
+        });
+      });
+      return items;
+    }
+
+    function play(g) {
+      cancelAnimationFrame(g.raf);
+      g.svgs.forEach(arm);
+      const items = plan(g.svgs);
+      const end = g.svgs.length * SLOT;
+      const t0 = performance.now();
+      const tick = (now) => {
+        const e = now - t0;
+        items.forEach((it) => {
+          if (e < it.t || it.done) return;
+          const k = Math.min(1, (e - it.t) / it.d);
+          it.p.style.opacity = 1;
+          it.p.style.strokeDashoffset = it.p._len * (1 - k);
+          if (it.nib) {
+            const pt = it.p.getPointAtLength(it.p._len * k);
+            it.nib.setAttribute('cx', pt.x);
+            it.nib.setAttribute('cy', pt.y);
+            it.nib.setAttribute('opacity', 1);
+          }
+          if (k === 1) it.done = true;
+        });
+        g.svgs.forEach((svg, i) => {
+          if (e >= (i + 1) * SLOT) svg.querySelector('.somna-icon__nib')?.setAttribute('opacity', 0);
+        });
+        if (e < end) g.raf = requestAnimationFrame(tick);
+        else items.forEach((it) => (it.p.style.strokeDasharray = 'none'));
+      };
+      g.raf = requestAnimationFrame(tick);
+    }
+
+    function reset(g) {
+      cancelAnimationFrame(g.raf);
+      g.svgs.forEach((svg) => {
+        arm(svg);
+        svg.querySelector('.somna-icon__nib')?.setAttribute('opacity', 0);
+      });
+      g.played = false;
+    }
+
+    function init() {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches || !matchMedia('(min-width: 750px)').matches) return;
+      const sections = new Set();
+      document.querySelectorAll('.somna-icon__drawing--pen:not([data-armed])').forEach((svg) => {
+        svg.setAttribute('data-armed', '');
+        sections.add(svg.closest('.shopify-section') || svg.parentElement);
+      });
+      sections.forEach((sec) => {
+        const g = { svgs: [...sec.querySelectorAll('.somna-icon__drawing--pen')], played: false, raf: 0 };
+        groups.set(sec, g);
+        g.svgs.forEach(arm);
+        new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting && !g.played) {
+              g.played = true;
+              play(g);
+            } else if (!entry.isIntersecting && entry.boundingClientRect.top > 0) {
+              reset(g);
+            }
+          },
+          { rootMargin: '0px 0px -25% 0px' }
+        ).observe(sec);
+      });
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+    document.addEventListener('shopify:section:load', init);
+  })();
+{% endjavascript %}
 
 {% schema %}
 {
@@ -115,6 +232,27 @@
         { "value": "play", "label": "Play" }
       ],
       "default": "star"
+    },
+    {
+      "type": "select",
+      "id": "drawing",
+      "label": "Line drawing",
+      "info": "Replaces the icon with a line drawing that takes the icon colour.",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "sleep_guide_1", "label": "Sleep guide 1" },
+        { "value": "sleep_guide_2", "label": "Sleep guide 2" },
+        { "value": "sleep_tracker", "label": "Sleep tracker" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "checkbox",
+      "id": "draw_animation",
+      "label": "Draw on scroll",
+      "info": "Drawings in the same section draw one after another when it comes into view.",
+      "default": true,
+      "visible_if": "{{ block.settings.drawing != 'none' }}"
     },
     {
       "type": "image_picker",
