@@ -518,7 +518,9 @@
                       "settings": {
                         "icon": "none",
                         "size": 60,
-                        "color": "#03163b",
+                        "drawing": "sleep_guide_1",
+                        "draw_animation": true,
+                        "color": "#0b2347",
                         "backdrop": "image",
                         "icon_offset": 16,
                         "image": "shopify://shop_images/somna-v2-mask-sleep-guide-1.png",
@@ -576,7 +578,9 @@
                       "settings": {
                         "icon": "none",
                         "size": 60,
-                        "color": "#03163b",
+                        "drawing": "sleep_guide_2",
+                        "draw_animation": true,
+                        "color": "#0b2347",
                         "backdrop": "image",
                         "icon_offset": 16,
                         "image": "shopify://shop_images/somna-v2-mask-sleep-guide-2.png",
@@ -634,7 +638,9 @@
                       "settings": {
                         "icon": "none",
                         "size": 60,
-                        "color": "#03163b",
+                        "drawing": "sleep_tracker",
+                        "draw_animation": true,
+                        "color": "#0b2347",
                         "backdrop": "image",
                         "icon_offset": 16,
                         "image": "shopify://shop_images/somna-v2-mask-tracker.png",
