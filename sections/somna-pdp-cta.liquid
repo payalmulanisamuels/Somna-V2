@@ -41,7 +41,7 @@
 {%- capture price_money -%}{{ price | money }}{%- endcapture -%}
 {%- capture night_money -%}{{ night | money }}{%- endcapture -%}
 
-<somna-pdp-cta class="somna-pdp-cta" data-id="{{ v.id }}" data-plan="{{ plan_id }}" style="--somna-cta-bg: {{ s.background_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;">
+<somna-pdp-cta class="somna-pdp-cta" data-flip="{{ s.product_flip }}" data-id="{{ v.id }}" data-plan="{{ plan_id }}" style="--somna-cta-bg: {{ s.background_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;">
   <div class="somna-pdp-cta__inner somna-container">
     <div class="somna-pdp-cta__copy">
       <h2 class="somna-pdp-cta__heading">
@@ -60,8 +60,8 @@
       {%- if s.note != blank -%}<p class="somna-pdp-cta__note">{{ s.note }}</p>{%- endif -%}
     </div>
     <div class="somna-pdp-cta__media">
-      {%- if image -%}{{ image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300, 450, 600', sizes: '(min-width: 750px) 290px, 60vw' }}{%- endif -%}
-      {%- if s.sticker != blank and night > 0 -%}<p class="somna-pdp-cta__sticker">{{ s.sticker | replace: '[night]', night_money }}</p>{%- endif -%}
+      {%- if image -%}<div class="somna-pdp-cta__product">{{ image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300, 450, 600', sizes: '(min-width: 750px) 290px, 60vw' }}</div>{%- endif -%}
+      {%- if s.sticker != blank and night > 0 -%}<p class="somna-pdp-cta__sticker{% if s.sticker_motion != 'none' %} somna-shake--{{ s.sticker_motion }}{% endif %}">{{ s.sticker | replace: '[night]', night_money }}</p>{%- endif -%}
     </div>
   </div>
 </somna-pdp-cta>
@@ -77,9 +77,42 @@
       connectedCallback() {
         this.form = this.querySelector('form');
         this.form?.addEventListener('submit', this.onSubmit);
+        this.setupFlip();
       }
       disconnectedCallback() {
         this.form?.removeEventListener('submit', this.onSubmit);
+        this.observer?.disconnect();
+        this.flipAnim?.cancel();
+      }
+      /* Product flips once in place (small lift + one side turn) when the section comes into view, then floats.
+         Desktop/tablet only; reduced motion leaves it still. Resets when scrolled back below. */
+      setupFlip() {
+        this.product = this.querySelector('.somna-pdp-cta__product');
+        if (!this.product || this.dataset.flip !== 'true') return;
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches || !matchMedia('(min-width: 750px)').matches) return;
+        const hide = () => {
+          this.flipAnim?.cancel();
+          this.product.classList.remove('is-floating');
+          this.flipAnim = this.product.animate([{ opacity: 0 }], { fill: 'both' });
+        };
+        hide();
+        this.observer = new IntersectionObserver(([entry]) => {
+          if (entry.isIntersecting && !this.flipped) {
+            this.flipped = true;
+            this.flipAnim?.cancel();
+            this.flipAnim = this.product.animate([
+              { transform: 'translate3d(0, 20px, 0) rotateY(0deg) scale(0.92)', opacity: 0, offset: 0 },
+              { opacity: 1, offset: 0.2 },
+              { transform: 'translate3d(0, -36px, 0) rotateY(180deg) scale(1.03)', offset: 0.55 },
+              { transform: 'translate3d(0, 0, 0) rotateY(360deg) scale(1)', opacity: 1, offset: 1 },
+            ], { duration: 1200, easing: 'cubic-bezier(0.45, 0, 0.55, 1)', fill: 'both' });
+            this.flipAnim.finished.then(() => this.flipped && this.product.classList.add('is-floating')).catch(() => {});
+          } else if (!entry.isIntersecting && entry.boundingClientRect.top > 0) {
+            this.flipped = false;
+            hide();
+          }
+        }, { rootMargin: '0px 0px -30% 0px' });
+        this.observer.observe(this);
       }
       onSubmit = async (e) => {
         e.preventDefault();
@@ -189,6 +222,29 @@
     width: min(100%, 290px);
   }
 
+  .somna-pdp-cta__media {
+    perspective: 1100px;
+  }
+
+  .somna-pdp-cta__product {
+    transform-style: preserve-3d;
+  }
+
+  .somna-pdp-cta__product.is-floating {
+    animation: somnaCtaFloat 4s ease-in-out infinite;
+  }
+
+  @keyframes somnaCtaFloat {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -10px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-pdp-cta__product.is-floating {
+      animation: none;
+    }
+  }
+
   .somna-pdp-cta__media img {
     display: block;
     width: 100%;
@@ -272,6 +328,8 @@
     { "type": "image_picker", "id": "image", "label": "Image", "info": "Defaults to the product's \"How it works\" image." },
     { "type": "text", "id": "sticker", "label": "Sticker", "info": "[night] is the price per night.", "default": "[night] a night" },
     { "type": "number", "id": "nights_per_bag", "label": "Nights per bag", "default": 30 },
+    { "type": "checkbox", "id": "product_flip", "label": "Flip the product when the section comes into view", "default": true },
+    { "type": "select", "id": "sticker_motion", "label": "Sticker shake", "options": [{ "value": "none", "label": "None" }, { "value": "wiggle", "label": "Wiggle" }, { "value": "swing", "label": "Swing" }, { "value": "pop", "label": "Pop" }], "default": "pop" },
     { "type": "color", "id": "background_color", "label": "Background", "default": "#afbdf8" },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 40 },
     { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 40 },
