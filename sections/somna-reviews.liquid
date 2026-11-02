@@ -8,6 +8,11 @@
 {%- liquid
   assign s = section.settings
   assign photo_blocks = section.blocks | where: 'type', 'photo'
+  assign app_blocks = section.blocks | where: 'type', '@app'
+  assign use_app = false
+  if app_blocks.size > 0
+    assign use_app = true
+  endif
   assign joined = false
   if s.show_edges and s.show_featured and s.show_summary
     assign joined = true
@@ -151,6 +156,11 @@
       </div>
     {%- endif -%}
 
+    {%- if use_app -%}
+      <div class="somna-reviews__app">
+        {%- for block in app_blocks -%}{% render block %}{%- endfor -%}
+      </div>
+    {%- else -%}
     <p class="somna-reviews__note" data-note hidden></p>
     <ul class="somna-reviews__list" role="list" data-list aria-live="polite" aria-busy="true">
       {%- if s.sheet_url != blank -%}
@@ -162,6 +172,7 @@
     {%- if s.sheet_url == blank and request.design_mode -%}
       <p class="somna-reviews__status">Add the Google Sheet link in “Customer reviews (Google Sheet)” to show reviews here.</p>
     {%- endif -%}
+    {%- endif -%}
   </div>
 </somna-reviews>
 
@@ -169,7 +180,7 @@
   {%- render 'somna-wave', top: s.background_color, bottom: s.bottom_wave_color, shape: s.bottom_wave_shape -%}
 {%- endif -%}
 
-{%- if s.sheet_url != blank -%}
+{%- if s.sheet_url != blank and use_app == false -%}
   <template data-somna-review-star>{{ star_svg }}</template>
   <script src="{{ 'somna-reviews.js' | asset_url }}" defer></script>
 {%- endif -%}
@@ -824,6 +835,7 @@
   "tag": "section",
   "class": "somna-reviews-section",
   "blocks": [
+    { "type": "@app" },
     {
       "type": "photo",
       "name": "Summary photo",
