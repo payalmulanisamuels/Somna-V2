@@ -1,0 +1,43 @@
+{%- doc -%}
+  Somna V2 — line icons for the product page (24×24, drawn with currentColor).
+  The names match the "Icon" choices of the PDP feature metaobject (case and spaces don't matter),
+  so merchants pick an icon in admin and the theme draws it.
+
+  @param {string} name - icon name, e.g. 'Drug-free', 'Gentle on skin', 'Shipping'
+  @param {string} [class] - extra class on the svg
+{%- enddoc -%}
+{%- assign key = name | handleize -%}
+{%- if key != blank -%}
+<svg class="somna-pdp-icon {{ class }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  {%- case key -%}
+    {%- when 'drug-free' -%}
+      <path d="M5 19c8 0 14-5 14-14-9 0-14 5-14 14z"/><path d="M5 19l7-7M9.5 14.5h3.5M12 12V8.5"/>
+    {%- when 'gentle-on-skin' or 'moon' -%}
+      <path d="M19 14.5A7.5 7.5 0 1 1 9.5 5a6 6 0 0 0 9.5 9.5z"/>
+    {%- when 'gentle-adhesive' -%}
+      <path d="M20 4c-7 0-12 4-13.5 11L5 20"/><path d="M20 4c0 6-3.5 10.5-10 11.5M8 11.5h5.5M10.5 8h5"/>
+    {%- when 'sits-outside' -%}
+      <circle cx="12" cy="12" r="8.5"/><path d="M12 16.5s-4-2.4-4-5.1A2.2 2.2 0 0 1 12 10a2.2 2.2 0 0 1 4 1.4c0 2.7-4 5.1-4 5.1z"/>
+    {%- when 'made-for-lips' -%}
+      <path d="M2.5 11.5C5 8 7.5 6.5 9.5 7.5L12 8.5l2.5-1C16.5 6.5 19 8 21.5 11.5 18.5 16 15.5 17.5 12 17.5s-6.5-1.5-9.5-6z"/><path d="M2.5 11.5h19"/>
+    {%- when 'pairs-with' -%}
+      <rect x="3" y="7" width="9" height="10" rx="3"/><rect x="12" y="7" width="9" height="10" rx="3"/><path d="M7.5 10.5v3M6 12h3M15 12h3"/>
+    {%- when 'easy-peel' -%}
+      <path d="M4 20V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v7l-7 7H6a2 2 0 0 1-2-2"/><path d="M13 20v-5a2 2 0 0 1 2-2h5"/>
+    {%- when 'layer' -%}
+      <path d="M12 4l9 4.5-9 4.5-9-4.5z"/><path d="M3 12.5l9 4.5 9-4.5M3 16.5l9 4.5 9-4.5"/>
+    {%- when 'shipping' -%}
+      <path d="M2.5 6.5h11v9h-11zM13.5 9.5h4l3 3.5v2.5h-7z"/><circle cx="6.5" cy="17" r="1.8"/><circle cx="17" cy="17" r="1.8"/>
+    {%- when 'delivery' -%}
+      <rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4M9 15l2 2 4-4"/>
+    {%- when 'cancel-anytime' -%}
+      <circle cx="12" cy="7" r="4"/><path d="M10.5 5.5l3 3M13.5 5.5l-3 3"/><path d="M4 13.5l8-2.5 8 2.5v6.5l-8 2.5-8-2.5zM12 11v11.5M4 13.5l8 2.5 8-2.5"/>
+    {%- when 'check' -%}
+      <path d="M5 12.5l4.5 4.5L19 7.5"/>
+    {%- when 'cross' -%}
+      <path d="M6 6l12 12M18 6L6 18"/>
+    {%- when 'play' -%}
+      <path d="M8 5.5v13l11-6.5z" fill="currentColor"/>
+  {%- endcase -%}
+</svg>
+{%- endif -%}

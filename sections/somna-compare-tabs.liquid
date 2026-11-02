@@ -11,11 +11,22 @@
   assign tab_blocks = section.blocks | where: 'type', 'tab'
   assign row_blocks = section.blocks | where: 'type', 'row'
   assign uid = section.id | replace: '_', '-'
+  assign only_tab = 0
+  if s.match_product and closest.product != blank
+    assign product_name = closest.product.title | downcase | strip
+    for tab in tab_blocks
+      assign tab_name = tab.settings.name | downcase | strip
+      if tab_name == product_name
+        assign only_tab = forloop.index
+      endif
+    endfor
+  endif
 -%}
 
 {%- capture tabs_markup -%}
   {%- assign active_set = false -%}
   {%- for tab in tab_blocks -%}
+    {%- if only_tab > 0 and forloop.index != only_tab -%}{%- continue -%}{%- endif -%}
     {%- assign tab_index = forloop.index | append: '' -%}
     {%- assign row_count = 0 -%}
     {%- for row in row_blocks -%}{%- if row.settings.tab == tab_index -%}{%- assign row_count = row_count | plus: 1 -%}{%- endif -%}{%- endfor -%}
@@ -43,13 +54,15 @@
     <div class="somna-compare__intro">
       {%- if s.eyebrow != blank -%}<p class="somna-compare__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
       {%- if s.heading != blank -%}<h2 class="somna-compare__heading">{{ s.heading }}</h2>{%- endif -%}
+      {%- if s.text != blank -%}<p class="somna-compare__text">{{ s.text }}</p>{%- endif -%}
     </div>
 
     <div class="somna-compare__body">
-      <div class="somna-compare__tabs" role="tablist" aria-label="{{ s.tabs_label | escape }}">{{ tabs_markup }}</div>
+      <div class="somna-compare__tabs"{% if only_tab > 0 %} hidden{% endif %} role="tablist" aria-label="{{ s.tabs_label | escape }}">{{ tabs_markup }}</div>
 
       {%- assign first_panel = true -%}
       {%- for tab in tab_blocks -%}
+        {%- if only_tab > 0 and forloop.index != only_tab -%}{%- continue -%}{%- endif -%}
         {%- assign tab_index = forloop.index | append: '' -%}
         {%- assign row_count = 0 -%}
         {%- for row in row_blocks -%}{%- if row.settings.tab == tab_index -%}{%- assign row_count = row_count | plus: 1 -%}{%- endif -%}{%- endfor -%}
@@ -174,6 +187,23 @@
     justify-items: center;
     gap: 18px;
     min-width: 0;
+  }
+
+  .somna-compare__heading em {
+    font-style: normal;
+    color: var(--somna-compare-accent, #afbdf8);
+  }
+
+  .somna-compare__text {
+    max-width: 260px;
+    margin: 12px 0 0;
+    font-size: 1.125rem;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+
+  .somna-compare__tabs[hidden] {
+    display: none;
   }
 
   .somna-compare__tabs {
@@ -379,7 +409,9 @@
   "settings": [
     { "type": "checkbox", "id": "drip_edges", "label": "Drippy card edges", "info": "Drip shapes on the card edges, as in the Figma design.", "default": true },
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Made for your nights" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Built for Bedtime. Not the First-Aid Kit." },
+    { "type": "text", "id": "heading", "label": "Heading", "info": "Wrap words in <em></em> for the accent colour.", "default": "Built for Bedtime. Not the First-Aid Kit." },
+    { "type": "textarea", "id": "text", "label": "Text under the heading" },
+    { "type": "checkbox", "id": "match_product", "label": "On product pages, show only the tab named like the product", "info": "E.g. the \"Nasal Strips\" tab on the Nasal Strips page.", "default": false },
     { "type": "text", "id": "tabs_label", "label": "Tabs label (screen readers)", "default": "Compare products" },
     { "type": "text", "id": "caption", "label": "Table caption (screen readers)", "default": "how Somna compares" },
     { "type": "checkbox", "id": "show_column_names", "label": "Show comparison column names", "default": true },
