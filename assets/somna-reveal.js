@@ -177,7 +177,8 @@
     // reveal when the element's top passes 85% of the screen
     enterIO = new IntersectionObserver((entries) => {
       for (const e of entries) if (e.isIntersecting && e.target.classList.contains('somna-r')) queue.push(e.target);
-      if (queue.length && !raf) raf = requestAnimationFrame(flush);
+      // one batch per observer callback (entries that arrive together are staggered together)
+      if (queue.length && !raf) { raf = 1; queueMicrotask(flush); }
     }, { rootMargin: '0px 0px -15% 0px' });
     // reset only once the element is completely below the screen
     leaveIO = new IntersectionObserver((entries) => {
