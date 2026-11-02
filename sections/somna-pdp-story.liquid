@@ -53,14 +53,27 @@
     {%- case s.layout -%}
       {%- when 'problem' -%}
         <div class="somna-pdp-story__media">
-          {%- if c.label != blank -%}<p class="somna-pdp-story__tag">{{ c.label.value }}</p>{%- endif -%}
           {%- assign image_after = c.image_after.value -%}
+          {%- if c.label != blank -%}
+            <p class="somna-pdp-story__tag{% if image and image_after %} has-after{% endif %}">
+              <span class="somna-pdp-story__tag-before">{{ c.label.value }}</span>
+              {%- if image and image_after and c.label_after != blank -%}<span class="somna-pdp-story__tag-after" aria-hidden="true">{{ c.label_after.value }}</span>{%- endif -%}
+            </p>
+          {%- endif -%}
           <div class="somna-pdp-story__frame{% if image and image_after %} has-after{% endif %}">
             {%- if image -%}{{ image | image_url: width: 1500 | image_tag: loading: 'lazy', widths: '600, 900, 1200, 1500', sizes: '(min-width: 990px) 753px, 100vw', class: 'somna-pdp-story__before' }}{%- endif -%}
             {%- if image and image_after -%}{{ image_after | image_url: width: 1500 | image_tag: loading: 'lazy', widths: '600, 900, 1200, 1500', sizes: '(min-width: 990px) 753px, 100vw', class: 'somna-pdp-story__after' }}{%- endif -%}
             {%- if features != blank -%}
               <ul class="somna-pdp-story__bullets" role="list">
                 {%- for f in features -%}
+                  <li>{% render 'somna-pdp-icon', name: f.icon.value %}<span>{{ f.title.value }}</span></li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+            {%- assign features_after = c.features_after.value -%}
+            {%- if image and image_after and features_after != blank -%}
+              <ul class="somna-pdp-story__bullets somna-pdp-story__bullets--after" role="list">
+                {%- for f in features_after -%}
                   <li>{% render 'somna-pdp-icon', name: f.icon.value %}<span>{{ f.title.value }}</span></li>
                 {%- endfor -%}
               </ul>
@@ -250,17 +263,57 @@
     animation: somnaStoryAfter 7s ease-in-out infinite;
   }
 
-  .somna-pdp-story__frame.has-after .somna-pdp-story__bullets {
-    animation: somnaStoryBefore 7s ease-in-out infinite;
-    transform-origin: 0 100%;
+  .somna-pdp-story__frame.has-after .somna-pdp-story__bullets,
+  .somna-pdp-story__tag.has-after .somna-pdp-story__tag-before {
+    animation: somnaStoryFade 7s ease-in-out infinite;
+  }
+
+  .somna-pdp-story__frame.has-after .somna-pdp-story__bullets--after,
+  .somna-pdp-story__tag-after {
+    animation: somnaStoryFadeIn 7s ease-in-out infinite;
+  }
+
+  @keyframes somnaStoryFade {
+    0%, 42% { opacity: 1; }
+    50%, 92% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes somnaStoryFadeIn {
+    0%, 42% { opacity: 0; }
+    50%, 92% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  .somna-pdp-story__tag.has-after {
+    display: grid;
+    justify-items: end;
+  }
+
+  .somna-pdp-story__tag.has-after > span {
+    grid-area: 1 / 1;
+  }
+
+  .somna-pdp-story__tag-after {
+    text-transform: none;
+  }
+
+  .somna-pdp-story__bullets--after svg {
+    padding: 3px;
+    border-radius: 3px;
+    background: #4caf3e;
+    color: #fff;
+    stroke-width: 3.6;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .somna-pdp-story__frame.has-after :is(.somna-pdp-story__before, .somna-pdp-story__bullets) {
+    .somna-pdp-story__frame.has-after :is(.somna-pdp-story__before, .somna-pdp-story__bullets),
+    .somna-pdp-story__tag.has-after .somna-pdp-story__tag-before {
       animation: none;
     }
 
-    .somna-pdp-story__frame.has-after .somna-pdp-story__after {
+    .somna-pdp-story__frame.has-after :is(.somna-pdp-story__after, .somna-pdp-story__bullets--after),
+    .somna-pdp-story__tag-after {
       display: none;
     }
   }
