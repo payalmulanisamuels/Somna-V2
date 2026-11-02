@@ -608,6 +608,14 @@
   }
 
   .somna-reviews__app .jdgm-widget {
+    --jm-review-widget-star-and-histogram-color: var(--somna-rv-star, #f5c242) !important;
+    --jm-review-widget-button-color: var(--somna-rv-chip, #afbdf8) !important;
+    --jm-review-widget-button-text-color: #000 !important;
+    --jm-primary-button-bg: var(--somna-rv-chip, #afbdf8) !important;
+    --jm-secondary-button-bg: var(--somna-rv-card, #f3feee) !important;
+    --jm-review-widget-text-color: var(--somna-rv-card-fg, #0b1a45) !important;
+    --jm-review-widget-lighter-text-color: rgb(11 26 69 / 0.6) !important;
+    --jm-btn-border-radius: 999px !important;
     margin: 0;
     padding: 0;
     background: none;
@@ -616,19 +624,19 @@
   }
 
   /* header: our summary above already shows the real rating, so keep only the buttons, centred like the Figma chips */
-  .somna-reviews__app :is(.jm-review-widget-minimal-header__title, .jm-average-rating-display) {
+  .somna-reviews__app .jdgm-widget :is(.jm-review-widget-minimal-header__title, .jm-average-rating-display) {
     display: none;
   }
 
-  .somna-reviews__app .jm-review-widget__header,
-  .somna-reviews__app .jm-review-widget-minimal-header,
-  .somna-reviews__app .jm-review-widget-minimal-header__button-and-filters {
+  .somna-reviews__app .jdgm-widget .jm-review-widget__header,
+  .somna-reviews__app .jdgm-widget .jm-review-widget-minimal-header,
+  .somna-reviews__app .jdgm-widget .jm-review-widget-minimal-header__button-and-filters {
     justify-content: center;
     align-items: center;
     text-align: center;
   }
 
-  .somna-reviews__app .jm-button {
+  .somna-reviews__app .jdgm-widget .jm-button {
     min-height: 32px;
     padding: 6px 16px;
     border: 0;
@@ -642,28 +650,38 @@
     box-shadow: none;
   }
 
-  .somna-reviews__app .jm-button--primary {
+  .somna-reviews__app .jdgm-widget .jm-button--primary {
     background: var(--somna-rv-chip, #afbdf8);
     color: #000;
   }
 
-  .somna-reviews__app .jm-button :is(svg, path) {
+  .somna-reviews__app .jdgm-widget .jm-button :is(svg, path) {
     color: currentColor;
     fill: currentColor;
   }
 
-  .somna-reviews__app .jm-button:focus-visible {
+  .somna-reviews__app .jdgm-widget .jm-button:focus-visible {
     outline: 2px solid var(--somna-rv-chip, #afbdf8);
     outline-offset: 3px;
   }
 
+  .somna-reviews__app .jdgm-widget .jm-review-widget__header {
+    margin-bottom: 8px;
+  }
+
+  .somna-reviews__app .jdgm-widget .jm-review-widget-minimal-header__button-and-filters {
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+  }
+
   /* review cards */
-  .somna-reviews__app .jm-review-widget__body > .jm-stack,
-  .somna-reviews__app .jm-review-widget__body {
+  .somna-reviews__app .jdgm-widget .jm-review-widget__body > .jm-stack,
+  .somna-reviews__app .jdgm-widget .jm-review-widget__body {
     gap: 12px;
   }
 
-  .somna-reviews__app .jm-review-item {
+  .somna-reviews__app .jdgm-widget .jm-review-item {
     padding: 18px 28px 18px 26px;
     border: 0;
     border-radius: 6px;
@@ -671,11 +689,11 @@
     color: var(--somna-rv-card-fg, #0b1a45);
   }
 
-  .somna-reviews__app .jm-review-item + .jm-review-item {
-    margin-top: 0;
+  .somna-reviews__app .jdgm-widget .jm-review-item + .jm-review-item {
+    margin-top: 12px;
   }
 
-  .somna-reviews__app .jm-review-item__content {
+  .somna-reviews__app .jdgm-widget .jm-review-item__content {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
@@ -686,15 +704,15 @@
     gap: 4px 18px;
   }
 
-  .somna-reviews__app :is(.jm-reviewer-info, .jm-review-content) {
+  .somna-reviews__app .jdgm-widget :is(.jm-reviewer-info, .jm-review-content) {
     display: contents;
   }
 
-  .somna-reviews__app .jm-review-item__content > .jm-cluster:first-child {
+  .somna-reviews__app .jdgm-widget .jm-review-item__content > .jm-cluster:first-child {
     grid-area: stars;
   }
 
-  .somna-reviews__app .jm-reviewer-avatar {
+  .somna-reviews__app .jdgm-widget .jm-reviewer-avatar {
     grid-area: avatar;
     width: 52px;
     height: 52px;
@@ -705,8 +723,8 @@
     box-shadow: 0 0 0 1px rgb(0 0 0 / 0.12);
   }
 
-  .somna-reviews__app .jm-reviewer-avatar__initial,
-  .somna-reviews__app .jm-reviewer-avatar__initial .jm-text {
+  .somna-reviews__app .jdgm-widget .jm-reviewer-avatar__initial,
+  .somna-reviews__app .jdgm-widget .jm-reviewer-avatar__initial .jm-text {
     width: 100%;
     height: 100%;
     display: grid;
@@ -718,7 +736,7 @@
     text-transform: uppercase;
   }
 
-  .somna-reviews__app .jm-reviewer-info__details {
+  .somna-reviews__app .jdgm-widget .jm-reviewer-info__details {
     grid-area: name;
     flex-direction: row;
     flex-wrap: wrap;
@@ -728,25 +746,25 @@
     font-size: 0.75rem;
   }
 
-  .somna-reviews__app .jm-reviewer-info__details .jm-text {
+  .somna-reviews__app .jdgm-widget .jm-reviewer-info__details .jm-text {
     font-size: 0.75rem;
     color: inherit;
     opacity: 0.6;
   }
 
-  .somna-reviews__app .jm-reviewer-info__name.jm-text {
+  .somna-reviews__app .jdgm-widget .jm-reviewer-info__name.jm-text {
     font-weight: 700;
     letter-spacing: 0.04em;
     opacity: 1;
   }
 
-  .somna-reviews__app .jm-review-content__title-wrapper {
+  .somna-reviews__app .jdgm-widget .jm-review-content__title-wrapper {
     grid-area: title;
     min-width: 0;
   }
 
-  .somna-reviews__app .jm-review-content__title,
-  .somna-reviews__app .jm-review-content__title .jm-text {
+  .somna-reviews__app .jdgm-widget .jm-review-content__title,
+  .somna-reviews__app .jdgm-widget .jm-review-content__title .jm-text {
     margin: 0;
     font-family: var(--font-accent--family);
     font-weight: var(--font-accent--weight);
@@ -755,17 +773,17 @@
     color: inherit;
   }
 
-  .somna-reviews__app .jm-review-body-wrapper,
-  .somna-reviews__app .jm-review-content > :not(.jm-review-content__title-wrapper) {
+  .somna-reviews__app .jdgm-widget .jm-review-body-wrapper,
+  .somna-reviews__app .jdgm-widget .jm-review-content > :not(.jm-review-content__title-wrapper) {
     grid-column: 2 / -1;
     min-width: 0;
   }
 
-  .somna-reviews__app .jm-review-body-wrapper {
+  .somna-reviews__app .jdgm-widget .jm-review-body-wrapper {
     grid-area: body;
   }
 
-  .somna-reviews__app :is(.jm-review-content__body, .jm-review-content__body .jm-text, .jdgm-review-content__body-content p) {
+  .somna-reviews__app .jdgm-widget :is(.jm-review-content__body, .jm-review-content__body .jm-text, .jdgm-review-content__body-content p) {
     margin: 0;
     font-size: 0.875rem;
     line-height: 1.6;
@@ -773,7 +791,7 @@
     overflow-wrap: anywhere;
   }
 
-  .somna-reviews__app .jm-review-content__expand-button {
+  .somna-reviews__app .jdgm-widget .jm-review-content__expand-button {
     padding: 0;
     border: 0;
     background: none;
@@ -784,20 +802,20 @@
     cursor: pointer;
   }
 
-  .somna-reviews__app .jm-star-rating,
-  .somna-reviews__app .jm-star-rating__font-icon {
+  .somna-reviews__app .jdgm-widget .jm-star-rating,
+  .somna-reviews__app .jdgm-widget .jm-star-rating__font-icon {
     color: var(--somna-rv-star, #f5c242);
     font-size: 18px;
   }
 
   /* pagination: lavender pills under the list, like the Figma "Show more" button */
-  .somna-reviews__app .jm-pagination-controls {
+  .somna-reviews__app .jdgm-widget .jm-pagination-controls {
     justify-content: center;
     gap: 8px;
     margin-top: 8px;
   }
 
-  .somna-reviews__app .jm-pagination-controls__button {
+  .somna-reviews__app .jdgm-widget .jm-pagination-controls__button {
     min-width: 36px;
     min-height: 36px;
     padding: 6px 12px;
@@ -806,12 +824,12 @@
     color: #0b1a45;
   }
 
-  .somna-reviews__app .jm-pagination-controls__button--active {
+  .somna-reviews__app .jdgm-widget .jm-pagination-controls__button--active {
     background: var(--somna-rv-chip, #afbdf8);
     color: #000;
   }
 
-  .somna-reviews__app .jm-pagination-controls__ellipsis {
+  .somna-reviews__app .jdgm-widget .jm-pagination-controls__ellipsis {
     color: inherit;
   }
 
