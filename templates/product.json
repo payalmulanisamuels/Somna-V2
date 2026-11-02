@@ -17,6 +17,7 @@
         "verified_label": "Verified Buyer",
         "videos_heading": "Real Nights, On Camera",
         "rating_format": "[rating]/5 · [count] reviews",
+        "rating_source": "judgeme",
         "brand": "somna.",
         "save_label": "Save [percent]%",
         "percent_suffix": " · [percent]% off",
