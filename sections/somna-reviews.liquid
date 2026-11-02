@@ -675,6 +675,50 @@
     width: 100%;
   }
 
+  /* filter panel (opens under the buttons on the dark background) */
+  .somna-reviews__app .jdgm-widget .jm-filter-panel {
+    --jm-review-widget-text-color: var(--somna-rv-fg, #f3feee) !important;
+    color: var(--somna-rv-fg, #f3feee);
+    justify-content: center;
+    text-align: center;
+  }
+
+  .somna-reviews__app .jdgm-widget .jm-filter-panel .jm-text {
+    color: inherit !important;
+  }
+
+  .somna-reviews__app .jdgm-widget .jm-rating-filter__tag {
+    min-height: 32px;
+    padding: 6px 14px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: var(--somna-rv-card, #f3feee) !important;
+    color: #0b1a45 !important;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .somna-reviews__app .jdgm-widget .jm-rating-filter__tag :is(.jm-text, .jm-rating-filter__star) {
+    color: #0b1a45 !important;
+  }
+
+  .somna-reviews__app .jdgm-widget .jm-rating-filter__tag[aria-pressed='true'],
+  .somna-reviews__app .jdgm-widget .jm-rating-filter__tag[aria-checked='true'],
+  .somna-reviews__app .jdgm-widget .jm-rating-filter__tag[class*='--selected'],
+  .somna-reviews__app .jdgm-widget .jm-rating-filter__tag[class*='--active'] {
+    background: var(--somna-rv-chip, #afbdf8) !important;
+  }
+
+  .somna-reviews__app .jdgm-widget .jm-filter-panel__clear-btn {
+    color: var(--somna-rv-fg, #f3feee) !important;
+    text-decoration: underline;
+  }
+
+  .somna-reviews__app .jdgm-widget .jm-custom-answer-filter--active {
+    background: var(--somna-rv-chip, #afbdf8) !important;
+  }
+
   /* review cards */
   .somna-reviews__app .jdgm-widget .jm-review-widget__body > .jm-stack,
   .somna-reviews__app .jdgm-widget .jm-review-widget__body {
