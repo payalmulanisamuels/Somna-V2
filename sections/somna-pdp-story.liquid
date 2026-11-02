@@ -261,6 +261,10 @@
           const handoff = () => {
             const t = tl.time();
             const travelling = t > 0.001;
+            // a fast scroll can start this while the How-it-works hop is still running: jump it to its end
+            // so the copy (measured at the strip's resting spot) takes over without a sideways jump
+            if (travelling && !this.wasTravelling) this.source.closest('somna-pdp-how')?.finishNow?.();
+            this.wasTravelling = travelling;
             this.source.style.opacity = travelling ? '0' : '';
             this.traveller.style.opacity = travelling ? String(Math.max(0, Math.min(1, (T + 0.08 - t) / 0.08))) : '0';
           };
@@ -345,6 +349,10 @@
         if (copy && copy.right < p.left) return copy.right + 30 + p.width / 2 - centre; // desktop: from just after the text
         const v = this.getBoundingClientRect();
         return v.left + v.width * 0.17 - centre; // tablet: from the left column
+      }
+      finishNow() {
+        if (!this.played) return;
+        this.anims.forEach((a) => { try { a.finish(); } catch (e) {} });
       }
       reset() {
         if (!this.played) return;
