@@ -297,6 +297,8 @@
         let timer;
         this.ro = new ResizeObserver(() => { clearTimeout(timer); timer = setTimeout(() => ScrollTrigger.refresh(), 200); });
         this.ro.observe(host);
+        // and when the How-it-works picture itself changes size (layout settles, fonts, breakpoints)
+        if (this.source) this.ro.observe(this.source);
         // the How-it-works picture is lazy-loaded: measure again once it has its real size
         if (this.source && !(this.source.complete && this.source.naturalWidth)) {
           this.source.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
