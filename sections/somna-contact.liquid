@@ -1,0 +1,610 @@
+{%- doc -%}
+  Somna V2 — contact form + direct contact details. The form is Shopify's own contact form
+  ({% form 'contact' %}), so messages arrive exactly where the current contact form sends them.
+  Inline validation and a sending state are added with a few lines of vanilla JS; without JS the
+  browser's own required-field checks still work.
+{%- enddoc -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  assign form_id = 'SomnaContact-' | append: section.id
+  assign options = s.enquiry_options | newline_to_br | split: '<br />'
+-%}
+<somna-contact
+  id="{{ s.anchor | default: 'contact-form' | handleize }}"
+  class="somna-contact"
+  style="--scf-bg: {{ s.background_color }}; --scf-panel: {{ s.panel_color }}; --scf-accent: {{ s.accent_color }}; --scf-card: {{ s.card_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+>
+  <div class="somna-container somna-contact__grid">
+    <div class="somna-contact__intro">
+      {%- if s.eyebrow != blank -%}<p class="somna-contact__eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+      {%- if s.heading != blank -%}<h2 class="somna-contact__heading somna-accent">{{ s.heading }}</h2>{%- endif -%}
+      {%- if s.text != blank -%}<div class="somna-contact__text">{{ s.text }}</div>{%- endif -%}
+
+      {%- if s.email != blank -%}
+        <div class="somna-contact__direct">
+          <span class="somna-contact__direct-icon">{%- render 'somna-line-icon', name: 'mail', class: 'somna-contact__svg', stroke: 1.6 -%}</span>
+          <div class="somna-contact__direct-body">
+            {%- if s.direct_label != blank -%}<p class="somna-contact__direct-label">{{ s.direct_label | escape }}</p>{%- endif -%}
+            <a class="somna-contact__email" href="mailto:{{ s.email | strip }}">{{ s.email | strip | escape }}</a>
+            {%- if s.response_time != blank -%}
+              <p class="somna-contact__response">
+                {%- render 'somna-line-icon', name: 'clock', class: 'somna-contact__svg somna-contact__svg--small', stroke: 1.6 -%}
+                {{ s.response_time | escape }}
+              </p>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="somna-contact__panel{% if s.drip_edge %} somna-edge-drip-bottom{% endif %}">
+      {%- if s.form_heading != blank -%}<h2 class="somna-contact__form-heading">{{ s.form_heading | escape }}</h2>{%- endif -%}
+
+      <div data-no-reveal>
+      {%- form 'contact', id: form_id, class: 'somna-contact__form' -%}
+        {%- if form.posted_successfully? -%}
+          <div class="somna-contact__notice somna-contact__notice--success" role="status" tabindex="-1" data-notice>
+            {%- render 'somna-line-icon', name: 'shield', class: 'somna-contact__svg', stroke: 1.6 -%}
+            <p>{{ s.success_message | escape }}</p>
+          </div>
+        {%- elsif form.errors -%}
+          <div class="somna-contact__notice somna-contact__notice--error" role="alert" tabindex="-1" data-notice>
+            <p>{{ s.error_message | escape }}</p>
+            <ul>
+              {%- for field in form.errors -%}
+                <li>
+                  {%- if field == 'form' -%}
+                    {{ form.errors.messages[field] }}
+                  {%- else -%}
+                    {{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+
+        <p class="somna-contact__required-note"><span aria-hidden="true">*</span> {{ s.required_note | escape }}</p>
+
+        <div class="somna-contact__fields">
+          <div class="somna-contact__field">
+            <label for="{{ form_id }}-name">{{ s.name_label | escape }} <span class="somna-contact__req" aria-hidden="true">*</span></label>
+            <input id="{{ form_id }}-name" type="text" name="contact[name]" autocomplete="name" required placeholder="{{ s.name_placeholder | escape }}" value="{{ form.name | escape }}" aria-describedby="{{ form_id }}-name-error">
+            <p class="somna-contact__error" id="{{ form_id }}-name-error" data-error hidden>{{ s.required_error | escape }}</p>
+          </div>
+
+          <div class="somna-contact__field">
+            <label for="{{ form_id }}-email">{{ s.email_label | escape }} <span class="somna-contact__req" aria-hidden="true">*</span></label>
+            <input id="{{ form_id }}-email" type="email" name="contact[email]" autocomplete="email" autocapitalize="off" spellcheck="false" required placeholder="{{ s.email_placeholder | escape }}" value="{% if form.email != blank %}{{ form.email | escape }}{% elsif customer %}{{ customer.email | escape }}{% endif %}" aria-describedby="{{ form_id }}-email-error" data-email-error="{{ s.email_error | escape }}">
+            <p class="somna-contact__error" id="{{ form_id }}-email-error" data-error hidden>{{ s.required_error | escape }}</p>
+          </div>
+
+          <div class="somna-contact__field">
+            <label for="{{ form_id }}-phone">{{ s.phone_label | escape }}</label>
+            <input id="{{ form_id }}-phone" type="tel" name="contact[phone]" autocomplete="tel" pattern="[0-9\-\+\s\(\)\.]*" placeholder="{{ s.phone_placeholder | escape }}" value="{{ form.phone | escape }}" aria-describedby="{{ form_id }}-phone-error" data-pattern-error="{{ s.phone_error | escape }}">
+            <p class="somna-contact__error" id="{{ form_id }}-phone-error" data-error hidden>{{ s.phone_error | escape }}</p>
+          </div>
+
+          <div class="somna-contact__field">
+            <label for="{{ form_id }}-enquiry">{{ s.enquiry_label | escape }} <span class="somna-contact__req" aria-hidden="true">*</span></label>
+            <div class="somna-contact__select">
+              <select id="{{ form_id }}-enquiry" name="contact[{{ s.enquiry_label | escape }}]" required aria-describedby="{{ form_id }}-enquiry-error">
+                <option value="" disabled selected>{{ s.enquiry_placeholder | escape }}</option>
+                {%- for opt in options -%}
+                  {%- assign o = opt | strip -%}
+                  {%- if o != blank -%}<option value="{{ o | escape }}">{{ o | escape }}</option>{%- endif -%}
+                {%- endfor -%}
+              </select>
+            </div>
+            <p class="somna-contact__error" id="{{ form_id }}-enquiry-error" data-error hidden>{{ s.select_error | escape }}</p>
+          </div>
+
+          <div class="somna-contact__field somna-contact__field--full">
+            <label for="{{ form_id }}-body">{{ s.message_label | escape }} <span class="somna-contact__req" aria-hidden="true">*</span></label>
+            <textarea id="{{ form_id }}-body" name="contact[body]" rows="6" required placeholder="{{ s.message_placeholder | escape }}" aria-describedby="{{ form_id }}-body-error">{{ form.body }}</textarea>
+            <p class="somna-contact__error" id="{{ form_id }}-body-error" data-error hidden>{{ s.required_error | escape }}</p>
+          </div>
+        </div>
+
+        <button type="submit" class="somna-contact__submit" data-submit data-sending="{{ s.sending_label | escape }}">
+          <span class="somna-contact__spinner" aria-hidden="true"></span>
+          <span data-submit-label>{{ s.submit_label | escape }}</span>
+        </button>
+      {%- endform -%}
+      </div>
+    </div>
+  </div>
+</somna-contact>
+
+<script>
+  if (!customElements.get('somna-contact')) {
+    customElements.define(
+      'somna-contact',
+      class extends HTMLElement {
+        connectedCallback() {
+          const form = this.querySelector('form');
+          if (!form) return;
+          form.noValidate = true;
+          this.querySelectorAll('[data-error]').forEach((e) => (e.dataset.base = e.textContent.trim()));
+          this.fields = [...form.querySelectorAll('input:not([type="hidden"]), select, textarea')];
+          this.fields.forEach((f) => {
+            f.addEventListener('blur', () => this.check(f));
+            f.addEventListener('input', () => f.getAttribute('aria-invalid') === 'true' && this.check(f));
+            f.addEventListener('change', () => f.getAttribute('aria-invalid') === 'true' && this.check(f));
+          });
+          form.addEventListener('submit', (e) => {
+            const bad = this.fields.filter((f) => !this.check(f));
+            if (bad.length) {
+              e.preventDefault();
+              bad[0].focus();
+              return;
+            }
+            const btn = form.querySelector('[data-submit]');
+            btn.disabled = true;
+            btn.classList.add('is-sending');
+            btn.setAttribute('aria-busy', 'true');
+            btn.querySelector('[data-submit-label]').textContent = btn.dataset.sending;
+          });
+          const notice = this.querySelector('[data-notice]');
+          if (notice) requestAnimationFrame(() => notice.focus({ preventScroll: false }));
+        }
+
+        check(f) {
+          const err = document.getElementById(f.getAttribute('aria-describedby') || '');
+          let msg = '';
+          if (f.validity.valueMissing) msg = err?.dataset.base || '';
+          else if (f.validity.typeMismatch) msg = f.dataset.emailError;
+          else if (f.validity.patternMismatch) msg = f.dataset.patternError;
+          const ok = f.validity.valid;
+          f.setAttribute('aria-invalid', ok ? 'false' : 'true');
+          if (err) {
+            err.hidden = ok;
+            if (!ok) err.textContent = msg || err.dataset.base;
+          }
+          return ok;
+        }
+      }
+    );
+  }
+</script>
+
+{% stylesheet %}
+  somna-contact {
+    display: block;
+    background: var(--scf-bg);
+    color: #000;
+  }
+
+  .somna-contact__grid {
+    display: grid;
+    gap: 28px;
+  }
+
+  .somna-contact__intro {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .somna-contact__eyebrow {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .somna-contact__heading {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.35;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .somna-contact__text {
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    line-height: 1.45;
+  }
+
+  .somna-contact__text p {
+    margin: 0;
+  }
+
+  .somna-contact__direct {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-top: 8px;
+    padding: 22px 24px;
+    border-radius: 12px;
+    background: var(--scf-card);
+  }
+
+  .somna-contact__direct-icon {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #0b0f1d;
+    color: var(--scf-accent);
+  }
+
+  .somna-contact__svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .somna-contact__svg--small {
+    width: 18px;
+    height: 18px;
+    flex: none;
+  }
+
+  .somna-contact__direct-body {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .somna-contact__direct-label {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .somna-contact__email {
+    color: #000;
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    overflow-wrap: anywhere;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+    transition: color 0.2s ease;
+  }
+
+  .somna-contact__email:hover {
+    color: #2c3a8c;
+  }
+
+  .somna-contact__response {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 0;
+    font-size: 0.9375rem;
+    letter-spacing: 0.04em;
+  }
+
+  .somna-contact__panel {
+    --somna-drip-h: 60px;
+    position: relative;
+    padding: 28px 20px 44px;
+    border-radius: 12px;
+    background: var(--scf-panel);
+    color: #fff;
+  }
+
+  .somna-contact__form-heading {
+    margin: 0 0 6px;
+    color: #f3feee;
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.5rem, 2.2vw, 2rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .somna-contact__required-note {
+    margin: 0 0 18px;
+    color: #9a9a9a;
+    font-size: 0.875rem;
+  }
+
+  .somna-contact__req,
+  .somna-contact__required-note span {
+    color: var(--scf-accent);
+  }
+
+  .somna-contact__fields {
+    display: grid;
+    gap: 16px;
+  }
+
+  .somna-contact__field {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .somna-contact__field label {
+    color: #f3feee;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .somna-contact__field :is(input, select, textarea) {
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 16px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: #f3feee;
+    color: #000;
+    font: inherit;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    appearance: none;
+  }
+
+  .somna-contact__field textarea {
+    min-height: 150px;
+    resize: vertical;
+  }
+
+  .somna-contact__field :is(input, textarea)::placeholder {
+    color: #6b6f7a;
+  }
+
+  .somna-contact__field :is(input, select, textarea):hover {
+    border-color: var(--scf-accent);
+  }
+
+  .somna-contact__field :is(input, select, textarea):focus-visible {
+    border-color: var(--scf-accent);
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(175 189 248 / 0.45);
+  }
+
+  .somna-contact__field [aria-invalid='true'] {
+    border-color: #ff8a8a;
+  }
+
+  .somna-contact__select {
+    position: relative;
+  }
+
+  .somna-contact__select::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 18px;
+    width: 9px;
+    height: 9px;
+    border-right: 2px solid #000;
+    border-bottom: 2px solid #000;
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
+  }
+
+  .somna-contact__select select {
+    padding-right: 44px;
+    cursor: pointer;
+  }
+
+  .somna-contact__select select:invalid {
+    color: #6b6f7a;
+  }
+
+  .somna-contact__error {
+    margin: 0;
+    color: #ffb4b4;
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
+  }
+
+  .somna-contact__submit {
+    position: relative;
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 60px;
+    margin-top: 22px;
+    padding: 0 28px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--scf-accent);
+    color: #000;
+    cursor: pointer;
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+
+  .somna-contact__submit:hover:not(:disabled) {
+    background: #f3feee;
+    color: #0b0f1d;
+    transform: translateY(-2px);
+  }
+
+  .somna-contact__submit:focus-visible {
+    outline: 2px solid #f3feee;
+    outline-offset: 3px;
+  }
+
+  .somna-contact__submit:disabled {
+    cursor: progress;
+    opacity: 0.85;
+  }
+
+  .somna-contact__spinner {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: somna-contact-spin 0.7s linear infinite;
+  }
+
+  .somna-contact__submit.is-sending .somna-contact__spinner {
+    display: inline-block;
+  }
+
+  @keyframes somna-contact-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .somna-contact__notice {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+    padding: 16px 18px;
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    letter-spacing: 0.03em;
+    line-height: 1.45;
+  }
+
+  .somna-contact__notice:focus {
+    outline: none;
+  }
+
+  .somna-contact__notice p,
+  .somna-contact__notice ul {
+    margin: 0;
+  }
+
+  .somna-contact__notice ul {
+    padding-left: 18px;
+  }
+
+  .somna-contact__notice--success {
+    background: #f3feee;
+    color: #0b0f1d;
+  }
+
+  .somna-contact__notice--success .somna-contact__svg {
+    flex: none;
+    color: #3f7f3a;
+  }
+
+  .somna-contact__notice--error {
+    display: grid;
+    background: #ffe3e3;
+    color: #6d1010;
+  }
+
+  @media screen and (min-width: 750px) {
+    .somna-contact__grid {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: clamp(32px, 4.5vw, 72px);
+      align-items: start;
+    }
+
+    .somna-contact__intro {
+      position: sticky;
+      top: 120px;
+    }
+
+    .somna-contact__eyebrow {
+      font-size: clamp(15px, 1.25vw, 18px);
+    }
+
+    .somna-contact__text {
+      font-size: clamp(1rem, 1.37vw, 1.2rem);
+    }
+
+    .somna-contact__panel {
+      padding: clamp(28px, 3vw, 44px) clamp(24px, 3vw, 44px) 64px;
+    }
+
+    .somna-contact__fields {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px 20px;
+    }
+
+    .somna-contact__field--full {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-contact__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .somna-contact__intro {
+      position: static;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-contact__submit,
+    .somna-contact__field :is(input, select, textarea) {
+      transition: none;
+    }
+
+    .somna-contact__spinner {
+      animation-duration: 2s;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna contact form",
+  "tag": "section",
+  "class": "somna-contact-section",
+  "settings": [
+    { "type": "text", "id": "anchor", "label": "Anchor", "default": "contact-form", "info": "Link to the form with #contact-form." },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Send us a <em>message</em>" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "header", "content": "Direct contact" },
+    { "type": "text", "id": "direct_label", "label": "Label", "default": "Email us directly" },
+    { "type": "text", "id": "email", "label": "Email", "default": "hello@somnasleep.com" },
+    { "type": "text", "id": "response_time", "label": "Response time", "default": "Typically within 1 business day." },
+    { "type": "header", "content": "Form" },
+    { "type": "text", "id": "form_heading", "label": "Form heading" },
+    { "type": "text", "id": "required_note", "label": "Required note", "default": "Required fields" },
+    { "type": "text", "id": "name_label", "label": "Name label", "default": "Full name" },
+    { "type": "text", "id": "name_placeholder", "label": "Name placeholder", "default": "Your full name" },
+    { "type": "text", "id": "email_label", "label": "Email label", "default": "Email address" },
+    { "type": "text", "id": "email_placeholder", "label": "Email placeholder", "default": "you@example.com" },
+    { "type": "text", "id": "phone_label", "label": "Phone label", "default": "Phone number" },
+    { "type": "text", "id": "phone_placeholder", "label": "Phone placeholder", "default": "Optional" },
+    { "type": "text", "id": "enquiry_label", "label": "Enquiry label", "default": "Enquiry type", "info": "Also used as the field name in the message you receive." },
+    { "type": "text", "id": "enquiry_placeholder", "label": "Enquiry placeholder", "default": "Choose a topic" },
+    { "type": "textarea", "id": "enquiry_options", "label": "Enquiry options", "info": "One per line.", "default": "My order\nMy subscription\nUsing Somna\nReturns & guarantee\nSomething else" },
+    { "type": "text", "id": "message_label", "label": "Message label", "default": "Message" },
+    { "type": "text", "id": "message_placeholder", "label": "Message placeholder", "default": "How can we help? Include your order number if you have one." },
+    { "type": "text", "id": "submit_label", "label": "Button label", "default": "Send message" },
+    { "type": "text", "id": "sending_label", "label": "Sending label", "default": "Sending…" },
+    { "type": "text", "id": "success_message", "label": "Success message", "default": "Thanks for reaching out. We'll get back to you within 1 business day." },
+    { "type": "text", "id": "error_message", "label": "Error message", "default": "Something went wrong. Please check the fields below and try again." },
+    { "type": "text", "id": "required_error", "label": "Required field error", "default": "Please fill in this field." },
+    { "type": "text", "id": "select_error", "label": "Topic error", "default": "Please choose a topic." },
+    { "type": "text", "id": "email_error", "label": "Email error", "default": "Please enter a valid email address." },
+    { "type": "text", "id": "phone_error", "label": "Phone error", "default": "Please use numbers, spaces, +, -, ( ) only." },
+    { "type": "checkbox", "id": "drip_edge", "label": "Drip edge on form panel", "default": true },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#f3feee" },
+    { "type": "color", "id": "panel_color", "label": "Form panel", "default": "#0b0f1d" },
+    { "type": "color", "id": "card_color", "label": "Direct contact card", "default": "#afbdf8" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#afbdf8" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 72 }
+  ],
+  "presets": [{ "name": "Somna contact form" }]
+}
+{% endschema %}

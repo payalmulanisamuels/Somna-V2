@@ -1,0 +1,337 @@
+{%- doc -%}
+  Somna V2 — row of icon cards for content pages. One block per card: icon, title, text and an
+  optional link (the whole card becomes the link). Two looks:
+  - Cards: navy cards with a lavender icon circle and a lift on hover (Quick help, Track your order).
+  - Badges: icon over a short label, no card (trust highlights).
+{%- enddoc -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  assign count = section.blocks.size
+-%}
+<div
+  class="somna-cards somna-cards--{{ s.layout }}"
+  style="--sc-bg: {{ s.background_color }}; --sc-fg: {{ s.text_color }}; --sc-card: {{ s.card_color }}; --sc-card-fg: {{ s.card_text_color }}; --sc-accent: {{ s.accent_color }}; --sc-cols: {{ count | at_most: 4 }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+>
+  <div class="somna-container">
+    {%- if s.eyebrow != blank or s.heading != blank or s.text != blank -%}
+      <div class="somna-cards__intro">
+        {%- if s.eyebrow != blank -%}<p class="somna-cards__eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="somna-cards__heading somna-accent">{{ s.heading }}</h2>{%- endif -%}
+        {%- if s.text != blank -%}<div class="somna-cards__text">{{ s.text }}</div>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <ul class="somna-cards__list" role="list">
+      {%- for block in section.blocks -%}
+        {%- assign b = block.settings -%}
+        {%- assign tag = 'div' -%}
+        {%- if b.link != blank -%}{%- assign tag = 'a' -%}{%- endif -%}
+        <li class="somna-cards__item" {{ block.shopify_attributes }}>
+          <{{ tag }} class="somna-cards__card"{% if tag == 'a' %} href="{{ b.link }}"{% endif %}>
+            <span class="somna-cards__icon">
+              {%- if b.image != blank -%}
+                <span class="somna-cards__mask" style="--sc-mask: url('{{ b.image | image_url: width: 160 }}');" aria-hidden="true"></span>
+              {%- else -%}
+                {%- render 'somna-line-icon', name: b.icon, class: 'somna-cards__svg', stroke: 1.6 -%}
+              {%- endif -%}
+            </span>
+            <span class="somna-cards__body">
+              <span class="somna-cards__title">{{ b.title | escape }}</span>
+              {%- if b.text != blank -%}<span class="somna-cards__desc">{{ b.text | escape }}</span>{%- endif -%}
+              {%- if tag == 'a' and b.link_label != blank -%}
+                <span class="somna-cards__more">{{ b.link_label | escape }} <span aria-hidden="true">→</span></span>
+              {%- endif -%}
+            </span>
+          </{{ tag }}>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% stylesheet %}
+  .somna-cards {
+    background: var(--sc-bg);
+    color: var(--sc-fg);
+  }
+
+  .somna-cards__intro {
+    display: grid;
+    gap: 12px;
+    max-width: 720px;
+    margin: 0 auto 28px;
+    text-align: center;
+  }
+
+  .somna-cards__eyebrow {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .somna-cards__heading {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.35;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .somna-cards__text {
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+  }
+
+  .somna-cards__text p {
+    margin: 0;
+  }
+
+  .somna-cards__list {
+    display: grid;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-cards__card {
+    display: flex;
+    gap: 16px;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .somna-cards__icon {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--sc-accent);
+    color: #000;
+  }
+
+  .somna-cards__svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .somna-cards__mask {
+    width: 30px;
+    height: 30px;
+    background: currentColor;
+    -webkit-mask: var(--sc-mask) center / contain no-repeat;
+    mask: var(--sc-mask) center / contain no-repeat;
+  }
+
+  .somna-cards__body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .somna-cards__title {
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.125rem, 1.55vw, 1.375rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .somna-cards__desc {
+    font-size: 0.9375rem;
+    letter-spacing: 0.04em;
+    line-height: 1.45;
+    opacity: 0.85;
+  }
+
+  .somna-cards__more {
+    margin-top: auto;
+    padding-top: 8px;
+    color: var(--sc-accent);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .somna-cards__more span {
+    display: inline-block;
+    transition: transform 0.2s ease;
+  }
+
+  /* Cards look */
+  .somna-cards--cards .somna-cards__card {
+    flex-direction: column;
+    padding: 24px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: var(--sc-card);
+    color: var(--sc-card-fg);
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .somna-cards--cards a.somna-cards__card:hover {
+    border-color: var(--sc-accent);
+    box-shadow: 0 14px 30px rgb(11 15 29 / 0.18);
+    transform: translateY(-4px);
+  }
+
+  .somna-cards--cards a.somna-cards__card:hover .somna-cards__more span {
+    transform: translateX(4px);
+  }
+
+  .somna-cards--cards a.somna-cards__card:focus-visible {
+    outline: 2px solid var(--sc-fg);
+    outline-offset: 3px;
+  }
+
+  /* Badges look */
+  .somna-cards--badges .somna-cards__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 16px;
+  }
+
+  .somna-cards--badges .somna-cards__card {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .somna-cards--badges .somna-cards__icon {
+    width: 64px;
+    height: 64px;
+    border: 2px solid currentColor;
+    background: transparent;
+    color: inherit;
+  }
+
+  .somna-cards--badges .somna-cards__svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .somna-cards--badges .somna-cards__title {
+    font-family: var(--font-body--family);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+
+  .somna-cards--badges .somna-cards__body {
+    align-items: center;
+  }
+
+  @media screen and (min-width: 750px) {
+    .somna-cards__intro {
+      margin-bottom: 40px;
+    }
+
+    .somna-cards__eyebrow {
+      font-size: clamp(15px, 1.25vw, 18px);
+    }
+
+    .somna-cards__text {
+      font-size: clamp(1rem, 1.37vw, 1.2rem);
+    }
+
+    .somna-cards--cards .somna-cards__list {
+      grid-template-columns: repeat(var(--sc-cols), minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .somna-cards--cards .somna-cards__card {
+      padding: clamp(24px, 2.4vw, 36px);
+    }
+
+    .somna-cards--badges .somna-cards__list {
+      grid-template-columns: repeat(var(--sc-cols), minmax(0, 1fr));
+    }
+
+    .somna-cards--badges .somna-cards__icon {
+      transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .somna-cards--badges .somna-cards__item:hover .somna-cards__icon {
+      background: var(--sc-fg);
+      color: var(--sc-bg);
+      transform: translateY(-3px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-cards__card,
+    .somna-cards__icon,
+    .somna-cards__more span {
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna cards",
+  "tag": "section",
+  "class": "somna-cards-section",
+  "settings": [
+    { "type": "select", "id": "layout", "label": "Look", "options": [{ "value": "cards", "label": "Cards" }, { "value": "badges", "label": "Badges" }], "default": "cards" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "info": "Italic words take the accent colour." },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#f3feee" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },
+    { "type": "color", "id": "card_color", "label": "Card", "default": "#0b0f1d" },
+    { "type": "color", "id": "card_text_color", "label": "Card text", "default": "#f3feee" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#afbdf8" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "truck", "label": "Truck" },
+            { "value": "refresh", "label": "Refresh" },
+            { "value": "question", "label": "Question" },
+            { "value": "mail", "label": "Mail" },
+            { "value": "chat", "label": "Chat" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "lock", "label": "Lock" },
+            { "value": "gift", "label": "Gift" },
+            { "value": "clock", "label": "Clock" },
+            { "value": "box", "label": "Box" },
+            { "value": "moon", "label": "Moon" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "star", "label": "Star" }
+          ],
+          "default": "truck"
+        },
+        { "type": "image_picker", "id": "image", "label": "Custom icon", "info": "Silhouette on transparent background; replaces the icon." },
+        { "type": "text", "id": "title", "label": "Title", "default": "Card title" },
+        { "type": "textarea", "id": "text", "label": "Text" },
+        { "type": "url", "id": "link", "label": "Link", "info": "The whole card becomes the link." },
+        { "type": "text", "id": "link_label", "label": "Link label" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Somna cards", "blocks": [{ "type": "card" }, { "type": "card" }, { "type": "card" }] }]
+}
+{% endschema %}
