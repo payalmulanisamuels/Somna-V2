@@ -257,4 +257,42 @@
   .page-wrapper::-webkit-scrollbar-thumb:hover {
     background-color: #15228a;
   }
+
+  /* Gentle attention shakes (product page): a short move, then a rest in the same cycle.
+     They use transform only, so an element's own `rotate` (tilt) and layout stay untouched.
+     Siblings can offset themselves with --somna-shake-delay so they never move together. */
+  @keyframes somnaShakeWiggle {
+    0%, 70%, 100% { transform: translateX(0) rotate(0deg); }
+    74% { transform: translateX(-3px) rotate(-3deg); }
+    78% { transform: translateX(3px) rotate(3deg); }
+    82% { transform: translateX(-2px) rotate(-2deg); }
+    86% { transform: translateX(2px) rotate(1.5deg); }
+    90% { transform: translateX(0) rotate(0deg); }
+  }
+
+  @keyframes somnaShakeSwing {
+    0%, 60%, 100% { transform: rotate(0deg); }
+    66% { transform: rotate(5deg); }
+    74% { transform: rotate(-4deg); }
+    82% { transform: rotate(2deg); }
+    90% { transform: rotate(0deg); }
+  }
+
+  @keyframes somnaShakePop {
+    0%, 72%, 100% { transform: scale(1) rotate(0deg); }
+    76% { transform: scale(1.06) rotate(-3deg); }
+    81% { transform: scale(1.06) rotate(3deg); }
+    86% { transform: scale(1.03) rotate(-1.5deg); }
+    92% { transform: scale(1) rotate(0deg); }
+  }
+
+  .somna-shake--wiggle { animation: somnaShakeWiggle 3.2s ease-in-out var(--somna-shake-delay, 0s) infinite; }
+  .somna-shake--swing { animation: somnaShakeSwing 3.6s ease-in-out var(--somna-shake-delay, 0s) infinite; transform-origin: 50% 0; }
+  .somna-shake--pop { animation: somnaShakePop 3.4s cubic-bezier(0.3, 0.7, 0.4, 1) var(--somna-shake-delay, 0s) infinite; }
+
+  @media (prefers-reduced-motion: reduce) {
+    :is(.somna-shake--wiggle, .somna-shake--swing, .somna-shake--pop) {
+      animation: none;
+    }
+  }
 {% endstylesheet %}

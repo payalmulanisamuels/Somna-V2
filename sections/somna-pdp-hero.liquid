@@ -98,8 +98,8 @@
         {%- endif -%}
       </div>
 
-      {%- if s.badge_text != blank -%}<p class="somna-pdp-hero__badge"><span>{{ s.badge_text }}</span></p>{%- endif -%}
-      {%- if s.sticker_text != blank -%}<p class="somna-pdp-hero__sticker">{{ s.sticker_text }}</p>{%- endif -%}
+      {%- if s.badge_text != blank -%}<p class="somna-pdp-hero__badge{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}"><span>{{ s.badge_text }}</span></p>{%- endif -%}
+      {%- if s.sticker_text != blank -%}<p class="somna-pdp-hero__sticker{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}" style="--somna-shake-delay: 0.7s;">{{ s.sticker_text }}</p>{%- endif -%}
     </div>
 
     <div class="somna-pdp-hero__side">
@@ -258,7 +258,7 @@
   {%- if sticker_blocks.size > 0 -%}
     <ul class="somna-pdp-hero__stickers somna-container" role="list">
       {%- for block in sticker_blocks -%}
-        <li style="--somna-tilt: {{ block.settings.tilt }}deg;" {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
+        <li class="{% if s.sticker_motion != 'none' %}somna-shake--{{ s.sticker_motion }}{% endif %}" style="--somna-tilt: {{ block.settings.tilt }}deg; --somna-shake-delay: {{ forloop.index0 | times: 0.3 }}s;" {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
       {%- endfor -%}
     </ul>
   {%- endif -%}
@@ -1052,6 +1052,7 @@
     { "type": "header", "content": "Gallery" },
     { "type": "text", "id": "badge_text", "label": "Round badge", "default": "Up to 60% off" },
     { "type": "text", "id": "sticker_text", "label": "Sticker on the image", "default": "Bestseller" },
+    { "type": "select", "id": "badge_motion", "label": "Badge and sticker animation", "info": "A short shake every few seconds. Off for visitors who prefer reduced motion.", "options": [{ "value": "none", "label": "None" }, { "value": "wiggle", "label": "Wiggle" }, { "value": "swing", "label": "Tilt-swing" }, { "value": "pop", "label": "Pop-jiggle" }], "default": "pop" },
     { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified Buyer" },
     { "type": "text", "id": "videos_heading", "label": "Videos heading", "default": "Real Nights, On Camera" },
     { "type": "text", "id": "play_label", "label": "Play label (screen readers)", "default": "Play video" },
@@ -1078,6 +1079,7 @@
     { "type": "text", "id": "added_label", "label": "Added message", "default": "Added to your cart." },
     { "type": "text", "id": "error_label", "label": "Error message", "default": "Couldn’t add to cart. Please try again." },
     { "type": "text", "id": "sold_out_label", "label": "Sold out label", "default": "Sold out" },
+    { "type": "select", "id": "sticker_motion", "label": "Trust sticker animation", "options": [{ "value": "none", "label": "None" }, { "value": "wiggle", "label": "Wiggle" }, { "value": "swing", "label": "Tilt-swing" }, { "value": "pop", "label": "Pop-jiggle" }], "default": "swing" },
     { "type": "header", "content": "Colours and spacing" },
     { "type": "color", "id": "background_color", "label": "Background", "default": "#afbdf8" },
     { "type": "color", "id": "panel_color", "label": "Panel background", "default": "#0b0f1d" },
