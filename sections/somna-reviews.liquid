@@ -61,9 +61,12 @@
   if s.featured_source == 'judgeme' and jm_ok
     assign f_pick = nil
     for rv in jm.reviews
+      assign rv_body = rv.body | strip_html
       if rv.rating >= 5 and rv.is_anonymous_reviewer != true
-        assign f_pick = rv
-        break
+        unless rv_body contains '(Review #'
+          assign f_pick = rv
+          break
+        endunless
       endif
     endfor
     if f_pick == nil
