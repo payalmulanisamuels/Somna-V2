@@ -622,7 +622,9 @@
     color: #498525;
   }
 
+  /* Boldonse has one weight; without this the h2 default fakes a bold */
   .somna-pdp-hero__videos-title {
+    font-weight: 400;
     margin: 0 0 16px;
     font-family: var(--font-accent--family);
     font-size: 2rem;
@@ -700,6 +702,7 @@
     margin: 0;
     color: #9a9a9a;
     font-size: 1.25rem;
+    font-weight: 300;
   }
 
   .somna-pdp-hero__rating-stars {
@@ -743,6 +746,7 @@
   }
 
   .somna-pdp-hero__features li {
+    font-family: Arimo, Arial, Helvetica, sans-serif;
     display: flex;
     gap: 14px;
     align-items: center;
@@ -891,17 +895,24 @@
     padding: 4px 22px;
     border-radius: 6px;
     background: var(--somna-chip);
-    font-size: 0.75rem;
+    font-size: 0.8625rem;
+    font-weight: 600;
   }
 
   .somna-pdp-hero__packs .somna-buy__pack-name {
-    font-size: 1rem;
+    font-size: 0.875rem;
+    letter-spacing: 0.08em;
   }
 
   .somna-pdp-hero__packs .somna-buy__pack-price {
-    font-size: 1.625rem;
-    font-weight: 800;
+    font-size: 1.5625rem;
+    font-weight: 700;
     line-height: 1.1;
+  }
+
+  .somna-pdp-hero__packs :is(.somna-buy__pack s, .somna-buy__pack-night) {
+    font-size: 0.875rem;
+    font-weight: 500;
   }
 
   .somna-pdp-hero__packs .somna-buy__pack s:empty {
@@ -932,7 +943,8 @@
   }
 
   .somna-pdp-hero__modes .somna-buy__mode {
-    font-size: 1rem;
+    font-size: 1.125rem;
+    letter-spacing: 0.08em;
   }
 
   .somna-pdp-hero__modes .somna-buy__mode-label strong {
@@ -949,8 +961,8 @@
     margin: 0;
     padding: 0 0 0 4px;
     list-style: none;
-    font-size: 0.9375rem;
-    letter-spacing: 0.03em;
+    font-size: 1.03rem;
+    letter-spacing: 0.08em;
   }
 
   .somna-pdp-hero__sub-points li {
@@ -989,7 +1001,8 @@
     margin: 4px 0 0;
     padding: 0;
     list-style: none;
-    font-size: 0.875rem;
+    font-family: Arimo, Arial, Helvetica, sans-serif;
+    font-size: 0.9125rem;
     text-align: center;
   }
 

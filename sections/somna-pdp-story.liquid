@@ -731,12 +731,14 @@
     text-transform: uppercase;
   }
 
+  /* Figma: Arimo Bold 21px at 1440 */
   .somna-pdp-story__step p {
     margin: 0;
     max-width: 330px;
-    font-size: 1.125rem;
-    font-weight: 600;
-    line-height: 1.3;
+    font-family: Arimo, Arial, Helvetica, sans-serif;
+    font-size: clamp(1.0625rem, 1.48vw, 1.33rem);
+    font-weight: 700;
+    line-height: 1.18;
   }
 
   .somna-pdp-story__button {
@@ -814,7 +816,7 @@
     }
 
     .somna-pdp-story__button {
-      font-weight: 700;
+      font-weight: 800;
     }
   }
 
@@ -913,6 +915,11 @@
   /* Mobile (Figma 4606:9024 / 4606:9662): homepage mobile type scale — eyebrow 12px, headings 26px,
      text 14px, buttons ~52px — and tighter gaps. Tablet/desktop (>= 750px) untouched. */
   @media screen and (max-width: 749px) {
+    /* section padding is an inline style from the settings */
+    .somna-pdp-story {
+      padding-block: 16px 24px !important;
+    }
+
     .somna-pdp-story__inner {
       gap: 20px;
     }

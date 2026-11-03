@@ -176,7 +176,7 @@
   .somna-pdp-pair__trend-title {
     display: block;
     font-family: var(--font-accent--family);
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     line-height: 1.3;
   }
 
@@ -216,12 +216,14 @@
 
   .somna-pdp-pair__name {
     padding-inline: 6px;
-    font-size: 1.25rem;
+    font-size: 1.3125rem;
+    font-weight: 500;
   }
 
   .somna-pdp-pair__meta {
     padding-inline: 6px;
-    font-size: 0.75rem;
+    font-size: 0.775rem;
+    font-weight: 300;
     opacity: 0.85;
   }
 
@@ -237,7 +239,8 @@
     border-radius: 8px;
     background: var(--somna-pair-accent);
     color: #0b0f1d;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 600;
     text-transform: uppercase;
     transition: background-color 0.2s, color 0.2s;
   }
@@ -336,6 +339,11 @@
     .somna-pdp-pair__name {
       font-size: 1.25rem;
       font-weight: 500;
+    }
+
+    /* Figma: a near-square product photo on mobile */
+    .somna-pdp-pair__card img {
+      aspect-ratio: 1;
     }
 
     .somna-pdp-pair__meta {
