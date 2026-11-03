@@ -94,6 +94,8 @@
     if (s.tried.indexOf('pills') > -1) extra.push(cfg.triedPills);
     if (s.tried.indexOf('tape') > -1 && s.result !== 'strips') extra.push(cfg.triedTape);
     extra = extra.filter(Boolean).slice(0, 2);
+    // Sleep Bundle, nothing like it tried before: the easy-start line keeps it at three ticks
+    if (s.result === 'bundle' && s.tried.indexOf('strips') < 0 && s.tried.indexOf('tape') < 0 && cfg.bundleStart) extra.unshift(p ? (cfg.bundleStartPartner || cfg.bundleStart) : cfg.bundleStart);
     if (extra.length < 2 && extra.indexOf(cfg.triedPills) < 0 && cfg.triedPills) extra.push(cfg.triedPills);
     // The 30-Night Money-Back Guarantee has its own trust line above the button, so it is not repeated here.
     return out.concat(extra).filter(Boolean).slice(0, 3);

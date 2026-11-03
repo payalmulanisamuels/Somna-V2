@@ -9,7 +9,6 @@
   .sq-match__in { max-width: 1280px; margin: 0 auto; padding: 18px 16px 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 12px; font-size: 13px; line-height: 1.45; }
   .sq-match__t { font-weight: 700; color: #2B4CC2; }
   .sq-match__d strong { font-weight: 700; }
-  .sq-match a { margin-left: auto; color: #0E1A4A; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
   @media screen and (min-width: 750px) { .sq-match__in { padding: 20px 24px 12px; font-size: 14px; } }
 </style>
 <script>
@@ -28,7 +27,6 @@
       if (m.built) d.appendChild(document.createTextNode(m.built));
       if (m.code) { if (m.built) d.appendChild(document.createTextNode(' · ')); d.appendChild(el('strong', '', m.code)); d.appendChild(document.createTextNode(' applied at checkout')); }
       if (d.childNodes.length) inner.appendChild(d);
-      var a = el('a', '', 'Retake'); a.href = '{{ pages['quiz'].url | default: '/pages/quiz' }}'; inner.appendChild(a);
       bar.appendChild(inner); main.insertBefore(bar, main.firstChild);
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount); else mount();
