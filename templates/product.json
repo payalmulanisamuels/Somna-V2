@@ -184,6 +184,7 @@
       "type": "somna-pdp-story",
       "settings": {
         "layout": "steps",
+        "video": "shopify://files/videos/0706(4)-1.mp4",
         "accent_line": "second",
         "background_color": "#f3feee",
         "text_color": "#000000",
