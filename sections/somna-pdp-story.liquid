@@ -139,7 +139,40 @@
               </li>
             {%- endfor -%}
           </ol>
-          {%- if c.button_label != blank and c.button_url != blank -%}
+          {%- liquid
+            # video for the popup: the steps metaobject's "video" field, then the product metafield
+            # custom.how_it_works_video, then the section's fallback video
+            assign how_video = c.video.value
+            if how_video == blank
+              assign how_video = product.metafields.custom.how_it_works_video.value
+            endif
+            if how_video == blank
+              assign how_video = s.video
+            endif
+            assign button_label = c.button_label.value | default: s.video_button_label
+          -%}
+          {%- if how_video != blank and how_video.sources != blank and button_label != blank -%}
+            <button
+              type="button"
+              class="somna-pdp-story__button"
+              aria-haspopup="dialog"
+              aria-controls="SomnaHowVideo-{{ section.id }}"
+              data-somna-video-open
+            >
+              <span class="somna-pdp-story__button-icon">{% render 'somna-pdp-icon', name: 'play' %}</span>{{ button_label }}
+            </button>
+            <dialog
+              id="SomnaHowVideo-{{ section.id }}"
+              class="somna-video-modal"
+              aria-label="{{ button_label | escape }}"
+              data-somna-video-modal
+            >
+              <button type="button" class="somna-video-modal__close" aria-label="{{ 'accessibility.close' | t | default: 'Close' }}" data-somna-video-close>
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+              </button>
+              {{ how_video | video_tag: controls: true, playsinline: true, preload: 'none', class: 'somna-video-modal__video', image_size: '1080x' }}
+            </dialog>
+          {%- elsif c.button_label != blank and c.button_url != blank -%}
             <a class="somna-pdp-story__button" href="{{ c.button_url.value | replace: 'https://usesomna.com', '' }}">
               <span class="somna-pdp-story__button-icon">{% render 'somna-pdp-icon', name: 'play' %}</span>{{ c.button_label.value }}
             </a>
@@ -151,6 +184,31 @@
 {%- if section.settings.wave_color != blank -%}
   {%- render 'somna-wave', top: section.settings.background_color, bottom: section.settings.wave_color, shape: section.settings.wave_shape -%}
 {%- endif -%}
+{%- endif -%}
+
+{%- if s.layout == 'steps' -%}
+<script type="module">
+  /* "Watch how it works": plays the steps video in a native modal dialog (Esc, backdrop and the X close it; closing pauses) */
+  const root = document.getElementById('shopify-section-{{ section.id }}');
+  const modal = root?.querySelector('[data-somna-video-modal]');
+  const opener = root?.querySelector('[data-somna-video-open]');
+  if (modal && opener) {
+    const video = modal.querySelector('video');
+    opener.addEventListener('click', () => {
+      modal.showModal();
+      if (video) {
+        video.currentTime = 0;
+        video.play().catch(() => {});
+      }
+    });
+    modal.querySelector('[data-somna-video-close]')?.addEventListener('click', () => modal.close());
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); });
+    modal.addEventListener('close', () => {
+      video?.pause();
+      opener.focus();
+    });
+  }
+</script>
 {%- endif -%}
 
 {%- if s.layout == 'layers' and s.layers_animation and c != blank -%}
@@ -827,6 +885,95 @@
     }
   }
 
+  button.somna-pdp-story__button {
+    border: 0;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  /* "Watch how it works" video popup */
+  .somna-video-modal {
+    width: fit-content;
+    max-width: min(92vw, 1100px);
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 20px;
+    background: #000;
+  }
+
+  .somna-video-modal::backdrop {
+    background: rgb(11 15 29 / 0.86);
+    backdrop-filter: blur(4px);
+  }
+
+  .somna-video-modal[open] {
+    animation: somna-video-in 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-video-modal__video {
+    display: block;
+    width: auto;
+    max-width: min(92vw, 1100px);
+    height: auto;
+    max-height: 82vh;
+    max-height: 82dvh;
+    border-radius: 20px;
+    background: #000;
+  }
+
+  .somna-video-modal__close {
+    position: absolute;
+    top: -18px;
+    right: -18px;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 2px solid #000;
+    border-radius: 50%;
+    background: #f3feee;
+    color: #000;
+    box-shadow: 2px 3px 0 #000;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .somna-video-modal__close:hover {
+    background: #afbdf8;
+  }
+
+  .somna-video-modal__close:focus-visible {
+    outline: 2px solid #f3feee;
+    outline-offset: 3px;
+  }
+
+  html:has(.somna-video-modal[open]) {
+    overflow: hidden;
+  }
+
+  @keyframes somna-video-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.97);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .somna-video-modal__close {
+      top: -52px;
+      right: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-video-modal[open] {
+      animation: none;
+    }
+  }
+
   /* button hover: dark fill so the change is clearly visible on the light section */
   .somna-pdp-story__button {
     transition: translate 0.2s, background-color 0.2s, color 0.2s;
@@ -1196,6 +1343,8 @@
       "default": "problem"
     },
     { "type": "product", "id": "preview_product", "label": "Product for the theme editor", "info": "Only used where there is no product." },
+    { "type": "video", "id": "video", "label": "Three steps: fallback video", "info": "The \"Watch how it works\" popup plays the product's steps metaobject \"video\" field, or the product metafield custom.how_it_works_video. This video is used only when neither is set." },
+    { "type": "text", "id": "video_button_label", "label": "Three steps: button label", "default": "Watch how it works", "info": "Used when the steps metaobject has no button label." },
     { "type": "checkbox", "id": "layers_animation", "label": "Animate \"What it's made of\"", "info": "When every layer has its own image: the How it works product travels in and peels into the layers as you scroll. Desktop and tablet; off for reduced motion.", "default": true },
     { "type": "select", "id": "pills_motion", "label": "Pill badges animation", "info": "A short shake every few seconds, one pill after another. Off for reduced motion.", "options": [{ "value": "none", "label": "None" }, { "value": "wiggle", "label": "Wiggle" }, { "value": "swing", "label": "Tilt-swing" }, { "value": "pop", "label": "Pop-jiggle" }], "default": "swing" },
     { "type": "checkbox", "id": "how_animation", "label": "Animate \"How it works\"", "info": "Hop-flip of the product and icons 1 → 4 when the section comes on screen. Off for visitors who prefer reduced motion.", "default": true },
