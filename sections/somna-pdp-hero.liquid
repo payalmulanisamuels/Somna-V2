@@ -1145,6 +1145,62 @@
     }
   }
 
+  /* small laptops (990–1299px): the buy panel is only 380–530px wide, so each feature icon sits
+     above its label and the three packs stay on one row as in Figma (they wrapped 2 + 1) */
+  @media screen and (min-width: 990px) and (max-width: 1299px) {
+    .somna-pdp-hero__features {
+      font-size: 0.9375rem;
+    }
+
+    .somna-pdp-hero__features li {
+      flex-direction: column;
+      gap: 8px;
+      padding-inline: 6px;
+      text-align: center;
+    }
+
+    .somna-pdp-hero__feature-icon {
+      width: 52px;
+      height: 52px;
+    }
+
+    .somna-pdp-hero__packs .somna-buy__pack-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .somna-pdp-hero__packs .somna-buy__pack {
+      padding-inline: 4px;
+    }
+
+    .somna-pdp-hero__packs .somna-buy__pack-badge {
+      padding-inline: 10px;
+      font-size: 0.75rem;
+    }
+
+    .somna-pdp-hero__packs .somna-buy__pack-price {
+      font-size: 1.3125rem;
+    }
+
+    .somna-pdp-hero__packs :is(.somna-buy__pack-name, .somna-buy__pack s, .somna-buy__pack-night) {
+      font-size: 0.8125rem;
+    }
+
+    .somna-pdp-hero__gift {
+      font-size: 0.75rem;
+    }
+
+    /* trust stickers under the hero stay on one row */
+    .somna-pdp-hero__stickers {
+      gap: 12px;
+    }
+
+    .somna-pdp-hero__stickers li {
+      padding: 8px 14px;
+      font-size: 0.875rem;
+    }
+  }
+
   /* mobile: design to come (Figma pending) — simple stacked fallback only */
   /* Mobile (Figma 4606:9024 / 4606:9662, 398px): gallery + thumbnail row, then the buy panel,
      then the quote, videos and stickers. Type follows the homepage mobile scale (body 11–14px,

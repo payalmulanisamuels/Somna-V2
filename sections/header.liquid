@@ -1060,6 +1060,15 @@
     --padding-block-end: var(--header-padding);
   }
 
+  /* Somna V2: wide screens keep the Figma 1440 header spacing instead of pinning the logo and icons to the screen edges */
+  @media screen and (min-width: 1441px) {
+    .header__row--top .header__columns {
+      width: 100%;
+      max-width: 1440px;
+      margin-inline: auto;
+    }
+  }
+
   .header:not(.header--compact) .header__row--bottom {
     --header-padding: var(--padding-xs);
   }
