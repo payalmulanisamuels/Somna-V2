@@ -920,6 +920,7 @@
     .somna-pdp-story__eyebrow {
       margin-bottom: 8px;
       font-size: 0.75rem;
+      letter-spacing: 0.18em;
     }
 
     .somna-pdp-story__heading {
@@ -929,12 +930,15 @@
     .somna-pdp-story__text {
       margin-top: 10px;
       font-size: 0.875rem;
-      line-height: 1.45;
+      letter-spacing: 0.06em;
+      line-height: 1.3;
     }
 
     .somna-pdp-story__label {
       margin-top: 18px;
       font-size: 0.9375rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
     }
 
     .somna-pdp-story__pills {
@@ -949,6 +953,7 @@
     /* problem: label on the left, smaller overlay list */
     .somna-pdp-story__tag {
       margin-bottom: 10px;
+      letter-spacing: 0.08em;
       font-size: 1.25rem;
       text-align: left;
     }
@@ -995,11 +1000,13 @@
 
     .somna-pdp-story__point h3 {
       margin-top: 6px;
-      font-size: 0.75rem;
+      font-size: 0.6875rem;
+      font-weight: 500;
     }
 
     .somna-pdp-story__point p {
-      font-size: 0.6875rem;
+      font-size: 0.625rem;
+      letter-spacing: 0.06em;
     }
 
     /* layers: picture, then the list in two columns */
@@ -1008,16 +1015,18 @@
       margin-inline: auto;
     }
 
+    /* Figma: Inter Bold 12 / Regular 12, 0.08em */
     .somna-pdp-story__layers {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 16px 18px;
       padding-left: 1.1em;
-      font-size: 0.8125rem;
-      letter-spacing: 0.04em;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
     }
 
-    .somna-pdp-story__layers p {
+    .somna-pdp-story__layers :is(h3, p) {
       font-size: 0.75rem;
+      line-height: 1.3;
     }
 
     /* steps: photo on the left, title + text on the right */
@@ -1039,9 +1048,12 @@
       font-size: 1.375rem;
     }
 
+    /* Figma: Arimo Bold */
     .somna-pdp-story__step p {
+      font-family: Arimo, Arial, Helvetica, sans-serif;
       font-size: 0.75rem;
-      line-height: 1.35;
+      font-weight: 700;
+      line-height: 1.2;
     }
 
     .somna-pdp-story__button {
