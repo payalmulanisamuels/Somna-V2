@@ -480,20 +480,22 @@
     scrollbar-width: none;
   }
 
+  /* Figma: plain rounded images, no border (the main image shows which one is selected) */
   .somna-pdp-hero__thumb {
     display: block;
     width: 96px;
     aspect-ratio: 96 / 104;
     padding: 0;
-    border: 2px solid transparent;
+    border: 0;
     border-radius: 12px;
     overflow: hidden;
     background: #0b0f1d;
     cursor: pointer;
   }
 
-  .somna-pdp-hero__thumb[aria-current='true'] {
-    border-color: #0b0f1d;
+  .somna-pdp-hero__thumb:focus-visible {
+    outline: 2px solid #0b0f1d;
+    outline-offset: 2px;
   }
 
   .somna-pdp-hero__thumb img,
@@ -819,16 +821,63 @@
     gap: 21px;
   }
 
+  /* Figma: 2.5px borders, 11px corners; unselected #2e3134 with a mint border */
   .somna-pdp-hero__packs .somna-buy__pack {
     padding: 20px 8px 12px;
-    border: 2px solid #f3feee;
-    border-radius: 10px;
-    background: #2a2d33;
+    border: 2.5px solid #f3feee;
+    border-radius: 11px;
+    background: #2e3134;
   }
 
+  /* selected: the lavender border draws itself in from the top-right corner round both sides
+     (same motion as the live site's pack picker: 0.68s, once per selection) */
   .somna-pdp-hero__packs .somna-buy__pack:has(input:checked) {
-    border-color: var(--somna-chip);
+    border-color: var(--somna-mint);
     background: var(--somna-mint);
+  }
+
+  .somna-pdp-hero__packs .somna-buy__pack:has(input:checked)::after {
+    content: '';
+    position: absolute;
+    inset: -2.5px;
+    z-index: 1;
+    padding: 2.5px;
+    border-radius: inherit;
+    background: var(--somna-chip);
+    pointer-events: none;
+    -webkit-mask:
+      conic-gradient(from 45deg, #000 0deg var(--somna-border-reveal), transparent var(--somna-border-reveal) calc(360deg - var(--somna-border-reveal)), #000 calc(360deg - var(--somna-border-reveal))),
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: source-in, xor;
+    mask:
+      conic-gradient(from 45deg, #000 0deg var(--somna-border-reveal), transparent var(--somna-border-reveal) calc(360deg - var(--somna-border-reveal)), #000 calc(360deg - var(--somna-border-reveal))),
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: intersect, exclude;
+    animation: somna-border-trace 0.68s cubic-bezier(0.45, 0, 0.2, 1) both;
+  }
+
+  .somna-pdp-hero__packs .somna-buy__pack-badge {
+    z-index: 2;
+  }
+
+  @property --somna-border-reveal {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+  }
+
+  @keyframes somna-border-trace {
+    0%, 10% { --somna-border-reveal: 0deg; }
+    100% { --somna-border-reveal: 180deg; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-pdp-hero__packs .somna-buy__pack:has(input:checked)::after {
+      --somna-border-reveal: 180deg;
+      animation: none;
+    }
   }
 
   .somna-pdp-hero__packs .somna-buy__pack-badge {
@@ -1133,7 +1182,7 @@
     .somna-pdp-hero__thumb {
       width: 100%;
       aspect-ratio: 1;
-      border-radius: 8px;
+      border-radius: 11px;
       scroll-snap-align: start;
     }
 
@@ -1238,7 +1287,7 @@
     .somna-pdp-hero__packs .somna-buy__pack {
       gap: 0;
       padding: 12px 4px 6px;
-      border-radius: 8px;
+      border-radius: 6px;
       line-height: 1.25;
     }
 

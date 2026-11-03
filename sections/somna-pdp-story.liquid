@@ -45,7 +45,7 @@
       {%- assign pills = c.pills.value -%}
       {%- if pills != blank -%}
         <ul class="somna-pdp-story__pills" role="list">
-          {%- for p in pills -%}<li>{{ p }}</li>{%- endfor -%}
+          {%- for p in pills -%}<li{% if s.pills_motion != 'none' %} class="somna-shake--{{ s.pills_motion }}" style="--somna-shake-delay: {{ forloop.index0 | times: 0.3 }}s;"{% endif %}>{{ p }}</li>{%- endfor -%}
         </ul>
       {%- endif -%}
     </div>
@@ -1149,6 +1149,7 @@
     },
     { "type": "product", "id": "preview_product", "label": "Product for the theme editor", "info": "Only used where there is no product." },
     { "type": "checkbox", "id": "layers_animation", "label": "Animate \"What it's made of\"", "info": "When every layer has its own image: the How it works product travels in and peels into the layers as you scroll. Desktop and tablet; off for reduced motion.", "default": true },
+    { "type": "select", "id": "pills_motion", "label": "Pill badges animation", "info": "A short shake every few seconds, one pill after another. Off for reduced motion.", "options": [{ "value": "none", "label": "None" }, { "value": "wiggle", "label": "Wiggle" }, { "value": "swing", "label": "Tilt-swing" }, { "value": "pop", "label": "Pop-jiggle" }], "default": "swing" },
     { "type": "checkbox", "id": "how_animation", "label": "Animate \"How it works\"", "info": "Hop-flip of the product and icons 1 → 4 when the section comes on screen. Off for visitors who prefer reduced motion.", "default": true },
     { "type": "select", "id": "accent_line", "label": "Heading line in the accent colour", "options": [{ "value": "first", "label": "First line" }, { "value": "second", "label": "Second line" }], "default": "first" },
     { "type": "color", "id": "background_color", "label": "Background", "default": "#0b0f1d" },
