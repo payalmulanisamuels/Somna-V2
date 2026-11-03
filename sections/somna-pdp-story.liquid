@@ -910,36 +910,150 @@
   }
 
   /* mobile: design to come (Figma pending) — simple stacked fallback only */
+  /* Mobile (Figma 4606:9024 / 4606:9662): homepage mobile type scale — eyebrow 12px, headings 32px,
+     text 14px, buttons ~52px — and tighter gaps. Tablet/desktop (>= 750px) untouched. */
   @media screen and (max-width: 749px) {
-    .somna-pdp-story__visual {
-      grid-template-columns: 1fr 1fr;
+    .somna-pdp-story__inner {
+      gap: 20px;
     }
 
-    .somna-pdp-story__visual .somna-pdp-story__product {
-      grid-column: 1 / -1;
-      grid-row: 1;
-      max-width: 220px;
+    .somna-pdp-story__eyebrow {
+      margin-bottom: 8px;
+      font-size: 0.75rem;
     }
 
-    .somna-pdp-story__point--1,
-    .somna-pdp-story__point--2,
-    .somna-pdp-story__point--3,
-    .somna-pdp-story__point--4 {
-      grid-area: auto;
+    .somna-pdp-story__heading {
+      font-size: 2rem;
     }
 
-    .somna-pdp-story__step {
-      grid-template-columns: 120px minmax(0, 1fr);
-      gap: 12px;
+    .somna-pdp-story__text {
+      margin-top: 10px;
+      font-size: 0.875rem;
+      line-height: 1.45;
     }
 
-    .somna-pdp-story__step p {
+    .somna-pdp-story__label {
+      margin-top: 18px;
       font-size: 0.9375rem;
     }
 
+    .somna-pdp-story__pills {
+      margin-top: 14px;
+    }
+
+    .somna-pdp-story__pills li {
+      padding: 5px 12px;
+      font-size: 0.75rem;
+    }
+
+    /* problem: label on the left, smaller overlay list */
+    .somna-pdp-story__tag {
+      margin-bottom: 10px;
+      font-size: 1.375rem;
+      text-align: left;
+    }
+
+    .somna-pdp-story__tag.has-after {
+      justify-items: start;
+    }
+
+    .somna-pdp-story__bullets {
+      left: 12px;
+      bottom: 12px;
+      font-size: 0.8125rem;
+    }
+
+    .somna-pdp-story__bullets svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* how it works: the four features stay at the corners of the product, as in Figma */
+    .somna-pdp-story__visual {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: 16px 6px;
+    }
+
+    .somna-pdp-story__point {
+      max-width: 104px;
+    }
+
+    .somna-pdp-story__point-icon {
+      width: 38px;
+      height: 38px;
+    }
+
+    .somna-pdp-story__point-icon svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .somna-pdp-story__point h3 {
+      margin-top: 6px;
+      font-size: 0.75rem;
+    }
+
+    .somna-pdp-story__point p {
+      font-size: 0.6875rem;
+    }
+
+    /* layers: picture, then the list in two columns */
+    .somna-pdp-story--layers .somna-pdp-story__product {
+      max-width: 320px;
+      margin-inline: auto;
+    }
+
+    .somna-pdp-story__layers {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px 18px;
+      padding-left: 1.1em;
+      font-size: 0.8125rem;
+      letter-spacing: 0.04em;
+    }
+
+    .somna-pdp-story__layers p {
+      font-size: 0.75rem;
+    }
+
+    /* steps: photo on the left, title + text on the right */
+    .somna-pdp-story__steps {
+      gap: 20px;
+    }
+
+    .somna-pdp-story__step-list {
+      gap: 8px;
+    }
+
+    .somna-pdp-story__step {
+      grid-template-columns: 132px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+    }
+
+    .somna-pdp-story__step h3 {
+      font-size: 1.625rem;
+    }
+
+    .somna-pdp-story__step p {
+      font-size: 0.75rem;
+      line-height: 1.35;
+    }
+
     .somna-pdp-story__button {
-      min-height: 60px;
-      font-size: 1.125rem;
+      gap: 10px;
+      min-height: 52px;
+      border-radius: 14px;
+      font-size: 1rem;
+    }
+
+    .somna-pdp-story__button-icon {
+      width: 30px;
+      height: 30px;
+    }
+
+    .somna-pdp-story__button-icon svg {
+      width: 14px;
+      margin-left: 2px;
     }
   }
   /* "How it works" hop-flip: hidden until it plays; float once landed */
