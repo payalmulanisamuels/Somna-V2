@@ -1377,10 +1377,20 @@
       --somna-mark-size: 16px;
     }
 
-    /* 16px keeps iOS from zooming the page when the select is tapped */
+    /* Figma: ~11px text in a slim box. The select keeps a 16px font (under 16px iOS zooms the page
+       when it is tapped) and is scaled to 11px visually; the negative margin removes the space the
+       unscaled box would leave. */
     .somna-pdp-hero__plan {
-      min-height: 32px;
+      --somna-plan-scale: 0.6875;
+      width: calc(100% / var(--somna-plan-scale));
+      min-height: 44px;
+      margin-bottom: calc(44px * (var(--somna-plan-scale) - 1));
+      padding: 0 12px;
+      border-radius: 6px;
       font-size: 1rem;
+      letter-spacing: 0.06em;
+      transform: scale(var(--somna-plan-scale));
+      transform-origin: 0 0;
     }
 
     .somna-pdp-hero__add {
