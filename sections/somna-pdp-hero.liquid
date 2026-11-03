@@ -1146,9 +1146,10 @@
       font-size: 0.75rem;
     }
 
+    /* sits on the main image, above the thumbnail row (one thumb = (gallery width - 4 gaps) / 5) */
     .somna-pdp-hero__sticker {
       right: -4px;
-      bottom: 14px;
+      bottom: calc((100vw - var(--page-margin, 16px) * 2 - 24px) / 5 + 8px + 12px);
       padding: 5px 12px;
       font-size: 0.875rem;
     }
@@ -1343,7 +1344,8 @@
 
     .somna-pdp-hero__videos-title {
       margin-bottom: 12px;
-      font-size: 1.625rem;
+      font-size: 1.5rem;
+      text-transform: none;
     }
 
     /* two and a half cards, swipe for the rest */
@@ -1369,15 +1371,17 @@
       height: 40px;
     }
 
+    /* Figma: two stickers per row */
     .somna-pdp-hero__stickers {
-      gap: 12px 8px;
+      gap: 10px 6px;
       margin-top: 20px;
+      padding-inline: 8px;
     }
 
     .somna-pdp-hero__sticker,
     .somna-pdp-hero__stickers li {
-      padding: 6px 12px;
-      font-size: 0.9375rem;
+      padding: 5px 10px;
+      font-size: 0.8125rem;
       box-shadow: 2px 3px 0 #000;
     }
   }
