@@ -880,6 +880,18 @@
     }
   }
 
+  /* small laptops (990–1299px): the layers text column is ~290–420px, so the three badges shrink to stay on one row */
+  @media screen and (min-width: 990px) and (max-width: 1299px) {
+    .somna-pdp-story__pills {
+      gap: 2px;
+    }
+
+    .somna-pdp-story__pills li {
+      padding: 6px 8px;
+      font-size: 0.6875rem;
+    }
+  }
+
   /* tablet: adapted two-column layouts, no horizontal scroll */
   @media screen and (min-width: 750px) and (max-width: 989px) {
     .somna-pdp-story--problem .somna-pdp-story__inner,

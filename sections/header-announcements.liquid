@@ -199,6 +199,15 @@
     white-space: nowrap;
   }
 
+  /* Somna V2: fixed mobile size for the strip text (the 14px desktop size with wide tracking showed only a few words) */
+  @media screen and (max-width: 749px) {
+    .announcement-bar__marquee-item .announcement-bar__text,
+    .announcement-bar__slide .announcement-bar__text {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+    }
+  }
+
   /* The accessible copy takes no space in the strip's grid */
   .announcement-bar__accessible-text {
     display: contents;

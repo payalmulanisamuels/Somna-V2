@@ -330,6 +330,42 @@
     }
   }
 
+  /* desktop: three stats on one row, each label on two lines as in Figma
+     (fixed 160px columns wrapped "Would recommend Somna" to 3 lines and dropped it to a 2nd row at 1024) */
+  @media screen and (min-width: 990px) {
+    .somna-proof__head {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
+
+    .somna-proof__stats {
+      flex-wrap: nowrap;
+      gap: 4px;
+    }
+
+    .somna-proof__stat {
+      flex: 1 1 0;
+      width: auto;
+      max-width: 210px;
+      min-width: 0;
+    }
+
+    .somna-proof__label {
+      letter-spacing: 0.18em;
+      text-wrap: balance;
+    }
+  }
+
+  @media screen and (min-width: 990px) and (max-width: 1199px) {
+    .somna-proof__head {
+      grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    }
+
+    .somna-proof__label {
+      font-size: 0.8125rem;
+      letter-spacing: 0.14em;
+    }
+  }
+
   /* final mobile design: centred heading, the three stats in one row */
   @media screen and (max-width: 749px) {
     .somna-proof__intro {

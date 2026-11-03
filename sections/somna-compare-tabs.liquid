@@ -346,6 +346,18 @@
     }
   }
 
+  /* homepage, small laptops (990–1199px): the long heading left the table too little room
+     (labels on 3–4 lines, sideways scroll), so the heading sits above a centred table */
+  @media screen and (min-width: 990px) and (max-width: 1199px) {
+    main[data-template='index'] .somna-compare__inner {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    main[data-template='index'] .somna-compare__panel {
+      max-width: 860px;
+    }
+  }
+
   @media screen and (max-width: 749px) {
     .somna-compare__inner {
       grid-template-columns: minmax(0, 1fr);
