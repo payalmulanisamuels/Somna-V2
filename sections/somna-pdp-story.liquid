@@ -892,6 +892,13 @@
     }
   }
 
+  /* 990–1199px: the fixed 440/460/320 columns shrink evenly and leave the text ~295px; give the text a larger share */
+  @media screen and (min-width: 990px) and (max-width: 1199px) {
+    .somna-pdp-story--layers .somna-pdp-story__inner {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 0.8fr);
+    }
+  }
+
   /* tablet: adapted two-column layouts, no horizontal scroll */
   @media screen and (min-width: 750px) and (max-width: 989px) {
     .somna-pdp-story--problem .somna-pdp-story__inner,
