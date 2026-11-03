@@ -551,4 +551,9 @@
   main[data-template^='product'] :is(.somna-pdp-hero__videos-title, .somna-compare__heading, [id$='__faq'] [class*='__heading'] h2) :is(p, span, em, strong) {
     text-transform: none !important;
   }
+
+  /* mixed case: Boldonse's lowercase tails (the Q) need more room than the all-caps headings */
+  main[data-template^='product'] [id$='__faq'] [class*='__heading'] h2 {
+    line-height: 1.5 !important;
+  }
 }
