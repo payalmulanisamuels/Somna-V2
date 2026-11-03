@@ -543,4 +543,12 @@
   main[data-template^='product'] [id$='__faq'] .details-content p {
     font-size: 0.8125rem !important;
   }
+
+  /* Figma mobile PDP writes these headings in mixed case ("Real Nights, On Camera",
+     "somna. VS others", "Questions? We've Got You."); the site-wide mobile rule above capitalises
+     every h1/h2, so the product page opts these three out. The others stay in capitals, as in Figma. */
+  main[data-template^='product'] :is(.somna-pdp-hero__videos-title, .somna-compare__heading, [id$='__faq'] [class*='__heading'] h2),
+  main[data-template^='product'] :is(.somna-pdp-hero__videos-title, .somna-compare__heading, [id$='__faq'] [class*='__heading'] h2) :is(p, span, em, strong) {
+    text-transform: none !important;
+  }
 }
