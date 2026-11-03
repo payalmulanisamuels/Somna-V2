@@ -346,6 +346,22 @@
       line-height: 1.38;
     }
 
+    /* Figma: gifts eyebrow 0.18em, labels Inter Medium 0.11em, button ExtraBold 22.8px */
+    main[data-template^='product'] [id$='__gifts'] .text-block[class*='__eyebrow'] p {
+      letter-spacing: 0.18em !important;
+    }
+
+    main[data-template^='product'] [id$='__gifts'] .text-block[class*='__label'] p {
+      font-size: clamp(0.9375rem, 1.16vw, 1.05rem);
+      font-weight: 500 !important;
+      letter-spacing: 0.11em !important;
+    }
+
+    main[data-template^='product'] [id$='__gifts'] .button-custom {
+      font-size: clamp(1.125rem, 1.58vw, 1.425rem);
+      font-weight: 800 !important;
+    }
+
     main[data-template^='product'] [id$='__guarantee'] .text-block[class*='__eyebrow'] p {
       font-size: clamp(1.25rem, 2vw, 1.8rem);
       letter-spacing: 0.18em;
@@ -365,6 +381,10 @@
 
     main[data-template^='product'] [id$='__faq'] h2 {
       font-size: clamp(1.75rem, 2.57vw, 2.3125rem);
+    }
+
+    main[data-template^='product'] [id$='__guarantee'] .button-custom {
+      font-size: clamp(1.125rem, 1.53vw, 1.375rem);
     }
   }
 

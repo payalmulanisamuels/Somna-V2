@@ -432,6 +432,12 @@
       font-weight: 600;
     }
   }
+  /* PDP desktop (Figma 1440): row labels 18px */
+  @media screen and (min-width: 750px) {
+    main[data-template^='product'] .somna-compare__table tbody th {
+      font-size: clamp(1rem, 1.28vw, 1.15rem);
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

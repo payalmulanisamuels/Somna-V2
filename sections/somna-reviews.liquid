@@ -1082,22 +1082,41 @@
     display: none;
   }
 
+  /* Show more: 3 reviews on desktop, 2 on mobile (Figma), then the rest + page numbers */
+  .somna-reviews__more-toggle:not(:checked) + .somna-reviews__app .jdgm-review-list > .jm-review-item:nth-child(n + 4),
+  .somna-reviews__more-toggle:not(:checked) + .somna-reviews__app .jm-pagination-controls {
+    display: none !important;
+  }
+
+  .somna-reviews__more-toggle:not(:checked) ~ .somna-reviews__more--app {
+    display: grid;
+    place-items: center;
+    justify-self: center;
+    width: min(100%, 420px);
+  }
+
+  .somna-reviews__more-toggle:focus-visible ~ .somna-reviews__more--app {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .somna-reviews__more--app {
+      font-size: 1.25rem;
+    }
+
+    main[data-template^='product'] .somna-reviews__eyebrow {
+      font-size: 1.0625rem;
+    }
+  }
+
   @media screen and (max-width: 749px) {
-    .somna-reviews__more-toggle:not(:checked) + .somna-reviews__app .jdgm-review-list > .jm-review-item:nth-child(n + 3),
-    .somna-reviews__more-toggle:not(:checked) + .somna-reviews__app .jm-pagination-controls {
+    .somna-reviews__more-toggle:not(:checked) + .somna-reviews__app .jdgm-review-list > .jm-review-item:nth-child(3) {
       display: none !important;
     }
 
     .somna-reviews__more-toggle:not(:checked) ~ .somna-reviews__more--app {
-      display: grid;
-      place-items: center;
-      justify-self: center;
       width: 100%;
-    }
-
-    .somna-reviews__more-toggle:focus-visible ~ .somna-reviews__more--app {
-      outline: 2px solid currentColor;
-      outline-offset: 3px;
     }
 
     /* Figma: controls right under the summary, compact review cards */
