@@ -11,6 +11,70 @@
   "sections": {
     "main": {
       "type": "somna-quiz",
+      "blocks": {
+        "review_NUeAkD": {
+          "type": "review",
+          "settings": {
+            "product": "strips",
+            "image": "shopify://shop_images/somna_selfie_strips_kitchen.png",
+            "name": "Andrew Williams",
+            "rating": 5,
+            "text": "Simple, clean, and effective. Will definitely be reordering when this box runs low.",
+            "verified": true
+          }
+        },
+        "review_dyGjF4": {
+          "type": "review",
+          "settings": {
+            "product": "strips",
+            "image": "shopify://shop_images/somna_selfie_strips_runner.png",
+            "name": "Christian Phillips",
+            "rating": 5,
+            "text": "Glad these are completely drug-free. Simple nightly ritual that's easy to get used to after a couple of tries.",
+            "verified": true
+          }
+        },
+        "review_AGyPqf": {
+          "type": "review",
+          "settings": {
+            "product": "tape",
+            "image": "shopify://shop_images/somna_tape_06_gym.png",
+            "name": "Brandon Robinson",
+            "rating": 5,
+            "text": "Decided to try this out to encourage nasal breathing. Snug fit without feeling tight when applied right.",
+            "verified": true
+          }
+        },
+        "review_U7gqcm": {
+          "type": "review",
+          "settings": {
+            "product": "tape",
+            "image": "shopify://shop_images/somna_tape_03_sofa.png",
+            "name": "Kayla Turner",
+            "rating": 5,
+            "text": "Great addition to my evening self-care and sleep hygiene habits.",
+            "verified": true
+          }
+        },
+        "review_b6njzh": {
+          "type": "review",
+          "settings": {
+            "product": "bundle",
+            "image": "shopify://shop_images/somna_selfie_strips_bedroom.png",
+            "name": "Ashley Lee",
+            "rating": 5,
+            "text": "Super easy to incorporate into nightly wind-down time",
+            "verified": true
+          }
+        }
+      },
+      "block_order": [
+        "review_NUeAkD",
+        "review_dyGjF4",
+        "review_AGyPqf",
+        "review_U7gqcm",
+        "review_b6njzh"
+      ],
       "settings": {
         "intro_heading": "Snoring, stuffy nose or dry mouth? Find out what's <em>really</em> wrecking your sleep.",
         "intro_sub": "This 60-second assessment reads your symptoms and routine to find the fix built for you.",
@@ -83,21 +147,21 @@
         "guarantee_text": "30-Night Money-Back Guarantee",
         "result_button": "Claim My Discount →",
         "preselect_size": "1 Bag",
+        "strips_result_image": "shopify://shop_images/somna-v2-strips-pouch.png",
         "product_strips": "nasal-strips",
         "strips_name": "The Nose Breather",
         "strips_self": "It looks like your nose could use a little help at night. Lying down can narrow the airflow through your nose, which can lead to snoring and slower mornings. SOMNA Strips are designed to gently hold your nose open all night.",
         "strips_partner": "It looks like their nose could use a little help at night. Lying down can narrow the airflow through the nose, which can make sleep feel lighter and mornings slower, even after a full night. SOMNA Strips are designed to gently hold their nose open all night.",
+        "tape_result_image": "shopify://shop_images/somna-v2-tape-pouch.png",
         "product_tape": "mouth-tape",
         "tape_name": "The Mouth Breather",
         "tape_self": "You're breathing through your mouth at night, which is why you wake up dry and groggy. SOMNA Tape is designed to keep your lips gently closed so you breathe through your nose.",
         "tape_partner": "They're breathing through their mouth at night. SOMNA Tape is designed to keep their lips gently closed so they breathe through their nose.",
+        "bundle_result_image": "shopify://shop_images/somna-v2-cta-pouches.png",
         "product_bundle": "sleep-bundle",
         "bundle_name": "The Double Trouble",
         "bundle_self": "It's your nose and your mouth. Strips open the airway; Tape keeps you breathing through it. Built to work together.",
-        "bundle_partner": "It's their nose and their mouth. Strips open the airway; Tape keeps them breathing through it. Built to work together.",
-        "strips_result_image": "shopify://shop_images/somna-v2-strips-pouch.png",
-        "tape_result_image": "shopify://shop_images/somna-v2-tape-pouch.png",
-        "bundle_result_image": "shopify://shop_images/somna-v2-cta-pouches.png"
+        "bundle_partner": "It's their nose and their mouth. Strips open the airway; Tape keeps them breathing through it. Built to work together."
       }
     }
   },
