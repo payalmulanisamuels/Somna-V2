@@ -44,7 +44,7 @@
   {%- endif -%}
   <h2 class="sq-q sq-q--sm" id="sq-{{ sid }}-q1">{{ qs.q1_heading | default: "First, who's this for?" }}</h2>
   <div class="sq-opts" role="group" aria-labelledby="sq-{{ sid }}-q1">
-    <button type="button" class="sq-opt" data-tag="self" data-val="Me"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'person' %}</span><span>Me</span></button>
+    <button type="button" class="sq-opt" data-tag="self" data-val="Me"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'person' %}</span><span data-sq-me>Me</span></button>
     <button type="button" class="sq-opt" data-s="2" data-tag="partner" data-val="My partner"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'partner' %}</span><span>My partner (their snoring keeps me up)</span></button>
     <button type="button" class="sq-opt" data-tag="both" data-val="Both of us"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'both' %}</span><span>Both of us</span></button>
   </div>

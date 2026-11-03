@@ -134,6 +134,7 @@
     if (ty !== 'story') rcStop();
     root.classList.toggle('sq--wide', ty === 'report');      // result: report + fix side by side on wide screens (CSS)
     applyWording();
+    var me = $('[data-sq-me]'); if (me) me.textContent = firstName || 'Me';   // Q1: their first name instead of "Me" (Skip keeps "Me")
     var hasBar = PROG[pk] != null;
     top.hidden = !hasBar;
     if (hasBar) { progf.style.width = PROG[pk] + '%'; prog.setAttribute('aria-valuenow', PROG[pk]); }
