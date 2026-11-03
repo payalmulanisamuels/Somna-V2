@@ -55,7 +55,7 @@
     {%- comment -%} 09 · Unlock 10% (optional email, blurred report peek, Skip always visible) {%- endcomment -%}
     <div class="sq-s sq-center" data-type="email">
       <p class="sq-pill">✓ {{ section.settings.email_pill }}</p>
-      <h2 class="sq-q" tabindex="-1">{{ section.settings.email_heading }}</h2>
+      <h2 class="sq-q" tabindex="-1" data-sq-named>{{ section.settings.email_heading }}</h2>
       {%- if section.settings.email_sub != blank -%}<p class="sq-sub">{{ section.settings.email_sub }}</p>{%- endif -%}
       <div class="sq-peek" aria-hidden="true" data-sq-peek></div>
       {%- comment -%} Subscribes the email to the Klaviyo list set below (default: Quiz Signups, no flows) with source "quiz" + the result and answers. {%- endcomment -%}
@@ -67,9 +67,7 @@
         {%- if code != blank -%}<p class="sq-code">{{ section.settings.code_text | escape | replace: '[code]', code_html }}</p>{%- endif -%}
         <button type="button" class="sq-cta" data-sq-done-next>{{ section.settings.email_done_button | default: 'See my report →' }}</button>
       </div>
-      <form class="sq-form" data-sq-form novalidate>
-        <label class="sq-sr" for="sq-{{ sid }}-name">First name</label>
-        <input class="sq-input sq-input--name" id="sq-{{ sid }}-name" type="text" name="first_name" autocomplete="given-name" autocapitalize="words" maxlength="40" placeholder="{{ section.settings.name_placeholder | default: 'First name' | escape }}" required aria-required="true" data-sq-name>
+      <form class="sq-form" data-sq-form novalidate onsubmit="return false">
         <label class="sq-sr" for="sq-{{ sid }}-email">Email address</label>
         <input class="sq-input" id="sq-{{ sid }}-email" type="email" name="email" autocomplete="email" inputmode="email" placeholder="Your email" required data-sq-email>
         <p class="sq-err" role="alert" data-sq-err hidden></p>
@@ -81,7 +79,7 @@
 
     {%- comment -%} 10 · Sleep report (sleep type, problem line, Nose vs Mouth profile from their answers, tiles) {%- endcomment -%}
     <div class="sq-s sq-report" data-type="report">
-      <p class="sq-pill sq-pill--c" data-self="Your sleep type" data-partner="Their sleep type">Your sleep type</p>
+      <p class="sq-pill sq-pill--c" data-self="Your sleep type" data-partner="Their sleep type" data-sq-type-pill>Your sleep type</p>
       <h2 class="sq-type" tabindex="-1" data-sq-type></h2>
       <p class="sq-problem" data-sq-problem hidden></p>
       {%- if code != blank -%}<p class="sq-code sq-code--top" data-sq-code-top hidden>{{ section.settings.code_text | escape | replace: '[code]', code_html }}</p>{%- endif -%}
@@ -105,18 +103,21 @@
               assign rname = section.settings.strips_name
               assign rself = section.settings.strips_self
               assign rpartner = section.settings.strips_partner
+              assign rpack = section.settings.strips_result_image
             when 2
               assign rk = 'tape'
               assign rp = p_tape
               assign rname = section.settings.tape_name
               assign rself = section.settings.tape_self
               assign rpartner = section.settings.tape_partner
+              assign rpack = section.settings.tape_result_image
             when 3
               assign rk = 'bundle'
               assign rp = p_bundle
               assign rname = section.settings.bundle_name
               assign rself = section.settings.bundle_self
               assign rpartner = section.settings.bundle_partner
+              assign rpack = section.settings.bundle_result_image
           endcase
           assign rv = nil
           if rp != blank
@@ -135,14 +136,15 @@
           data-copy-self="{{ rself | escape }}" data-copy-partner="{{ rpartner | escape }}">
           <h2 class="sq-q sq-fix-h" data-sq-fix-h data-ptitle="{{ rp.title | escape }}">{{ section.settings.fix_prefix }} SOMNA {{ rp.title }}</h2>
           {%- if rp != blank -%}
-            {%- assign rimg = rv.featured_image | default: rp.featured_image -%}
+            {%- comment -%} Packet-only image picked in the theme editor (Result: … → Result image); falls back to the product image {%- endcomment -%}
+            {%- assign rimg = rpack | default: rv.featured_image | default: rp.featured_image -%}
             {%- if rimg != blank -%}
-              <div class="sq-fix-img">{{ rimg | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: '(min-width: 750px) 520px, 92vw', loading: 'lazy', alt: rp.title }}</div>
+              <div class="sq-fix-img{% if rpack != blank %} sq-fix-img--pack{% endif %}">{{ rimg | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: '(min-width: 750px) 520px, 92vw', loading: 'lazy', alt: rp.title }}</div>
             {%- endif -%}
           {%- endif -%}
         </div>
       {%- endfor -%}
-      <p class="sq-lbl">{{ section.settings.why_heading }}</p>
+      <p class="sq-lbl" data-self="{{ section.settings.why_heading | escape }}" data-partner="{{ section.settings.why_heading_partner | default: section.settings.why_heading | escape }}">{{ section.settings.why_heading }}</p>
       <ul class="sq-ticks" data-sq-ticks></ul>
       {%- if section.settings.timeline_heading != blank -%}
         <section class="sq-30" aria-labelledby="sq-{{ sid }}-30">
@@ -154,7 +156,9 @@
                 assign tl_x = 'timeline_' | append: n | append: '_text'
               -%}
               {%- if section.settings[tl_t] != blank -%}
-                <li><p class="sq-tl-t">{{ section.settings[tl_t] }}</p><p class="sq-tl-x">{{ section.settings[tl_x] }}{% if n == 2 and section.settings.timeline_2_note != blank %} <small>{{ section.settings.timeline_2_note }}</small>{% endif %}</p></li>
+                {%- assign tl_p = 'timeline_' | append: n | append: '_text_partner' -%}
+                {%- assign tl_xp = section.settings[tl_p] | default: section.settings[tl_x] -%}
+                <li><p class="sq-tl-t">{{ section.settings[tl_t] }}</p><p class="sq-tl-x"><span{% if n == 1 %} data-sq-tl1 data-strips="{{ section.settings.timeline_1_text_strips | escape }}"{% endif %} data-self="{{ section.settings[tl_x] | escape }}" data-partner="{{ tl_xp | escape }}">{{ section.settings[tl_x] }}</span>{% if n == 2 and section.settings.timeline_2_note != blank %} <small>{{ section.settings.timeline_2_note }}</small>{% endif %}</p></li>
               {%- endif -%}
             {%- endfor -%}
           </ol>
@@ -164,7 +168,6 @@
         <p class="sq-trust"><span class="sq-trust-i" aria-hidden="true">{% render 'somna-quiz-icon', name: 'shield' %}</span>{{ section.settings.guarantee_text }}</p>
       {%- endif -%}
       <a class="sq-cta" data-sq-plan href="{{ fallback_url }}">{{ section.settings.result_button }}</a>
-      <button type="button" class="sq-retake" data-sq-retake>Retake quiz</button>
       </div>
     </div>
   </div>
@@ -176,10 +179,15 @@
     "fallbackUrl": {{ fallback_url | json }},
     "klaviyoCompany": {{ section.settings.klaviyo_company_id | strip | json }},
     "klaviyoList": {{ section.settings.klaviyo_list_id | strip | json }},
+    "klaviyoWelcomeList": {{ section.settings.klaviyo_welcome_list_id | strip | json }},
     "source": {{ section.settings.klaviyo_source | strip | json }},
     "triedStrips": {{ section.settings.tried_strips_line | json }},
     "triedStripsPartner": {{ section.settings.tried_strips_line_partner | json }},
     "triedPills": {{ section.settings.tried_pills_line | json }},
+    "stripsStart": {{ section.settings.strips_start_line | json }},
+    "fixPrefix": {{ section.settings.fix_prefix | json }},
+    "fixPartner": {{ section.settings.fix_prefix_partner | json }},
+    "typePillName": {{ section.settings.type_pill_name | json }},
     "triedTape": {{ section.settings.tried_tape_line | json }},
     "bundleTick": {{ section.settings.bundle_tick | json }},
     "bundleTickPartner": {{ section.settings.bundle_tick_partner | json }},
@@ -200,6 +208,15 @@
   "name": "SOMNA quiz v5.2",
   "class": "somna-quiz-section",
   "settings": [
+    { "type": "header", "content": "00 · First name" },
+    { "type": "paragraph", "content": "Optional (Skip goes to Q1). The name personalises the email step and the report, and is saved to Klaviyo as first_name on sign-up." },
+    { "type": "text", "id": "name_pill", "label": "Pill", "default": "Your sleep quiz" },
+    { "type": "text", "id": "name_heading", "label": "Heading", "default": "Let's find what helps you sleep better." },
+    { "type": "text", "id": "name_sub", "label": "Subheading", "default": "First, what should we call you?" },
+    { "type": "text", "id": "name_placeholder", "label": "First name placeholder", "default": "First name" },
+    { "type": "text", "id": "name_button", "label": "Button", "default": "Let's begin →" },
+    { "type": "text", "id": "name_fine", "label": "Small print", "default": "We'll only use it to personalise your report." },
+    { "type": "text", "id": "name_skip", "label": "Skip link", "default": "Skip" },
     { "type": "header", "content": "01 · Intro + Q1" },
     { "type": "inline_richtext", "id": "intro_heading", "label": "Heading", "info": "Use italic for the highlighted word.", "default": "Snoring, stuffy nose or dry mouth? Find out what's <em>really</em> wrecking your sleep." },
     { "type": "text", "id": "intro_sub", "label": "Subheading", "default": "This 60-second assessment reads your symptoms and routine to find the fix built for you." },
@@ -239,62 +256,73 @@
     { "type": "text", "id": "analyze_sub", "label": "Subheading", "default": "Matching your answers to the right SOMNA fix." },
     { "type": "header", "content": "09 · Unlock 10% (optional email)" },
     { "type": "text", "id": "email_pill", "label": "Pill", "default": "Your report is ready" },
-    { "type": "text", "id": "email_heading", "label": "Heading", "default": "Unlock 10% off your SOMNA plan" },
-    { "type": "text", "id": "email_sub", "label": "Subheading", "default": "Enter your email and we'll show your code with your report." },
+    { "type": "text", "id": "email_heading", "label": "Heading", "info": "With a first name it reads \"Sarah, your sleep report is ready\".", "default": "Your sleep report is ready" },
+    { "type": "text", "id": "email_sub", "label": "Subheading", "default": "Where should we send it? We'll add 10% off your SOMNA plan." },
     { "type": "text", "id": "email_button", "label": "Button", "default": "Show my report + 10% off" },
     { "type": "text", "id": "email_skip", "label": "Skip link", "info": "Skipping shows the report without the discount code.", "default": "Skip, just show my report" },
-    { "type": "text", "id": "name_placeholder", "label": "First name placeholder", "info": "Required when signing up for the code (Skip doesn't ask for it). The name personalises the report and Your fix headings.", "default": "First name" },
     { "type": "text", "id": "email_done", "label": "Signed-up message", "default": "You're in." },
     { "type": "text", "id": "email_done_button", "label": "Signed-up button", "default": "See my report →" },
     { "type": "text", "id": "email_consent", "label": "Consent line", "default": "By signing up you agree to receive marketing emails from SOMNA. Unsubscribe anytime." },
-    { "type": "paragraph", "content": "The email is added to this Klaviyo list (default: Quiz Signups, which has no flows, so quiz sign-ups get no emails), with source 'quiz', the result and their answers on the profile." },
+    { "type": "paragraph", "content": "The email is added to the Klaviyo list below (default: Quiz Signups, for tracking) with source 'quiz', the first name, result and answers on the profile, and also to the Welcome flow list so they get the Welcome Series." },
     { "type": "text", "id": "klaviyo_company_id", "label": "Klaviyo public API key (company ID)", "default": "Tr7JSM" },
     { "type": "text", "id": "klaviyo_list_id", "label": "Klaviyo list ID", "default": "SGCi7d" },
+    { "type": "text", "id": "klaviyo_welcome_list_id", "label": "Welcome flow list ID", "info": "Sign-ups are also added to this list so they get the Welcome Series (default: Email List). Leave empty to turn off.", "default": "XyWydk" },
     { "type": "text", "id": "klaviyo_source", "label": "Sign-up source", "default": "quiz" },
     { "type": "text", "id": "discount_code", "label": "Discount code (email sign-ups only)", "info": "Shown on screen 11 and applied automatically through the product link. Leave empty to turn off.", "default": "QUIZ10" },
     { "type": "text", "id": "code_text", "label": "Code box text", "info": "[code] is replaced by the discount code.", "default": "Your code [code] · applied at checkout" },
     { "type": "header", "content": "10 · Sleep report" },
-    { "type": "text", "id": "problem_a_self", "label": "Problem line: Snoring (me / both)", "default": "You told us snoring is the biggest problem at night." },
-    { "type": "text", "id": "problem_a_partner", "label": "Problem line: Snoring (partner)", "default": "You told us their snoring is the biggest problem at night." },
-    { "type": "text", "id": "problem_b_self", "label": "Problem line: Blocked nose (me / both)", "default": "You told us a blocked or stuffy nose is keeping you up." },
-    { "type": "text", "id": "problem_b_partner", "label": "Problem line: Blocked nose (partner)", "default": "You told us their blocked or stuffy nose is the problem." },
-    { "type": "text", "id": "problem_c_self", "label": "Problem line: Dry mouth (me / both)", "default": "You told us you wake up with a dry mouth or sore throat." },
-    { "type": "text", "id": "problem_c_partner", "label": "Problem line: Dry mouth (partner)", "default": "You told us they wake up with a dry mouth or sore throat." },
-    { "type": "text", "id": "problem_d_self", "label": "Problem line: Tired (me / both)", "default": "You told us you wake up tired, even after a full night." },
-    { "type": "text", "id": "problem_d_partner", "label": "Problem line: Tired (partner)", "default": "You told us they wake up tired, even after a full night." },
-    { "type": "text", "id": "problem_e_self", "label": "Problem line: Both (me / both)", "default": "You told us it's snoring or a blocked nose, and a dry mouth." },
-    { "type": "text", "id": "problem_e_partner", "label": "Problem line: Both (partner)", "default": "You told us it's their snoring or blocked nose, and a dry mouth." },
+    { "type": "paragraph", "content": "With a first name, the problem line starts with it: \"Sarah, you mentioned …\"." },
+    { "type": "text", "id": "type_pill_name", "label": "Pill with a first name (me / both)", "info": "[name] is replaced by the first name. Partner: \"Their sleep type\". No name: \"Your sleep type\".", "default": "[name]'s sleep type" },
+    { "type": "text", "id": "problem_a_self", "label": "Problem line: Snoring (me / both)", "default": "You mentioned snoring is what you'd most like to change." },
+    { "type": "text", "id": "problem_a_partner", "label": "Problem line: Snoring (partner)", "default": "You mentioned their snoring is what they'd most like to change." },
+    { "type": "text", "id": "problem_b_self", "label": "Problem line: Blocked nose (me / both)", "default": "You mentioned a blocked or stuffy nose is keeping you up." },
+    { "type": "text", "id": "problem_b_partner", "label": "Problem line: Blocked nose (partner)", "default": "You mentioned their blocked or stuffy nose is the problem." },
+    { "type": "text", "id": "problem_c_self", "label": "Problem line: Dry mouth (me / both)", "default": "You mentioned you wake up with a dry mouth or sore throat." },
+    { "type": "text", "id": "problem_c_partner", "label": "Problem line: Dry mouth (partner)", "default": "You mentioned they wake up with a dry mouth or sore throat." },
+    { "type": "text", "id": "problem_d_self", "label": "Problem line: Tired (me / both)", "default": "You mentioned you wake up tired, even after a full night." },
+    { "type": "text", "id": "problem_d_partner", "label": "Problem line: Tired (partner)", "default": "You mentioned they wake up tired, even after a full night." },
+    { "type": "text", "id": "problem_e_self", "label": "Problem line: Both (me / both)", "default": "You mentioned it's snoring or a blocked nose, and a dry mouth." },
+    { "type": "text", "id": "problem_e_partner", "label": "Problem line: Both (partner)", "default": "You mentioned it's their snoring or blocked nose, and a dry mouth." },
     { "type": "header", "content": "11 · Your fix" },
-    { "type": "text", "id": "fix_prefix", "label": "Heading start", "default": "Your fix:" },
-    { "type": "text", "id": "why_heading", "label": "'Why it fits' heading", "default": "Why it fits you" },
-    { "type": "text", "id": "tried_strips_line", "label": "Tick if they tried cheap strips (me / both)", "default": "Structural, all-night adhesive, unlike the cheap strips you tried." },
-    { "type": "text", "id": "tried_strips_line_partner", "label": "Tick if they tried cheap strips (partner)", "default": "Structural, all-night adhesive, unlike the cheap strips they tried." },
-    { "type": "text", "id": "tried_pills_line", "label": "Drug-free tick", "info": "Shown first when they tried melatonin or pills, otherwise used to fill the list.", "default": "Drug-free. Nothing to swallow." },
+    { "type": "text", "id": "fix_prefix", "label": "Heading start (me / both)", "info": "With a first name: \"Sarah, here's your fix:\".", "default": "Your fix:" },
+    { "type": "text", "id": "fix_prefix_partner", "label": "Heading start (partner)", "info": "With a first name: \"Sarah, here's what we'd suggest for them:\".", "default": "Here's what we'd suggest for them:" },
+    { "type": "text", "id": "why_heading", "label": "'Why it fits' heading (me / both)", "default": "Why it fits you" },
+    { "type": "text", "id": "why_heading_partner", "label": "'Why it fits' heading (partner)", "default": "Why it fits them" },
+    { "type": "text", "id": "tried_strips_line", "label": "Tick if they tried cheap strips (me / both)", "default": "Built to stay on until morning, unlike the strips you may have tried before." },
+    { "type": "text", "id": "tried_strips_line_partner", "label": "Tick if they tried cheap strips (partner)", "default": "Built to stay on until morning, unlike the strips they may have tried before." },
+    { "type": "text", "id": "strips_start_line", "label": "Nasal Strips tick if they didn't try strips", "default": "Easy to start: one strip at bedtime, nothing else to change." },
+    { "type": "text", "id": "tried_pills_line", "label": "Drug-free tick", "info": "Shown first when they tried melatonin or pills, otherwise used to fill the list.", "default": "Drug-free, with nothing to swallow." },
     { "type": "text", "id": "bundle_tick", "label": "Sleep Bundle tick (me / both)", "default": "Strips open the airway, while Tape helps keep the mouth closed. You said it's your nose and your mouth." },
     { "type": "text", "id": "bundle_tick_partner", "label": "Sleep Bundle tick (partner)", "default": "Strips open the airway, while Tape helps keep the mouth closed. You said it's their nose and their mouth." },
     { "type": "text", "id": "tried_tape_line", "label": "Tick if they tried mouth tape", "info": "Wording to confirm.", "default": "Designed to be gentle on skin and peel off easily in the morning." },
     { "type": "text", "id": "timeline_heading", "label": "Timeline heading", "default": "Your first 30 nights" },
     { "type": "text", "id": "timeline_1_title", "label": "Step 1 title", "default": "Night 1" },
-    { "type": "text", "id": "timeline_1_text", "label": "Step 1 text", "default": "Apply before bed." },
+    { "type": "text", "id": "timeline_1_text", "label": "Step 1 text (Mouth Tape / Sleep Bundle)", "default": "Apply before bed." },
+    { "type": "text", "id": "timeline_1_text_strips", "label": "Step 1 text (Nasal Strips)", "default": "Apply one strip before bed." },
     { "type": "text", "id": "timeline_2_title", "label": "Step 2 title", "default": "Nights 1–30" },
-    { "type": "text", "id": "timeline_2_text", "label": "Step 2 text", "default": "Log your mornings in your free Sleep Tracker" },
+    { "type": "text", "id": "timeline_2_text", "label": "Step 2 text (me / both)", "default": "Note how your mornings feel in your free Sleep Tracker" },
+    { "type": "text", "id": "timeline_2_text_partner", "label": "Step 2 text (partner)", "default": "Note how their mornings feel in the free Sleep Tracker" },
     { "type": "text", "id": "timeline_2_note", "label": "Step 2 small print", "info": "Keep: the Sleep Tracker is free with a subscription only.", "default": "(with subscription)." },
     { "type": "text", "id": "timeline_3_title", "label": "Step 3 title", "default": "Night 30" },
-    { "type": "text", "id": "timeline_3_text", "label": "Step 3 text", "info": "Must match the Return & Refund Policy.", "default": "Not for you? Get a full refund under our 30-Night Money-Back Guarantee." },
+    { "type": "text", "id": "timeline_3_text", "label": "Step 3 text", "info": "Must match the Return & Refund Policy.", "default": "Not quite right for you? Get a full refund under our 30-Night Money-Back Guarantee." },
+    { "type": "text", "id": "timeline_3_text_partner", "label": "Step 3 text (partner)", "info": "Must match the Return & Refund Policy.", "default": "Not quite right for them? Get a full refund under our 30-Night Money-Back Guarantee." },
     { "type": "text", "id": "guarantee_text", "label": "Guarantee trust line (above the button)", "info": "Leave empty to hide.", "default": "30-Night Money-Back Guarantee" },
     { "type": "text", "id": "result_button", "label": "Button", "default": "Claim My Discount →" },
     { "type": "text", "id": "preselect_size", "label": "Size to pre-select on the product page", "info": "Must match the variant name, e.g. 1 Bag, 2 Bags, 4 Bags.", "default": "1 Bag" },
     { "type": "header", "content": "Result: Nasal Strips" },
+    { "type": "image_picker", "id": "strips_result_image", "label": "Result image", "info": "Packet image shown on the quiz result. Leave empty to use the product image. Doesn't change the product." },
     { "type": "product", "id": "product_strips", "label": "Product" },
     { "type": "text", "id": "strips_name", "label": "Sleep type name", "default": "The Nose Breather" },
-    { "type": "textarea", "id": "strips_self", "label": "Copy (me / both)", "default": "Your nose is the bottleneck. When airflow is restricted lying down, snoring and groggy mornings follow. SOMNA Strips are designed to hold your nose open all night." },
-    { "type": "textarea", "id": "strips_partner", "label": "Copy (partner)", "default": "Their nose is the bottleneck. When airflow is restricted lying down, they snore, and you're the one losing sleep. SOMNA Strips are designed to hold their nose open all night." },
+    { "type": "textarea", "id": "strips_self", "label": "Copy (me / both)", "default": "It looks like your nose could use a little help at night. Lying down can narrow the airflow through your nose, which can lead to snoring and slower mornings. SOMNA Strips are designed to gently hold your nose open all night." },
+    { "type": "textarea", "id": "strips_partner", "label": "Copy (partner)", "default": "It looks like their nose could use a little help at night. Lying down can narrow the airflow through the nose, which can make sleep feel lighter and mornings slower, even after a full night. SOMNA Strips are designed to gently hold their nose open all night." },
     { "type": "header", "content": "Result: Mouth Tape" },
+    { "type": "image_picker", "id": "tape_result_image", "label": "Result image", "info": "Packet image shown on the quiz result. Leave empty to use the product image. Doesn't change the product." },
     { "type": "product", "id": "product_tape", "label": "Product" },
     { "type": "text", "id": "tape_name", "label": "Sleep type name", "default": "The Mouth Breather" },
     { "type": "textarea", "id": "tape_self", "label": "Copy (me / both)", "default": "You're breathing through your mouth at night, which is why you wake up dry and groggy. SOMNA Tape is designed to keep your lips gently closed so you breathe through your nose." },
     { "type": "textarea", "id": "tape_partner", "label": "Copy (partner)", "default": "They're breathing through their mouth at night. SOMNA Tape is designed to keep their lips gently closed so they breathe through their nose." },
     { "type": "header", "content": "Result: Sleep Bundle" },
+    { "type": "image_picker", "id": "bundle_result_image", "label": "Result image", "info": "Packet image shown on the quiz result. Leave empty to use the product image. Doesn't change the product." },
     { "type": "product", "id": "product_bundle", "label": "Product" },
     { "type": "text", "id": "bundle_name", "label": "Sleep type name", "default": "The Double Trouble" },
     { "type": "textarea", "id": "bundle_self", "label": "Copy (me / both)", "default": "It's your nose and your mouth. Strips open the airway; Tape keeps you breathing through it. Built to work together." },

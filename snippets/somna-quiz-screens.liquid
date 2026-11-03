@@ -5,8 +5,23 @@
   data-self / data-partner hold the "you" and "they" wording; Q1 "My partner" switches to the partner version.
 {%- endcomment -%}
 
+{%- comment -%} 00 · First name (optional: Skip goes straight to Q1). Personalises the email step and report; sent to Klaviyo as first_name on sign-up. {%- endcomment -%}
+<div class="sq-s sq-center is-on" data-type="name">
+  {%- if qs.name_pill != blank -%}<p class="sq-pill">{{ qs.name_pill }}</p>{%- endif -%}
+  <h1 class="sq-intro-h" tabindex="-1">{{ qs.name_heading }}</h1>
+  {%- if qs.name_sub != blank -%}<p class="sq-sub">{{ qs.name_sub }}</p>{%- endif -%}
+  <form class="sq-form" data-sq-name-form novalidate onsubmit="return false">
+    <label class="sq-sr" for="sq-{{ sid }}-name">First name</label>
+    <input class="sq-input" id="sq-{{ sid }}-name" type="text" name="first_name" autocomplete="given-name" autocapitalize="words" maxlength="40" placeholder="{{ qs.name_placeholder | default: 'First name' | escape }}" aria-describedby="sq-{{ sid }}-name-err" data-sq-name>
+    <p class="sq-err" id="sq-{{ sid }}-name-err" role="alert" data-sq-name-err hidden></p>
+    <button type="submit" class="sq-cta">{{ qs.name_button | default: "Let's begin →" }}</button>
+  </form>
+  {%- if qs.name_fine != blank -%}<p class="sq-fine">{{ qs.name_fine }}</p>{%- endif -%}
+  <button type="button" class="sq-skip" data-sq-name-skip>{{ qs.name_skip | default: 'Skip' }}</button>
+</div>
+
 {%- comment -%} 01 · Intro + Q1 {%- endcomment -%}
-<div class="sq-s is-on" data-type="q" data-q="1" data-step="1">
+<div class="sq-s" data-type="q" data-q="1" data-step="1">
   <h1 class="sq-intro-h" tabindex="-1">{{ qs.intro_heading }}</h1>
   {%- if qs.intro_sub != blank -%}<p class="sq-intro-sub">{{ qs.intro_sub }}</p>{%- endif -%}
   {%- comment -%} Testimonial card (old-quiz design). Content: theme editor → SOMNA quiz → "01 · Intro + Q1". Hidden while the quote is empty. {%- endcomment -%}

@@ -19,12 +19,12 @@
   var nameIn = $('[data-sq-name]');
   var TOTAL = 6;
   // progress bar per screen (PDF mockups)
-  var PROG = { q1: 12, q2: 25, q3: 38, q4: 50, story: 58, q5: 70, multi6: 82, analyze: 90, email: 95, report: 100, fix: 100 };
+  var PROG = { name: 6, q1: 12, q2: 25, q3: 38, q4: 50, story: 58, q5: 70, multi6: 82, analyze: 90, email: 95, report: 100, fix: 100 };
 
   // ---- state ----
   // unlocked: the discount code is earned only by signing up with an email (Skip shows the report without a code)
   var i = 0, answers = {}, busy = false, timer = null, signedUp = false, unlocked = false, sending = false, run = 0;
-  var firstName = '';                                       // optional, from the email step; personalises the results
+  var firstName = '';                                       // optional, from the name screen; personalises the email step + report
   var applying = null, applied = false, prefetched = {};    // QUIZ10 applied in the background → "Claim" goes straight to the product
 
   function opt(q) { var s = qScreens[q]; return answers[q] == null || !s ? null : s.querySelectorAll('.sq-opt')[answers[q]]; }
@@ -70,15 +70,18 @@
     return t.length ? cap(t.join(', ')) : 'Nothing yet';
   }
   function level(n) { return n >= 5 ? 'Strong' : (n >= 3 ? 'Medium' : 'Low'); }
+  // "Sarah, your sleep report is ready" / "Sarah, you mentioned …"; no name → the line as written
+  function named(t) { return firstName && t ? firstName + ', ' + t.charAt(0).toLowerCase() + t.slice(1) : t; }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 
   // "Why it fits you": one tick from the result + up to two from Q6 (fallbacks keep it at three)
   function ticks(s) {
     var p = s.partner, out = [];
     if (s.result === 'strips') {
-      var n = { blocked: p ? '. You said theirs is blocked most nights.' : ". You said it's blocked most nights.", stuffy: ', even when a cold or allergies hit.' }[s.nose]
-        || ((s.problem === 'snoring') ? ', right where snoring usually starts.' : '.');
-      out.push('Designed to hold ' + (p ? 'their' : 'your') + ' nose open all night' + n);
+      // SOMNA_Quiz_Name_Personalisation.pdf: hold-open, then the strips line (tried strips) or the easy-start line, then drug-free
+      out.push('Designed to gently hold ' + (p ? 'their' : 'your') + ' nose open through the night.');
+      out.push(s.tried.indexOf('strips') > -1 ? (p ? (cfg.triedStripsPartner || cfg.triedStrips) : cfg.triedStrips) : cfg.stripsStart);
+      return out.concat([cfg.triedPills]).filter(Boolean).slice(0, 3);
     } else if (s.result === 'tape') {
       var m = { dry: p ? '. You said they wake up bone dry.' : '. You said you wake up bone dry.', drool: '. You mentioned drooling or morning breath.' }[s.mouth]
         || ((s.problem === 'mouth') ? (p ? '. You said they wake with a dry mouth.' : '. You said you wake with a dry mouth.') : '.');
@@ -125,8 +128,9 @@
     screens.forEach(function (s, k) { s.classList.toggle('is-on', k === n); });
     // stop story-break videos (and any sound) once the shopper leaves that screen
     $$('.sq-s:not(.is-on) video').forEach(function (v) { try { v.pause(); } catch (e) {} });
-    if (ty !== 'story') rcStop();
     var sc = screens[n], ty = sc.getAttribute('data-type'), q = +sc.dataset.step || 0, pk = screenKey(sc);
+    if (ty !== 'story') rcStop();
+    root.classList.toggle('sq--wide', ty === 'report');      // result: report + fix side by side on wide screens (CSS)
     applyWording();
     var hasBar = PROG[pk] != null;
     top.hidden = !hasBar;
@@ -183,18 +187,20 @@
   var rc = $('[data-sq-rc]'), rcTrack = rc && $('[data-sq-rc-track]', rc), rcTimer = null, rcDots = [], rcCur = 0, rcMoving = 0;
   function rcCards() { return $$('.sq-rc-card', rcTrack); }
   function rcIndex() { var c = rcCards(), x = rcTrack.scrollLeft, best = 0; c.forEach(function (e, k) { if (Math.abs(e.offsetLeft - rcTrack.offsetLeft - x) < Math.abs(c[best].offsetLeft - rcTrack.offsetLeft - x)) best = k; }); return best; }
+  // 2 cards in view on mobile, 3 on desktop: the last start position is cards - visible, then it loops to the first
+  function rcMax() { var c = rcCards(); if (!c.length) return 0; var vis = Math.max(1, Math.round(rcTrack.clientWidth / c[0].getBoundingClientRect().width)); return Math.max(0, c.length - vis); }
   function rcGo(k, smooth) {
-    var c = rcCards(); if (!c.length) return; k = (k + c.length) % c.length;
+    var c = rcCards(), m = rcMax(); if (!c.length) return; k = k > m ? 0 : (k < 0 ? m : k);
     rcCur = k; rcMoving = Date.now();                       // remember the target so taps during a slide still step on
     rcTrack.scrollTo({ left: c[k].offsetLeft - rcTrack.offsetLeft, behavior: smooth && !reduce ? 'smooth' : 'auto' });
     rcSync(k);
   }
-  function rcSync(k) { rcDots.forEach(function (d, j) { d.setAttribute('aria-current', j === k ? 'true' : 'false'); }); }
-  // Autoplay: loops every 4.5s (7s with no slide animation for "reduce motion" devices).
+  function rcSync(k) { var m = rcMax(); rcDots.forEach(function (d, j) { d.hidden = j > m; d.setAttribute('aria-current', j === Math.min(k, m) ? 'true' : 'false'); }); }
+  // Autoplay: one review every 1s from the moment the screen shows (3s with no slide animation for "reduce motion" devices).
   // Pauses only while the shopper is swiping or using the arrows/dots, then resumes 6s later.
   var rcResumeT = null;
   function rcStop() { clearInterval(rcTimer); rcTimer = null; clearTimeout(rcResumeT); }
-  function rcStart() { rcStop(); if (!rc || rcCards().length < 2 || screens[i].getAttribute('data-type') !== 'story') return; rcTimer = setInterval(function () { if (!document.hidden) rcGo(rcCur + 1, true); }, reduce ? 7000 : 4500); }
+  function rcStart() { rcStop(); if (!rc || rcCards().length < 2 || screens[i].getAttribute('data-type') !== 'story') return; rcTimer = setInterval(function () { if (!document.hidden) rcGo(rcCur + 1, true); }, reduce ? 3000 : 1000); }
   function rcPause() { rcStop(); rcResumeT = setTimeout(rcStart, 6000); }
   if (rc) {
     var dotsBox = $('[data-sq-rc-dots]', rc);
@@ -287,7 +293,7 @@
     var labels = ['Checking ' + (p ? 'their' : 'your') + ' nose answers', 'Checking ' + (p ? 'their' : 'your') + ' mouth answers', 'Finding ' + (p ? 'their' : 'your') + ' SOMNA fix'];
     var t0 = null, DUR = 3000;
     function frame(ts) {
-      if (my !== run) return;                              // left the screen (Back / Retake)
+      if (my !== run) return;                              // left the screen (Back)
       if (t0 == null) t0 = ts;
       var f = Math.min(1, (ts - t0) / DUR), v = Math.round(f * 100);
       ring.style.strokeDashoffset = C * (1 - f); pct.textContent = v + '%';
@@ -328,14 +334,12 @@
   function renderReport() {
     var s = score(), r = resEl(s), p = s.partner;
     var type = $('[data-sq-type]'), tname = r ? r.getAttribute('data-name') : '';
-    // "John, you're a Nose Breather" (partner: "John, your partner is a …"); no name → the sleep type on its own
-    if (firstName && tname) {
-      var t2 = tname.replace(/^the\s+/i, ''), art = /^[aeiou]/i.test(t2) ? 'an ' : 'a ';
-      type.textContent = firstName + ', ' + (p ? 'your partner is ' : "you're ") + art + t2;
-    } else type.textContent = tname;
+    type.textContent = tname;                                // the sleep type on its own; the name goes in the pill above
+    var tp = $('[data-sq-type-pill]');                       // "Sarah's sleep type" (partner: "Their sleep type")
+    if (tp && firstName && !p && cfg.typePillName) tp.textContent = cfg.typePillName.replace('[name]', firstName);
     type.classList.remove('is-reveal'); void type.offsetWidth; type.classList.add('is-reveal');
     var pr = $('[data-sq-problem]'), lines = (cfg.problems || {})[s.problem];
-    pr.textContent = lines ? lines[p ? 1 : 0] : ''; pr.hidden = !pr.textContent;
+    pr.textContent = lines ? named(lines[p ? 1 : 0]) : ''; pr.hidden = !pr.textContent;
     $('[data-sq-nose-lbl]').textContent = level(s.S); $('[data-sq-mouth-lbl]').textContent = level(s.T);
     dots($('[data-sq-nose]'), Math.min(8, s.S), 8, true); dots($('[data-sq-mouth]'), Math.min(6, s.T), 6, true);
     tiles($('[data-sq-tilegrid]'), s);
@@ -350,10 +354,10 @@
     var s = score();
     $$('.sq-res').forEach(function (e) { e.hidden = e.getAttribute('data-res') !== s.result; });
     var rimg = $('.sq-res[data-res="' + s.result + '"] img'); if (rimg) rimg.loading = 'eager';   // load the matched product image now, not on scroll
-    $$('[data-sq-fix-h]').forEach(function (h) {               // "John, here's your fix: SOMNA Nasal Strips"
-      if (!h.dataset.orig) h.dataset.orig = h.textContent;
-      h.textContent = firstName ? firstName + ", here's " + (s.partner ? 'their' : 'your') + ' fix: SOMNA ' + h.getAttribute('data-ptitle') : h.dataset.orig;
-    });
+    // "Sarah, here's your fix: SOMNA Nasal Strips" / partner: "Sarah, here's what we'd suggest for them: SOMNA Nasal Strips"
+    var pre = s.partner ? (cfg.fixPartner || cfg.fixPrefix || '') : (firstName ? "Here's your fix:" : (cfg.fixPrefix || ''));
+    $$('[data-sq-fix-h]').forEach(function (h) { h.textContent = named(pre) + ' SOMNA ' + h.getAttribute('data-ptitle'); });
+    var tl1 = $('[data-sq-tl1]'); if (tl1 && s.result === 'strips' && tl1.getAttribute('data-strips')) tl1.textContent = tl1.getAttribute('data-strips');
     $('[data-sq-plan]').setAttribute('href', productUrl(s));
     var ul = $('[data-sq-ticks]'); ul.innerHTML = '';
     ticks(s).forEach(function (t) { var li = el('li', '', null); li.appendChild(el('span', 'sq-tick', null)); li.appendChild(el('span', '', t)); ul.appendChild(li); });
@@ -402,21 +406,23 @@
       'Quiz problem': TXT.issue[s.problem] || '', 'Quiz nose': TXT.nose[s.nose] || '', 'Quiz mouth': TXT.mouth[s.mouth] || '',
       'Quiz energy': TXT.energy[s.energy] || '', 'Quiz tried': s.tried };
     if (s.tried.indexOf('other') > -1 && answers.other) props['Quiz tried other'] = answers.other.trim();
-    var body = { data: { type: 'subscription', attributes: {
-      custom_source: cfg.source || 'quiz',
-      profile: { data: { type: 'profile', attributes: firstName ? { email: email, first_name: firstName, properties: props } : { email: email, properties: props } } }
-    }, relationships: { list: { data: { type: 'list', id: cfg.klaviyoList } } } } };
-    return fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + encodeURIComponent(cfg.klaviyoCompany), {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'revision': '2024-10-15' }, body: JSON.stringify(body)
-    }).then(function (res) { if (!res.ok) throw new Error('Klaviyo ' + res.status); return s.result; });
+    function sub(list) {
+      var body = { data: { type: 'subscription', attributes: {
+        custom_source: cfg.source || 'quiz',
+        profile: { data: { type: 'profile', attributes: firstName ? { email: email, first_name: firstName, properties: props } : { email: email, properties: props } } }
+      }, relationships: { list: { data: { type: 'list', id: list } } } } };
+      return fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + encodeURIComponent(cfg.klaviyoCompany), {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'revision': '2024-10-15' }, body: JSON.stringify(body)
+      });
+    }
+    // Quiz Signups (tracking) decides success; the Welcome flow list (Email List → Welcome Series) is added alongside, best effort
+    var welcome = cfg.klaviyoWelcomeList && cfg.klaviyoWelcomeList !== cfg.klaviyoList ? sub(cfg.klaviyoWelcomeList).catch(function () {}) : null;
+    return sub(cfg.klaviyoList).then(function (res) { if (!res.ok) throw new Error('Klaviyo ' + res.status); return welcome; }).then(function () { return s.result; });
   }
   form.addEventListener('submit', function (ev) {
     ev.preventDefault();
     if (sending) return;                                   // ignore repeat taps / Enter
     var email = emailIn.value.trim();
-    firstName = cleanName(nameIn ? nameIn.value : '');
-    if (nameIn && !firstName) { showErr('Please enter your first name.'); nameIn.setAttribute('aria-invalid', 'true'); nameIn.focus(); return; }
-    if (nameIn) nameIn.removeAttribute('aria-invalid');
     if (!EMAIL_RE.test(email)) { showErr('Enter a valid email address.'); emailIn.focus(); return; }
     if (!cfg.klaviyoCompany || !cfg.klaviyoList) { showErr("Sign-up isn't available right now. Tap the link below to see your report."); return; }
     sending = true; showErr(''); sendBtn.disabled = true; sendBtn.setAttribute('aria-busy', 'true'); sendBtn.textContent = 'Sending…';
@@ -428,18 +434,30 @@
   });
   var sendLabel = sendBtn.textContent;
   emailIn.addEventListener('input', function () { if (!err.hidden) showErr(''); });
-  if (nameIn) nameIn.addEventListener('input', function () { nameIn.removeAttribute('aria-invalid'); if (!err.hidden) showErr(''); });
   // Skip: no email needed; shows the report without the discount code
   $('[data-sq-skip]').addEventListener('click', function () { if (!sending) go(idx('report')); });
   // Email step after a successful sign-up (e.g. Back from the report): show "You're in" + code instead of the form
   var done = $('[data-sq-done]'), consent = $('[data-sq-consent]'), skipBtn = $('[data-sq-skip]');
   function renderEmail() {
+    var eh = $('[data-sq-named]'); if (eh) { if (!eh.dataset.orig) eh.dataset.orig = eh.textContent; eh.textContent = named(eh.dataset.orig); }
     if (done) done.hidden = !signedUp;
     form.hidden = signedUp; skipBtn.hidden = signedUp; if (consent) consent.hidden = signedUp;
   }
   var doneNext = $('[data-sq-done-next]'); if (doneNext) doneNext.addEventListener('click', function () { go(idx('report')); });
 
-  $$('[data-sq-retake]').forEach(function (b) { b.addEventListener('click', function () { answers = {}; if (otherText) otherText.value = ''; syncMulti(); go(0); }); });
+  // ---- 00 first name: optional. "Let's begin" with a name, or Skip → Q1 ----
+  var nameForm = $('[data-sq-name-form]'), nameErr = $('[data-sq-name-err]'), nameSkip = $('[data-sq-name-skip]');
+  function nameErrShow(m) { if (!nameErr) return; nameErr.textContent = m; nameErr.hidden = !m; if (m) nameIn.setAttribute('aria-invalid', 'true'); else nameIn.removeAttribute('aria-invalid'); }
+  if (nameForm && nameIn) {
+    nameForm.addEventListener('submit', function (ev) {
+      ev.preventDefault(); if (busy) return;
+      firstName = cleanName(nameIn.value);
+      if (!firstName) { nameErrShow('Please enter your first name, or tap Skip.'); nameIn.focus(); return; }
+      nameErrShow(''); go(i + 1);
+    });
+    nameIn.addEventListener('input', function () { if (nameErr && !nameErr.hidden) nameErrShow(''); });
+  }
+  if (nameSkip) nameSkip.addEventListener('click', function () { if (busy) return; firstName = ''; if (nameIn) { nameIn.value = ''; nameErrShow(''); } go(i + 1); });
 
   show(0, false);
 })();
