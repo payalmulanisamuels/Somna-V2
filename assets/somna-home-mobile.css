@@ -493,7 +493,7 @@
   }
 }
 
-/* Product pages (Figma mobile PDP 4606:9024 / 4606:9662): gifts and FAQ copy on the left, 32px
+/* Product pages (Figma mobile PDP 4606:9024 / 4606:9662): gifts and FAQ copy on the left, 26px
    headings. Scoped to the product template so the homepage keeps its centred final design. */
 @media screen and (max-width: 749px) {
   main[data-template^='product'] :is([id$='__gifts'], [id$='__faq']) .text-block:is([class*='__heading'], [class*='__eyebrow'], [class*='__text']):not(.details-content *) {
@@ -502,8 +502,8 @@
   }
 
   main[data-template^='product'] :is([id$='__gifts'], [id$='__faq'], [id$='__guarantee']) [class*='__heading'] :is(h2, p) {
-    font-size: 2rem !important;
-    line-height: 1.15 !important;
+    font-size: 1.625rem !important;
+    line-height: 1.2 !important;
   }
 
   main[data-template^='product'] [id$='__gifts'] [class*='__eyebrow'] p {
