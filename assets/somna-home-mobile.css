@@ -503,7 +503,7 @@
 
   main[data-template^='product'] :is([id$='__gifts'], [id$='__faq'], [id$='__guarantee']) [class*='__heading'] :is(h2, p) {
     font-size: 1.625rem !important;
-    line-height: 1.2 !important;
+    line-height: 1.35 !important;
   }
 
   main[data-template^='product'] [id$='__gifts'] [class*='__eyebrow'] p {
