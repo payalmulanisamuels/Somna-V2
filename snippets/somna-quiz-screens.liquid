@@ -76,6 +76,55 @@
   <p class="sq-pill">✓ {{ qs.story_pill }}</p>
   <h2 class="sq-q" tabindex="-1">{{ qs.story_heading }}</h2>
   {%- if qs.story_sub != blank -%}<p class="sq-sub">{{ qs.story_sub }}</p>{%- endif -%}
+  {%- liquid
+    assign rev_count = 0
+    for b in blocks
+      if b.type == 'review' and b.settings.text != blank
+        assign rev_count = rev_count | plus: 1
+      endif
+    endfor
+  -%}
+  {%- if rev_count > 0 -%}
+    {%- comment -%} Review carousel (replaces the video once real reviews are added as "Story review" blocks) {%- endcomment -%}
+    <div class="sq-rc" data-sq-rc>
+      <div class="sq-rc-track" data-sq-rc-track tabindex="0" role="region" aria-roledescription="carousel" aria-label="Customer reviews">
+        {%- for b in blocks -%}
+          {%- if b.type == 'review' and b.settings.text != blank -%}
+            {%- assign rs = b.settings -%}
+            <figure class="sq-rc-card{% if rs.image != blank %} sq-rc-card--photo{% endif %}" data-product="{{ rs.product }}" role="group" aria-roledescription="slide" {{ b.shopify_attributes }}>
+              {%- if rs.image != blank -%}
+                {%- assign rc_alt = 'Photo from ' | append: rs.name -%}
+                <div class="sq-rc-photo">{{ rs.image | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: '(min-width: 750px) 480px, 85vw', loading: 'lazy', alt: rc_alt }}</div>
+              {%- endif -%}
+              <div class="sq-rc-head">
+                {%- if rs.image != blank -%}
+                {%- else -%}
+                  {%- assign rc_words = rs.name | strip | split: ' ' -%}
+                  <span class="sq-rc-img sq-review-ph" aria-hidden="true">{{ rc_words.first | slice: 0 }}{% if rc_words.size > 1 %}{{ rc_words.last | slice: 0 }}{% endif %}</span>
+                {%- endif -%}
+                <div class="sq-rc-who">
+                  <strong class="sq-rc-name">{{ rs.name }}</strong>
+                  <span class="sq-rc-stars" role="img" aria-label="Rated {{ rs.rating }} out of 5">
+                    {%- for st in (1..5) -%}<svg viewBox="0 0 20 20" aria-hidden="true" class="{% if st > rs.rating %}is-off{% endif %}"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z"/></svg>{%- endfor -%}
+                  </span>
+                  {%- if rs.verified -%}<span class="sq-rc-ver">✓ Verified buyer</span>{%- endif -%}
+                </div>
+              </div>
+              <blockquote class="sq-rc-text">“{{ rs.text | escape | newline_to_br }}”</blockquote>
+              <figcaption class="sq-rc-prod">{% case rs.product %}{% when 'tape' %}Mouth Tape{% when 'bundle' %}Sleep Bundle{% else %}Nasal Strips{% endcase %}</figcaption>
+            </figure>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+      {%- if rev_count > 1 -%}
+        <div class="sq-rc-nav">
+          <button type="button" class="sq-rc-btn" data-sq-rc-prev aria-label="Previous review">‹</button>
+          <div class="sq-rc-dots" data-sq-rc-dots></div>
+          <button type="button" class="sq-rc-btn" data-sq-rc-next aria-label="Next review">›</button>
+        </div>
+      {%- endif -%}
+    </div>
+  {%- else -%}
   {%- for k in (1..2) -%}
     {%- liquid
       if k == 1
@@ -111,6 +160,7 @@
       {%- endif -%}
     </div>
   {%- endfor -%}
+  {%- endif -%}
   <button type="button" class="sq-cta" data-sq-story-next>Continue →</button>
 </div>
 
@@ -135,7 +185,14 @@
     <button type="button" class="sq-opt sq-chip" data-tried="pills">Melatonin or sleep pills</button>
     <button type="button" class="sq-opt sq-chip" data-tried="earlier">Sleeping earlier</button>
     <button type="button" class="sq-opt sq-chip" data-tried="spray">Nasal spray</button>
+    <button type="button" class="sq-opt sq-chip" data-tried="other" aria-controls="sq-{{ sid }}-other">Other</button>
     <button type="button" class="sq-opt sq-chip" data-tried="nothing">Nothing yet</button>
+  </div>
+  {%- comment -%} "Other": text box shows (and is required) only while Other is picked {%- endcomment -%}
+  <div class="sq-other" id="sq-{{ sid }}-other" data-sq-other hidden>
+    <label class="sq-sr" for="sq-{{ sid }}-other-text">What else have you tried?</label>
+    <textarea class="sq-textarea" id="sq-{{ sid }}-other-text" rows="3" maxlength="300" placeholder="{{ qs.q6_other_placeholder | default: 'Please tell us more...' | escape }}" data-sq-other-text></textarea>
+    <p class="sq-err" role="alert" data-sq-other-err hidden></p>
   </div>
   {%- if qs.q6_note != blank -%}<div class="sq-note"><p class="sq-note-h">Nice, last one</p><p>{{ qs.q6_note }}</p></div>{%- endif -%}
   <button type="button" class="sq-cta" data-sq-continue disabled>See my results →</button>
