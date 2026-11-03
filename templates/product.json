@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "hero": {
       "type": "somna-pdp-hero",
@@ -854,7 +855,8 @@
         "samples_in_preview": true,
         "chip_active_color": "#afbdf8",
         "bottom_wave_color": "#afbdf8",
-        "bottom_wave_shape": "drip-10"
+        "bottom_wave_shape": "drip-10",
+        "app_mobile_more": true
       }
     },
     "guarantee": {
