@@ -278,12 +278,62 @@
   }
 
   /* mobile: design to come (Figma pending) */
+  /* Mobile (Figma): heading + arrow, the product card, then "Also Trending" */
   @media screen and (max-width: 749px) {
+    /* padding is an inline style from the section settings */
+    .somna-pdp-pair {
+      padding-block: 16px 32px !important;
+    }
+
+    .somna-pdp-pair__inner {
+      gap: 16px;
+    }
+
+    .somna-pdp-pair__copy {
+      display: contents;
+    }
+
+    .somna-pdp-pair__heading {
+      order: 1;
+      padding-right: 84px;
+      font-size: 2rem;
+    }
+
     .somna-pdp-pair__arrow {
-      display: none;
+      order: 2;
+      width: 80px;
+      margin: -64px 4px -12px 0;
+      rotate: 60deg;
+    }
+
+    .somna-pdp-pair__card {
+      order: 3;
+      width: min(100%, 340px);
+    }
+
+    .somna-pdp-pair__trend {
+      order: 4;
+    }
+
+    .somna-pdp-pair__trend-card {
+      display: flex;
+      width: 100%;
+    }
+
+    .somna-pdp-pair__trend-card img {
+      width: 96px;
+      height: 72px;
     }
 
     .somna-pdp-pair__trend-title {
+      font-size: 1.125rem;
+    }
+
+    .somna-pdp-pair__trend-price {
+      font-size: 0.8125rem;
+    }
+
+    .somna-pdp-pair__name {
       font-size: 1.125rem;
     }
   }
