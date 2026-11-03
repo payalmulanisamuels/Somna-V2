@@ -191,6 +191,8 @@
     "triedTape": {{ section.settings.tried_tape_line | json }},
     "bundleTick": {{ section.settings.bundle_tick | json }},
     "bundleTickPartner": {{ section.settings.bundle_tick_partner | json }},
+    "bundleStart": {{ section.settings.bundle_start_line | json }},
+    "bundleStartPartner": {{ section.settings.bundle_start_line_partner | json }},
     "problems": {
       "snoring": [{{ section.settings.problem_a_self | json }}, {{ section.settings.problem_a_partner | json }}],
       "nose": [{{ section.settings.problem_b_self | json }}, {{ section.settings.problem_b_partner | json }}],
@@ -294,6 +296,8 @@
     { "type": "text", "id": "tried_pills_line", "label": "Drug-free tick", "info": "Shown first when they tried melatonin or pills, otherwise used to fill the list.", "default": "Drug-free, with nothing to swallow." },
     { "type": "text", "id": "bundle_tick", "label": "Sleep Bundle tick (me / both)", "default": "Strips open the airway, while Tape helps keep the mouth closed. You said it's your nose and your mouth." },
     { "type": "text", "id": "bundle_tick_partner", "label": "Sleep Bundle tick (partner)", "default": "Strips open the airway, while Tape helps keep the mouth closed. You said it's their nose and their mouth." },
+    { "type": "text", "id": "bundle_start_line", "label": "Sleep Bundle tick if they haven't tried strips or tape (me / both)", "default": "Easy to start: one strip and one tape at bedtime, nothing else to change." },
+    { "type": "text", "id": "bundle_start_line_partner", "label": "Sleep Bundle tick if they haven't tried strips or tape (partner)", "default": "Easy to start: one strip and one tape at bedtime, nothing else to change." },
     { "type": "text", "id": "tried_tape_line", "label": "Tick if they tried mouth tape", "info": "Wording to confirm.", "default": "Designed to be gentle on skin and peel off easily in the morning." },
     { "type": "text", "id": "timeline_heading", "label": "Timeline heading", "default": "Your first 30 nights" },
     { "type": "text", "id": "timeline_1_title", "label": "Step 1 title", "default": "Night 1" },
