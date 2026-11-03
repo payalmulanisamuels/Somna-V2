@@ -511,13 +511,28 @@
     letter-spacing: 0.1em;
   }
 
+  /* Figma: gift labels Inter Medium 12.3px, 0.11em; eyebrows Inter Regular, 0.18em */
   main[data-template^='product'] [id$='__gifts'] [class*='__label'] p {
-    font-size: 0.8125rem;
-    letter-spacing: 0.06em;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.11em;
+  }
+
+  main[data-template^='product'] :is([id$='__gifts'], [id$='__guarantee']) [class*='__eyebrow'] p {
+    letter-spacing: 0.18em;
+  }
+
+  main[data-template^='product'] [id$='__guarantee'] [class*='__eyebrow'] p {
+    font-size: 0.625rem !important;
+  }
+
+  main[data-template^='product'] [id$='__guarantee'] [class*='__text'] p {
+    font-size: 0.8125rem !important;
+    letter-spacing: 0.08em;
   }
 
   main[data-template^='product'] :is([id$='__gifts'], [id$='__faq']) [class*='__text'] p {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
   }
 
   main[data-template^='product'] [id$='__faq'] .details__header {
