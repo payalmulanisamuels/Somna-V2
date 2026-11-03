@@ -158,7 +158,7 @@
 <script src="{{ 'gsap-scroll-trigger.min.js' | asset_url }}" defer></script>
 <script type="module">
   /* "How it works" -> "What it's made of" (approved demo N · Peel apart, Slow).
-     Plays by itself (~3.8s, soft ease-in-out; approved demo E) when the section is a third of the way up the screen: the "How it works" product leaves its spot,
+     Plays by itself (~3.2s, soft ease-in-out; approved demo E) when the section is a third of the way up the screen: the "How it works" product leaves its spot,
      flips and travels down-right into this section, turns into the stacked layers, the layers peel
      apart one after another (first up-left, last down-right), then the descriptions appear 1 -> n.
      Rewinds when scrolled back above it. Desktop + tablet only (mobile design pending); off for reduced motion.
@@ -292,10 +292,10 @@
         const t4 = t3 + last * step + peel * 0.8;
         this.items.forEach((it, i) => tl.to(it, { opacity: 1, y: 0, duration: 0.5, ease: 'sine.out' }, t4 + i * 0.3));
         this.tl = tl;
-        // Approved demo E: plays by itself (~3.8s) once the section is a third of the way up the screen,
+        // Approved demo E: plays by itself (~3.2s) once the section is a third of the way up the screen,
         // and rewinds (twice as fast) when the visitor scrolls back above it.
         tl.pause(0);
-        tl.timeScale(tl.duration() / 3.8);
+        tl.timeScale(tl.duration() / 3.2);
         const speed = tl.timeScale();
         this.st = ScrollTrigger.create({
           trigger: section, scroller: this.scroller, start: 'top 66%',
