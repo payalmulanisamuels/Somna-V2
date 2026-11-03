@@ -104,6 +104,7 @@
               assign rself = section.settings.strips_self
               assign rpartner = section.settings.strips_partner
               assign rpack = section.settings.strips_result_image
+              assign rword = section.settings.strips_button_word | default: 'strips'
             when 2
               assign rk = 'tape'
               assign rp = p_tape
@@ -111,6 +112,7 @@
               assign rself = section.settings.tape_self
               assign rpartner = section.settings.tape_partner
               assign rpack = section.settings.tape_result_image
+              assign rword = section.settings.tape_button_word | default: 'tape'
             when 3
               assign rk = 'bundle'
               assign rp = p_bundle
@@ -118,6 +120,7 @@
               assign rself = section.settings.bundle_self
               assign rpartner = section.settings.bundle_partner
               assign rpack = section.settings.bundle_result_image
+              assign rword = section.settings.bundle_button_word | default: 'bundle'
           endcase
           assign rv = nil
           if rp != blank
@@ -132,7 +135,7 @@
         -%}
         <div class="sq-res" data-res="{{ rk }}" hidden
           data-url="{% if rp != blank %}{{ rp.url }}?variant={{ rv.id }}{% endif %}"
-          data-name="{{ rname | escape }}" data-ptitle="{{ rp.title | escape }}"
+          data-name="{{ rname | escape }}" data-ptitle="{{ rp.title | escape }}" data-word="{{ rword | escape }}"
           data-copy-self="{{ rself | escape }}" data-copy-partner="{{ rpartner | escape }}">
           <h2 class="sq-q sq-fix-h" data-sq-fix-h data-ptitle="{{ rp.title | escape }}">{{ section.settings.fix_prefix }} SOMNA {{ rp.title }}</h2>
           {%- if rp != blank -%}
@@ -164,10 +167,9 @@
           </ol>
         </section>
       {%- endif -%}
-      {%- if section.settings.guarantee_text != blank -%}
-        <p class="sq-trust"><span class="sq-trust-i" aria-hidden="true">{% render 'somna-quiz-icon', name: 'shield' %}</span>{{ section.settings.guarantee_text }}</p>
-      {%- endif -%}
+      {%- comment -%} "Get my strips – 10% off →": text set by the script from the result, who it's for and whether QUIZ10 is unlocked {%- endcomment -%}
       <a class="sq-cta" data-sq-plan href="{{ fallback_url }}">{{ section.settings.result_button }}</a>
+      <p class="sq-trust sq-cta-note" data-sq-cta-note data-code="{{ section.settings.cta_note | escape }}" data-nocode="{{ section.settings.guarantee_text | escape }}"{% if section.settings.cta_note == blank and section.settings.guarantee_text == blank %} hidden{% endif %}><span class="sq-trust-i" aria-hidden="true">{% render 'somna-quiz-icon', name: 'shield' %}</span><span data-sq-cta-note-t>{{ section.settings.guarantee_text }}</span></p>
       </div>
     </div>
   </div>
@@ -186,6 +188,9 @@
     "triedPills": {{ section.settings.tried_pills_line | json }},
     "stripsStart": {{ section.settings.strips_start_line | json }},
     "fixPrefix": {{ section.settings.fix_prefix | json }},
+    "ctaSelf": {{ section.settings.cta_self | json }},
+    "ctaPartner": {{ section.settings.cta_partner | json }},
+    "ctaOff": {{ section.settings.cta_off | json }},
     "fixPartner": {{ section.settings.fix_prefix_partner | json }},
     "typePillName": {{ section.settings.type_pill_name | json }},
     "triedTape": {{ section.settings.tried_tape_line | json }},
@@ -310,25 +315,32 @@
     { "type": "text", "id": "timeline_3_title", "label": "Step 3 title", "default": "Night 30" },
     { "type": "text", "id": "timeline_3_text", "label": "Step 3 text", "info": "Must match the Return & Refund Policy.", "default": "Not quite right for you? Get a full refund under our 30-Night Money-Back Guarantee." },
     { "type": "text", "id": "timeline_3_text_partner", "label": "Step 3 text (partner)", "info": "Must match the Return & Refund Policy.", "default": "Not quite right for them? Get a full refund under our 30-Night Money-Back Guarantee." },
-    { "type": "text", "id": "guarantee_text", "label": "Guarantee trust line (above the button)", "info": "Leave empty to hide.", "default": "30-Night Money-Back Guarantee" },
-    { "type": "text", "id": "result_button", "label": "Button", "default": "Claim My Discount →" },
+    { "type": "text", "id": "cta_self", "label": "Button (me / both)", "info": "[product] is replaced by the result's button word below (strips / tape / bundle).", "default": "Get my [product]" },
+    { "type": "text", "id": "cta_partner", "label": "Button (partner)", "default": "Get their [product]" },
+    { "type": "text", "id": "cta_off", "label": "Button discount part", "info": "Added only when QUIZ10 is unlocked (email sign-up).", "default": "– 10% off" },
+    { "type": "text", "id": "cta_note", "label": "Line under the button (with code)", "default": "Your 10% off is applied at checkout · 30-Night Money-Back Guarantee" },
+    { "type": "text", "id": "guarantee_text", "label": "Line under the button (no code / Skip)", "info": "Leave both lines empty to hide.", "default": "30-Night Money-Back Guarantee" },
+    { "type": "text", "id": "result_button", "label": "Button before the result loads", "info": "Only seen if the script hasn't run yet.", "default": "Get my 10% off →" },
     { "type": "text", "id": "preselect_size", "label": "Size to pre-select on the product page", "info": "Must match the variant name, e.g. 1 Bag, 2 Bags, 4 Bags.", "default": "1 Bag" },
     { "type": "header", "content": "Result: Nasal Strips" },
     { "type": "image_picker", "id": "strips_result_image", "label": "Result image", "info": "Packet image shown on the quiz result. Leave empty to use the product image. Doesn't change the product." },
     { "type": "product", "id": "product_strips", "label": "Product" },
     { "type": "text", "id": "strips_name", "label": "Sleep type name", "default": "The Nose Breather" },
+    { "type": "text", "id": "strips_button_word", "label": "Button word", "info": "Used in \"Get my [product]\".", "default": "strips" },
     { "type": "textarea", "id": "strips_self", "label": "Copy (me / both)", "default": "It looks like your nose could use a little help at night. Lying down can narrow the airflow through your nose, which can lead to snoring and slower mornings. SOMNA Strips are designed to gently hold your nose open all night." },
     { "type": "textarea", "id": "strips_partner", "label": "Copy (partner)", "default": "It looks like their nose could use a little help at night. Lying down can narrow the airflow through the nose, which can make sleep feel lighter and mornings slower, even after a full night. SOMNA Strips are designed to gently hold their nose open all night." },
     { "type": "header", "content": "Result: Mouth Tape" },
     { "type": "image_picker", "id": "tape_result_image", "label": "Result image", "info": "Packet image shown on the quiz result. Leave empty to use the product image. Doesn't change the product." },
     { "type": "product", "id": "product_tape", "label": "Product" },
     { "type": "text", "id": "tape_name", "label": "Sleep type name", "default": "The Mouth Breather" },
+    { "type": "text", "id": "tape_button_word", "label": "Button word", "info": "Used in \"Get my [product]\".", "default": "tape" },
     { "type": "textarea", "id": "tape_self", "label": "Copy (me / both)", "default": "You're breathing through your mouth at night, which is why you wake up dry and groggy. SOMNA Tape is designed to keep your lips gently closed so you breathe through your nose." },
     { "type": "textarea", "id": "tape_partner", "label": "Copy (partner)", "default": "They're breathing through their mouth at night. SOMNA Tape is designed to keep their lips gently closed so they breathe through their nose." },
     { "type": "header", "content": "Result: Sleep Bundle" },
     { "type": "image_picker", "id": "bundle_result_image", "label": "Result image", "info": "Packet image shown on the quiz result. Leave empty to use the product image. Doesn't change the product." },
     { "type": "product", "id": "product_bundle", "label": "Product" },
     { "type": "text", "id": "bundle_name", "label": "Sleep type name", "default": "The Double Trouble" },
+    { "type": "text", "id": "bundle_button_word", "label": "Button word", "info": "Used in \"Get my [product]\".", "default": "bundle" },
     { "type": "textarea", "id": "bundle_self", "label": "Copy (me / both)", "default": "It's your nose and your mouth. Strips open the airway; Tape keeps you breathing through it. Built to work together." },
     { "type": "textarea", "id": "bundle_partner", "label": "Copy (partner)", "default": "It's their nose and their mouth. Strips open the airway; Tape keeps them breathing through it. Built to work together." }
   ],
