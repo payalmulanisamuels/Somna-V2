@@ -238,9 +238,12 @@
     {%- endif -%}
 
     {%- if use_app -%}
+      {%- comment -%} mobile: first two reviews, then "Show more reviews" (a label for a hidden checkbox, no JS) {%- endcomment -%}
+      {%- if s.app_mobile_more -%}<input type="checkbox" class="somna-reviews__more-toggle" id="{{ section.id }}-more" aria-label="{{ s.more_label | escape }}">{%- endif -%}
       <div class="somna-reviews__app">
         {%- for block in app_blocks -%}{% render block %}{%- endfor -%}
       </div>
+      {%- if s.app_mobile_more -%}<label class="somna-reviews__more somna-reviews__more--app" for="{{ section.id }}-more" aria-hidden="true">{{ s.more_label | escape }}</label>{%- endif -%}
     {%- else -%}
     <p class="somna-reviews__note" data-note hidden></p>
     <ul class="somna-reviews__list" role="list" data-list aria-live="polite" aria-busy="true">
@@ -1057,6 +1060,37 @@
     box-shadow: 0 4px 10px rgb(0 0 0 / 0.25);
   }
 
+  .somna-reviews__more-toggle {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .somna-reviews__more--app {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .somna-reviews__more-toggle:not(:checked) + .somna-reviews__app .jdgm-review-list > .jm-review-item:nth-child(n + 3),
+    .somna-reviews__more-toggle:not(:checked) + .somna-reviews__app .jm-pagination-controls {
+      display: none !important;
+    }
+
+    .somna-reviews__more-toggle:not(:checked) ~ .somna-reviews__more--app {
+      display: grid;
+      place-items: center;
+      justify-self: center;
+      width: 100%;
+    }
+
+    .somna-reviews__more-toggle:focus-visible ~ .somna-reviews__more--app {
+      outline: 2px solid currentColor;
+      outline-offset: 3px;
+    }
+  }
+
   .somna-reviews__more:disabled {
     opacity: 0.6;
     cursor: progress;
@@ -1317,6 +1351,7 @@
     { "type": "text", "id": "chip_low", "label": "Filter: 3 and below", "default": "3 & below" },
     { "type": "text", "id": "chip_photos", "label": "Filter: with photos", "default": "with photos" },
     { "type": "text", "id": "more_label", "label": "Show more button", "default": "Show more reviews ↓" },
+    { "type": "checkbox", "id": "app_mobile_more", "label": "Judge.me on mobile: show 2 reviews, then the Show more button", "default": false },
     { "type": "text", "id": "empty_text", "label": "No matching reviews", "default": "No reviews match this filter yet." },
     { "type": "text", "id": "error_text", "label": "Reviews didn't load", "default": "Reviews couldn't be loaded right now." },
     { "type": "text", "id": "retry_label", "label": "Try again link", "default": "Try again" },

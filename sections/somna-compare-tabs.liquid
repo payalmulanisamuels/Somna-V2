@@ -399,6 +399,31 @@
     .somna-compare__table .somna-cross {
       --somna-mark-size: 24px;
     }
+
+    /* PDP (Figma mobile): intro on the left, "somna. / VS / others" stacked */
+    main[data-template^='product'] .somna-compare__intro {
+      text-align: left;
+    }
+
+    main[data-template^='product'] .somna-compare__eyebrow {
+      margin-bottom: 10px;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    main[data-template^='product'] .somna-compare__heading {
+      max-width: min-content;
+      font-size: 2rem;
+      line-height: 1.15;
+    }
+
+    main[data-template^='product'] .somna-compare__text {
+      max-width: 300px;
+      margin-top: 10px;
+      font-size: 0.875rem;
+      text-align: left;
+    }
   }
 {% endstylesheet %}
 
