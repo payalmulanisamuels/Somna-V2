@@ -1078,41 +1078,146 @@
   }
 
   /* mobile: design to come (Figma pending) — simple stacked fallback only */
+  /* Mobile (Figma 4606:9024 / 4606:9662, 398px): gallery + thumbnail row, then the buy panel,
+     then the quote, videos and stickers. Type follows the homepage mobile scale (body 11–14px,
+     buttons ~50px). Desktop and tablet (>= 750px) are untouched. */
   @media screen and (max-width: 749px) {
-    .somna-pdp-hero__gallery {
-      grid-template-columns: minmax(0, 1fr);
+    /* the section's top/bottom padding is an inline style from its settings */
+    somna-pdp-buy.somna-pdp-hero {
+      padding-block: 12px 24px !important;
     }
 
-    .somna-pdp-hero__thumbs {
-      display: none;
-    }
-
-    .somna-pdp-hero__badge {
-      left: 4px;
-      width: 88px;
-    }
-
-    .somna-pdp-hero__badge span {
-      font-size: 0.8125rem;
+    .somna-pdp-hero__inner {
+      gap: 16px;
     }
 
     .somna-pdp-hero__panel {
-      padding-inline: 18px;
+      order: 2;
+      padding: 12px 16px 22px;
+    }
+
+    .somna-pdp-hero__side {
+      order: 3;
+      gap: 16px;
+    }
+
+    /* gallery: main image, then the thumbnails in one row */
+    .somna-pdp-hero__gallery {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+    }
+
+    .somna-pdp-hero__main {
+      aspect-ratio: 368 / 410;
+    }
+
+    .somna-pdp-hero__main.somna-edge-drip-top {
+      --somna-drip-h: 40px;
+    }
+
+    .somna-pdp-hero__thumbs {
+      order: 2;
+      grid-auto-flow: column;
+      grid-auto-columns: calc((100% - 4 * 6px) / 5);
+      gap: 6px;
+      height: auto;
+      min-height: 0;
+      margin: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+    }
+
+    .somna-pdp-hero__thumb {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 8px;
+      scroll-snap-align: start;
+    }
+
+    .somna-pdp-hero__badge {
+      top: -4px;
+      left: -4px;
+      width: 72px;
+    }
+
+    .somna-pdp-hero__badge span {
+      max-width: 54px;
+      font-size: 0.75rem;
+    }
+
+    .somna-pdp-hero__sticker {
+      right: -4px;
+      bottom: 14px;
+      padding: 5px 12px;
+      font-size: 0.875rem;
+    }
+
+    /* buy panel */
+    .somna-pdp-hero__rating {
+      font-size: 0.75rem;
+    }
+
+    .somna-pdp-hero__title {
+      margin-top: 6px;
+      font-size: 1.375rem;
+      line-height: 1.3;
+    }
+
+    .somna-pdp-hero__tagline {
+      margin-top: 4px;
+      font-size: 0.8125rem;
+      line-height: 1.4;
     }
 
     .somna-pdp-hero__features {
-      font-size: 0.8125rem;
+      margin-top: 12px;
+      padding: 10px 0;
+      font-size: 0.6875rem;
+      line-height: 1.2;
     }
 
     .somna-pdp-hero__features li {
-      flex-direction: column;
       gap: 6px;
-      text-align: center;
+      padding-inline: 4px;
     }
 
     .somna-pdp-hero__feature-icon {
-      width: 48px;
-      height: 48px;
+      width: 32px;
+      height: 32px;
+    }
+
+    .somna-pdp-hero__feature-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .somna-pdp-hero__price {
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .somna-pdp-hero__price-now {
+      font-size: 1.75rem;
+    }
+
+    .somna-pdp-hero__price s {
+      font-size: 1rem;
+    }
+
+    .somna-pdp-hero__save {
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+    }
+
+    .somna-pdp-hero__packs {
+      margin-block-start: 12px;
+    }
+
+    .somna-pdp-hero__packs legend {
+      margin-bottom: 14px;
+      font-size: 0.875rem;
     }
 
     .somna-pdp-hero__packs .somna-buy__pack-list {
@@ -1120,9 +1225,160 @@
       gap: 8px;
     }
 
-    .somna-pdp-hero__add {
-      min-height: 56px;
+    .somna-pdp-hero__packs .somna-buy__pack {
+      gap: 2px;
+      padding: 14px 4px 8px;
+      border-radius: 8px;
+    }
+
+    .somna-pdp-hero__packs .somna-buy__pack-badge {
+      top: -10px;
+      padding: 3px 10px;
+      font-size: 0.625rem;
+      white-space: nowrap;
+    }
+
+    .somna-pdp-hero__packs .somna-buy__pack-name {
+      font-size: 0.75rem;
+    }
+
+    .somna-pdp-hero__packs .somna-buy__pack-price {
       font-size: 1.125rem;
+    }
+
+    .somna-pdp-hero__packs :is(.somna-buy__pack s, .somna-buy__pack-night) {
+      font-size: 0.6875rem;
+    }
+
+    .somna-pdp-hero__gift {
+      font-size: 0.6875rem;
+      letter-spacing: 0.02em;
+    }
+
+    .somna-pdp-hero__modes {
+      gap: 8px;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+    }
+
+    .somna-pdp-hero__mode-box {
+      gap: 8px;
+    }
+
+    .somna-pdp-hero__modes .somna-buy__mode {
+      font-size: 0.8125rem;
+    }
+
+    .somna-pdp-hero__sub-points {
+      gap: 4px;
+      font-size: 0.75rem;
+    }
+
+    .somna-pdp-hero__sub-points li {
+      gap: 8px;
+    }
+
+    .somna-pdp-hero__sub-points .somna-check {
+      --somna-mark-size: 16px;
+    }
+
+    /* 16px keeps iOS from zooming the page when the select is tapped */
+    .somna-pdp-hero__plan {
+      min-height: 36px;
+      font-size: 1rem;
+    }
+
+    .somna-pdp-hero__add {
+      min-height: 52px;
+      margin-top: 14px;
+      border-radius: 14px;
+      font-size: 1rem;
+    }
+
+    .somna-pdp-hero__perks {
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 0.6875rem;
+      line-height: 1.25;
+    }
+
+    .somna-pdp-hero__perks li {
+      gap: 4px;
+    }
+
+    .somna-pdp-hero__perks svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    /* quote, videos, stickers */
+    .somna-pdp-hero__quote {
+      gap: 12px;
+      padding: 12px 14px;
+    }
+
+    .somna-pdp-hero__avatar {
+      width: 48px;
+      height: 48px;
+    }
+
+    .somna-pdp-hero__avatar--initial {
+      font-size: 1.25rem;
+    }
+
+    .somna-pdp-hero__stars {
+      font-size: 0.875rem;
+    }
+
+    .somna-pdp-hero__quote blockquote {
+      font-size: 0.875rem;
+      line-height: 1.25;
+    }
+
+    .somna-pdp-hero__quote figcaption {
+      margin-top: 4px;
+      font-size: 0.75rem;
+    }
+
+    .somna-pdp-hero__videos-title {
+      margin-bottom: 12px;
+      font-size: 1.625rem;
+    }
+
+    /* two and a half cards, swipe for the rest */
+    .somna-pdp-hero__video-list {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: 42%;
+      gap: 10px;
+      margin-inline: calc(var(--page-margin, 16px) * -1);
+      padding-inline: var(--page-margin, 16px);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--page-margin, 16px);
+      scrollbar-width: none;
+    }
+
+    .somna-pdp-hero__video {
+      scroll-snap-align: start;
+    }
+
+    .somna-pdp-hero__play-icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .somna-pdp-hero__stickers {
+      gap: 12px 8px;
+      margin-top: 20px;
+    }
+
+    .somna-pdp-hero__sticker,
+    .somna-pdp-hero__stickers li {
+      padding: 6px 12px;
+      font-size: 0.9375rem;
+      box-shadow: 2px 3px 0 #000;
     }
   }
 {% endstylesheet %}
