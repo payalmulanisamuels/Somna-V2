@@ -943,7 +943,7 @@
 
     .somna-pdp-story__pills li {
       padding: 5px 12px;
-      font-size: 0.75rem;
+      font-size: 0.8125rem;
     }
 
     /* problem: label on the left, smaller overlay list */
@@ -969,13 +969,18 @@
     }
 
     /* how it works: the four features stay at the corners of the product, as in Figma */
+    /* Figma: a large product picture with the features at its four corners */
     .somna-pdp-story__visual {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr);
-      gap: 16px 6px;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.3fr) minmax(0, 0.85fr);
+      gap: 72px 4px;
+    }
+
+    .somna-pdp-story__visual .somna-pdp-story__product {
+      width: 100%;
     }
 
     .somna-pdp-story__point {
-      max-width: 104px;
+      max-width: 98px;
     }
 
     .somna-pdp-story__point-icon {
@@ -999,7 +1004,7 @@
 
     /* layers: picture, then the list in two columns */
     .somna-pdp-story--layers .somna-pdp-story__product {
-      max-width: 320px;
+      max-width: 360px;
       margin-inline: auto;
     }
 
