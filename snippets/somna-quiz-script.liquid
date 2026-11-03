@@ -353,14 +353,20 @@
 
   // ---- 11 your fix ----
   function renderFix() {
-    var s = score();
+    var s = score(), r0 = resEl(s);
     $$('.sq-res').forEach(function (e) { e.hidden = e.getAttribute('data-res') !== s.result; });
     var rimg = $('.sq-res[data-res="' + s.result + '"] img'); if (rimg) rimg.loading = 'eager';   // load the matched product image now, not on scroll
     // "Sarah, here's your fix: SOMNA Nasal Strips" / partner: "Sarah, here's what we'd suggest for them: SOMNA Nasal Strips"
     var pre = s.partner ? (cfg.fixPartner || cfg.fixPrefix || '') : (firstName ? "Here's your fix:" : (cfg.fixPrefix || ''));
     $$('[data-sq-fix-h]').forEach(function (h) { h.textContent = named(pre) + ' SOMNA ' + h.getAttribute('data-ptitle'); });
     var tl1 = $('[data-sq-tl1]'); if (tl1 && s.result === 'strips' && tl1.getAttribute('data-strips')) tl1.textContent = tl1.getAttribute('data-strips');
-    $('[data-sq-plan]').setAttribute('href', productUrl(s));
+    var plan = $('[data-sq-plan]'), word = r0 ? r0.getAttribute('data-word') : '';
+    plan.setAttribute('href', productUrl(s));
+    // "Get my strips – 10% off →" (partner: "Get their …"); no code (Skip) → without "– 10% off"
+    var tmpl = (s.partner ? cfg.ctaPartner : cfg.ctaSelf) || '';
+    if (tmpl && word) plan.textContent = tmpl.replace('[product]', word) + (unlocked && cfg.code && cfg.ctaOff ? ' ' + cfg.ctaOff : '') + ' →';
+    var note = $('[data-sq-cta-note]'), nt = note && $('[data-sq-cta-note-t]', note);
+    if (nt) { nt.textContent = note.getAttribute(unlocked && cfg.code ? 'data-code' : 'data-nocode') || ''; note.hidden = !nt.textContent; }
     var ul = $('[data-sq-ticks]'); ul.innerHTML = '';
     ticks(s).forEach(function (t) { var li = el('li', '', null); li.appendChild(el('span', 'sq-tick', null)); li.appendChild(el('span', '', t)); ul.appendChild(li); });
   }
@@ -368,7 +374,11 @@
     var r = resEl(s), built = TXT.built[s.problem] || '';
     if (s.result !== 'tape' && s.problem !== 'nose' && s.problem !== 'both' && (s.nose === 'blocked' || s.nose === 'stuffy')) built += ' + a ' + (s.nose === 'blocked' ? 'blocked' : 'stuffy') + ' nose';
     if (s.result !== 'strips' && s.problem !== 'mouth' && s.problem !== 'both' && s.mouth === 'dry') built += ' + a dry mouth';
-    try { sessionStorage.setItem('somna-quiz-match', JSON.stringify({ result: s.result, type: r ? r.getAttribute('data-name') : '', built: built ? 'Built for ' + built : '', code: unlocked && cfg.code ? cfg.code : '', name: firstName, at: Date.now() })); } catch (e) {}
+    var path = productUrl(s).replace(/^\/discount\/[^?]*\?redirect=/, '').split(/[?&]/)[0];
+    try { path = decodeURIComponent(path); } catch (e) {}
+    // read by the product page banner (only on this product) and by "View my report" (restores this result)
+    try { sessionStorage.setItem('somna-quiz-match', JSON.stringify({ result: s.result, who: s.who, path: path, type: r ? r.getAttribute('data-name') : '', built: built ? 'Built for ' + built : '', code: unlocked && cfg.code ? cfg.code : '', name: firstName,
+      answers: answers, signedUp: signedUp, at: Date.now() })); } catch (e) {}
   }
   // "Claim My Discount" is a real link to the product page (works without JS too).
   $('[data-sq-plan]').addEventListener('click', function (e) {
@@ -461,6 +471,19 @@
   }
   if (nameSkip) nameSkip.addEventListener('click', function () { if (busy) return; firstName = ''; if (nameIn) { nameIn.value = ''; nameErrShow(''); } go(i + 1); });
 
-  show(0, false);
+  // "View my report" on the product page → /pages/quiz?report=1 reopens the saved result (same session only)
+  var restored = false;
+  if (/[?&]report=1/.test(location.search)) {
+    try {
+      var sv = JSON.parse(sessionStorage.getItem('somna-quiz-match') || 'null');
+      if (sv && sv.answers && sv.answers[1] != null && Date.now() - (sv.at || 0) < 6 * 60 * 60 * 1000) {
+        answers = sv.answers; firstName = sv.name || ''; signedUp = !!sv.signedUp; unlocked = !!sv.code;
+        if (nameIn) nameIn.value = firstName; if (otherText && answers.other) otherText.value = answers.other;
+        if (unlocked) applyCode();                           // code is already on the cart; keeps the button on the direct route
+        show(idx('report'), false); restored = true;
+      }
+    } catch (e) {}
+  }
+  if (!restored) show(0, false);
 })();
 </script>

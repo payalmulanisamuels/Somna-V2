@@ -1,33 +1,89 @@
 {%- comment -%}
-  SOMNA quiz v5.1 · screen 13: "Matched for you" banner on product pages.
-  Shows only when the URL has ?quiz= and the quiz saved its result in this browser session
-  (sessionStorage "somna-quiz-match", written when the shopper taps "Claim My Discount").
+  SOMNA quiz · "Your match" banner on product pages.
+  Shows only when the visitor arrives from the quiz (?quiz= in the URL), the quiz saved its result in this
+  browser session (sessionStorage "somna-quiz-match", written when they tap the result button) and this is
+  the product they were matched to.
+  Check icon · "Sarah, your match: the Sleep Bundle" (partner: "their match"; no name: "Your match: …") · "View my report →"
+  Line 2: why it was picked (shorter on mobile) + a "10% off applied at checkout" chip (only while QUIZ10 is on the cart)
   Rendered from layout/theme.liquid on product templates only. No app needed.
 {%- endcomment -%}
 <style>
   .sq-match { background: #E8EDFB; color: #0E1A4A; border-bottom: 1px solid #D5DDF5; font-family: var(--font-body--family, Inter, sans-serif); }
-  .sq-match__in { max-width: 1280px; margin: 0 auto; padding: 18px 16px 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 12px; font-size: 13px; line-height: 1.45; }
-  .sq-match__t { font-weight: 700; color: #2B4CC2; }
-  .sq-match__d strong { font-weight: 700; }
-  @media screen and (min-width: 750px) { .sq-match__in { padding: 20px 24px 12px; font-size: 14px; } }
+  .sq-match p { margin: 0; }
+  .sq-match__in { padding: 12px 16px 10px; display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; column-gap: 10px; row-gap: 2px; align-items: center; }
+  .sq-match__ic { grid-row: 1 / span 2; align-self: start; width: 26px; height: 26px; border-radius: 50%; background: #2B4CC2; color: #fff; display: inline-flex; align-items: center; justify-content: center; margin-top: 1px; }
+  .sq-match__ic svg { width: 14px; height: 14px; }
+  .sq-match__t { font-size: 13.5px; line-height: 1.35; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sq-match__t strong { font-weight: 700; color: #2B4CC2; }
+  .sq-match__d { grid-column: 2 / span 2; display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 12.5px; line-height: 1.35; color: #4A5578; white-space: nowrap; }
+  .sq-match__why { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .sq-match__why--long, .sq-match__off--long { display: none; }
+  .sq-match__off { flex: none; display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; background: #DDF3E6; color: #11643A; font-weight: 600; font-size: 12px; }
+  .sq-match__off svg { width: 12px; height: 12px; }
+  .sq-match__link { grid-column: 3; grid-row: 1; justify-self: end; color: #2B4CC2; font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .sq-match__link:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .sq-match__link:focus-visible { outline: 2px solid #2B4CC2; outline-offset: 3px; border-radius: 6px; }
+  @media screen and (min-width: 750px) {
+    /* full width: lines up with the product gallery and buy box (50px side margins) */
+    .sq-match__in { padding: 14px 50px; grid-template-columns: 36px minmax(0, 1fr) auto; column-gap: 14px; }
+    .sq-match__ic { width: 36px; height: 36px; margin-top: 0; align-self: center; }
+    .sq-match__ic svg { width: 18px; height: 18px; }
+    .sq-match__t { font-size: 16px; }
+    .sq-match__d { grid-column: 2; font-size: 14px; gap: 10px; }
+    .sq-match__why--long, .sq-match__off--long { display: inline; }
+    .sq-match__why--short, .sq-match__off--short { display: none; }
+    .sq-match__off { font-size: 13px; padding: 3px 10px; }
+    .sq-match__link { grid-row: 1 / span 2; align-self: center; padding: 9px 16px; border: 1.5px solid #2B4CC2; border-radius: 999px; background: #fff; font-size: 14px; transition: background-color .15s, color .15s; }
+    .sq-match__link:hover { background: #2B4CC2; color: #fff; text-decoration: none; }
+  }
 </style>
 <script>
   (function () {
     if (!/[?&]quiz=(strips|tape|bundle)/.test(location.search)) return;
     var m = null;
     try { m = JSON.parse(sessionStorage.getItem('somna-quiz-match') || 'null'); } catch (e) {}
-    if (!m || !m.type || Date.now() - (m.at || 0) > 6 * 60 * 60 * 1000) return;
+    if (!m || !m.result || Date.now() - (m.at || 0) > 6 * 60 * 60 * 1000) return;
+    // only on the product they were matched to (ignores a locale prefix such as /en-gb)
+    if (m.path && location.pathname.replace(/\/$/, '').slice(-m.path.length) !== m.path) return;
+    var partner = m.who === 'partner';
+    var PRODUCT = { strips: 'SOMNA Nasal Strips', tape: 'SOMNA Mouth Tape', bundle: 'the Sleep Bundle' };
+    // [desktop, mobile]
+    var WHY = {
+      strips: partner ? ['Picked to help their nose breathe easier at night', 'For easier nose breathing'] : ['Picked to help your nose breathe easier at night', 'For easier nose breathing'],
+      tape: partner ? ['Picked to help them breathe through their nose at night', 'For nose breathing at night'] : ['Picked to help you breathe through your nose at night', 'For nose breathing at night'],
+      bundle: ['Picked for snoring and a stuffy nose at night', 'For snoring + a stuffy nose']
+    };
+    if (!PRODUCT[m.result]) return;
+    var CHECK = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+    var TAG = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>';
     function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
     function mount() {
       if (document.querySelector('.sq-match')) return;
       var main = document.getElementById('MainContent'); if (!main) return;
-      var bar = el('div', 'sq-match'), inner = el('div', 'sq-match__in'), d = el('span', 'sq-match__d');
-      bar.setAttribute('role', 'note');
-      inner.appendChild(el('span', 'sq-match__t', '✓ ' + (m.name ? m.name + ', matched for you: ' : 'Matched for you: ') + m.type));
-      if (m.built) d.appendChild(document.createTextNode(m.built));
-      if (m.code) { if (m.built) d.appendChild(document.createTextNode(' · ')); d.appendChild(el('strong', '', m.code)); d.appendChild(document.createTextNode(' applied at checkout')); }
-      if (d.childNodes.length) inner.appendChild(d);
-      bar.appendChild(inner); main.insertBefore(bar, main.firstChild);
+      var bar = el('div', 'sq-match'), inner = el('div', 'sq-match__in');
+      bar.setAttribute('role', 'note'); bar.setAttribute('aria-label', 'Your quiz match');
+      var ic = el('span', 'sq-match__ic'); ic.innerHTML = CHECK; inner.appendChild(ic);
+      // "Neha, your match: the Sleep Bundle" (partner: "their match"; no name: "Your match: …")
+      var who = partner ? 'their match: ' : 'your match: ';
+      var t = el('p', 'sq-match__t', m.name ? m.name + ', ' + who : who.charAt(0).toUpperCase() + who.slice(1));
+      var pn = el('strong'); pn.appendChild(el('span', 'sq-match__off--long', PRODUCT[m.result])); pn.appendChild(el('span', 'sq-match__off--short', PRODUCT[m.result].replace(/^SOMNA /, '')));
+      t.appendChild(pn); inner.appendChild(t);                 // mobile drops "SOMNA" so the longest names still fit
+      var a = el('a', 'sq-match__link'); a.appendChild(el('span', 'sq-match__off--long', 'View my report →')); a.appendChild(el('span', 'sq-match__off--short', 'Report →')); a.href = '{{ pages['quiz'].url | default: '/pages/quiz' }}?report=1'; inner.appendChild(a);
+      var d = el('p', 'sq-match__d');
+      d.appendChild(el('span', 'sq-match__why sq-match__why--long', WHY[m.result][0]));
+      d.appendChild(el('span', 'sq-match__why sq-match__why--short', WHY[m.result][1]));
+      var off = null;
+      if (m.code) {
+        off = el('span', 'sq-match__off'); off.innerHTML = TAG;
+        off.appendChild(el('span', 'sq-match__off--long', '10% off applied at checkout')); off.appendChild(el('span', 'sq-match__off--short', '10% off at checkout'));
+        d.appendChild(off);
+      }
+      inner.appendChild(d); bar.appendChild(inner); main.insertBefore(bar, main.firstChild);
+      // "10% off" stays only while the code is really on the cart
+      if (off) fetch('{{ routes.cart_url }}.js', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (c) {
+        var on = (c.discount_codes || []).some(function (x) { return String(x.code).toUpperCase() === String(m.code).toUpperCase(); });
+        if (!on) off.remove();
+      }).catch(function () {});
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount); else mount();
   })();
