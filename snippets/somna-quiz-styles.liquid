@@ -426,7 +426,16 @@ padding: 10px 16px 40px; min-height: 100vh;
 }
 {%- if extras %}
 /* ---------- Cart drawer on the quiz page, in the quiz's dark look (Result extras) ---------- */
-dialog.theme-drawer__dialog:has(cart-drawer-component) { background: #0d0d1c; color: #fff; border-left: 1px solid #2a2a45; }
+dialog.theme-drawer__dialog:has(cart-drawer-component) { background: #0d0d1c !important; color: #fff; border-left: 1px solid #2a2a45; }
+/* Somna-V2 drawer pieces: header wave, white item card, lavender gifts bar, variant pills, totals */
+cart-drawer-component .theme-drawer__header::after { background: #0d0d1c !important; }
+cart-drawer-component .cart-items__table-row { background: #16162b !important; border-color: #2a2a45 !important; }
+cart-drawer-component .cart-items__variants-wrapper li { background: #23233e !important; }
+cart-drawer-component .somna-gifts { background: #16162b !important; border: 1px solid #2a2a45; }
+cart-drawer-component .somna-gifts__track { background: #23233e !important; }
+cart-drawer-component :is(.somna-gifts__fill, .somna-gifts__dot) { background: #6D49E0 !important; }
+cart-drawer-component :is(.somna-gifts__icon, .somna-gifts__end) { background: #6D49E0 !important; }
+cart-drawer-component :is(.somna-cart-totals__saved, .somna-cart-totals__saved *) { color: #6FD39B !important; }
 cart-drawer-component :is(.cart-drawer__inner, .cart-drawer__content, .cart-drawer__items, .cart-drawer__summary, .theme-drawer__close-button) { background: #0d0d1c !important; color: #fff; }
 cart-drawer-component, cart-drawer-component * { color: #fff !important; }
 cart-drawer-component input { background: transparent !important; }
