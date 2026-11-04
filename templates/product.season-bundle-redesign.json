@@ -216,6 +216,7 @@
       "settings": {
         "eyebrow": "Made for your nights",
         "heading": "<em>THE SEASON</em> VS SHORTER RUNS",
+        "drip_edges": true,
         "show_column_names": true,
         "wave_color": "#afbdf8",
         "wave_shape": "drip-7",
