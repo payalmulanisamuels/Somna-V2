@@ -1,25 +1,26 @@
 {%- comment -%}
-  SOMNA quiz v5.2 "engaging flow" (SOMNA_Quiz_v5.2_Engaging_Flow.pdf, 27 Oct 2026).
-  13 screens: intro + Q1, Q2, Q3, Q4, story break, Q5, Q6, analyzing ring, unlock 10% (optional email),
-  sleep report, your fix, getting your plan ready → product page (screen 13 banner: snippets/somna-quiz-match.liquid).
-  Q1–Q4 decide the product; Q5–Q6 build the report. Logic: snippets/somna-quiz-script.liquid.
-  CSS and JS are snippets rendered only by this section, so they load only on the quiz page.
+  SOMNA quiz v6 (SOMNA_Quiz_Flow_v2_Result_Pages_Updated.pdf, 4 Nov 2026).
+  Q1, Q2, Q3, Q4, reviews break, Q5, Q6 → "Finding your match…" (2 s) → result page with the matched product:
+  match + image + rating, buy box (bags, Autoship / one-time, Add to Cart → cart drawer), How It Works, reviews,
+  main benefit, benefits, how to use, results + guarantee, FAQ, sticky Add to Cart.
+  Q1–Q4 decide the product (strips / tape / bundle). Result copy and images: "Result page" blocks (one per product).
+  Logic: snippets/somna-quiz-script.liquid · styles: snippets/somna-quiz-styles.liquid (quiz page only).
 {%- endcomment -%}
 {%- liquid
   assign sid = section.id
-  assign size_label = section.settings.preselect_size | default: '1 Bag'
   # Fall back to the live product handles if a product setting is empty (e.g. template out of sync)
   assign p_strips = section.settings.product_strips | default: all_products['nasal-strips']
   assign p_tape = section.settings.product_tape | default: all_products['mouth-tape']
   assign p_bundle = section.settings.product_bundle | default: all_products['sleep-bundle']
-  assign fallback_url = routes.all_products_collection_url
-  if p_strips != blank
-    assign fallback_url = p_strips.url
-  endif
-  assign code = section.settings.discount_code | strip
+  # Sale % for one-time purchases (automatic discount), shared with the product page: snippets/somna-sale.liquid
+  capture sq_once_off
+    render 'somna-sale', get: 'once_off'
+  endcapture
+  assign sq_once_off = sq_once_off | plus: 0
+  assign sq_once_keep = 100 | minus: sq_once_off
 -%}
 
-<section class="sq" id="sq-{{ sid }}" data-sq aria-label="Sleep quiz">
+<section class="sq{% if section.settings.design == 'v2' %} sq--v2{% endif %}" id="sq-{{ sid }}" data-sq aria-label="Sleep quiz">
   <div class="sq-wrap">
     <a class="sq-logo" href="{{ routes.root_url }}" aria-label="SOMNA home">
       {%- if settings.logo != blank -%}
@@ -32,334 +33,1288 @@
         <div class="sq-prog-f" data-sq-progf></div>
       </div>
       <div class="sq-top-row">
-        <button type="button" class="sq-back" data-sq-back hidden>‹ Back</button>
-        <p class="sq-step" data-sq-step>1 of 6</p>
+        <button type="button" class="sq-back" data-sq-back hidden><span aria-hidden="true">←</span> Back</button>
+        <p class="sq-step" data-sq-step>Question 1 of 6</p>
       </div>
     </div>
     <p class="sq-sr" aria-live="polite" data-sq-live></p>
 
     {% render 'somna-quiz-screens', qs: section.settings, sid: sid, blocks: section.blocks %}
 
-    {%- comment -%} 08 · Analyzing ring (3 seconds, ticks off their own answers) {%- endcomment -%}
-    <div class="sq-s" data-type="analyze">
+    {%- comment -%} 8 · Matching (2 seconds, ticks off their own answers, then straight to the result) {%- endcomment -%}
+    <div class="sq-s sq-center" data-type="analyze">
       <h2 class="sq-q" tabindex="-1">{{ section.settings.analyze_heading }}</h2>
-      <p class="sq-sub">{{ section.settings.analyze_sub }}</p>
       <div class="sq-ring" aria-hidden="true">
         <svg viewBox="0 0 120 120"><circle class="sq-ring-bg" cx="60" cy="60" r="52"/><circle class="sq-ring-f" cx="60" cy="60" r="52" data-sq-ring/></svg>
         <span class="sq-ring-pct" data-sq-pct>0%</span>
       </div>
-      <p class="sq-ring-lbl" data-sq-ring-lbl>Checking your nose answers</p>
       <ul class="sq-checks" data-sq-checks></ul>
+      {%- if section.settings.analyze_foot != blank -%}<p class="sq-fine">{{ section.settings.analyze_foot }}</p>{%- endif -%}
     </div>
 
-    {%- comment -%} 09 · Unlock 10% (optional email, blurred report peek, Skip always visible) {%- endcomment -%}
-    <div class="sq-s sq-center" data-type="email">
-      <p class="sq-pill">✓ {{ section.settings.email_pill }}</p>
-      <h2 class="sq-q" tabindex="-1" data-sq-named>{{ section.settings.email_heading }}</h2>
-      {%- if section.settings.email_sub != blank -%}<p class="sq-sub">{{ section.settings.email_sub }}</p>{%- endif -%}
-      <div class="sq-peek" aria-hidden="true" data-sq-peek></div>
-      {%- comment -%} Subscribes the email to the Klaviyo list set below (default: Quiz Signups, no flows) with source "quiz" + the result and answers. {%- endcomment -%}
-      {%- if code != blank -%}
-        {%- assign code_html = code | escape | prepend: '<strong>' | append: '</strong>' -%}
-      {%- endif -%}
-      <div class="sq-done" data-sq-done hidden>
-        <p class="sq-done-h">✓ {{ section.settings.email_done | default: "You're in." }}</p>
-        {%- if code != blank -%}<p class="sq-code">{{ section.settings.code_text | escape | replace: '[code]', code_html }}</p>{%- endif -%}
-        <button type="button" class="sq-cta" data-sq-done-next>{{ section.settings.email_done_button | default: 'See my report →' }}</button>
-      </div>
-      <form class="sq-form" data-sq-form novalidate onsubmit="return false">
-        <label class="sq-sr" for="sq-{{ sid }}-email">Email address</label>
-        <input class="sq-input" id="sq-{{ sid }}-email" type="email" name="email" autocomplete="email" inputmode="email" placeholder="Your email" required data-sq-email>
-        <p class="sq-err" role="alert" data-sq-err hidden></p>
-        <button type="submit" class="sq-cta" data-sq-send>{{ section.settings.email_button }}</button>
-      </form>
-      {%- if section.settings.email_consent != blank -%}<p class="sq-fine" data-sq-consent>{{ section.settings.email_consent }}</p>{%- endif -%}
-      <button type="button" class="sq-skip sq-skip--lg" data-sq-skip>{{ section.settings.email_skip }}</button>
-    </div>
-
-    {%- comment -%} 10 · Sleep report (sleep type, problem line, Nose vs Mouth profile from their answers, tiles) {%- endcomment -%}
-    <div class="sq-s sq-report" data-type="report">
-      <p class="sq-pill sq-pill--c" data-self="Your sleep type" data-partner="Their sleep type" data-sq-type-pill>Your sleep type</p>
-      <h2 class="sq-type" tabindex="-1" data-sq-type></h2>
-      <p class="sq-problem" data-sq-problem hidden></p>
-      {%- if code != blank -%}<p class="sq-code sq-code--top" data-sq-code-top hidden>{{ section.settings.code_text | escape | replace: '[code]', code_html }}</p>{%- endif -%}
-      <div class="sq-card sq-profile">
-        <p class="sq-lbl" data-self="Your breathing profile · based on your answers" data-partner="Their breathing profile · based on your answers">Your breathing profile · based on your answers</p>
-        <div class="sq-meter"><p><span>Nose signals</span><span class="sq-meter-v" data-sq-nose-lbl></span></p><div class="sq-dots" data-sq-nose></div></div>
-        <div class="sq-meter"><p><span>Mouth signals</span><span class="sq-meter-v" data-sq-mouth-lbl></span></p><div class="sq-dots" data-sq-mouth></div></div>
-      </div>
-      <div class="sq-tilegrid" data-sq-tilegrid></div>
-      <p class="sq-desc" data-sq-desc></p>
-
-
-      {%- comment -%} 11 · Your fix: now straight below the report (no extra step) {%- endcomment -%}
-      <div class="sq-fix" data-sq-fix>
+    {%- comment -%} 9 · Result: the matched product's page (one per product, the script shows the match) {%- endcomment -%}
+    <div class="sq-s sq-result" data-type="result">
       {%- for r in (1..3) -%}
         {%- liquid
           case r
             when 1
               assign rk = 'strips'
               assign rp = p_strips
-              assign rname = section.settings.strips_name
-              assign rself = section.settings.strips_self
-              assign rpartner = section.settings.strips_partner
-              assign rpack = section.settings.strips_result_image
-              assign rword = section.settings.strips_button_word | default: 'strips'
+              assign rimg_pick = section.settings.strips_result_image
             when 2
               assign rk = 'tape'
               assign rp = p_tape
-              assign rname = section.settings.tape_name
-              assign rself = section.settings.tape_self
-              assign rpartner = section.settings.tape_partner
-              assign rpack = section.settings.tape_result_image
-              assign rword = section.settings.tape_button_word | default: 'tape'
+              assign rimg_pick = section.settings.tape_result_image
             when 3
               assign rk = 'bundle'
               assign rp = p_bundle
-              assign rname = section.settings.bundle_name
-              assign rself = section.settings.bundle_self
-              assign rpartner = section.settings.bundle_partner
-              assign rpack = section.settings.bundle_result_image
-              assign rword = section.settings.bundle_button_word | default: 'bundle'
+              assign rimg_pick = section.settings.bundle_result_image
           endcase
-          assign rv = nil
-          if rp != blank
-            assign rv = rp.selected_or_first_available_variant
-            for v in rp.variants
-              if v.available and v.title contains size_label
-                assign rv = v
-                break
-              endif
-            endfor
+          assign rb = nil
+          for b in section.blocks
+            if b.type == 'result' and b.settings.product == rk
+              assign rb = b
+              break
+            endif
+          endfor
+          assign rbs = rb.settings
+          # "4.6 <svg…> (248)" → 4.6 and 248 (same field as the product page rating)
+          assign r_rating = ''
+          assign r_count = ''
+          assign r_raw = rp.metafields.custom.custom_review_rating_review_count.value | strip_html | strip
+          if r_raw != blank
+            assign r_rating = r_raw | split: ' ' | first
+            assign r_count = r_raw | split: '(' | last | split: ')' | first | strip
           endif
         -%}
-        <div class="sq-res" data-res="{{ rk }}" hidden
-          data-url="{% if rp != blank %}{{ rp.url }}?variant={{ rv.id }}{% endif %}"
-          data-name="{{ rname | escape }}" data-ptitle="{{ rp.title | escape }}" data-word="{{ rword | escape }}"
-          data-copy-self="{{ rself | escape }}" data-copy-partner="{{ rpartner | escape }}">
-          <h2 class="sq-q sq-fix-h" data-sq-fix-h data-ptitle="{{ rp.title | escape }}">{{ section.settings.fix_prefix }} SOMNA {{ rp.title }}</h2>
-          {%- if rp != blank -%}
-            {%- comment -%} Packet-only image picked in the theme editor (Result: … → Result image); falls back to the product image {%- endcomment -%}
-            {%- assign rimg = rpack | default: rv.featured_image | default: rp.featured_image -%}
-            {%- if rimg != blank -%}
-              <div class="sq-fix-img{% if rpack != blank %} sq-fix-img--pack{% endif %}">{{ rimg | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: '(min-width: 750px) 520px, 92vw', loading: 'lazy', alt: rp.title }}</div>
-            {%- endif -%}
-          {%- endif -%}
-        </div>
-      {%- endfor -%}
-      <p class="sq-lbl" data-self="{{ section.settings.why_heading | escape }}" data-partner="{{ section.settings.why_heading_partner | default: section.settings.why_heading | escape }}">{{ section.settings.why_heading }}</p>
-      <ul class="sq-ticks" data-sq-ticks></ul>
-      {%- if section.settings.timeline_heading != blank -%}
-        <section class="sq-30" aria-labelledby="sq-{{ sid }}-30">
-          <p class="sq-lbl" id="sq-{{ sid }}-30">{{ section.settings.timeline_heading }}</p>
-          <ol class="sq-timeline">
-            {%- for n in (1..3) -%}
+        {%- if rp != blank -%}
+        <div class="sq-res" data-res="{{ rk }}" hidden {% if rb %}{{ rb.shopify_attributes }}{% endif %}>
+          {%- comment -%} Match + product {%- endcomment -%}
+          <div class="sq-res-top">
+            <div class="sq-res-intro">
+              <p class="sq-pill">✓ {{ section.settings.match_pill }}</p>
+              <h2 class="sq-q sq-res-h" tabindex="-1">{{ section.settings.fix_prefix }} <em>SOMNA {{ rp.title }}</em></h2>
+              <p class="sq-res-why" data-sq-why></p>
+              <div class="sq-res-img{% if rimg_pick != blank %} sq-res-img--pack{% endif %}" data-sq-res-img>
+                {%- assign rimg = rimg_pick | default: rp.selected_or_first_available_variant.featured_image | default: rp.featured_image -%}
+                {%- if rimg != blank -%}{{ rimg | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: '(min-width: 1000px) 480px, (min-width: 750px) 560px, 92vw', loading: 'lazy', alt: rp.title }}{%- endif -%}
+              </div>
+              {%- if r_rating != blank -%}
+                <p class="sq-res-rating"><span class="sq-stars" aria-hidden="true">★★★★★</span> {{ r_rating }}{% if r_count != blank %} · {{ r_count }} reviews{% endif %}<span class="sq-sr"> out of 5</span></p>
+              {%- endif -%}
+              <ul class="sq-res-perks">
+                {%- if rbs.emoji_1 != blank -%}<li>{{ rbs.emoji_1 }}</li>{%- endif -%}
+                {%- if rbs.emoji_2 != blank -%}<li>{{ rbs.emoji_2 }}</li>{%- endif -%}
+                {%- if rbs.emoji_3 != blank -%}<li>{{ rbs.emoji_3 }}</li>{%- endif -%}
+              </ul>
+            </div>
+
+            {%- comment -%} Buy box: built by the script from the product data below (bags, Autoship / one-time, Add to Cart) {%- endcomment -%}
+            <div class="sq-buy" data-sq-buy>
+              <div data-sq-buy-ui></div>
+              <button type="button" class="sq-cta sq-atc" data-sq-atc><span aria-hidden="true">🛒</span> {{ section.settings.atc_label }}</button>
+              <p class="sq-err" role="alert" data-sq-atc-err hidden></p>
+              {%- if section.settings.atc_note != blank -%}<p class="sq-buy-note">↻ {{ section.settings.atc_note }}</p>{%- endif -%}
+              {%- if section.settings.view_product_label != blank -%}<p class="sq-buy-view"><a href="{{ rp.url }}">{{ section.settings.view_product_label }} →</a></p>{%- endif -%}
+              {%- if rbs.how_it_works != blank -%}
+                <details class="sq-acc sq-acc--box" open>
+                  <summary>{{ section.settings.how_it_works_heading }}</summary>
+                  <p>{{ rbs.how_it_works }}</p>
+                </details>
+              {%- endif -%}
+            </div>
+          </div>
+
+          {%- comment -%} Reviews: the product quote + the "Story review" blocks for this product {%- endcomment -%}
+          <section class="sq-res-sec sq-res-revs">
+            <h3 class="sq-res-h3">{{ section.settings.reviews_heading }}</h3>
+            <div class="sq-rv-track" data-sq-rv tabindex="0" role="region" aria-label="Customer reviews">
+              {%- if rbs.review_quote != blank -%}
+                <figure class="sq-rv-card"><p class="sq-rv-stars"><span class="sq-stars" aria-hidden="true">★★★★★</span> <span>✓ Verified buyer</span></p><blockquote>“{{ rbs.review_quote }}”</blockquote>{% if rbs.review_name != blank %}<figcaption>– {{ rbs.review_name }}</figcaption>{% endif %}</figure>
+              {%- endif -%}
+              {%- for b in section.blocks -%}
+                {%- if b.type == 'review' and b.settings.product == rk and b.settings.text != blank -%}
+                  <figure class="sq-rv-card"><p class="sq-rv-stars"><span class="sq-stars" aria-hidden="true">{% for st in (1..b.settings.rating) %}★{% endfor %}</span>{% if b.settings.verified %} <span>✓ Verified buyer</span>{% endif %}</p><blockquote>“{{ b.settings.text | escape }}”</blockquote><figcaption>– {{ b.settings.name }}</figcaption></figure>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+            <div class="sq-rc-nav"><div class="sq-rc-dots" data-sq-rv-dots></div><span class="sq-rc-hint" aria-hidden="true">swipe for more</span></div>
+          </section>
+
+          {%- comment -%} Main benefit {%- endcomment -%}
+          {%- if rbs.benefit_heading != blank -%}
+            <section class="sq-res-sec sq-res-split">
+              <div>
+                <h3 class="sq-res-h3 sq-res-h3--lg">{{ rbs.benefit_heading }}</h3>
+                {%- if rbs.benefit_text != blank -%}<p class="sq-res-p">{{ rbs.benefit_text }}</p>{%- endif -%}
+                <ul class="sq-res-points">
+                  {%- if rbs.point_1 != blank -%}<li>{{ rbs.point_1 }}</li>{%- endif -%}
+                  {%- if rbs.point_2 != blank -%}<li>{{ rbs.point_2 }}</li>{%- endif -%}
+                  {%- if rbs.point_3 != blank -%}<li>{{ rbs.point_3 }}</li>{%- endif -%}
+                </ul>
+              </div>
+              {%- comment -%} Right side of the V2 product page "What it's made of" section: the stacked layer picture + numbered list
+                (Sleep Bundle: the two products' cards), read from the product's own pdp_layers entry; else the image {%- endcomment -%}
               {%- liquid
-                assign tl_t = 'timeline_' | append: n | append: '_title'
-                assign tl_x = 'timeline_' | append: n | append: '_text'
+                assign lay = blank
+                if section.settings.v2_sections
+                  assign lay = rp.metafields.custom.pdp_layers.value
+                endif
+                assign lay_rel = lay.related.value
+                assign lay_feats = lay.features.value
+                assign lay_stack = true
+                if lay_feats == blank or lay_feats.size < 2
+                  assign lay_stack = false
+                endif
+                for f in lay_feats
+                  if f.image == blank
+                    assign lay_stack = false
+                  endif
+                endfor
               -%}
-              {%- if section.settings[tl_t] != blank -%}
-                {%- assign tl_p = 'timeline_' | append: n | append: '_text_partner' -%}
-                {%- assign tl_xp = section.settings[tl_p] | default: section.settings[tl_x] -%}
-                <li><p class="sq-tl-t">{{ section.settings[tl_t] }}</p><p class="sq-tl-x"><span{% if n == 1 %} data-sq-tl1 data-strips="{{ section.settings.timeline_1_text_strips | escape }}"{% endif %} data-self="{{ section.settings[tl_x] | escape }}" data-partner="{{ tl_xp | escape }}">{{ section.settings[tl_x] }}</span>{% if n == 2 and section.settings.timeline_2_note != blank %} <small>{{ section.settings.timeline_2_note }}</small>{% endif %}</p></li>
+              {%- if lay_rel != blank -%}
+                <somna-quiz-layers class="sq-lay sq-lay--pair">
+                  {%- for entry in lay_rel limit: 2 -%}
+                    {%- assign card_title = entry.admin_name.value | split: ' – ' | first | split: ' - ' | first -%}
+                    {%- unless forloop.first -%}<span class="sq-lay-plus" aria-hidden="true"></span>{%- endunless -%}
+                    <div class="sq-lay-card">
+                      {%- if card_title != blank -%}<p class="sq-lay-title">{{ card_title }}</p>{%- endif -%}
+                      <div class="sq-lay-body">
+                        {%- assign entry_image = entry.image.value -%}
+                        {%- if entry_image -%}{{ entry_image | image_url: width: 640 | image_tag: loading: 'lazy', widths: '320, 480, 640', sizes: '(min-width: 1000px) 220px, 45vw', alt: card_title }}{%- endif -%}
+                        {%- assign entry_features = entry.features.value -%}
+                        {%- if entry_features != blank -%}
+                          <ol class="sq-lay-list">
+                            {%- for f in entry_features -%}<li><p class="sq-lay-h">{{ f.title.value }}</p>{%- if f.text != blank -%}<p class="sq-lay-t">{{ f.text.value }}</p>{%- endif -%}</li>{%- endfor -%}
+                          </ol>
+                        {%- endif -%}
+                      </div>
+                    </div>
+                  {%- endfor -%}
+                </somna-quiz-layers>
+              {%- elsif lay_feats != blank -%}
+                <somna-quiz-layers class="sq-lay">
+                  {%- if lay_stack -%}
+                    {%- for f in lay_feats limit: 1 -%}{%- assign first_layer = f.image.value -%}{%- endfor -%}
+                    <div class="sq-lay-stack" style="aspect-ratio: {{ first_layer.width }} / {{ first_layer.height }};">
+                      {%- for f in lay_feats -%}
+                        {%- assign li = f.image.value -%}
+                        {%- assign probe = li | image_url: width: 120 -%}
+                        {{ li | image_url: width: 900 | image_tag: loading: 'lazy', widths: '450, 700, 900', sizes: '(min-width: 1000px) 300px, 55vw', class: 'sq-lay-layer', alt: f.title.value, data-probe: probe }}
+                      {%- endfor -%}
+                    </div>
+                  {%- elsif lay.image.value -%}
+                    <div class="sq-lay-stack">{{ lay.image.value | image_url: width: 900 | image_tag: loading: 'lazy', widths: '450, 700, 900', sizes: '(min-width: 1000px) 300px, 55vw' }}</div>
+                  {%- endif -%}
+                  <ol class="sq-lay-list">
+                    {%- for f in lay_feats -%}<li><p class="sq-lay-h">{{ f.title.value }}</p>{%- if f.text != blank -%}<p class="sq-lay-t">{{ f.text.value }}</p>{%- endif -%}</li>{%- endfor -%}
+                  </ol>
+                </somna-quiz-layers>
+              {%- elsif rbs.benefit_image != blank -%}<div class="sq-res-pic">{{ rbs.benefit_image | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: '(min-width: 1000px) 520px, 92vw', loading: 'lazy' }}</div>{%- endif -%}
+            </section>
+          {%- endif -%}
+
+          {%- comment -%} How to use {%- endcomment -%}
+          {%- if rbs.howto_heading != blank -%}
+            <section class="sq-res-sec sq-res-split sq-res-split--rev">
+              <div>
+                <h3 class="sq-res-h3">{{ rbs.howto_heading }}</h3>
+                {%- if rbs.howto_text != blank -%}<p class="sq-res-p">{{ rbs.howto_text }}</p>{%- endif -%}
+              </div>
+              {%- liquid
+                assign steps = blank
+                if section.settings.v2_sections
+                  assign steps = rp.metafields.custom.pdp_steps.value.features.value
+                endif
+              -%}
+              {%- if steps != blank -%}
+              <ol class="sq-steps" role="list">
+                {%- for f in steps -%}
+                  {%- assign photo = f.image.value -%}
+                  {%- assign crop = f.image_crop.value | downcase | default: 'center' -%}
+                  <li class="sq-howstep">
+                    {%- if photo -%}{{ photo | image_url: width: 506, height: 308, crop: crop | image_tag: loading: 'lazy', alt: photo.alt, width: 253, height: 154 }}{%- endif -%}
+                    <div>
+                      <p class="sq-howstep-h"><span>{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span> {{ f.title.value }}</p>
+                      {%- if f.text != blank -%}<p class="sq-howstep-t">{{ f.text.value }}</p>{%- endif -%}
+                    </div>
+                  </li>
+                {%- endfor -%}
+              </ol>
+              {%- else -%}
+              <div class="sq-res-steps">
+                {%- if rbs.howto_image != blank -%}
+                  {%- if rbs.howto_label_1 != blank -%}<p class="sq-res-step-l">{{ rbs.howto_label_1 }}</p>{%- endif -%}
+                  <div class="sq-res-pic">{{ rbs.howto_image | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: '(min-width: 1000px) 520px, 92vw', loading: 'lazy' }}</div>
+                {%- endif -%}
+                {%- if rbs.howto_image_2 != blank -%}
+                  {%- if rbs.howto_label_2 != blank -%}<p class="sq-res-step-l">{{ rbs.howto_label_2 }}</p>{%- endif -%}
+                  <div class="sq-res-pic">{{ rbs.howto_image_2 | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: '(min-width: 1000px) 520px, 92vw', loading: 'lazy' }}</div>
+                {%- endif -%}
+              </div>
+              {%- endif -%}
+            </section>
+          {%- endif -%}
+
+          {%- comment -%} Results + guarantee {%- endcomment -%}
+          {%- if rbs.results_heading != blank -%}
+            <section class="sq-res-sec sq-res-split">
+              <div>
+                <h3 class="sq-res-h3">{{ rbs.results_heading }}</h3>
+                {%- if rbs.results_text != blank -%}<p class="sq-res-p">{{ rbs.results_text }}</p>{%- endif -%}
+                <ul class="sq-stats">
+                  {%- for n in (1..3) -%}
+                    {%- liquid
+                      assign st_p = 'stat_' | append: n | append: '_pct'
+                      assign st_t = 'stat_' | append: n | append: '_text'
+                    -%}
+                    {%- if rbs[st_t] != blank -%}
+                      <li><p><strong>{{ rbs[st_p] }}%</strong> {{ rbs[st_t] }}</p><span class="sq-stat-bar" aria-hidden="true"><i style="width: {{ rbs[st_p] }}%"></i></span></li>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </ul>
+                {%- if section.settings.guarantee_heading != blank -%}
+                  <div class="sq-guar"><span class="sq-guar-n" aria-hidden="true">30</span><div><p class="sq-guar-h">{{ section.settings.guarantee_heading }}</p><p>{{ section.settings.guarantee_text }}</p></div></div>
+                {%- endif -%}
+              </div>
+              {%- liquid
+                assign rnd = blank
+                if section.settings.v2_sections
+                  assign rnd = rp.metafields.custom.pdp_how.value.image.value
+                  assign rv = rp.variants.first
+                  assign ralloc = rv.selling_plan_allocations | first
+                  assign rprice = rv.price
+                  if ralloc
+                    assign rprice = ralloc.price
+                  endif
+                  assign rbags = rv.title | split: ' ' | first | plus: 0
+                  if rbags < 1
+                    assign rbags = 1
+                  endif
+                  assign rnights = rp.metafields.custom.nights.value | default: 30
+                  assign rnight = rprice | divided_by: rbags | divided_by: rnights
+                  assign rsticker = rp.metafields.custom.pdp_cta_sticker.value | default: '[night] a night'
+                endif
+              -%}
+              {%- capture rnight_money -%}{{ rnight | money }}{%- endcapture -%}
+              {%- if rnd -%}
+                <somna-quiz-float class="sq-render">
+                  <div class="sq-render-prod">{{ rnd | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300, 450, 600', sizes: '(min-width: 1000px) 260px, 50vw', alt: rp.title }}</div>
+                  {%- if rnight > 0 -%}<p class="sq-render-sticker sq-shake--pop">{{ rsticker | replace: '[night]', rnight_money }}</p>{%- endif -%}
+                </somna-quiz-float>
+              {%- elsif rbs.results_image != blank -%}<div class="sq-res-pic sq-res-pic--wide">{{ rbs.results_image | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: '(min-width: 1000px) 520px, 92vw', loading: 'lazy' }}</div>{%- endif -%}
+            </section>
+          {%- endif -%}
+
+          {%- comment -%} FAQ {%- endcomment -%}
+          <section class="sq-res-sec sq-res-faq">
+            <h3 class="sq-res-h3">{{ section.settings.faq_heading }}</h3>
+            {%- for n in (1..6) -%}
+              {%- liquid
+                assign fq = 'faq_' | append: n | append: '_q'
+                assign fa = 'faq_' | append: n | append: '_a'
+              -%}
+              {%- if rbs[fq] != blank -%}
+                <details class="sq-acc"{% if forloop.first %} open{% endif %}><summary>{{ rbs[fq] }}</summary><p>{{ rbs[fa] }}</p></details>
               {%- endif -%}
             {%- endfor -%}
-          </ol>
-        </section>
-      {%- endif -%}
-      {%- comment -%} "Get my strips – 10% off →": text set by the script from the result, who it's for and whether QUIZ10 is unlocked {%- endcomment -%}
-      <a class="sq-cta" data-sq-plan href="{{ fallback_url }}">{{ section.settings.result_button }}</a>
-      <p class="sq-trust sq-cta-note" data-sq-cta-note data-code="{{ section.settings.cta_note | escape }}" data-nocode="{{ section.settings.guarantee_text | escape }}"{% if section.settings.cta_note == blank and section.settings.guarantee_text == blank %} hidden{% endif %}><span class="sq-trust-i" aria-hidden="true">{% render 'somna-quiz-icon', name: 'shield' %}</span><span data-sq-cta-note-t>{{ section.settings.guarantee_text }}</span></p>
+            <p class="sq-res-links"><button type="button" class="sq-linkbtn" data-sq-retake>↻ {{ section.settings.retake_label }}</button> · <a href="{{ routes.all_products_collection_url }}">{{ section.settings.all_products_label }}</a></p>
+          </section>
+        </div>
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- comment -%} Sticky Add to Cart (shows once the main button scrolls out of view) {%- endcomment -%}
+      <div class="sq-sticky" data-sq-sticky hidden>
+        <button type="button" class="sq-cta" data-sq-sticky-atc><span aria-hidden="true">🛒</span> {{ section.settings.atc_label }} · <span data-sq-sticky-price></span></button>
       </div>
     </div>
   </div>
 </section>
 
+{%- comment -%} Product data for the buy box (prices in cents). One-time price = variant price minus the sale % (snippets/somna-sale.liquid). {%- endcomment -%}
+<script type="application/json" data-sq-products>
+  {
+  {%- for r in (1..3) -%}
+    {%- liquid
+      case r
+        when 1
+          assign rk = 'strips'
+          assign rp = p_strips
+        when 2
+          assign rk = 'tape'
+          assign rp = p_tape
+        when 3
+          assign rk = 'bundle'
+          assign rp = p_bundle
+      endcase
+      assign size_pos = 0
+      assign color_pos = 0
+      for o in rp.options_with_values
+        assign on = o.name | downcase
+        if on contains 'size'
+          assign size_pos = forloop.index
+        elsif on contains 'color' or on contains 'colour'
+          assign color_pos = forloop.index
+        endif
+      endfor
+    -%}
+    {{ rk | json }}: {
+      "id": {{ rp.id | json }}, "title": {{ rp.title | json }}, "url": {{ rp.url | json }},
+      "variants": [
+        {%- for v in rp.variants -%}
+          {%- liquid
+            assign v_size = ''
+            assign v_color = ''
+            if size_pos > 0
+              assign sk = 'option' | append: size_pos
+              assign v_size = v[sk]
+            endif
+            if color_pos > 0
+              assign ck = 'option' | append: color_pos
+              assign v_color = v[ck]
+            endif
+            assign v_bags = v_size | split: ' ' | first | plus: 0
+            if v_bags < 1
+              assign v_bags = 1
+            endif
+            assign v_nights = v_bags | times: 30
+            assign v_once = v.price | times: sq_once_keep | divided_by: 100.0 | round
+            # Autoship plan whose interval is closest to the supply (30 / 60 / 120 nights), as on the product page
+            assign v_plan = nil
+            assign v_diff = 99999
+            for alloc in v.selling_plan_allocations
+              capture pd
+                render 'somna-plan-label', selling_plan: alloc.selling_plan, days_only: true
+              endcapture
+              assign pd = pd | plus: 0
+              assign dd = pd | minus: v_nights | abs
+              if dd < v_diff
+                assign v_diff = dd
+                assign v_plan = alloc
+                assign v_plan_days = pd
+              endif
+            endfor
+          -%}
+          { "id": {{ v.id }}, "size": {{ v_size | json }}, "color": {{ v_color | json }}, "bags": {{ v_bags }}, "nights": {{ v_nights }}, "available": {{ v.available | json }},
+            "price": {{ v.price }}, "once": {{ v_once }},
+            "sub": {% if v_plan %}{{ v_plan.price }}{% else %}null{% endif %}, "plan": {% if v_plan %}{{ v_plan.selling_plan.id }}{% else %}null{% endif %}, "days": {% if v_plan %}{{ v_plan_days }}{% else %}0{% endif %},
+            "image": {% if v.featured_image %}{{ v.featured_image | image_url: width: 900 | json }}{% else %}null{% endif %} }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }{% unless forloop.last %},{% endunless %}
+  {%- endfor -%}
+  }
+</script>
 <script type="application/json" data-sq-config>
   {
-    "code": {{ code | json }},
-    "fallbackUrl": {{ fallback_url | json }},
-    "klaviyoCompany": {{ section.settings.klaviyo_company_id | strip | json }},
-    "klaviyoList": {{ section.settings.klaviyo_list_id | strip | json }},
-    "klaviyoWelcomeList": {{ section.settings.klaviyo_welcome_list_id | strip | json }},
-    "source": {{ section.settings.klaviyo_source | strip | json }},
-    "triedStrips": {{ section.settings.tried_strips_line | json }},
-    "triedStripsPartner": {{ section.settings.tried_strips_line_partner | json }},
-    "triedPills": {{ section.settings.tried_pills_line | json }},
-    "stripsStart": {{ section.settings.strips_start_line | json }},
-    "fixPrefix": {{ section.settings.fix_prefix | json }},
-    "ctaSelf": {{ section.settings.cta_self | json }},
-    "ctaPartner": {{ section.settings.cta_partner | json }},
-    "ctaOff": {{ section.settings.cta_off | json }},
-    "fixPartner": {{ section.settings.fix_prefix_partner | json }},
-    "typePillName": {{ section.settings.type_pill_name | json }},
-    "triedTape": {{ section.settings.tried_tape_line | json }},
-    "bundleTick": {{ section.settings.bundle_tick | json }},
-    "bundleTickPartner": {{ section.settings.bundle_tick_partner | json }},
-    "bundleStart": {{ section.settings.bundle_start_line | json }},
-    "bundleStartPartner": {{ section.settings.bundle_start_line_partner | json }},
-    "problems": {
-      "snoring": [{{ section.settings.problem_a_self | json }}, {{ section.settings.problem_a_partner | json }}],
-      "nose": [{{ section.settings.problem_b_self | json }}, {{ section.settings.problem_b_partner | json }}],
-      "mouth": [{{ section.settings.problem_c_self | json }}, {{ section.settings.problem_c_partner | json }}],
-      "tired": [{{ section.settings.problem_d_self | json }}, {{ section.settings.problem_d_partner | json }}],
-      "both": [{{ section.settings.problem_e_self | json }}, {{ section.settings.problem_e_partner | json }}]
+    "moneyFormat": {{ shop.money_format | json }},
+    "colorNames": {{ section.settings.color_names | json }},
+    "why": {
+      "snoring": [{{ section.settings.why_snoring | json }}, {{ section.settings.why_snoring_partner | json }}],
+      "nose": [{{ section.settings.why_nose | json }}, {{ section.settings.why_nose_partner | json }}],
+      "mouth": [{{ section.settings.why_mouth | json }}, {{ section.settings.why_mouth_partner | json }}],
+      "tired": [{{ section.settings.why_tired | json }}, {{ section.settings.why_tired_partner | json }}],
+      "both": [{{ section.settings.why_both | json }}, {{ section.settings.why_both_partner | json }}]
+    },
+    "buy": {
+      "banner": {{ section.settings.buy_banner | json }},
+      "autoship": {{ section.settings.autoship_label | json }},
+      "onetime": {{ section.settings.onetime_label | json }},
+      "lock": {{ section.settings.lock_text | json }},
+      "ship1": {{ section.settings.ship_single | json }},
+      "shipFree": {{ section.settings.ship_free | json }},
+      "save": {{ section.settings.save_text | json }},
+      "gifts": {{ section.settings.gifts | json }},
+      "badges": [{{ section.settings.badge_1 | json }}, {{ section.settings.badge_2 | json }}, {{ section.settings.badge_3 | json }}],
+      "perks": [{{ section.settings.perk_1 | json }}, {{ section.settings.perk_2 | json }}, {{ section.settings.perk_3 | json }}],
+      "colorLabel": {{ section.settings.color_label | json }},
+      "added": {{ section.settings.atc_added | json }}
     }
   }
 </script>
-{% render 'somna-quiz-styles' %}
+{% render 'somna-quiz-styles', design: section.settings.design %}
+{%- if section.settings.v2_cursor -%}{% render 'somna-cursor', force: true %}{%- endif -%}
 {% render 'somna-quiz-script', sid: sid %}
 
 {% schema %}
 {
-  "name": "SOMNA quiz v5.2",
+  "name": "SOMNA quiz v6",
   "class": "somna-quiz-section",
   "settings": [
-    { "type": "header", "content": "00 · First name" },
-    { "type": "paragraph", "content": "Optional (Skip goes to Q1). The name personalises the email step and the report, and is saved to Klaviyo as first_name on sign-up." },
-    { "type": "text", "id": "name_pill", "label": "Pill", "default": "Your sleep quiz" },
-    { "type": "text", "id": "name_heading", "label": "Heading", "default": "Let's find what helps you sleep better." },
-    { "type": "text", "id": "name_sub", "label": "Subheading", "default": "First, what should we call you?" },
-    { "type": "text", "id": "name_placeholder", "label": "First name placeholder", "default": "First name" },
-    { "type": "text", "id": "name_button", "label": "Button", "default": "Let's begin →" },
-    { "type": "text", "id": "name_fine", "label": "Small print", "default": "We'll only use it to personalise your report." },
-    { "type": "text", "id": "name_skip", "label": "Skip link", "default": "Skip" },
-    { "type": "header", "content": "01 · Intro + Q1" },
-    { "type": "inline_richtext", "id": "intro_heading", "label": "Heading", "info": "Use italic for the highlighted word.", "default": "Snoring, stuffy nose or dry mouth? Find out what's <em>really</em> wrecking your sleep." },
-    { "type": "text", "id": "intro_sub", "label": "Subheading", "default": "This 60-second assessment reads your symptoms and routine to find the fix built for you." },
-    { "type": "paragraph", "content": "Testimonial card. PLACEHOLDER copy for now: replace with a REAL customer review before this goes live. Clear the quote to hide the card." },
-    { "type": "text", "id": "intro_review_quote", "label": "Review quote", "default": "Took maybe a minute. First thing in years that actually gets me up, and my wife sleeps right through it." },
-    { "type": "text", "id": "intro_review_name", "label": "First name + initial", "default": "Marcus D." },
-    { "type": "image_picker", "id": "intro_review_image", "label": "Reviewer photo", "info": "Square photo. Overrides the theme-file photo below." },
-    { "type": "text", "id": "intro_review_asset", "label": "Reviewer photo (theme file)", "info": "File name in the theme's assets. Used when no photo is picked above; if both are empty, their initials show.", "default": "somna-quiz-review-strips.jpg" },
-    { "type": "checkbox", "id": "intro_review_verified", "label": "Show \"✓ Verified buyer\"", "default": true },
-    { "type": "text", "id": "q1_heading", "label": "Q1 heading", "default": "First, who's this for?" },
-    { "type": "header", "content": "Q2–Q6 notes" },
-    { "type": "text", "id": "q2_note", "label": "Q2 'Did you know'", "default": "Snoring usually starts when air can't move freely through the nose while you're lying down." },
-    { "type": "text", "id": "q3_note", "label": "Q3 'Why we ask'", "default": "Lying down can make a narrow nasal passage feel even tighter, and that's often when snoring starts." },
-    { "type": "text", "id": "q4_note", "label": "Q4 'Why we ask' (me / both)", "default": "Waking with a dry mouth is one of the most common signs you've been breathing through your mouth at night." },
-    { "type": "text", "id": "q4_note_partner", "label": "Q4 'Why we ask' (partner)", "default": "Waking with a dry mouth is one of the most common signs they've been breathing through their mouth at night." },
-    { "type": "text", "id": "q6_other_placeholder", "label": "Q6 'Other' placeholder", "default": "Please tell us more..." },
-    { "type": "text", "id": "q6_note", "label": "Q6 'Nice, last one'", "default": "This helps us explain why SOMNA is different from what you've used before." },
-    { "type": "header", "content": "05 · Story break" },
-    { "type": "paragraph", "content": "Shows the Strips story if their answers trend to Strips, the Tape story if they trend to Tape, and one review from each for the Bundle. Only REAL customers (Judge.me reviews or a customer who agreed to film) or a product demo labeled as a demo, never AI-generated ads shown as customers. Empty fields are hidden." },
-    { "type": "text", "id": "story_pill", "label": "Pill", "default": "You're in the right place" },
-    { "type": "text", "id": "story_heading", "label": "Heading", "default": "Join 1,000+ SOMNA sleepers." },
-    { "type": "text", "id": "story_sub", "label": "Subheading", "default": "Real people with the same problem as you." },
-    { "type": "video", "id": "video_strips", "label": "Strips video (real customer, or a product demo)" },
-    { "type": "text", "id": "video_strips_label", "label": "Strips video label", "info": "Shown on the video. Use 'Product demo' for a demo; leave empty only for a real customer video.", "default": "Product demo" },
-    { "type": "text", "id": "strips_review_1_quote", "label": "Strips review 1 quote" },
-    { "type": "text", "id": "strips_review_1_name", "label": "Strips review 1 name" },
-    { "type": "text", "id": "strips_review_2_quote", "label": "Strips review 2 quote" },
-    { "type": "text", "id": "strips_review_2_name", "label": "Strips review 2 name" },
-    { "type": "video", "id": "video_tape", "label": "Tape video (real customer, or a product demo)" },
-    { "type": "text", "id": "video_tape_label", "label": "Tape video label", "info": "Shown on the video. Use 'Product demo' for a demo; leave empty only for a real customer video.", "default": "Product demo" },
-    { "type": "text", "id": "tape_review_1_quote", "label": "Tape review 1 quote" },
-    { "type": "text", "id": "tape_review_1_name", "label": "Tape review 1 name" },
-    { "type": "text", "id": "tape_review_2_quote", "label": "Tape review 2 quote" },
-    { "type": "text", "id": "tape_review_2_name", "label": "Tape review 2 name" },
-    { "type": "header", "content": "08 · Analyzing" },
-    { "type": "text", "id": "analyze_heading", "label": "Heading", "default": "Building your sleep report…" },
-    { "type": "text", "id": "analyze_sub", "label": "Subheading", "default": "Matching your answers to the right SOMNA fix." },
-    { "type": "header", "content": "09 · Unlock 10% (optional email)" },
-    { "type": "text", "id": "email_pill", "label": "Pill", "default": "Your report is ready" },
-    { "type": "text", "id": "email_heading", "label": "Heading", "info": "With a first name it reads \"Sarah, your sleep report is ready\".", "default": "Your sleep report is ready" },
-    { "type": "text", "id": "email_sub", "label": "Subheading", "default": "Where should we send it? We'll add 10% off your SOMNA plan." },
-    { "type": "text", "id": "email_button", "label": "Button", "default": "Show my report + 10% off" },
-    { "type": "text", "id": "email_skip", "label": "Skip link", "info": "Skipping shows the report without the discount code.", "default": "Skip, just show my report" },
-    { "type": "text", "id": "email_done", "label": "Signed-up message", "default": "You're in." },
-    { "type": "text", "id": "email_done_button", "label": "Signed-up button", "default": "See my report →" },
-    { "type": "text", "id": "email_consent", "label": "Consent line", "default": "By signing up you agree to receive marketing emails from SOMNA. Unsubscribe anytime." },
-    { "type": "paragraph", "content": "The email is added to the Klaviyo list below (default: Quiz Signups, for tracking) with source 'quiz', the first name, result and answers on the profile, and also to the Welcome flow list so they get the Welcome Series." },
-    { "type": "text", "id": "klaviyo_company_id", "label": "Klaviyo public API key (company ID)", "default": "Tr7JSM" },
-    { "type": "text", "id": "klaviyo_list_id", "label": "Klaviyo list ID", "default": "SGCi7d" },
-    { "type": "text", "id": "klaviyo_welcome_list_id", "label": "Welcome flow list ID", "info": "Sign-ups are also added to this list so they get the Welcome Series (default: Email List). Leave empty to turn off.", "default": "XyWydk" },
-    { "type": "text", "id": "klaviyo_source", "label": "Sign-up source", "default": "quiz" },
-    { "type": "text", "id": "discount_code", "label": "Discount code (email sign-ups only)", "info": "Shown on screen 11 and applied automatically through the product link. Leave empty to turn off.", "default": "QUIZ10" },
-    { "type": "text", "id": "code_text", "label": "Code box text", "info": "[code] is replaced by the discount code.", "default": "Your code [code] · applied at checkout" },
-    { "type": "header", "content": "10 · Sleep report" },
-    { "type": "paragraph", "content": "With a first name, the problem line starts with it: \"Sarah, you mentioned …\"." },
-    { "type": "text", "id": "type_pill_name", "label": "Pill with a first name (me / both)", "info": "[name] is replaced by the first name. Partner: \"Their sleep type\". No name: \"Your sleep type\".", "default": "[name]'s sleep type" },
-    { "type": "text", "id": "problem_a_self", "label": "Problem line: Snoring (me / both)", "default": "You mentioned snoring is what you'd most like to change." },
-    { "type": "text", "id": "problem_a_partner", "label": "Problem line: Snoring (partner)", "default": "You mentioned their snoring is what they'd most like to change." },
-    { "type": "text", "id": "problem_b_self", "label": "Problem line: Blocked nose (me / both)", "default": "You mentioned a blocked or stuffy nose is keeping you up." },
-    { "type": "text", "id": "problem_b_partner", "label": "Problem line: Blocked nose (partner)", "default": "You mentioned their blocked or stuffy nose is the problem." },
-    { "type": "text", "id": "problem_c_self", "label": "Problem line: Dry mouth (me / both)", "default": "You mentioned you wake up with a dry mouth or sore throat." },
-    { "type": "text", "id": "problem_c_partner", "label": "Problem line: Dry mouth (partner)", "default": "You mentioned they wake up with a dry mouth or sore throat." },
-    { "type": "text", "id": "problem_d_self", "label": "Problem line: Tired (me / both)", "default": "You mentioned you wake up tired, even after a full night." },
-    { "type": "text", "id": "problem_d_partner", "label": "Problem line: Tired (partner)", "default": "You mentioned they wake up tired, even after a full night." },
-    { "type": "text", "id": "problem_e_self", "label": "Problem line: Both (me / both)", "default": "You mentioned it's snoring or a blocked nose, and a dry mouth." },
-    { "type": "text", "id": "problem_e_partner", "label": "Problem line: Both (partner)", "default": "You mentioned it's their snoring or blocked nose, and a dry mouth." },
-    { "type": "header", "content": "11 · Your fix" },
-    { "type": "text", "id": "fix_prefix", "label": "Heading start (me / both)", "info": "With a first name: \"Sarah, here's your fix:\".", "default": "Your fix:" },
-    { "type": "text", "id": "fix_prefix_partner", "label": "Heading start (partner)", "info": "With a first name: \"Sarah, here's what we'd suggest for them:\".", "default": "Here's what we'd suggest for them:" },
-    { "type": "text", "id": "why_heading", "label": "'Why it fits' heading (me / both)", "default": "Why it fits you" },
-    { "type": "text", "id": "why_heading_partner", "label": "'Why it fits' heading (partner)", "default": "Why it fits them" },
-    { "type": "text", "id": "tried_strips_line", "label": "Tick if they tried cheap strips (me / both)", "default": "Built to stay on until morning, unlike the strips you may have tried before." },
-    { "type": "text", "id": "tried_strips_line_partner", "label": "Tick if they tried cheap strips (partner)", "default": "Built to stay on until morning, unlike the strips they may have tried before." },
-    { "type": "text", "id": "strips_start_line", "label": "Nasal Strips tick if they didn't try strips", "default": "Easy to start: one strip at bedtime, nothing else to change." },
-    { "type": "text", "id": "tried_pills_line", "label": "Drug-free tick", "info": "Shown first when they tried melatonin or pills, otherwise used to fill the list.", "default": "Drug-free, with nothing to swallow." },
-    { "type": "text", "id": "bundle_tick", "label": "Sleep Bundle tick (me / both)", "default": "Strips open the airway, while Tape helps keep the mouth closed. You said it's your nose and your mouth." },
-    { "type": "text", "id": "bundle_tick_partner", "label": "Sleep Bundle tick (partner)", "default": "Strips open the airway, while Tape helps keep the mouth closed. You said it's their nose and their mouth." },
-    { "type": "text", "id": "bundle_start_line", "label": "Sleep Bundle tick if they haven't tried strips or tape (me / both)", "default": "Easy to start: one strip and one tape at bedtime, nothing else to change." },
-    { "type": "text", "id": "bundle_start_line_partner", "label": "Sleep Bundle tick if they haven't tried strips or tape (partner)", "default": "Easy to start: one strip and one tape at bedtime, nothing else to change." },
-    { "type": "text", "id": "tried_tape_line", "label": "Tick if they tried mouth tape", "info": "Wording to confirm.", "default": "Designed to be gentle on skin and peel off easily in the morning." },
-    { "type": "text", "id": "timeline_heading", "label": "Timeline heading", "default": "Your first 30 nights" },
-    { "type": "text", "id": "timeline_1_title", "label": "Step 1 title", "default": "Night 1" },
-    { "type": "text", "id": "timeline_1_text", "label": "Step 1 text (Mouth Tape / Sleep Bundle)", "default": "Apply before bed." },
-    { "type": "text", "id": "timeline_1_text_strips", "label": "Step 1 text (Nasal Strips)", "default": "Apply one strip before bed." },
-    { "type": "text", "id": "timeline_2_title", "label": "Step 2 title", "default": "Nights 1–30" },
-    { "type": "text", "id": "timeline_2_text", "label": "Step 2 text (me / both)", "default": "Note how your mornings feel in your free Sleep Tracker" },
-    { "type": "text", "id": "timeline_2_text_partner", "label": "Step 2 text (partner)", "default": "Note how their mornings feel in the free Sleep Tracker" },
-    { "type": "text", "id": "timeline_2_note", "label": "Step 2 small print", "info": "Keep: the Sleep Tracker is free with a subscription only.", "default": "(with subscription)." },
-    { "type": "text", "id": "timeline_3_title", "label": "Step 3 title", "default": "Night 30" },
-    { "type": "text", "id": "timeline_3_text", "label": "Step 3 text", "info": "Must match the Return & Refund Policy.", "default": "Not quite right for you? Get a full refund under our 30-Night Money-Back Guarantee." },
-    { "type": "text", "id": "timeline_3_text_partner", "label": "Step 3 text (partner)", "info": "Must match the Return & Refund Policy.", "default": "Not quite right for them? Get a full refund under our 30-Night Money-Back Guarantee." },
-    { "type": "text", "id": "cta_self", "label": "Button (me / both)", "info": "[product] is replaced by the result's button word below (strips / tape / bundle).", "default": "Get my [product]" },
-    { "type": "text", "id": "cta_partner", "label": "Button (partner)", "default": "Get their [product]" },
-    { "type": "text", "id": "cta_off", "label": "Button discount part", "info": "Added only when QUIZ10 is unlocked (email sign-up).", "default": "– 10% off" },
-    { "type": "text", "id": "cta_note", "label": "Line under the button (with code)", "default": "Your 10% off is applied at checkout · 30-Night Money-Back Guarantee" },
-    { "type": "text", "id": "guarantee_text", "label": "Line under the button (no code / Skip)", "info": "Leave both lines empty to hide.", "default": "30-Night Money-Back Guarantee" },
-    { "type": "text", "id": "result_button", "label": "Button before the result loads", "info": "Only seen if the script hasn't run yet.", "default": "Get my 10% off →" },
-    { "type": "text", "id": "preselect_size", "label": "Size to pre-select on the product page", "info": "Must match the variant name, e.g. 1 Bag, 2 Bags, 4 Bags.", "default": "1 Bag" },
-    { "type": "header", "content": "Result: Nasal Strips" },
-    { "type": "image_picker", "id": "strips_result_image", "label": "Result image", "info": "Packet image shown on the quiz result. Leave empty to use the product image. Doesn't change the product." },
-    { "type": "product", "id": "product_strips", "label": "Product" },
-    { "type": "text", "id": "strips_name", "label": "Sleep type name", "default": "The Nose Breather" },
-    { "type": "text", "id": "strips_button_word", "label": "Button word", "info": "Used in \"Get my [product]\".", "default": "strips" },
-    { "type": "textarea", "id": "strips_self", "label": "Copy (me / both)", "default": "It looks like your nose could use a little help at night. Lying down can narrow the airflow through your nose, which can lead to snoring and slower mornings. SOMNA Strips are designed to gently hold your nose open all night." },
-    { "type": "textarea", "id": "strips_partner", "label": "Copy (partner)", "default": "It looks like their nose could use a little help at night. Lying down can narrow the airflow through the nose, which can make sleep feel lighter and mornings slower, even after a full night. SOMNA Strips are designed to gently hold their nose open all night." },
-    { "type": "header", "content": "Result: Mouth Tape" },
-    { "type": "image_picker", "id": "tape_result_image", "label": "Result image", "info": "Packet image shown on the quiz result. Leave empty to use the product image. Doesn't change the product." },
-    { "type": "product", "id": "product_tape", "label": "Product" },
-    { "type": "text", "id": "tape_name", "label": "Sleep type name", "default": "The Mouth Breather" },
-    { "type": "text", "id": "tape_button_word", "label": "Button word", "info": "Used in \"Get my [product]\".", "default": "tape" },
-    { "type": "textarea", "id": "tape_self", "label": "Copy (me / both)", "default": "You're breathing through your mouth at night, which is why you wake up dry and groggy. SOMNA Tape is designed to keep your lips gently closed so you breathe through your nose." },
-    { "type": "textarea", "id": "tape_partner", "label": "Copy (partner)", "default": "They're breathing through their mouth at night. SOMNA Tape is designed to keep their lips gently closed so they breathe through their nose." },
-    { "type": "header", "content": "Result: Sleep Bundle" },
-    { "type": "image_picker", "id": "bundle_result_image", "label": "Result image", "info": "Packet image shown on the quiz result. Leave empty to use the product image. Doesn't change the product." },
-    { "type": "product", "id": "product_bundle", "label": "Product" },
-    { "type": "text", "id": "bundle_name", "label": "Sleep type name", "default": "The Double Trouble" },
-    { "type": "text", "id": "bundle_button_word", "label": "Button word", "info": "Used in \"Get my [product]\".", "default": "bundle" },
-    { "type": "textarea", "id": "bundle_self", "label": "Copy (me / both)", "default": "It's your nose and your mouth. Strips open the airway; Tape keeps you breathing through it. Built to work together." },
-    { "type": "textarea", "id": "bundle_partner", "label": "Copy (partner)", "default": "It's their nose and their mouth. Strips open the airway; Tape keeps them breathing through it. Built to work together." }
+    {
+      "type": "select",
+      "id": "design",
+      "label": "Design",
+      "options": [
+        { "value": "night", "label": "Night (navy + purple)" },
+        { "value": "v2", "label": "SOMNA V2 (mint, lavender, Boldonse)" }
+      ],
+      "default": "night"
+    },
+    {
+      "type": "checkbox",
+      "id": "v2_sections",
+      "label": "Result: use the SOMNA V2 product page sections",
+      "info": "Main benefit = How it works diagram, How to use = numbered steps, Results = product with the per-night sticker. Read from each product's own V2 content; falls back to the images below.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "v2_cursor",
+      "label": "SOMNA V2 moon cursor on the quiz",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Q1 · Intro"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "intro_heading",
+      "label": "Heading",
+      "info": "Use italic for the highlighted word.",
+      "default": "Snoring, stuffy nose or dry mouth? Find out what's <em>really</em> wrecking your sleep."
+    },
+    {
+      "type": "text",
+      "id": "intro_sub",
+      "label": "Info line",
+      "default": "60 seconds · 6 questions → your sleep match"
+    },
+    {
+      "type": "text",
+      "id": "intro_sub_extra",
+      "label": "Info line highlight",
+      "default": "+ today's sale price"
+    },
+    {
+      "type": "paragraph",
+      "content": "Testimonial card. Use a REAL customer review. Clear the quote to hide the card."
+    },
+    {
+      "type": "text",
+      "id": "intro_review_quote",
+      "label": "Review quote",
+      "default": "Took maybe a minute. First thing in years that actually gets me up, and my wife sleeps right through it."
+    },
+    {
+      "type": "text",
+      "id": "intro_review_name",
+      "label": "First name + initial",
+      "default": "Marcus D."
+    },
+    {
+      "type": "image_picker",
+      "id": "intro_review_image",
+      "label": "Reviewer photo",
+      "info": "Square photo. Overrides the theme-file photo below."
+    },
+    {
+      "type": "text",
+      "id": "intro_review_asset",
+      "label": "Reviewer photo (theme file)",
+      "info": "File name in the theme's assets. Used when no photo is picked above; if both are empty, their initials show.",
+      "default": "somna-quiz-review-strips.jpg"
+    },
+    {
+      "type": "checkbox",
+      "id": "intro_review_verified",
+      "label": "Show \"✓ Verified buyer\"",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "q1_heading",
+      "label": "Q1 heading",
+      "default": "First, who's this for?"
+    },
+    {
+      "type": "header",
+      "content": "Q2–Q6 notes"
+    },
+    {
+      "type": "text",
+      "id": "q2_note",
+      "label": "Q2 'Did you know'",
+      "default": "Snoring usually starts when air can't move freely through the nose while you're lying down."
+    },
+    {
+      "type": "text",
+      "id": "q3_note",
+      "label": "Q3 'Why we ask'",
+      "default": "Lying down can make a narrow nasal passage feel even tighter, and that's often when snoring starts."
+    },
+    {
+      "type": "text",
+      "id": "q4_note",
+      "label": "Q4 'Why we ask' (me / both)",
+      "default": "Waking with a dry mouth is one of the most common signs you've been breathing through your mouth at night."
+    },
+    {
+      "type": "text",
+      "id": "q4_note_partner",
+      "label": "Q4 'Why we ask' (partner)",
+      "default": "Waking with a dry mouth is one of the most common signs they've been breathing through their mouth at night."
+    },
+    {
+      "type": "text",
+      "id": "q5_note",
+      "label": "Q5 'Nearly done'",
+      "default": "One more question, then your match."
+    },
+    {
+      "type": "text",
+      "id": "q6_other_placeholder",
+      "label": "Q6 'Other' placeholder",
+      "default": "Please tell us more..."
+    },
+    {
+      "type": "text",
+      "id": "q6_note",
+      "label": "Q6 'Last one'",
+      "default": "Then we'll show your SOMNA match."
+    },
+    {
+      "type": "text",
+      "id": "q6_button",
+      "label": "Q6 button",
+      "default": "See my match →"
+    },
+    {
+      "type": "header",
+      "content": "Reviews break (after Q4)"
+    },
+    {
+      "type": "paragraph",
+      "content": "Shows the 'Story review' blocks (2 per swipe), reviews for the product their answers trend to first. Only REAL customers. With no review blocks, the video + quotes below show instead."
+    },
+    {
+      "type": "text",
+      "id": "story_pill",
+      "label": "Pill",
+      "default": "You're in the right place"
+    },
+    {
+      "type": "text",
+      "id": "story_heading",
+      "label": "Heading",
+      "default": "Real SOMNA sleepers."
+    },
+    {
+      "type": "text",
+      "id": "story_sub",
+      "label": "Subheading",
+      "default": "Real people with the same problem as you."
+    },
+    {
+      "type": "video",
+      "id": "video_strips",
+      "label": "Strips video (real customer, or a product demo)"
+    },
+    {
+      "type": "text",
+      "id": "video_strips_label",
+      "label": "Strips video label",
+      "info": "Shown on the video. Use 'Product demo' for a demo; leave empty only for a real customer video.",
+      "default": "Product demo"
+    },
+    {
+      "type": "text",
+      "id": "strips_review_1_quote",
+      "label": "Strips review 1 quote"
+    },
+    {
+      "type": "text",
+      "id": "strips_review_1_name",
+      "label": "Strips review 1 name"
+    },
+    {
+      "type": "text",
+      "id": "strips_review_2_quote",
+      "label": "Strips review 2 quote"
+    },
+    {
+      "type": "text",
+      "id": "strips_review_2_name",
+      "label": "Strips review 2 name"
+    },
+    {
+      "type": "video",
+      "id": "video_tape",
+      "label": "Tape video (real customer, or a product demo)"
+    },
+    {
+      "type": "text",
+      "id": "video_tape_label",
+      "label": "Tape video label",
+      "info": "Shown on the video. Use 'Product demo' for a demo; leave empty only for a real customer video.",
+      "default": "Product demo"
+    },
+    {
+      "type": "text",
+      "id": "tape_review_1_quote",
+      "label": "Tape review 1 quote"
+    },
+    {
+      "type": "text",
+      "id": "tape_review_1_name",
+      "label": "Tape review 1 name"
+    },
+    {
+      "type": "text",
+      "id": "tape_review_2_quote",
+      "label": "Tape review 2 quote"
+    },
+    {
+      "type": "text",
+      "id": "tape_review_2_name",
+      "label": "Tape review 2 name"
+    },
+    {
+      "type": "header",
+      "content": "Matching"
+    },
+    {
+      "type": "text",
+      "id": "analyze_heading",
+      "label": "Heading",
+      "default": "Finding your match…"
+    },
+    {
+      "type": "text",
+      "id": "analyze_foot",
+      "label": "Small print",
+      "default": "Takes 2 seconds · goes straight to your match"
+    },
+    {
+      "type": "header",
+      "content": "Result · match"
+    },
+    {
+      "type": "text",
+      "id": "match_pill",
+      "label": "Pill",
+      "default": "Your match"
+    },
+    {
+      "type": "text",
+      "id": "fix_prefix",
+      "label": "Heading start",
+      "default": "Your fix:"
+    },
+    {
+      "type": "paragraph",
+      "content": "'Picked because…' line, from their answer to Q2 (biggest problem)."
+    },
+    {
+      "type": "text",
+      "id": "why_snoring",
+      "label": "Snoring (me / both)",
+      "default": "Picked because you said snoring is your biggest problem at night."
+    },
+    {
+      "type": "text",
+      "id": "why_snoring_partner",
+      "label": "Snoring (partner)",
+      "default": "Picked because you said their snoring is the biggest problem at night."
+    },
+    {
+      "type": "text",
+      "id": "why_nose",
+      "label": "Blocked nose (me / both)",
+      "default": "Picked because you said your nose blocks up when you lie down."
+    },
+    {
+      "type": "text",
+      "id": "why_nose_partner",
+      "label": "Blocked nose (partner)",
+      "default": "Picked because you said their nose blocks up when they lie down."
+    },
+    {
+      "type": "text",
+      "id": "why_mouth",
+      "label": "Dry mouth (me / both)",
+      "default": "Picked because you said dry mouth is your biggest problem at night."
+    },
+    {
+      "type": "text",
+      "id": "why_mouth_partner",
+      "label": "Dry mouth (partner)",
+      "default": "Picked because you said dry mouth is their biggest problem at night."
+    },
+    {
+      "type": "text",
+      "id": "why_tired",
+      "label": "Tired (me / both)",
+      "default": "Picked because you said you wake up tired, even after a full night."
+    },
+    {
+      "type": "text",
+      "id": "why_tired_partner",
+      "label": "Tired (partner)",
+      "default": "Picked because you said they wake up tired, even after a full night."
+    },
+    {
+      "type": "text",
+      "id": "why_both",
+      "label": "Both (me / both)",
+      "default": "Picked because you said it is both: a blocked nose and a dry mouth."
+    },
+    {
+      "type": "text",
+      "id": "why_both_partner",
+      "label": "Both (partner)",
+      "default": "Picked because you said it is both for them: a blocked nose and a dry mouth."
+    },
+    {
+      "type": "header",
+      "content": "Result · buy box"
+    },
+    {
+      "type": "paragraph",
+      "content": "Prices come from the products: Autoship = the subscription plan closest to the bag size (30 / 60 / 120 nights); one-time = price minus the sale % in snippets/somna-sale.liquid, as on the product page."
+    },
+    {
+      "type": "text",
+      "id": "color_label",
+      "label": "Colour label",
+      "default": "Color:"
+    },
+    {
+      "type": "text",
+      "id": "color_names",
+      "label": "Colour names",
+      "info": "Variant colour : name shown, separated by |",
+      "default": "Blue:Breathe|Red:Bold|Black:Night"
+    },
+    {
+      "type": "text",
+      "id": "badge_1",
+      "label": "1 Bag badge",
+      "default": "Recommended"
+    },
+    {
+      "type": "text",
+      "id": "badge_2",
+      "label": "2 Bags badge",
+      "default": "Most popular"
+    },
+    {
+      "type": "text",
+      "id": "badge_3",
+      "label": "4 Bags badge",
+      "default": "Best value"
+    },
+    {
+      "type": "text",
+      "id": "perk_1",
+      "label": "1 Bag perk",
+      "default": "$4.95 shipping"
+    },
+    {
+      "type": "text",
+      "id": "perk_2",
+      "label": "2 Bags perk",
+      "default": "+3 free gifts"
+    },
+    {
+      "type": "text",
+      "id": "perk_3",
+      "label": "4 Bags perk",
+      "default": "4th bag free"
+    },
+    {
+      "type": "text",
+      "id": "buy_banner",
+      "label": "Banner",
+      "default": "UP TO 50% OFF + 3 FREE GIFTS WITH 2+ BAGS"
+    },
+    {
+      "type": "text",
+      "id": "autoship_label",
+      "label": "Autoship label",
+      "default": "Autoship & Save"
+    },
+    {
+      "type": "text",
+      "id": "ship_single",
+      "label": "Autoship shipping (1 bag)",
+      "default": "$4.95 shipping"
+    },
+    {
+      "type": "text",
+      "id": "ship_free",
+      "label": "Autoship shipping (2+ bags)",
+      "default": "FREE shipping"
+    },
+    {
+      "type": "text",
+      "id": "lock_text",
+      "label": "Autoship line",
+      "default": "Lock in your sale price on every delivery"
+    },
+    {
+      "type": "text",
+      "id": "gifts",
+      "label": "Free gifts (2+ bags)",
+      "info": "Separated by |. Shown with Autoship on 2+ bags.",
+      "default": "Sleep Guide 1|Sleep Guide 2|30-Night Tracker"
+    },
+    {
+      "type": "text",
+      "id": "onetime_label",
+      "label": "One-time label",
+      "default": "One-time purchase"
+    },
+    {
+      "type": "text",
+      "id": "save_text",
+      "label": "One-time saving line",
+      "default": "You'd save [amount] with Autoship"
+    },
+    {
+      "type": "text",
+      "id": "atc_label",
+      "label": "Button",
+      "default": "Add to cart"
+    },
+    {
+      "type": "text",
+      "id": "atc_added",
+      "label": "Button after adding",
+      "default": "Added ✓"
+    },
+    {
+      "type": "text",
+      "id": "atc_note",
+      "label": "Line under the button",
+      "default": "Skip, pause or cancel anytime · 30-Night Money-Back Guarantee"
+    },
+    {
+      "type": "text",
+      "id": "how_it_works_heading",
+      "label": "How It Works heading",
+      "default": "How It Works"
+    },
+    {
+      "type": "header",
+      "content": "Result · sections"
+    },
+    {
+      "type": "text",
+      "id": "reviews_heading",
+      "label": "Reviews heading",
+      "default": "Real SOMNA sleepers"
+    },
+    {
+      "type": "text",
+      "id": "guarantee_heading",
+      "label": "Guarantee heading",
+      "default": "30-Night Money-Back Guarantee"
+    },
+    {
+      "type": "text",
+      "id": "guarantee_text",
+      "label": "Guarantee text",
+      "info": "Must match the Return & Refund Policy.",
+      "default": "Try SOMNA for 30 nights. Not right for you? Get a full refund, counted from delivery."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "faq_heading",
+      "label": "FAQ heading",
+      "default": "Questions? <em>We've got you.</em>"
+    },
+    {
+      "type": "text",
+      "id": "view_product_label",
+      "label": "Link to the product page (under Add to Cart)",
+      "info": "Opens the matched product's page only when tapped. Empty = hidden.",
+      "default": "View full product details"
+    },
+    {
+      "type": "text",
+      "id": "retake_label",
+      "label": "Retake link",
+      "default": "Retake quiz"
+    },
+    {
+      "type": "text",
+      "id": "all_products_label",
+      "label": "All products link",
+      "default": "See all products"
+    },
+    {
+      "type": "header",
+      "content": "Products"
+    },
+    {
+      "type": "product",
+      "id": "product_strips",
+      "label": "Nasal Strips"
+    },
+    {
+      "type": "image_picker",
+      "id": "strips_result_image",
+      "label": "Nasal Strips result image",
+      "info": "Packet image at the top of the result. Empty = product image."
+    },
+    {
+      "type": "product",
+      "id": "product_tape",
+      "label": "Mouth Tape"
+    },
+    {
+      "type": "image_picker",
+      "id": "tape_result_image",
+      "label": "Mouth Tape result image",
+      "info": "Packet image at the top of the result. Empty = product image."
+    },
+    {
+      "type": "product",
+      "id": "product_bundle",
+      "label": "Sleep Bundle"
+    },
+    {
+      "type": "image_picker",
+      "id": "bundle_result_image",
+      "label": "Sleep Bundle result image",
+      "info": "Empty = the image of the colour they pick."
+    }
   ],
   "blocks": [
     {
       "type": "review",
-      "name": "Story review (carousel)",
+      "name": "Story review",
       "settings": [
-        { "type": "paragraph", "content": "Shown as a sliding carousel on the 'Join 1,000+ SOMNA sleepers' step, in place of the video. Use REAL customer reviews only. Reviews for the shopper's matched product are shown first." },
-        { "type": "select", "id": "product", "label": "Product", "options": [ { "value": "strips", "label": "Nasal Strips" }, { "value": "tape", "label": "Mouth Tape" }, { "value": "bundle", "label": "Sleep Bundle" } ], "default": "strips" },
-        { "type": "image_picker", "id": "image", "label": "Customer photo" },
-        { "type": "text", "id": "name", "label": "Customer name", "placeholder": "Jessica M." },
-        { "type": "range", "id": "rating", "label": "Star rating", "min": 1, "max": 5, "step": 1, "default": 5 },
-        { "type": "textarea", "id": "text", "label": "Review" },
-        { "type": "checkbox", "id": "verified", "label": "Show \"Verified buyer\"", "default": true }
+        {
+          "type": "paragraph",
+          "content": "Real customer reviews only. Shown on the reviews break (2 per swipe, matched product first) and in 'Real SOMNA sleepers' on that product's result."
+        },
+        {
+          "type": "select",
+          "id": "product",
+          "label": "Product",
+          "options": [
+            {
+              "value": "strips",
+              "label": "Nasal Strips"
+            },
+            {
+              "value": "tape",
+              "label": "Mouth Tape"
+            },
+            {
+              "value": "bundle",
+              "label": "Sleep Bundle"
+            }
+          ],
+          "default": "strips"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Customer photo"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Customer name",
+          "placeholder": "Jessica M."
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Review"
+        },
+        {
+          "type": "checkbox",
+          "id": "verified",
+          "label": "Show \"Verified buyer\"",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "result",
+      "name": "Result page",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "One per product: the copy and images of that product's quiz result page."
+        },
+        {
+          "type": "select",
+          "id": "product",
+          "label": "Product",
+          "options": [
+            {
+              "value": "strips",
+              "label": "Nasal Strips"
+            },
+            {
+              "value": "tape",
+              "label": "Mouth Tape"
+            },
+            {
+              "value": "bundle",
+              "label": "Sleep Bundle"
+            }
+          ],
+          "default": "strips"
+        },
+        {
+          "type": "header",
+          "content": "Under the image"
+        },
+        {
+          "type": "text",
+          "id": "emoji_1",
+          "label": "Line 1"
+        },
+        {
+          "type": "text",
+          "id": "emoji_2",
+          "label": "Line 2"
+        },
+        {
+          "type": "text",
+          "id": "emoji_3",
+          "label": "Line 3"
+        },
+        {
+          "type": "textarea",
+          "id": "how_it_works",
+          "label": "How It Works text"
+        },
+        {
+          "type": "header",
+          "content": "Reviews"
+        },
+        {
+          "type": "text",
+          "id": "review_quote",
+          "label": "First review quote"
+        },
+        {
+          "type": "text",
+          "id": "review_name",
+          "label": "First review name"
+        },
+        {
+          "type": "header",
+          "content": "Main benefit"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "benefit_heading",
+          "label": "Heading",
+          "info": "Use italic for the highlighted words."
+        },
+        {
+          "type": "textarea",
+          "id": "benefit_text",
+          "label": "Text"
+        },
+        {
+          "type": "image_picker",
+          "id": "benefit_image",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "point_1",
+          "label": "Point 1",
+          "info": "Bold the lead-in."
+        },
+        {
+          "type": "inline_richtext",
+          "id": "point_2",
+          "label": "Point 2"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "point_3",
+          "label": "Point 3"
+        },
+        {
+          "type": "header",
+          "content": "How to use"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "howto_heading",
+          "label": "Heading"
+        },
+        {
+          "type": "textarea",
+          "id": "howto_text",
+          "label": "Text"
+        },
+        {
+          "type": "text",
+          "id": "howto_label_1",
+          "label": "Image 1 label (optional)"
+        },
+        {
+          "type": "image_picker",
+          "id": "howto_image",
+          "label": "Image 1"
+        },
+        {
+          "type": "text",
+          "id": "howto_label_2",
+          "label": "Image 2 label (optional)"
+        },
+        {
+          "type": "image_picker",
+          "id": "howto_image_2",
+          "label": "Image 2 (optional)"
+        },
+        {
+          "type": "header",
+          "content": "Results"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "results_heading",
+          "label": "Heading"
+        },
+        {
+          "type": "textarea",
+          "id": "results_text",
+          "label": "Text"
+        },
+        {
+          "type": "image_picker",
+          "id": "results_image",
+          "label": "Image"
+        },
+        {
+          "type": "range",
+          "id": "stat_1_pct",
+          "label": "Stat 1 %",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 90
+        },
+        {
+          "type": "text",
+          "id": "stat_1_text",
+          "label": "Stat 1 text"
+        },
+        {
+          "type": "range",
+          "id": "stat_2_pct",
+          "label": "Stat 2 %",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 90
+        },
+        {
+          "type": "text",
+          "id": "stat_2_text",
+          "label": "Stat 2 text"
+        },
+        {
+          "type": "range",
+          "id": "stat_3_pct",
+          "label": "Stat 3 %",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 90
+        },
+        {
+          "type": "text",
+          "id": "stat_3_text",
+          "label": "Stat 3 text"
+        },
+        {
+          "type": "header",
+          "content": "FAQ"
+        },
+        {
+          "type": "text",
+          "id": "faq_1_q",
+          "label": "Question 1"
+        },
+        {
+          "type": "textarea",
+          "id": "faq_1_a",
+          "label": "Answer 1"
+        },
+        {
+          "type": "text",
+          "id": "faq_2_q",
+          "label": "Question 2"
+        },
+        {
+          "type": "textarea",
+          "id": "faq_2_a",
+          "label": "Answer 2"
+        },
+        {
+          "type": "text",
+          "id": "faq_3_q",
+          "label": "Question 3"
+        },
+        {
+          "type": "textarea",
+          "id": "faq_3_a",
+          "label": "Answer 3"
+        },
+        {
+          "type": "text",
+          "id": "faq_4_q",
+          "label": "Question 4"
+        },
+        {
+          "type": "textarea",
+          "id": "faq_4_a",
+          "label": "Answer 4"
+        },
+        {
+          "type": "text",
+          "id": "faq_5_q",
+          "label": "Question 5"
+        },
+        {
+          "type": "textarea",
+          "id": "faq_5_a",
+          "label": "Answer 5"
+        },
+        {
+          "type": "text",
+          "id": "faq_6_q",
+          "label": "Question 6"
+        },
+        {
+          "type": "textarea",
+          "id": "faq_6_a",
+          "label": "Answer 6"
+        }
       ]
     }
   ],
-  "max_blocks": 8,
-  "presets": [{ "name": "SOMNA quiz v5.2" }]
+  "max_blocks": 20,
+  "presets": [
+    {
+      "name": "SOMNA quiz v6"
+    }
+  ]
 }
 {% endschema %}
