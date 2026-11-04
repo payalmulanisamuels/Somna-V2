@@ -965,8 +965,9 @@
   }
 
   /* problem, split style (Season Bundle): the problem and the fix as two panels under the heading */
-  .somna-pdp-story--split .somna-pdp-story__inner {
+  .somna-pdp-story--problem.somna-pdp-story--split .somna-pdp-story__inner {
     grid-template-columns: minmax(0, 1fr);
+    align-items: start;
   }
 
   .somna-pdp-story__split {
@@ -1145,7 +1146,7 @@
   }
 
   @media screen and (min-width: 990px) {
-    .somna-pdp-story--split .somna-pdp-story__copy {
+    .somna-pdp-story--problem.somna-pdp-story--split .somna-pdp-story__copy {
       display: grid;
       grid-template-columns: auto minmax(0, 440px);
       column-gap: 36px;
