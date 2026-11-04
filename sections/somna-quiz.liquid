@@ -20,7 +20,7 @@
   assign sq_once_keep = 100 | minus: sq_once_off
 -%}
 
-<section class="sq{% if section.settings.design == 'v2' %} sq--v2{% endif %}" id="sq-{{ sid }}" data-sq aria-label="Sleep quiz">
+<section class="sq{% if section.settings.design == 'v2' %} sq--v2{% endif %}{% if section.settings.result_extras %} sq--extras{% endif %}" id="sq-{{ sid }}" data-sq aria-label="Sleep quiz">
   <div class="sq-wrap">
     <a class="sq-logo" href="{{ routes.root_url }}" aria-label="SOMNA home">
       {%- if settings.logo != blank -%}
@@ -99,6 +99,24 @@
                 {%- assign rimg = rimg_pick | default: rp.selected_or_first_available_variant.featured_image | default: rp.featured_image -%}
                 {%- if rimg != blank -%}{{ rimg | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: '(min-width: 1000px) 480px, (min-width: 750px) 560px, 92vw', loading: 'lazy', alt: rp.title }}{%- endif -%}
               </div>
+              {%- if section.settings.result_extras and rimg != blank -%}
+                {%- comment -%} thumbnails: the result image + the product's own photos (as the product page gallery); tap = main image {%- endcomment -%}
+                {%- capture thumbs -%}
+                  {%- assign tn = 0 -%}
+                  {%- for m in rp.media -%}
+                    {%- if m.media_type == 'image' and m.preview_image.src != rimg.src and tn < 5 -%}
+                      {%- assign tn = tn | plus: 1 -%}
+                      <button type="button" class="sq-thumb" data-sq-thumb data-src="{{ m.preview_image | image_url: width: 900 }}" aria-label="{{ rp.title | escape }} photo {{ tn | plus: 1 }}">{{ m.preview_image | image_url: width: 160 | image_tag: loading: 'lazy', alt: '', width: 80, height: 80 }}</button>
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- endcapture -%}
+                {%- if tn > 0 -%}
+                  <div class="sq-thumbs" role="group" aria-label="{{ rp.title | escape }} photos">
+                    <button type="button" class="sq-thumb" data-sq-thumb data-first data-src="{{ rimg | image_url: width: 900 }}" aria-current="true" aria-label="{{ rp.title | escape }} photo 1">{{ rimg | image_url: width: 160 | image_tag: loading: 'lazy', alt: '', width: 80, height: 80 }}</button>
+                    {{- thumbs -}}
+                  </div>
+                {%- endif -%}
+              {%- endif -%}
               {%- if r_rating != blank -%}
                 <p class="sq-res-rating"><span class="sq-stars" aria-hidden="true">★★★★★</span> {{ r_rating }}{% if r_count != blank %} · {{ r_count }} reviews{% endif %}<span class="sq-sr"> out of 5</span></p>
               {%- endif -%}
@@ -114,6 +132,7 @@
               <div data-sq-buy-ui></div>
               <button type="button" class="sq-cta sq-atc" data-sq-atc><span aria-hidden="true">🛒</span> {{ section.settings.atc_label }}</button>
               <p class="sq-err" role="alert" data-sq-atc-err hidden></p>
+              {%- if section.settings.result_extras and section.settings.ship_note != blank -%}<p class="sq-buy-ship"><span aria-hidden="true">🚚</span> {{ section.settings.ship_note }}</p>{%- endif -%}
               {%- if section.settings.atc_note != blank -%}<p class="sq-buy-note">↻ {{ section.settings.atc_note }}</p>{%- endif -%}
               {%- if section.settings.view_product_label != blank -%}<p class="sq-buy-view"><a href="{{ rp.url }}">{{ section.settings.view_product_label }} →</a></p>{%- endif -%}
               {%- if rbs.how_it_works != blank -%}
@@ -128,7 +147,24 @@
           {%- comment -%} Reviews: the product quote + the "Story review" blocks for this product {%- endcomment -%}
           <section class="sq-res-sec sq-res-revs">
             <h3 class="sq-res-h3">{{ section.settings.reviews_heading }}</h3>
-            <div class="sq-rv-track" data-sq-rv tabindex="0" role="region" aria-label="Customer reviews">
+            <div class="sq-rv-track{% if section.settings.result_extras %} sq-rv-track--photos{% endif %}" data-sq-rv tabindex="0" role="region" aria-label="Customer reviews">
+              {%- if section.settings.result_extras -%}
+                {%- comment -%} photo reviews first (photo left, as the reviews break), then the quote from the result block with initials {%- endcomment -%}
+                {%- for b in section.blocks -%}
+                  {%- if b.type == 'review' and b.settings.product == rk and b.settings.text != blank -%}
+                    <figure class="sq-rv-card sq-rv-card--pic">
+                      {%- if b.settings.image != blank -%}<div class="sq-rv-photo">{{ b.settings.image | image_url: width: 240 | image_tag: loading: 'lazy', widths: '120, 240', sizes: '96px', alt: b.settings.name }}</div>{%- else -%}<span class="sq-rv-av" aria-hidden="true">{{ b.settings.name | slice: 0 }}</span>{%- endif -%}
+                      <div class="sq-rv-body"><p class="sq-rv-stars"><span class="sq-stars" aria-hidden="true">{% for st in (1..b.settings.rating) %}★{% endfor %}</span>{% if b.settings.verified %} <span>✓ Verified buyer</span>{% endif %}</p><blockquote>“{{ b.settings.text | escape }}”</blockquote><figcaption>– {{ b.settings.name }}</figcaption></div>
+                    </figure>
+                  {%- endif -%}
+                {%- endfor -%}
+                {%- if rbs.review_quote != blank -%}
+                  <figure class="sq-rv-card sq-rv-card--pic">
+                    {%- if rbs.review_image != blank -%}<div class="sq-rv-photo">{{ rbs.review_image | image_url: width: 240 | image_tag: loading: 'lazy', widths: '120, 240', sizes: '96px', alt: rbs.review_name }}</div>{%- else -%}<span class="sq-rv-av" aria-hidden="true">{{ rbs.review_name | default: 'S' | slice: 0 }}</span>{%- endif -%}
+                    <div class="sq-rv-body"><p class="sq-rv-stars"><span class="sq-stars" aria-hidden="true">★★★★★</span> <span>✓ Verified buyer</span></p><blockquote>“{{ rbs.review_quote }}”</blockquote>{% if rbs.review_name != blank %}<figcaption>– {{ rbs.review_name }}</figcaption>{% endif %}</div>
+                  </figure>
+                {%- endif -%}
+              {%- else -%}
               {%- if rbs.review_quote != blank -%}
                 <figure class="sq-rv-card"><p class="sq-rv-stars"><span class="sq-stars" aria-hidden="true">★★★★★</span> <span>✓ Verified buyer</span></p><blockquote>“{{ rbs.review_quote }}”</blockquote>{% if rbs.review_name != blank %}<figcaption>– {{ rbs.review_name }}</figcaption>{% endif %}</figure>
               {%- endif -%}
@@ -137,6 +173,7 @@
                   <figure class="sq-rv-card"><p class="sq-rv-stars"><span class="sq-stars" aria-hidden="true">{% for st in (1..b.settings.rating) %}★{% endfor %}</span>{% if b.settings.verified %} <span>✓ Verified buyer</span>{% endif %}</p><blockquote>“{{ b.settings.text | escape }}”</blockquote><figcaption>– {{ b.settings.name }}</figcaption></figure>
                 {%- endif -%}
               {%- endfor -%}
+              {%- endif -%}
             </div>
             <div class="sq-rc-nav"><div class="sq-rc-dots" data-sq-rv-dots></div><span class="sq-rc-hint" aria-hidden="true">swipe for more</span></div>
           </section>
@@ -433,7 +470,7 @@
     }
   }
 </script>
-{% render 'somna-quiz-styles', design: section.settings.design %}
+{% render 'somna-quiz-styles', design: section.settings.design, extras: section.settings.result_extras %}
 {%- if section.settings.v2_cursor -%}{% render 'somna-cursor', force: true %}{%- endif -%}
 {% render 'somna-quiz-script', sid: sid %}
 
@@ -458,6 +495,19 @@
       "label": "Result: use the SOMNA V2 product page sections",
       "info": "Main benefit = How it works diagram, How to use = numbered steps, Results = product with the per-night sticker. Read from each product's own V2 content; falls back to the images below.",
       "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "result_extras",
+      "label": "Result: review photos, free shipping line, dark cart drawer",
+      "info": "Review cards show the customer photo; a free shipping line sits under Add to Cart; the cart drawer on this page matches the dark quiz.",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "ship_note",
+      "label": "Free shipping line (under Add to Cart)",
+      "default": "Free US shipping on every order"
     },
     {
       "type": "checkbox",
@@ -1101,6 +1151,11 @@
         {
           "type": "header",
           "content": "Reviews"
+        },
+        {
+          "type": "image_picker",
+          "id": "review_image",
+          "label": "Review photo (optional)"
         },
         {
           "type": "text",
