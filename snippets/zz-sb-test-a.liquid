@@ -1,0 +1,17 @@
+{%- liquid
+  assign c = product.metafields.custom.pdp_layers.value
+  # "What it's made of": an entry with "Products in this section" shows cards.
+  assign related = c.related.value
+  assign layout_class = 'layers'
+  if layout_class == 'layers'
+    if related == blank
+      assign c = nil
+    else
+      assign layout_class = 'layers_pair'
+    endif
+  elsif related != blank
+    assign c = nil
+  endif
+  assign accent_pos = c.accent_line.value | default: 'first' | downcase
+-%}
+{%- for entry in related limit: 2 -%}{%- assign card_title = entry.admin_name.value | split: ' – ' | first | split: ' - ' | first -%}{%- unless forloop.first -%}+{%- endunless -%}{{ card_title }}{%- endfor -%}
