@@ -1,0 +1,19 @@
+{%- comment -%}
+  Somna V2 — CSS colour for a colour name (Sleep Bundle swatches, Color Set dots).
+  Somna's three strip colours use the Figma shades; any other name is used as a CSS colour.
+  A swatch colour set on the option value in Shopify admin wins (see somna-pdp-hero).
+  Usage: {% render 'somna-swatch-color', name: 'Blue' %}
+{%- endcomment -%}
+{%- liquid
+  assign key = name | downcase | strip
+  case key
+    when 'black', 'night black'
+      echo '#000000'
+    when 'red', 'bold red'
+      echo '#c40000'
+    when 'blue', 'breathe blue'
+      echo '#0b46d1'
+    else
+      echo key
+  endcase
+-%}
