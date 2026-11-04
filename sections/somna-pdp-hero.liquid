@@ -1184,8 +1184,13 @@
 
   /* desktop (Figma 1440): gallery + quote + videos on the left, buy panel on the right */
   @media screen and (min-width: 990px) {
+    /* Figma 4557:857 / 4557:44: gallery 577 + gap 36 + buy panel 742 = 1355px content.
+       Rows: the gallery row keeps its own height and the quote/videos start right under it,
+       however tall the buy panel gets (bundles have longer panels). */
     .somna-pdp-hero__inner {
+      --somna-content-width: 1355px;
       grid-template-columns: minmax(0, 577px) minmax(0, 742px);
+      grid-template-rows: auto 1fr;
       grid-template-areas:
         'gallery panel'
         'side panel';
@@ -1199,6 +1204,8 @@
 
     .somna-pdp-hero__side {
       grid-area: side;
+      align-self: start;
+      align-content: start;
     }
 
     .somna-pdp-hero__panel {
@@ -1299,6 +1306,11 @@
   /* small laptops (990–1299px): the buy panel is only 380–530px wide, so each feature icon sits
      above its label and the three packs stay on one row as in Figma (they wrapped 2 + 1) */
   @media screen and (min-width: 990px) and (max-width: 1299px) {
+    /* "Real Nights, On Camera" wraps to two lines here; Boldonse's tall glyphs need more line height */
+    .somna-pdp-hero__videos-title {
+      line-height: 1.6;
+    }
+
     .somna-pdp-hero__features {
       font-size: 0.9375rem;
     }
