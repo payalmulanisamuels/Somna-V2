@@ -17,7 +17,10 @@
   endif
   assign key = 'pdp_' | append: s.layout
   # a content entry picked in the template wins over the product's metafield (used by the Season Bundle template)
-  assign c = s.content
+  assign c = nil
+  if s.content != blank
+    assign c = metaobjects.pdp_section[s.content]
+  endif
   if c == blank
     assign c = product.metafields.custom[key].value
   endif
@@ -26,7 +29,6 @@
     assign split = true
   endif
 -%}
-<!-- sbdebug {{ section.id }} content={{ s.content | json | escape }} global={{ metaobjects.pdp_section['season-bundle-problem'].heading.value }} -->
 {%- if c != blank -%}
 {%- liquid
   assign features = c.features.value
@@ -167,10 +169,10 @@
           {%- for side in (1..2) -%}
             {%- liquid
               if side == 1
-                assign entry = s.pair_left
+                assign entry = metaobjects.pdp_section[s.pair_left]
                 assign card_title = s.pair_left_title
               else
-                assign entry = s.pair_right
+                assign entry = metaobjects.pdp_section[s.pair_right]
                 assign card_title = s.pair_right_title
               endif
             -%}
@@ -1637,11 +1639,11 @@
       ],
       "default": "problem"
     },
-    { "type": "metaobject", "id": "content", "label": "Content entry", "metaobject_type": "pdp_section", "info": "Optional. When set, this PDP section entry is used instead of the product's matching metafield." },
+    { "type": "text", "id": "content", "label": "Content entry handle", "info": "Optional. The handle of a PDP section entry (Content > Metaobjects), e.g. season-bundle-problem. Used instead of the product's matching metafield." },
     { "type": "select", "id": "problem_style", "label": "Problem style", "options": [{ "value": "crossfade", "label": "One picture (problem fades to fix)" }, { "value": "split", "label": "Two panels side by side" }], "default": "crossfade", "visible_if": "{{ section.settings.layout == 'problem' }}" },
-    { "type": "metaobject", "id": "pair_left", "label": "Left product entry", "metaobject_type": "pdp_section", "visible_if": "{{ section.settings.layout == 'layers_pair' }}", "info": "A \"What it's made of\" entry: its image and layers fill the card." },
+    { "type": "text", "id": "pair_left", "label": "Left product entry handle", "visible_if": "{{ section.settings.layout == 'layers_pair' }}", "info": "A \"What it's made of\" PDP section entry, e.g. mouth-tape-layers. Its image and layers fill the card." },
     { "type": "text", "id": "pair_left_title", "label": "Left card title", "default": "Mouth Tape", "visible_if": "{{ section.settings.layout == 'layers_pair' }}" },
-    { "type": "metaobject", "id": "pair_right", "label": "Right product entry", "metaobject_type": "pdp_section", "visible_if": "{{ section.settings.layout == 'layers_pair' }}" },
+    { "type": "text", "id": "pair_right", "label": "Right product entry handle", "visible_if": "{{ section.settings.layout == 'layers_pair' }}", "info": "e.g. nasal-strips-layers" },
     { "type": "text", "id": "pair_right_title", "label": "Right card title", "default": "Nasal Strip", "visible_if": "{{ section.settings.layout == 'layers_pair' }}" },
     { "type": "product", "id": "preview_product", "label": "Product for the theme editor", "info": "Only used where there is no product." },
     { "type": "video", "id": "video", "label": "Three steps: fallback video", "info": "The \"Watch how it works\" popup plays the product's steps metaobject \"video\" field, or the product metafield custom.how_it_works_video. This video is used only when neither is set." },

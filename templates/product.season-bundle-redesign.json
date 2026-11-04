@@ -35,11 +35,7 @@
         "wave_color": "#0b0f1d",
         "wave_shape": "drip-1",
         "tagline": "3 packs of Nasal Strips and 3 packs of Mouth Tape. The full SOMNA routine for 90 nights, in one delivery.",
-        "features": [
-          "gid://shopify/Metaobject/649894297831",
-          "gid://shopify/Metaobject/649894330599",
-          "gid://shopify/Metaobject/649894363367"
-        ],
+        "features": "sb-hero-nose-lips,sb-hero-90-nights,sb-hero-one-delivery",
         "price_night_label": "/night for both",
         "savings_note": "",
         "box_heading": "What's in the Box?",
@@ -149,7 +145,7 @@
         "padding_bottom": 40,
         "wave_color": "#f3feee",
         "wave_shape": "drip-2",
-        "content": "gid://shopify/Metaobject/649894887655",
+        "content": "season-bundle-problem",
         "problem_style": "split"
       }
     },
@@ -168,7 +164,7 @@
         "padding_bottom": 40,
         "wave_color": "#afbdf8",
         "wave_shape": "drip-3",
-        "content": "pdp_section.season-bundle-how"
+        "content": "season-bundle-how"
       }
     },
     "steps": {
@@ -195,10 +191,10 @@
       "type": "somna-pdp-story",
       "settings": {
         "layout": "layers_pair",
-        "content": "pdp_section.season-bundle-layers",
-        "pair_left": "pdp_section.mouth-tape-layers",
+        "content": "season-bundle-layers",
+        "pair_left": "mouth-tape-layers",
         "pair_left_title": "Mouth Tape",
-        "pair_right": "pdp_section.nasal-strips-layers",
+        "pair_right": "nasal-strips-layers",
         "pair_right_title": "Nasal Strip",
         "accent_line": "second",
         "background_color": "#f3feee",

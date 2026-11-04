@@ -200,14 +200,26 @@
       {%- if tagline != blank -%}<p class="somna-pdp-hero__tagline">{{ tagline | newline_to_br }}</p>{%- endif -%}
 
       {%- comment -%} features picked in the template win over the product's metafield (Season Bundle) {%- endcomment -%}
-      {%- assign features = s.features -%}
-      {%- if features == blank -%}{%- assign features = mf.pdp_hero_features.value -%}{%- endif -%}
-      {%- if features != blank -%}
+      {%- if s.features != blank -%}
+        {%- assign feature_handles = s.features | split: ',' -%}
         <ul class="somna-pdp-hero__features" role="list">
-          {%- for f in features -%}
-            <li><span class="somna-pdp-hero__feature-icon">{% render 'somna-pdp-icon', name: f.icon.value, variant: 'figma' %}</span>{{ f.title.value }}</li>
+          {%- for fh in feature_handles -%}
+            {%- assign fh = fh | strip -%}
+            {%- assign f = metaobjects.pdp_feature[fh] -%}
+            {%- if f != blank -%}
+              <li><span class="somna-pdp-hero__feature-icon">{% render 'somna-pdp-icon', name: f.icon.value, variant: 'figma' %}</span>{{ f.title.value }}</li>
+            {%- endif -%}
           {%- endfor -%}
         </ul>
+      {%- else -%}
+        {%- assign features = mf.pdp_hero_features.value -%}
+        {%- if features != blank -%}
+          <ul class="somna-pdp-hero__features" role="list">
+            {%- for f in features -%}
+              <li><span class="somna-pdp-hero__feature-icon">{% render 'somna-pdp-icon', name: f.icon.value, variant: 'figma' %}</span>{{ f.title.value }}</li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
       {%- endif -%}
 
       <p class="somna-pdp-hero__price">
@@ -1778,7 +1790,7 @@
     { "type": "text", "id": "rating_format", "label": "Rating text", "info": "[rating] and [count] come from the product's review metafield.", "default": "[rating]/5 · [count] reviews" },
     { "type": "text", "id": "brand", "label": "Brand before the title", "default": "somna." },
     { "type": "textarea", "id": "tagline", "label": "Tagline", "info": "Optional. Empty uses the product's PDP – Tagline metafield." },
-    { "type": "metaobject_list", "id": "features", "label": "Hero features", "metaobject_type": "pdp_feature", "limit": 4, "info": "Optional. Empty uses the product's PDP – Hero features metafield." },
+    { "type": "text", "id": "features", "label": "Hero feature handles", "info": "Optional. PDP feature entry handles separated by commas, e.g. sb-hero-nose-lips,sb-hero-90-nights. Empty uses the product's PDP – Hero features metafield." },
     { "type": "text", "id": "price_night_label", "label": "Per-night text next to the price", "info": "Optional, e.g. \"/night for both\". Uses Nights per bag. Empty hides it." },
     { "type": "text", "id": "savings_note", "label": "Note under the price", "info": "Optional. Empty hides it." },
     { "type": "text", "id": "box_heading", "label": "What's in the box: heading", "default": "What's in the Box?" },
