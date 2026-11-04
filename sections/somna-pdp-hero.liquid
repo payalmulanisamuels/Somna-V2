@@ -262,6 +262,8 @@
       </p>
       {%- if mf.pdp_savings_note != blank -%}<p class="somna-pdp-hero__savings">{{ mf.pdp_savings_note.value }}</p>{%- endif -%}
 
+      {%- comment -%} What's in the box: under the price for single-variant products; after the packs when there are packs (Sleep Bundle) {%- endcomment -%}
+      {%- capture box_markup -%}
       {%- assign box_products = mf.pdp_box_products.value -%}
       {%- assign box_notes = mf.pdp_box_notes.value -%}
       {%- assign box_titles = mf.pdp_box_titles.value -%}
@@ -294,6 +296,8 @@
           {%- if mf.pdp_gifts_bar != blank -%}<p class="somna-pdp-hero__gifts-bar">{{ mf.pdp_gifts_bar.value }}</p>{%- endif -%}
         </div>
       {%- endif -%}
+      {%- endcapture -%}
+      {%- if product.has_only_default_variant -%}{{ box_markup }}{%- endif -%}
 
       {%- form 'product', product, class: 'somna-pdp-hero__form', data-form: '' -%}
         <input type="hidden" name="id" value="{{ current.id }}" data-id>
@@ -355,6 +359,8 @@
           </div>
         </fieldset>
 
+        {%- unless product.has_only_default_variant -%}{{ box_markup }}{%- endunless -%}
+
         <fieldset class="somna-buy__modes somna-pdp-hero__modes">
           <legend class="visually-hidden">{{ s.mode_label }}</legend>
           {%- if has_plans -%}
@@ -400,7 +406,9 @@
         <div class="somna-pdp-hero__upsell">
           {%- if mf.pdp_upsell_label != blank -%}<p class="somna-pdp-hero__upsell-label">{{ mf.pdp_upsell_label.value }}</p>{%- endif -%}
           <a class="somna-pdp-hero__upsell-card" href="{{ upsell.url }}">
-            {%- if upsell.featured_image -%}{{ upsell.featured_image | image_url: width: 260, height: 190, crop: 'center' | image_tag: loading: 'lazy', alt: '', width: 120, height: 88, class: 'somna-pdp-hero__upsell-thumb' }}{%- endif -%}
+            {%- comment -%} thumbnail: the linked product's first PDP gallery image (pack shot), else its featured image {%- endcomment -%}
+            {%- assign upsell_image = upsell.metafields.custom.pdp_gallery.value | first | default: upsell.featured_image -%}
+            {%- if upsell_image -%}{{ upsell_image | image_url: width: 260, height: 190, crop: 'center' | image_tag: loading: 'lazy', alt: '', width: 120, height: 88, class: 'somna-pdp-hero__upsell-thumb' }}{%- endif -%}
             <span class="somna-pdp-hero__upsell-text">
               <span class="somna-pdp-hero__upsell-title">{{ mf.pdp_upsell_heading.value | default: upsell.title }}</span>
               {%- if mf.pdp_upsell_text != blank -%}<span class="somna-pdp-hero__upsell-desc">{{ mf.pdp_upsell_text.value }}</span>{%- endif -%}
@@ -1738,6 +1746,16 @@
       min-height: 0;
       margin: 0;
       overflow: visible;
+    }
+
+    /* sticker sits on the main photo's bottom-right corner, not under the thumbnails */
+    .somna-pdp-hero--gallery-below .somna-pdp-hero__gallery {
+      container-type: inline-size;
+    }
+
+    .somna-pdp-hero--gallery-below .somna-pdp-hero__sticker {
+      top: calc(100cqw * 426 / 569 - 38px);
+      bottom: auto;
     }
 
     .somna-pdp-hero--gallery-below .somna-pdp-hero__thumb {
