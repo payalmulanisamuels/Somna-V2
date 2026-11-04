@@ -586,7 +586,10 @@
         "padding_bottom": 8,
         "wave_color": "#afbdf8",
         "wave_shape": "drip-7"
-      }
+      },
+      "custom_css": [
+        ".somna-compare__inner {--somna-content-width: 1220px;}"
+      ]
     },
     "gifts": {
       "type": "section",
@@ -933,7 +936,10 @@
         "background_color": "#afbdf8",
         "padding-block-start": 24,
         "padding-block-end": 24
-      }
+      },
+      "custom_css": [
+        ".section-content-wrapper {max-width: 1140px; margin-inline: auto;}"
+      ]
     },
     "wave_gifts_pair": {
       "type": "somna-wave",
@@ -1289,7 +1295,10 @@
         "background_color": "#f3feee",
         "padding-block-start": 24,
         "padding-block-end": 24
-      }
+      },
+      "custom_css": [
+        ".section-content-wrapper {max-width: 1120px; margin-inline: auto;}"
+      ]
     },
     "wave_faq_cta": {
       "type": "somna-wave",
