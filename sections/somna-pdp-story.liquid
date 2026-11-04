@@ -121,8 +121,16 @@
         {%- endif -%}
 
       {%- when 'how' -%}
-        {%- if s.how_animation -%}<somna-pdp-how class="somna-pdp-story__visual" data-order="1,2,4,3">{%- else -%}<div class="somna-pdp-story__visual">{%- endif -%}
-          {%- if image -%}<div class="somna-pdp-story__product">{{ image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350, 500, 700', sizes: '(min-width: 990px) 335px, 50vw' }}</div>{%- endif -%}
+        {%- assign how_after = c.image_after.value -%}
+        {%- capture visual_class -%}somna-pdp-story__visual{% if how_after %} somna-pdp-story__visual--pair{% endif %}{%- endcapture -%}
+        {%- if s.how_animation -%}<somna-pdp-how class="{{ visual_class }}" data-order="1,2,4,3">{%- else -%}<div class="{{ visual_class }}">{%- endif -%}
+          {%- if image -%}
+            <div class="somna-pdp-story__product">
+              {{- image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350, 500, 700', sizes: '(min-width: 990px) 335px, 50vw' -}}
+              {%- comment -%} optional second product (Season Bundle: tape + strip side by side) {%- endcomment -%}
+              {%- if how_after -%}{{ how_after | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350, 500, 700', sizes: '(min-width: 990px) 200px, 30vw', class: 'somna-pdp-story__product-after' }}{%- endif -%}
+            </div>
+          {%- endif -%}
           {%- for f in features limit: 4 -%}
             <div class="somna-pdp-story__point somna-pdp-story__point--{{ forloop.index }}">
               <span class="somna-pdp-story__point-icon">{% render 'somna-pdp-icon', name: f.icon.value %}</span>
@@ -770,6 +778,26 @@
   .somna-pdp-story__point--2 { grid-area: 1 / 3; }
   .somna-pdp-story__point--3 { grid-area: 2 / 1; align-self: end; }
   .somna-pdp-story__point--4 { grid-area: 2 / 3; align-self: end; }
+
+  /* how it works with two products (Season Bundle, Figma 4654:113): tape + strip side by side,
+     the first two features above either side and the third centred underneath */
+  .somna-pdp-story__visual--pair .somna-pdp-story__product {
+    display: flex;
+    gap: 4%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .somna-pdp-story__visual--pair .somna-pdp-story__product img {
+    width: 48%;
+    min-width: 0;
+    height: auto;
+  }
+
+  .somna-pdp-story__visual--pair .somna-pdp-story__point--3 {
+    grid-area: 3 / 2;
+    align-self: start;
+  }
 
   .somna-pdp-story__point-icon {
     display: grid;
