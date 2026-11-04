@@ -187,7 +187,7 @@
         "padding_bottom": 40,
         "wave_color": "#f3feee",
         "wave_shape": "drip-6",
-        "content": "pdp_section.season-bundle-steps",
+        "content": "season-bundle-steps",
         "button_color": "#f3feee"
       }
     },

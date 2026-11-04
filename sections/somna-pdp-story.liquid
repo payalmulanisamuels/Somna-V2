@@ -26,6 +26,7 @@
     assign split = true
   endif
 -%}
+<!-- sbdebug {{ section.id }} content={{ s.content | json | escape }} global={{ metaobjects.pdp_section['season-bundle-problem'].heading.value }} -->
 {%- if c != blank -%}
 {%- liquid
   assign features = c.features.value
