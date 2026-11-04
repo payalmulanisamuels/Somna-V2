@@ -799,6 +799,24 @@
     align-self: start;
   }
 
+  .somna-pdp-story__visual--pair .somna-pdp-story__point h3 {
+    text-transform: uppercase;
+  }
+
+  @media screen and (min-width: 990px) {
+    .somna-pdp-story--how .somna-pdp-story__visual--pair {
+      grid-template-columns: minmax(0, 0.75fr) minmax(0, 2.1fr) minmax(0, 0.75fr);
+      grid-template-rows: auto auto auto;
+      min-height: 0;
+    }
+
+    .somna-pdp-story--how .somna-pdp-story__visual--pair .somna-pdp-story__product img {
+      width: 47%;
+      max-height: 380px;
+      object-fit: contain;
+    }
+  }
+
   .somna-pdp-story__point-icon {
     display: grid;
     place-items: center;
