@@ -16,7 +16,15 @@
     assign product = all_products[s.preview_product.handle]
   endif
   assign key = 'pdp_' | append: s.layout
-  assign c = product.metafields.custom[key].value
+  # a content entry picked in the template wins over the product's metafield (used by the Season Bundle template)
+  assign c = s.content
+  if c == blank
+    assign c = product.metafields.custom[key].value
+  endif
+  assign split = false
+  if s.layout == 'problem' and s.problem_style == 'split'
+    assign split = true
+  endif
 -%}
 {%- if c != blank -%}
 {%- liquid
@@ -28,8 +36,8 @@
   endif
 -%}
 <div
-  class="somna-pdp-story somna-pdp-story--{{ s.layout }}"
-  style="--somna-story-bg: {{ s.background_color }}; --somna-story-fg: {{ s.text_color }}; --somna-story-heading: {{ s.heading_color }}; --somna-story-accent: {{ s.accent_color }}; --somna-story-card: {{ s.card_color }}; --somna-story-card-fg: {{ s.card_text_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+  class="somna-pdp-story somna-pdp-story--{{ s.layout }}{% if split %} somna-pdp-story--split{% endif %}"
+  style="--somna-story-bg: {{ s.background_color }}; --somna-story-fg: {{ s.text_color }}; --somna-story-heading: {{ s.heading_color }}; --somna-story-accent: {{ s.accent_color }}; --somna-story-card: {{ s.card_color }}; --somna-story-card-fg: {{ s.card_text_color }}; --somna-story-button: {{ s.button_color | default: '#afbdf8' }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
 >
   <div class="somna-pdp-story__inner somna-container">
     <div class="somna-pdp-story__copy">
@@ -52,6 +60,33 @@
 
     {%- case s.layout -%}
       {%- when 'problem' -%}
+        {%- if split -%}
+          {%- comment -%} two panels side by side: the problem (label + bullets bottom-left) and the fix (bottom-right) {%- endcomment -%}
+          {%- assign image_after = c.image_after.value -%}
+          {%- assign features_after = c.features_after.value -%}
+          <div class="somna-pdp-story__split">
+            <div class="somna-pdp-story__panel">
+              {%- if image -%}{{ image | image_url: width: 1300 | image_tag: loading: 'lazy', widths: '500, 700, 1000, 1300', sizes: '(min-width: 990px) 636px, 100vw', class: 'somna-pdp-story__panel-image' }}{%- endif -%}
+              {%- if c.label != blank -%}<p class="somna-pdp-story__panel-tag">{{ c.label.value }}</p>{%- endif -%}
+              {%- if features != blank -%}
+                <ul class="somna-pdp-story__panel-list" role="list">
+                  {%- for f in features -%}<li>{% render 'somna-pdp-icon', name: f.icon.value %}<span>{{ f.title.value }}</span></li>{%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </div>
+            {%- if image_after or features_after != blank or c.label_after != blank -%}
+              <div class="somna-pdp-story__panel somna-pdp-story__panel--after">
+                {%- if image_after -%}{{ image_after | image_url: width: 1300 | image_tag: loading: 'lazy', widths: '500, 700, 1000, 1300', sizes: '(min-width: 990px) 636px, 100vw', class: 'somna-pdp-story__panel-image' }}{%- endif -%}
+                {%- if c.label_after != blank -%}<p class="somna-pdp-story__panel-tag">{{ c.label_after.value }}</p>{%- endif -%}
+                {%- if features_after != blank -%}
+                  <ul class="somna-pdp-story__panel-list" role="list">
+                    {%- for f in features_after -%}<li>{% render 'somna-pdp-icon', name: f.icon.value %}<span>{{ f.title.value }}</span></li>{%- endfor -%}
+                  </ul>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- else -%}
         <div class="somna-pdp-story__media">
           {%- assign image_after = c.image_after.value -%}
           {%- if c.label != blank -%}
@@ -80,6 +115,7 @@
             {%- endif -%}
           </div>
         </div>
+        {%- endif -%}
 
       {%- when 'how' -%}
         {%- if s.how_animation -%}<somna-pdp-how class="somna-pdp-story__visual" data-order="1,2,4,3">{%- else -%}<div class="somna-pdp-story__visual">{%- endif -%}
@@ -123,6 +159,40 @@
             {%- endfor -%}
           </ol>
         {%- endif -%}
+
+      {%- when 'layers_pair' -%}
+        {%- comment -%} two products' "What it's made of" entries side by side (Season Bundle) {%- endcomment -%}
+        <div class="somna-pdp-story__pair">
+          {%- for side in (1..2) -%}
+            {%- liquid
+              if side == 1
+                assign entry = s.pair_left
+                assign card_title = s.pair_left_title
+              else
+                assign entry = s.pair_right
+                assign card_title = s.pair_right_title
+              endif
+            -%}
+            {%- if side == 2 -%}<span class="somna-pdp-story__pair-plus" aria-hidden="true"></span>{%- endif -%}
+            <div class="somna-pdp-story__pair-card">
+              {%- if card_title != blank -%}<h3 class="somna-pdp-story__pair-title">{{ card_title }}</h3>{%- endif -%}
+              {%- if entry != blank -%}
+                <div class="somna-pdp-story__pair-body">
+                  {%- assign entry_image = entry.image.value -%}
+                  {%- if entry_image -%}{{ entry_image | image_url: width: 640 | image_tag: loading: 'lazy', widths: '320, 480, 640', sizes: '(min-width: 990px) 260px, 45vw', class: 'somna-pdp-story__pair-image', alt: card_title }}{%- endif -%}
+                  {%- assign entry_features = entry.features.value -%}
+                  {%- if entry_features != blank -%}
+                    <ol class="somna-pdp-story__layers">
+                      {%- for f in entry_features -%}
+                        <li><h4>{{ f.title.value }}</h4>{%- if f.text != blank -%}<p>{{ f.text.value }}</p>{%- endif -%}</li>
+                      {%- endfor -%}
+                    </ol>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        </div>
 
       {%- when 'steps' -%}
         <div class="somna-pdp-story__steps">
@@ -813,7 +883,7 @@
     justify-content: center;
     min-height: 102px;
     border-radius: 18px;
-    background: #afbdf8; /* Figma: lighter lavender than the heading accent */
+    background: var(--somna-story-button, #afbdf8); /* Figma: lighter lavender than the heading accent */
     color: #000;
     box-shadow: 0 8px 18px rgb(0 0 0 / 0.18);
     font-size: 1.625rem;
@@ -889,6 +959,229 @@
     border: 0;
     font-family: inherit;
     cursor: pointer;
+  }
+
+  /* problem, split style (Season Bundle): the problem and the fix as two panels under the heading */
+  .somna-pdp-story--split .somna-pdp-story__inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .somna-pdp-story__split {
+    display: grid;
+    gap: 24px;
+  }
+
+  .somna-pdp-story__panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 300px;
+    padding: 18px 20px 22px;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 0.15);
+    border-radius: 12px;
+    background: #0e1a4a;
+    color: #fff;
+  }
+
+  .somna-pdp-story__panel-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .somna-pdp-story__panel--after .somna-pdp-story__panel-image {
+    transform: scaleX(-1); /* the fix faces the problem, as in Figma */
+  }
+
+  .somna-pdp-story__panel-tag,
+  .somna-pdp-story__panel-list {
+    position: relative;
+    z-index: 1;
+  }
+
+  .somna-pdp-story__panel-tag {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.5rem, 2.1vw, 1.875rem);
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .somna-pdp-story__panel-list {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 1.0625rem;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+  }
+
+  .somna-pdp-story__panel-list li {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .somna-pdp-story__panel-list svg {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    color: #e3262f;
+    stroke-width: 3.2;
+  }
+
+  .somna-pdp-story__panel--after :is(.somna-pdp-story__panel-tag, .somna-pdp-story__panel-list) {
+    text-align: right;
+  }
+
+  .somna-pdp-story__panel--after .somna-pdp-story__panel-list {
+    justify-items: end;
+  }
+
+  .somna-pdp-story__panel--after .somna-pdp-story__panel-list svg {
+    color: #3fbf3f;
+  }
+
+  /* layers, two-product style (Season Bundle): two hand-drawn cards joined by a plus */
+  .somna-pdp-story--layers_pair .somna-pdp-story__inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .somna-pdp-story--layers_pair .somna-pdp-story__copy {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .somna-pdp-story--layers_pair .somna-pdp-story__text {
+    max-width: 340px;
+    font-size: 0.9375rem;
+    letter-spacing: 0.08em;
+  }
+
+  .somna-pdp-story__pair {
+    display: grid;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .somna-pdp-story__pair-card {
+    padding: 28px 24px 36px;
+    border: 3px solid #000;
+    border-radius: 22px;
+    background: var(--somna-story-bg);
+    color: #000;
+    box-shadow: 4px 5px 0 #000;
+    rotate: -0.6deg;
+  }
+
+  .somna-pdp-story__pair-card:last-child {
+    rotate: 0.6deg;
+  }
+
+  .somna-pdp-story__pair-title {
+    margin: 0 0 32px;
+    font-family: var(--font-accent--family);
+    font-size: clamp(2.25rem, 4.2vw, 4.25rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.3;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .somna-pdp-story__pair-body {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: center;
+  }
+
+  .somna-pdp-story__pair-image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .somna-pdp-story__pair .somna-pdp-story__layers {
+    gap: 14px;
+    font-size: clamp(0.9375rem, 1.3vw, 1.1875rem);
+    letter-spacing: 0.08em;
+  }
+
+  .somna-pdp-story__pair .somna-pdp-story__layers h4 {
+    margin: 0;
+    font-size: inherit;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .somna-pdp-story__pair-plus {
+    position: relative;
+    justify-self: center;
+    width: 30px;
+    height: 30px;
+  }
+
+  .somna-pdp-story__pair-plus::before,
+  .somna-pdp-story__pair-plus::after {
+    content: '';
+    position: absolute;
+    inset: 11px 0;
+    border-radius: 2px;
+    background: #000;
+  }
+
+  .somna-pdp-story__pair-plus::after {
+    inset: 0 11px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .somna-pdp-story--split .somna-pdp-story__copy {
+      display: grid;
+      grid-template-columns: auto minmax(0, 440px);
+      column-gap: 36px;
+      align-items: end;
+    }
+
+    .somna-pdp-story--split .somna-pdp-story__eyebrow {
+      grid-column: 1 / -1;
+    }
+
+    .somna-pdp-story--split .somna-pdp-story__text {
+      margin: 0 0 0.6em;
+    }
+
+    .somna-pdp-story__split {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 48px;
+    }
+
+    .somna-pdp-story__panel {
+      min-height: 0;
+      aspect-ratio: 636 / 460;
+    }
+
+    .somna-pdp-story__pair {
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 24px;
+    }
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-pdp-story__split {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .somna-pdp-story__pair-card {
+      max-width: 640px;
+      justify-self: center;
+    }
   }
 
   /* "Watch how it works" video popup */
@@ -1338,10 +1631,17 @@
         { "value": "problem", "label": "Problem (Sound familiar?)" },
         { "value": "how", "label": "How it works" },
         { "value": "layers", "label": "What it's made of" },
+        { "value": "layers_pair", "label": "What it's made of: two products" },
         { "value": "steps", "label": "Three steps" }
       ],
       "default": "problem"
     },
+    { "type": "metaobject", "id": "content", "label": "Content entry", "metaobject_type": "pdp_section", "info": "Optional. When set, this PDP section entry is used instead of the product's matching metafield." },
+    { "type": "select", "id": "problem_style", "label": "Problem style", "options": [{ "value": "crossfade", "label": "One picture (problem fades to fix)" }, { "value": "split", "label": "Two panels side by side" }], "default": "crossfade", "visible_if": "{{ section.settings.layout == 'problem' }}" },
+    { "type": "metaobject", "id": "pair_left", "label": "Left product entry", "metaobject_type": "pdp_section", "visible_if": "{{ section.settings.layout == 'layers_pair' }}", "info": "A \"What it's made of\" entry: its image and layers fill the card." },
+    { "type": "text", "id": "pair_left_title", "label": "Left card title", "default": "Mouth Tape", "visible_if": "{{ section.settings.layout == 'layers_pair' }}" },
+    { "type": "metaobject", "id": "pair_right", "label": "Right product entry", "metaobject_type": "pdp_section", "visible_if": "{{ section.settings.layout == 'layers_pair' }}" },
+    { "type": "text", "id": "pair_right_title", "label": "Right card title", "default": "Nasal Strip", "visible_if": "{{ section.settings.layout == 'layers_pair' }}" },
     { "type": "product", "id": "preview_product", "label": "Product for the theme editor", "info": "Only used where there is no product." },
     { "type": "video", "id": "video", "label": "Three steps: fallback video", "info": "The \"Watch how it works\" popup plays the product's steps metaobject \"video\" field, or the product metafield custom.how_it_works_video. This video is used only when neither is set." },
     { "type": "text", "id": "video_button_label", "label": "Three steps: button label", "default": "Watch how it works", "info": "Used when the steps metaobject has no button label." },
@@ -1355,6 +1655,7 @@
     { "type": "color", "id": "accent_color", "label": "Heading accent / button", "default": "#afbdf8" },
     { "type": "color", "id": "card_color", "label": "Pills and icon colour", "default": "#f3feee" },
     { "type": "color", "id": "card_text_color", "label": "Icon circle", "default": "#000000" },
+    { "type": "color", "id": "button_color", "label": "Button", "default": "#afbdf8" },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 32 },
     { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 32 },
     { "type": "header", "content": "Bottom wave" },

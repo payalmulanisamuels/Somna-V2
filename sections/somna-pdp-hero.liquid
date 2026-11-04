@@ -196,9 +196,12 @@
         </p>
       {%- endif -%}
       <h1 class="somna-pdp-hero__title"><span class="somna-pdp-hero__brand">{{ s.brand }}</span> {{ product.title }}</h1>
-      {%- if mf.pdp_tagline != blank -%}<p class="somna-pdp-hero__tagline">{{ mf.pdp_tagline.value | newline_to_br }}</p>{%- endif -%}
+      {%- assign tagline = s.tagline | default: mf.pdp_tagline.value -%}
+      {%- if tagline != blank -%}<p class="somna-pdp-hero__tagline">{{ tagline | newline_to_br }}</p>{%- endif -%}
 
-      {%- assign features = mf.pdp_hero_features.value -%}
+      {%- comment -%} features picked in the template win over the product's metafield (Season Bundle) {%- endcomment -%}
+      {%- assign features = s.features -%}
+      {%- if features == blank -%}{%- assign features = mf.pdp_hero_features.value -%}{%- endif -%}
       {%- if features != blank -%}
         <ul class="somna-pdp-hero__features" role="list">
           {%- for f in features -%}
@@ -214,13 +217,48 @@
         {%- assign pct = 0 -%}
         {%- if compare > 0 -%}{%- assign pct = compare | minus: price | times: 100 | divided_by: compare -%}{%- endif -%}
         <span class="somna-pdp-hero__save" data-save{% if pct == 0 %} hidden{% endif %}>{{ s.save_label | replace: '[percent]', pct }}</span>
+        {%- if s.price_night_label != blank and s.nights_per_bag > 0 -%}
+          <span class="somna-pdp-hero__price-night" data-price-night>{{ price | divided_by: s.nights_per_bag | money }}{{ s.price_night_label }}</span>
+        {%- endif -%}
       </p>
+      {%- if s.savings_note != blank -%}<p class="somna-pdp-hero__savings">{{ s.savings_note }}</p>{%- endif -%}
+
+      {%- if s.box_product_1 != blank or s.box_product_2 != blank -%}
+        <div class="somna-pdp-hero__box">
+          {%- if s.box_heading != blank -%}<h2 class="somna-pdp-hero__box-title">{{ s.box_heading }}</h2>{%- endif -%}
+          <ul class="somna-pdp-hero__box-list" role="list">
+            {%- for side in (1..2) -%}
+              {%- liquid
+                if side == 1
+                  assign bp = s.box_product_1
+                  assign bnote = s.box_note_1
+                else
+                  assign bp = s.box_product_2
+                  assign bnote = s.box_note_2
+                endif
+              -%}
+              {%- if bp != blank -%}
+                <li class="somna-pdp-hero__box-item">
+                  <a class="somna-pdp-hero__box-card" href="{{ bp.url }}">
+                    {%- if bp.featured_image -%}{{ bp.featured_image | image_url: width: 180, height: 180, crop: 'center' | image_tag: loading: 'lazy', alt: '', width: 86, height: 92, class: 'somna-pdp-hero__box-thumb' }}{%- endif -%}
+                    <span class="somna-pdp-hero__box-text">
+                      <span class="somna-pdp-hero__box-name">{{ bp.title }}</span>
+                      {%- if bnote != blank -%}<span class="somna-pdp-hero__box-note">{{ bnote }} <span aria-hidden="true">→</span></span>{%- endif -%}
+                    </span>
+                  </a>
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+          {%- if s.gifts_bar != blank -%}<p class="somna-pdp-hero__gifts-bar">{{ s.gifts_bar }}</p>{%- endif -%}
+        </div>
+      {%- endif -%}
 
       {%- form 'product', product, class: 'somna-pdp-hero__form', data-form: '' -%}
         <input type="hidden" name="id" value="{{ current.id }}" data-id>
         <input type="hidden" name="selling_plan" value="{% if mode == 'sub' and alloc %}{{ alloc.selling_plan.id }}{% endif %}" data-plan-input>
 
-        <fieldset class="somna-buy__packs somna-pdp-hero__packs">
+        <fieldset class="somna-buy__packs somna-pdp-hero__packs"{% if product.has_only_default_variant %} hidden{% endif %}>
           <legend>{{ s.packs_label }}</legend>
           <div class="somna-buy__pack-list">
             {%- for v in product.variants -%}
@@ -357,6 +395,8 @@
         q('[data-price]').innerHTML = this.priceHTML(price);
         const compare = this.base(v, price) > price ? this.base(v, price) : 0;
         const c = q('[data-compare]'); c.hidden = !compare; c.textContent = compare ? this.money(compare).replace(/[.,]00(?=\D*$)/, '') : '';
+        const priceNight = q('[data-price-night]');
+        if (priceNight && this.nights) priceNight.textContent = this.money(Math.round(price / (this.bags(v) * this.nights))) + {{ s.price_night_label | json }};
         const pct = this.pct(price, v);
         const save = q('[data-save]'); save.hidden = !pct; save.textContent = this.labels.save.replace('[percent]', pct);
         this.querySelectorAll('[data-pack]').forEach((input) => {
@@ -1565,6 +1605,154 @@
       box-shadow: 2px 3px 0 #000;
     }
   }
+
+  /* Season Bundle extras (optional settings): per-night next to the price, savings note,
+     "What's in the box" cards and the free-gifts bar (Figma 4654:113) */
+  .somna-pdp-hero__packs[hidden] {
+    display: none;
+  }
+
+  .somna-pdp-hero__price-night {
+    margin-left: auto;
+    color: #f3feee;
+    font-size: clamp(1rem, 1.4vw, 1.25rem);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+  }
+
+  .somna-pdp-hero__savings {
+    max-width: 620px;
+    margin: 14px 0 0;
+    color: var(--somna-chip);
+    font-size: 0.9375rem;
+    letter-spacing: 0.08em;
+    line-height: 1.35;
+  }
+
+  .somna-pdp-hero__box {
+    display: grid;
+    gap: 14px;
+    margin-top: 24px;
+  }
+
+  .somna-pdp-hero__box-title {
+    margin: 0;
+    color: #f3feee;
+    font-family: Arimo, Arial, Helvetica, sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .somna-pdp-hero__box-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 36px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-pdp-hero__box-item {
+    position: relative;
+  }
+
+  .somna-pdp-hero__box-item + .somna-pdp-hero__box-item::before {
+    content: '+';
+    position: absolute;
+    top: 50%;
+    left: -18px;
+    translate: -50% -50%;
+    color: #f3feee;
+    font-size: 1.375rem;
+    font-weight: 700;
+  }
+
+  .somna-pdp-hero__box-card,
+  .somna-pdp-hero__gifts-bar {
+    border: 1px solid rgb(255 255 255 / 0.22);
+    border-radius: 6px;
+    background: #2e3134;
+    color: #f3feee;
+  }
+
+  .somna-pdp-hero__box-card {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    min-height: 92px;
+    overflow: hidden;
+    text-decoration: none;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+
+  .somna-pdp-hero__box-card:hover {
+    border-color: var(--somna-chip);
+    background: #383c40;
+  }
+
+  .somna-pdp-hero__box-card:focus-visible {
+    outline: 2px solid var(--somna-chip);
+    outline-offset: 2px;
+  }
+
+  .somna-pdp-hero__box-thumb {
+    flex: none;
+    align-self: stretch;
+    width: 86px;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .somna-pdp-hero__box-text {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+    padding-right: 10px;
+  }
+
+  .somna-pdp-hero__box-name {
+    font-size: clamp(1.125rem, 1.7vw, 1.5rem);
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .somna-pdp-hero__box-note {
+    color: #9a9a9a;
+    font-size: 0.9375rem;
+  }
+
+  .somna-pdp-hero__gifts-bar {
+    display: grid;
+    place-items: center;
+    min-height: 56px;
+    margin: 0;
+    padding: 8px 16px;
+    font-size: clamp(1.0625rem, 1.65vw, 1.5rem);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  @media screen and (min-width: 990px) and (max-width: 1299px) {
+    .somna-pdp-hero__box-list {
+      gap: 24px;
+    }
+
+    .somna-pdp-hero__box-item + .somna-pdp-hero__box-item::before {
+      left: -12px;
+    }
+
+    .somna-pdp-hero__box-thumb {
+      width: 64px;
+    }
+
+    .somna-pdp-hero__price-night {
+      flex-basis: 100%;
+      margin-left: 0;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -1589,6 +1777,16 @@
     { "type": "header", "content": "Buy panel" },
     { "type": "text", "id": "rating_format", "label": "Rating text", "info": "[rating] and [count] come from the product's review metafield.", "default": "[rating]/5 · [count] reviews" },
     { "type": "text", "id": "brand", "label": "Brand before the title", "default": "somna." },
+    { "type": "textarea", "id": "tagline", "label": "Tagline", "info": "Optional. Empty uses the product's PDP – Tagline metafield." },
+    { "type": "metaobject_list", "id": "features", "label": "Hero features", "metaobject_type": "pdp_feature", "limit": 4, "info": "Optional. Empty uses the product's PDP – Hero features metafield." },
+    { "type": "text", "id": "price_night_label", "label": "Per-night text next to the price", "info": "Optional, e.g. \"/night for both\". Uses Nights per bag. Empty hides it." },
+    { "type": "text", "id": "savings_note", "label": "Note under the price", "info": "Optional. Empty hides it." },
+    { "type": "text", "id": "box_heading", "label": "What's in the box: heading", "default": "What's in the Box?" },
+    { "type": "product", "id": "box_product_1", "label": "What's in the box: product 1", "info": "Optional. Pick products to show the bundle contents." },
+    { "type": "text", "id": "box_note_1", "label": "What's in the box: note 1" },
+    { "type": "product", "id": "box_product_2", "label": "What's in the box: product 2" },
+    { "type": "text", "id": "box_note_2", "label": "What's in the box: note 2" },
+    { "type": "text", "id": "gifts_bar", "label": "Gifts bar under the box", "info": "Optional. Shown under the What's in the box cards." },
     { "type": "text", "id": "save_label", "label": "Save badge", "info": "[percent] is worked out from the compare-at price.", "default": "Save [percent]%" },
     { "type": "text", "id": "percent_suffix", "label": "Discount after the plan names", "default": " · [percent]% off" },
     { "type": "text", "id": "packs_label", "label": "Pack label", "default": "Choose Your Pack" },
