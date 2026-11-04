@@ -355,7 +355,7 @@
                 <details class="sq-acc"{% if forloop.first %} open{% endif %}><summary>{{ rbs[fq] }}</summary><p>{{ rbs[fa] }}</p></details>
               {%- endif -%}
             {%- endfor -%}
-            <p class="sq-res-links"><button type="button" class="sq-linkbtn" data-sq-retake>↻ {{ section.settings.retake_label }}</button> · <a href="{{ routes.all_products_collection_url }}">{{ section.settings.all_products_label }}</a></p>
+            <p class="sq-res-links">{% if section.settings.retake_label != blank %}<button type="button" class="sq-linkbtn" data-sq-retake>↻ {{ section.settings.retake_label }}</button> · {% endif %}<a href="{{ routes.all_products_collection_url }}">{{ section.settings.all_products_label }}</a></p>
           </section>
         </div>
         {%- endif -%}
@@ -987,6 +987,7 @@
       "type": "text",
       "id": "retake_label",
       "label": "Retake link",
+      "info": "Empty = no Retake link on the result page (Back still returns to the questions).",
       "default": "Retake quiz"
     },
     {
