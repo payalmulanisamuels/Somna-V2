@@ -16,7 +16,11 @@
   assign mf = product.metafields.custom
   assign pair = mf.pdp_pair_product.value
   assign trend = s.trending_product
+  # no "Also trending" when it is this product or the same product as the pair card (Color Set / Sleep Bundle → Season Bundle)
   if trend != blank and trend.id == product.id
+    assign trend = nil
+  endif
+  if trend != blank and pair != blank and trend.id == pair.id
     assign trend = nil
   endif
   # optional per-product wording and a landscape card image (Season Bundle: "Not ready for 90 nights?")
