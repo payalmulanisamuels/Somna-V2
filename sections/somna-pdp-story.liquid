@@ -804,15 +804,32 @@
   }
 
   @media screen and (min-width: 990px) {
-    .somna-pdp-story--how .somna-pdp-story__visual--pair {
-      grid-template-columns: minmax(0, 0.75fr) minmax(0, 2.1fr) minmax(0, 0.75fr);
+    /* the two products fill the visual; the first two features sit above either side, the third underneath */
+    .somna-pdp-story--how .somna-pdp-story__visual.somna-pdp-story__visual--pair {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       grid-template-rows: auto auto auto;
       min-height: 0;
     }
 
+    .somna-pdp-story__visual--pair .somna-pdp-story__point {
+      position: relative;
+      z-index: 1;
+    }
+
+    .somna-pdp-story__visual--pair .somna-pdp-story__point--1 { grid-area: 1 / 1; }
+    .somna-pdp-story__visual--pair .somna-pdp-story__point--2 { grid-area: 1 / 3; }
+
+    .somna-pdp-story--how .somna-pdp-story__visual--pair .somna-pdp-story__product {
+      grid-column: 1 / -1;
+      grid-row: 1 / span 2;
+      width: 100%;
+      padding-inline: 16%;
+    }
+
     .somna-pdp-story--how .somna-pdp-story__visual--pair .somna-pdp-story__product img {
-      width: 47%;
-      max-height: 380px;
+      width: auto;
+      max-width: 50%;
+      height: clamp(260px, 26vw, 380px);
       object-fit: contain;
     }
   }
