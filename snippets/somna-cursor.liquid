@@ -3,14 +3,15 @@
   pointer with soft easing and leaves a short trail of stardust (no pointer dot, no wave line).
   On anything clickable the crescent fills into a full moon (approved demo "2 · Full moon").
 
-  Rendered once from layout/theme.liquid. Turned on/off in Theme settings → Animations → "Somna cursor".
+  Rendered once from layout/theme.liquid (Theme settings → Animations → "Somna cursor"), or by the quiz with force: true.
   Not loaded in the theme editor, so editing keeps the normal cursor.
   Behaviour lives in assets/somna-cursor.js; the native cursor is only hidden once that script has
   drawn the custom one (html.somna-cursor-on), so if it fails the normal cursor stays.
+  @param {boolean} [force] - render even when the theme setting is off (the quiz page turns it on itself)
 {%- enddoc -%}
-{%- if settings.somna_cursor and request.design_mode == false -%}
+{%- if settings.somna_cursor or force -%}{%- if request.design_mode == false -%}
   <script src="{{ 'somna-cursor.js' | asset_url }}" defer></script>
-{%- endif -%}
+{%- endif -%}{%- endif -%}
 
 {% stylesheet %}
   /* native cursor off only once the custom one is live; text fields, iframes and disabled/busy controls keep theirs */

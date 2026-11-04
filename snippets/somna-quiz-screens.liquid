@@ -1,29 +1,16 @@
 {%- comment -%}
-  SOMNA quiz v5.2: screens 01–07 (intro + Q1, Q2, Q3, Q4, story break, Q5, Q6).
+  SOMNA quiz v6 (SOMNA_Quiz_Flow_v2_Result_Pages_Updated.pdf): screens 1–7 (Q1, Q2, Q3, Q4, reviews break, Q5, Q6).
   Rendered only by sections/somna-quiz.liquid with qs (section settings) + sid.
   Scoring (data-s / data-t) and copy follow SOMNA_Quiz_v5.2_Engaging_Flow.pdf.
   data-self / data-partner hold the "you" and "they" wording; Q1 "My partner" switches to the partner version.
 {%- endcomment -%}
 
-{%- comment -%} 00 · First name (optional: Skip goes straight to Q1). Personalises the email step and report; sent to Klaviyo as first_name on sign-up. {%- endcomment -%}
-<div class="sq-s sq-center is-on" data-type="name">
-  {%- if qs.name_pill != blank -%}<p class="sq-pill">{{ qs.name_pill }}</p>{%- endif -%}
-  <h1 class="sq-intro-h" tabindex="-1">{{ qs.name_heading }}</h1>
-  {%- if qs.name_sub != blank -%}<p class="sq-sub">{{ qs.name_sub }}</p>{%- endif -%}
-  <form class="sq-form" data-sq-name-form novalidate onsubmit="return false">
-    <label class="sq-sr" for="sq-{{ sid }}-name">First name</label>
-    <input class="sq-input" id="sq-{{ sid }}-name" type="text" name="first_name" autocomplete="given-name" autocapitalize="words" maxlength="40" placeholder="{{ qs.name_placeholder | default: 'First name' | escape }}" aria-describedby="sq-{{ sid }}-name-err" data-sq-name>
-    <p class="sq-err" id="sq-{{ sid }}-name-err" role="alert" data-sq-name-err hidden></p>
-    <button type="submit" class="sq-cta">{{ qs.name_button | default: "Let's begin →" }}</button>
-  </form>
-  {%- if qs.name_fine != blank -%}<p class="sq-fine">{{ qs.name_fine }}</p>{%- endif -%}
-  <button type="button" class="sq-skip" data-sq-name-skip>{{ qs.name_skip | default: 'Skip' }}</button>
-</div>
-
 {%- comment -%} 01 · Intro + Q1 {%- endcomment -%}
-<div class="sq-s" data-type="q" data-q="1" data-step="1">
+<div class="sq-s is-on" data-type="q" data-q="1" data-step="1">
   <h1 class="sq-intro-h" tabindex="-1">{{ qs.intro_heading }}</h1>
-  {%- if qs.intro_sub != blank -%}<p class="sq-intro-sub">{{ qs.intro_sub }}</p>{%- endif -%}
+  {%- if qs.intro_sub != blank -%}
+    <p class="sq-intro-meta"><span class="sq-intro-meta-i" aria-hidden="true">⏱</span><span>{{ qs.intro_sub }}{% if qs.intro_sub_extra != blank %} <strong>{{ qs.intro_sub_extra }}</strong>{% endif %}</span></p>
+  {%- endif -%}
   {%- comment -%} Testimonial card (old-quiz design). Content: theme editor → SOMNA quiz → "01 · Intro + Q1". Hidden while the quote is empty. {%- endcomment -%}
   {%- if qs.intro_review_quote != blank -%}
     <figure class="sq-review sq-review--intro">
@@ -44,7 +31,7 @@
   {%- endif -%}
   <h2 class="sq-q sq-q--sm" id="sq-{{ sid }}-q1">{{ qs.q1_heading | default: "First, who's this for?" }}</h2>
   <div class="sq-opts" role="group" aria-labelledby="sq-{{ sid }}-q1">
-    <button type="button" class="sq-opt" data-tag="self" data-val="Me"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'person' %}</span><span data-sq-me>Me</span></button>
+    <button type="button" class="sq-opt" data-tag="self" data-val="Me"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'person' %}</span><span>Me</span></button>
     <button type="button" class="sq-opt" data-s="2" data-tag="partner" data-val="My partner"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'partner' %}</span><span>My partner (their snoring keeps me up)</span></button>
     <button type="button" class="sq-opt" data-tag="both" data-val="Both of us"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'both' %}</span><span>Both of us</span></button>
   </div>
@@ -89,7 +76,7 @@
 {%- comment -%} 05 · Story break (video + reviews matched to the product they are trending to) {%- endcomment -%}
 <div class="sq-s" data-type="story">
   <p class="sq-pill">✓ {{ qs.story_pill }}</p>
-  <h2 class="sq-q" tabindex="-1">{{ qs.story_heading }}</h2>
+  <h2 class="sq-q sq-story-h" tabindex="-1">{{ qs.story_heading }}</h2>
   {%- if qs.story_sub != blank -%}<p class="sq-sub">{{ qs.story_sub }}</p>{%- endif -%}
   {%- liquid
     assign rev_count = 0
@@ -131,11 +118,10 @@
           {%- endif -%}
         {%- endfor -%}
       </div>
-      {%- if rev_count > 1 -%}
+      {%- if rev_count > 2 -%}
         <div class="sq-rc-nav">
-          <button type="button" class="sq-rc-btn" data-sq-rc-prev aria-label="Previous review">‹</button>
           <div class="sq-rc-dots" data-sq-rc-dots></div>
-          <button type="button" class="sq-rc-btn" data-sq-rc-next aria-label="Next review">›</button>
+          <span class="sq-rc-hint" aria-hidden="true">swipe for more</span>
         </div>
       {%- endif -%}
     </div>
@@ -188,6 +174,7 @@
     <button type="button" class="sq-opt sq-tile" data-key="3"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'battery-3' %}</span><span>Foggy until coffee</span></button>
     <button type="button" class="sq-opt sq-tile" data-key="4"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'battery-4' %}</span><span>Pretty good, just want better</span></button>
   </div>
+  {%- if qs.q5_note != blank -%}<div class="sq-note"><p class="sq-note-h">Nearly done</p><p>{{ qs.q5_note }}</p></div>{%- endif -%}
 </div>
 
 {%- comment -%} 07 · Q6 (multi-select chips; no points) {%- endcomment -%}
@@ -209,6 +196,6 @@
     <textarea class="sq-textarea" id="sq-{{ sid }}-other-text" rows="3" maxlength="300" placeholder="{{ qs.q6_other_placeholder | default: 'Please tell us more...' | escape }}" data-sq-other-text></textarea>
     <p class="sq-err" role="alert" data-sq-other-err hidden></p>
   </div>
-  {%- if qs.q6_note != blank -%}<div class="sq-note"><p class="sq-note-h">Nice, last one</p><p>{{ qs.q6_note }}</p></div>{%- endif -%}
-  <button type="button" class="sq-cta" data-sq-continue disabled>See my results →</button>
+  {%- if qs.q6_note != blank -%}<div class="sq-note"><p class="sq-note-h">Last one</p><p>{{ qs.q6_note }}</p></div>{%- endif -%}
+  <button type="button" class="sq-cta" data-sq-continue disabled>{{ qs.q6_button | default: 'See my match →' }}</button>
 </div>
