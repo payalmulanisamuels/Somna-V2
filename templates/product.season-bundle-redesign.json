@@ -36,9 +36,9 @@
         "wave_shape": "drip-1",
         "tagline": "3 packs of Nasal Strips and 3 packs of Mouth Tape. The full SOMNA routine for 90 nights, in one delivery.",
         "features": [
-          "pdp_feature.sb-hero-nose-lips",
-          "pdp_feature.sb-hero-90-nights",
-          "pdp_feature.sb-hero-one-delivery"
+          "gid://shopify/Metaobject/649894297831",
+          "gid://shopify/Metaobject/649894330599",
+          "gid://shopify/Metaobject/649894363367"
         ],
         "price_night_label": "/night for both",
         "savings_note": "",
@@ -149,7 +149,7 @@
         "padding_bottom": 40,
         "wave_color": "#f3feee",
         "wave_shape": "drip-2",
-        "content": "pdp_section.season-bundle-problem",
+        "content": "gid://shopify/Metaobject/649894887655",
         "problem_style": "split"
       }
     },
