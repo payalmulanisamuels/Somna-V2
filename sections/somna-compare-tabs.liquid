@@ -22,6 +22,10 @@
       endif
     endfor
   endif
+  # a single tab needs no tab switcher
+  if only_tab == 0 and tab_blocks.size == 1
+    assign only_tab = 1
+  endif
 -%}
 
 {%- capture tabs_markup -%}
@@ -84,11 +88,15 @@
                     <td></td>
                     <th scope="col" class="is-somna">
                       {%- if tab.settings.image != blank -%}{{ tab.settings.image | image_url: width: 160 | image_tag: loading: 'lazy', alt: '', width: 57, height: 80 }}{%- endif -%}
-                      <span>{{ tab.settings.label }}</span>
+                      <span{% if tab.settings.image == blank %} class="somna-compare__col-name"{% endif %}>{{ tab.settings.label }}</span>
                     </th>
+                    {%- comment -%} a column with neither a name nor an image is left out (e.g. a three-column table) {%- endcomment -%}
+                    {%- assign cols = '' -%}
                     {%- for n in (2..4) -%}
                       {%- capture img_key -%}column_{{ n }}_image{%- endcapture -%}
                       {%- capture label_key -%}column_{{ n }}_label{%- endcapture -%}
+                      {%- if tab.settings[img_key] == blank and tab.settings[label_key] == blank -%}{%- continue -%}{%- endif -%}
+                      {%- assign cols = cols | append: n | append: ',' -%}
                       <th scope="col">
                         {%- if tab.settings[img_key] != blank -%}{{ tab.settings[img_key] | image_url: width: 180 | image_tag: loading: 'lazy', alt: '', width: 80, height: 80 }}{%- endif -%}
                         <span class="somna-compare__col-name{% unless s.show_column_names %} visually-hidden{% endunless %}">{{ tab.settings[label_key] }}</span>
@@ -102,10 +110,14 @@
                     {%- assign r = row.settings -%}
                     <tr {{ row.shopify_attributes }}>
                       <th scope="row">{{ r.label }}</th>
-                      <td class="is-somna">{% render 'somna-mark', value: r.column_1 %}</td>
-                      <td>{% render 'somna-mark', value: r.column_2 %}</td>
-                      <td>{% render 'somna-mark', value: r.column_3 %}</td>
-                      <td>{% render 'somna-mark', value: r.column_4 %}</td>
+                      <td class="is-somna">{% if r.column_1_text != blank %}<span class="somna-compare__value">{{ r.column_1_text }}</span>{% else %}{% render 'somna-mark', value: r.column_1 %}{% endif %}</td>
+                      {%- for n in (2..4) -%}
+                        {%- assign n_key = n | append: ',' -%}
+                        {%- unless cols contains n_key -%}{%- continue -%}{%- endunless -%}
+                        {%- capture mark_key -%}column_{{ n }}{%- endcapture -%}
+                        {%- capture text_key -%}column_{{ n }}_text{%- endcapture -%}
+                        <td>{% if r[text_key] != blank %}<span class="somna-compare__value">{{ r[text_key] }}</span>{% else %}{% render 'somna-mark', value: r[mark_key] %}{% endif %}</td>
+                      {%- endfor -%}
                     </tr>
                   {%- endfor -%}
                 </tbody>
@@ -326,6 +338,12 @@
     --somna-mark-size: 34px;
   }
 
+  .somna-compare__value {
+    font-size: clamp(1rem, 1.4vw, 1.25rem);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
   @media screen and (min-width: 990px) {
     .somna-compare__inner {
       grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
@@ -512,7 +530,12 @@
         { "type": "checkbox", "id": "column_1", "label": "Somna", "default": true },
         { "type": "checkbox", "id": "column_2", "label": "Column 2", "default": true },
         { "type": "checkbox", "id": "column_3", "label": "Column 3", "default": true },
-        { "type": "checkbox", "id": "column_4", "label": "Column 4", "default": true }
+        { "type": "checkbox", "id": "column_4", "label": "Column 4", "default": true },
+        { "type": "header", "content": "Text instead of a tick or cross" },
+        { "type": "text", "id": "column_1_text", "label": "Somna" },
+        { "type": "text", "id": "column_2_text", "label": "Column 2" },
+        { "type": "text", "id": "column_3_text", "label": "Column 3" },
+        { "type": "text", "id": "column_4_text", "label": "Column 4" }
       ]
     }
   ],
