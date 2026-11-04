@@ -528,6 +528,34 @@
         const x = this.startX();
         const add = (el, kf, opt) => { const a = el.animate(kf, { fill: 'both', ...opt }); this.anims.push(a); return a; };
         this.classList.remove('is-pending');
+        const pairImgs = this.classList.contains('somna-pdp-story__visual--pair') ? [...this.product.querySelectorAll('img')] : [];
+        if (pairImgs.length > 1) {
+          // Season Bundle (approved demo A, "Split hop"): the tape hop-flips in from the text side, the strip from the
+          // right 0.2s later; each lands with a small squash. Uses transform for the hop and scale for the squash,
+          // so the float (translate) can run on top once both have landed.
+          const v = this.getBoundingClientRect();
+          pairImgs.forEach((im, i) => {
+            const r = im.getBoundingClientRect();
+            const centre = r.left + r.width / 2;
+            const dx = i === 0 ? x - (centre - (this.product.getBoundingClientRect().left + this.product.getBoundingClientRect().width / 2)) : Math.max(160, v.right + 40 - centre);
+            const delay = i * 200;
+            add(im, [
+              { transform: `translate3d(${dx}px, 0, 0) rotateY(0deg)`, opacity: 0, offset: 0 },
+              { opacity: 1, offset: 0.12 },
+              { transform: `translate3d(${dx * 0.45}px, -90px, 0) rotateY(180deg)`, offset: 0.5 },
+              { transform: 'translate3d(0, 0, 0) rotateY(360deg)', opacity: 1, offset: 1 },
+            ], { duration: 1100, delay, easing: 'cubic-bezier(0.45, 0, 0.55, 1)' });
+            const squash = add(im, [{ scale: '1 1' }, { scale: '1.05 0.94' }, { scale: '0.99 1.02' }, { scale: '1 1' }], { duration: 380, delay: delay + 1060, easing: 'ease-out', fill: 'none' });
+            if (i === pairImgs.length - 1) squash.finished.then(() => this.played && this.classList.add('is-done')).catch(() => {});
+          });
+          this.points.forEach((pt, i) => {
+            const at = 1450 + i * 220;
+            const icon = pt.querySelector('.somna-pdp-story__point-icon');
+            if (icon) add(icon, [{ opacity: 0, transform: 'scale(0.5)' }, { opacity: 1, transform: 'scale(1.08)', offset: 0.7 }, { opacity: 1, transform: 'scale(1)' }], { duration: 350, delay: at, easing: 'ease-out' });
+            pt.querySelectorAll('h3, p').forEach((t, j) => add(t, [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 350, delay: at + 150 + j * 70, easing: 'ease-out' }));
+          });
+          return;
+        }
         add(this.product, [
           { transform: `translate3d(${x}px, 0, 0) rotateY(0deg)`, opacity: 0, offset: 0 },
           { opacity: 1, offset: 0.12 },
@@ -1669,8 +1697,32 @@
     50% { transform: translateY(-10px); }
   }
 
+  /* two products: each floats on its own, out of step (translate, so it adds to the landed hop transform) */
+  somna-pdp-how.is-done.somna-pdp-story__visual--pair .somna-pdp-story__product img {
+    animation: somnaHowFloatPair 3.2s ease-in-out infinite;
+  }
+
+  somna-pdp-how.is-done.somna-pdp-story__visual--pair .somna-pdp-story__product img + img {
+    animation-delay: -1.6s;
+  }
+
+  @keyframes somnaHowFloatPair {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -6px; }
+  }
+
+  somna-pdp-how.somna-pdp-story__visual--pair .somna-pdp-story__product {
+    perspective: 1100px;
+    transform-style: flat;
+  }
+
+  somna-pdp-how.somna-pdp-story__visual--pair .somna-pdp-story__product img {
+    will-change: transform;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    somna-pdp-how.is-done .somna-pdp-story__product img {
+    somna-pdp-how.is-done .somna-pdp-story__product img,
+    somna-pdp-how.is-done.somna-pdp-story__visual--pair .somna-pdp-story__product img {
       animation: none;
     }
   }
