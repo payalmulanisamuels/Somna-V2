@@ -374,6 +374,15 @@
         const box = () => this.getBoundingClientRect();
         // the "How it works" picture that travels into this section (optional)
         this.source = document.querySelector('.somna-pdp-story--how .somna-pdp-story__product img');
+        // only when "How it works" sits right before this section (Nasal Strips / Mouth Tape). If another story
+        // section is in between (Color Set: steps come first), the layers simply appear stacked and peel apart.
+        const howSection = this.source?.closest('.shopify-section');
+        const ownSection = section.closest('.shopify-section');
+        if (howSection && ownSection) {
+          for (let el = howSection.nextElementSibling; el && el !== ownSection; el = el.nextElementSibling) {
+            if (el.querySelector('.somna-pdp-story')) { this.source = null; break; }
+          }
+        }
         // the page may scroll inside .page-wrapper instead of the window
         const pw = document.querySelector('.page-wrapper');
         this.scroller = pw && /(auto|scroll)/.test(getComputedStyle(pw).overflowY) && pw.scrollHeight > pw.clientHeight ? pw : window;
