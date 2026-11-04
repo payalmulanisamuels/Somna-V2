@@ -2069,7 +2069,8 @@
     white-space: nowrap;
   }
 
-  @media screen and (min-width: 750px) and (max-width: 1199px) {
+  /* tablets and phones: the upgrade card wraps and the swatches shrink, so the buy panel never widens the page */
+  @media screen and (max-width: 1199px) {
     .somna-pdp-hero__upsell-card {
       flex-wrap: wrap;
     }
