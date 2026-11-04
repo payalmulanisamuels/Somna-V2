@@ -35,6 +35,7 @@
     assign shown_index = only_tab | minus: 1
     assign shown_tab = tab_blocks[shown_index]
     if shown_tab.settings.heading != blank
+      assign intro_from_tab = true
       assign intro_eyebrow = shown_tab.settings.eyebrow
       assign intro_heading = shown_tab.settings.heading
       assign intro_text = shown_tab.settings.text
@@ -73,7 +74,7 @@
   <div class="somna-compare__inner somna-container">
     <div class="somna-compare__intro">
       {%- if intro_eyebrow != blank -%}<p class="somna-compare__eyebrow">{{ intro_eyebrow }}</p>{%- endif -%}
-      {%- if intro_heading != blank -%}<h2 class="somna-compare__heading">{{ intro_heading }}</h2>{%- endif -%}
+      {%- if intro_heading != blank -%}<h2 class="somna-compare__heading{% if intro_from_tab %} somna-compare__heading--tab{% endif %}">{{ intro_heading }}</h2>{%- endif -%}
       {%- if intro_text != blank -%}<p class="somna-compare__text">{{ intro_text }}</p>{%- endif -%}
     </div>
 
@@ -488,6 +489,30 @@
     main[data-template^='product'] .somna-compare__table tbody th {
       font-size: 0.625rem;
       font-weight: 600;
+    }
+
+    /* bundle tables (Figma 4781:9521 / 4767:8277 / 4759:7535): the tab's own heading runs in 2 lines,
+       and the table fits the screen (text values wrap, smaller) instead of scrolling sideways */
+    main[data-template^='product'] .somna-compare__heading--tab {
+      max-width: none;
+      font-size: 2rem;
+      line-height: 1.15;
+    }
+
+    .somna-compare__value {
+      font-size: 0.6875rem;
+      white-space: normal;
+    }
+
+    .somna-compare__table thead .somna-compare__col-name {
+      font-size: 0.625rem;
+    }
+  }
+
+  @media screen and (max-width: 359px) {
+    .somna-compare__table th,
+    .somna-compare__table td {
+      padding: 8px 2px;
     }
   }
   /* PDP desktop (Figma 1440): row labels 18px */

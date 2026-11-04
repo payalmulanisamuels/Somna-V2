@@ -2135,6 +2135,152 @@
       width: 72px;
     }
   }
+
+  /* Mobile QA (Figma 4781:9521 / 4767:8277 / 4759:7535). Placed last so it wins over the tablet rules above.
+     One grid column (the default "auto" column grew to the widest child and pushed the page sideways at 320px). */
+  @media screen and (max-width: 749px) {
+    .somna-pdp-hero__inner {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .somna-pdp-hero__savings {
+      font-size: 0.625rem;
+      letter-spacing: 0.04em;
+      line-height: 1.35;
+    }
+
+    .somna-pdp-hero__price-night {
+      font-size: 0.75rem;
+    }
+
+    .somna-pdp-hero__colors {
+      gap: 8px 16px;
+      margin-top: 12px;
+    }
+
+    .somna-pdp-hero__colors legend {
+      font-size: 0.8125rem;
+    }
+
+    .somna-pdp-hero__swatches {
+      gap: 12px;
+    }
+
+    .somna-pdp-hero__swatch {
+      width: 30px;
+      height: 30px;
+    }
+
+    /* What's in the box: two small cards side by side */
+    .somna-pdp-hero__box {
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .somna-pdp-hero__box-title {
+      font-size: 0.75rem;
+    }
+
+    .somna-pdp-hero__box-list {
+      gap: 20px;
+    }
+
+    .somna-pdp-hero__box-item + .somna-pdp-hero__box-item::before {
+      left: -10px;
+      font-size: 0.9375rem;
+    }
+
+    .somna-pdp-hero__box-card {
+      gap: 8px;
+      min-height: 46px;
+      border-radius: 4px;
+    }
+
+    .somna-pdp-hero__box-thumb {
+      width: 36px;
+    }
+
+    .somna-pdp-hero__box-text {
+      gap: 1px;
+      padding-block: 4px;
+      padding-right: 6px;
+    }
+
+    .somna-pdp-hero__box-name {
+      font-size: 0.8125rem;
+    }
+
+    .somna-pdp-hero__box-note,
+    .somna-pdp-hero__box-colors {
+      font-size: 0.5625rem;
+    }
+
+    .somna-pdp-hero__box-colors {
+      gap: 2px 8px;
+    }
+
+    .somna-pdp-hero__dot {
+      width: 9px;
+      height: 9px;
+    }
+
+    .somna-pdp-hero__gifts-bar {
+      min-height: 30px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+    }
+
+    /* upgrade card: one compact row, button on the right */
+    .somna-pdp-hero__upsell {
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .somna-pdp-hero__upsell-label {
+      font-size: 0.75rem;
+    }
+
+    .somna-pdp-hero__upsell-card {
+      flex-wrap: nowrap;
+      gap: 10px;
+      padding: 6px 8px 6px 6px;
+    }
+
+    .somna-pdp-hero__upsell-thumb {
+      width: 56px;
+      height: 44px;
+    }
+
+    .somna-pdp-hero__upsell-text {
+      flex: 1 1 auto;
+      gap: 2px;
+    }
+
+    .somna-pdp-hero__upsell-title {
+      font-size: 0.8125rem;
+    }
+
+    .somna-pdp-hero__upsell-desc {
+      font-size: 0.5625rem;
+      line-height: 1.3;
+    }
+
+    .somna-pdp-hero__upsell-button {
+      flex: none;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.625rem;
+      text-align: center;
+    }
+  }
+
+  /* very small phones (320px): the three feature labels may wrap */
+  @media screen and (max-width: 359px) {
+    .somna-pdp-hero__features li {
+      white-space: normal;
+      text-align: center;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
