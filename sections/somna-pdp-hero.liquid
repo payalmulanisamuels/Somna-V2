@@ -71,7 +71,8 @@
 -%}
 
 <somna-pdp-buy
-  class="somna-pdp-hero"
+  class="somna-pdp-hero{% if s.gallery_layout == 'below' %} somna-pdp-hero--gallery-below{% endif %}"
+  data-interval="{{ product.selling_plan_groups.first.selling_plans.first.options.first.value | escape }}"
   data-currency="{{ cart.currency.iso_code }}"
   data-locale="{{ request.locale.iso_code }}"
   data-nights="{{ s.nights_per_bag }}"
@@ -430,7 +431,8 @@
         this.querySelectorAll('[data-sub-each]').forEach((el) => { el.textContent = subPrice ? this.money(subPrice) : ''; });
         const subPlan = v.plans.length ? (this.plan(v) || v.plans[0]) : null;
         const opt = this.planSelect && subPlan ? [...this.planSelect.options].find((o) => Number(o.value) === subPlan.id) : null;
-        this.querySelectorAll('[data-sub-interval]').forEach((el) => { el.textContent = opt ? opt.textContent.trim().replace(/^Deliver(y)?\s+/i, '') : ''; });
+        const intervalText = opt ? opt.textContent : (subPlan ? this.dataset.interval || '' : '');
+        this.querySelectorAll('[data-sub-interval]').forEach((el) => { el.textContent = intervalText.trim().replace(/^Deliver(y)?\s+/i, ''); });
         q('[data-price-once]').textContent = this.money(v.price);
         const oncePct = this.pct(v.price, v);
         q('[data-once-pct]').textContent = oncePct ? this.labels.pct.replace('[percent]', oncePct) : '';
@@ -1624,6 +1626,43 @@
     display: none;
   }
 
+  /* gallery "below" (Season Bundle, Figma 4654:113): landscape main photo with the thumbnails in a row underneath */
+  @media screen and (min-width: 750px) {
+    .somna-pdp-hero--gallery-below .somna-pdp-hero__gallery {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 40px;
+    }
+
+    .somna-pdp-hero--gallery-below .somna-pdp-hero__main {
+      order: -1;
+      aspect-ratio: 569 / 426;
+    }
+
+    .somna-pdp-hero--gallery-below .somna-pdp-hero__main img {
+      object-position: center;
+    }
+
+    .somna-pdp-hero--gallery-below .somna-pdp-hero__thumbs {
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
+      height: auto;
+      min-height: 0;
+      margin: 0;
+      overflow: visible;
+    }
+
+    .somna-pdp-hero--gallery-below .somna-pdp-hero__thumb {
+      width: 100%;
+      aspect-ratio: 112 / 101;
+    }
+
+    .somna-pdp-hero--gallery-below .somna-pdp-hero__thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
   .somna-pdp-hero__price-night {
     margin-left: auto;
     color: #f3feee;
@@ -1786,6 +1825,7 @@
     { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified Buyer" },
     { "type": "text", "id": "videos_heading", "label": "Videos heading", "default": "Real Nights, On Camera" },
     { "type": "text", "id": "play_label", "label": "Play label (screen readers)", "default": "Play video" },
+    { "type": "select", "id": "gallery_layout", "label": "Gallery layout", "options": [{ "value": "side", "label": "Thumbnails beside a portrait photo" }, { "value": "below", "label": "Thumbnails below a landscape photo" }], "default": "side" },
     { "type": "header", "content": "Buy panel" },
     { "type": "text", "id": "rating_format", "label": "Rating text", "info": "[rating] and [count] come from the product's review metafield.", "default": "[rating]/5 · [count] reviews" },
     { "type": "text", "id": "brand", "label": "Brand before the title", "default": "somna." },
