@@ -795,17 +795,29 @@
 
   /* how it works with two products (Season Bundle, Figma 4654:113): tape + strip side by side,
      the first two features above either side and the third centred underneath */
+  /* Figma: the tape and the strip stand close together (about 10px apart) at ~360px tall.
+     Both images carry transparent margins (tape: 26% left / 25% right of a square; strip: 28% left / 15% right
+     of a 2:3 picture), so the sizes and the overlap below are worked out from --pair-h, the visible height. */
   .somna-pdp-story__visual--pair .somna-pdp-story__product {
+    --pair-h: clamp(170px, 25vw, 360px);
     display: flex;
-    gap: 4%;
     align-items: center;
     justify-content: center;
   }
 
   .somna-pdp-story__visual--pair .somna-pdp-story__product img {
-    width: 48%;
-    min-width: 0;
-    height: auto;
+    flex: none;
+    width: auto;
+    max-width: none;
+    height: calc(var(--pair-h) / 0.893);
+    margin-left: calc(var(--pair-h) * -0.176); /* centres the visible pair, not the padded boxes */
+    object-fit: contain;
+  }
+
+  .somna-pdp-story__visual--pair .somna-pdp-story__product img.somna-pdp-story__product-after {
+    height: calc(var(--pair-h) * 1.5 / 1.281);
+    margin-top: calc(var(--pair-h) * -0.05);
+    margin-left: calc(var(--pair-h) * -0.471);
   }
 
   .somna-pdp-story__visual--pair .somna-pdp-story__point--3 {
@@ -841,14 +853,7 @@
       grid-column: 1 / -1;
       grid-row: 1 / span 2;
       width: 100%;
-      padding-inline: 21%;
-    }
-
-    .somna-pdp-story--how .somna-pdp-story__visual--pair .somna-pdp-story__product img {
-      width: auto;
-      max-width: 50%;
-      height: clamp(260px, 26vw, 380px);
-      object-fit: contain;
+      overflow: visible;
     }
   }
 
