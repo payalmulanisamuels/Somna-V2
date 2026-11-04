@@ -44,9 +44,16 @@
         "box_note_1": "For your Nose",
         "box_product_2": "mouth-tape",
         "box_note_2": "For your Lips",
-        "gifts_bar": "+ 3 free gifts on your first order"
+        "gifts_bar": "+ 3 free gifts on your first order",
+        "gallery_product_images": true
       },
       "blocks": {
+        "gallery_1": {
+          "type": "gallery_image",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-season-hero.png"
+          }
+        },
         "video_1": {
           "type": "video",
           "settings": {
@@ -119,6 +126,7 @@
         }
       },
       "block_order": [
+        "gallery_1",
         "video_1",
         "video_2",
         "video_3",
@@ -683,7 +691,8 @@
         "eyebrow": "Complete your routine",
         "heading_accent": "90 nights?",
         "card_note": "1 Strips + 1 Tape · 30 nights · Try it first",
-        "card_style": "wide"
+        "card_style": "wide",
+        "card_image": "shopify://shop_images/somna-v2-sleep-bundle-card.png"
       }
     },
     "reviews": {
@@ -1042,7 +1051,8 @@
         "padding_top": 40,
         "padding_bottom": 40,
         "wave_color": "#000000",
-        "wave_shape": "drip-4"
+        "wave_shape": "drip-4",
+        "image": "shopify://shop_images/somna-v2-season-cta-tape.png"
       }
     },
     "newsletter": {
