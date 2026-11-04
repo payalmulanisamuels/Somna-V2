@@ -42,7 +42,8 @@
         "padding_top": 48,
         "padding_bottom": 24,
         "wave_color": "#0b0f1d",
-        "wave_shape": "drip-1"
+        "wave_shape": "drip-1",
+        "gallery_layout": "auto"
       },
       "blocks": {
         "video_1": {
@@ -348,11 +349,80 @@
             "column_3": false,
             "column_4": false
           }
+        },
+        "tab_season": {
+          "type": "tab",
+          "settings": {
+            "name": "Season Bundle",
+            "label": "Season Bundle",
+            "column_2_label": "Sleep Bundle",
+            "column_3_label": "Strips Only",
+            "column_4_label": "",
+            "highlight": false,
+            "only_on_match": true,
+            "eyebrow": "Made for your nights",
+            "heading": "<em>THE SEASON</em> VS SHORTER RUNS",
+            "text": "Built for bedtime, not borrowed from the first-aid kit."
+          }
+        },
+        "bsrow_1": {
+          "type": "row",
+          "settings": {
+            "tab": "3",
+            "label": "Covers your nose",
+            "column_1": true,
+            "column_2": true,
+            "column_3": true,
+            "column_4": false
+          }
+        },
+        "bsrow_2": {
+          "type": "row",
+          "settings": {
+            "tab": "3",
+            "label": "Covers your lips",
+            "column_1": true,
+            "column_2": true,
+            "column_3": false,
+            "column_4": false
+          }
+        },
+        "bsrow_3": {
+          "type": "row",
+          "settings": {
+            "tab": "3",
+            "label": "3 free gifts on first order",
+            "column_1": true,
+            "column_2": true,
+            "column_3": false,
+            "column_4": false
+          }
+        },
+        "bsrow_4": {
+          "type": "row",
+          "settings": {
+            "tab": "3",
+            "label": "Nights per delivery",
+            "column_1_text": "90",
+            "column_2_text": "30",
+            "column_3_text": "30"
+          }
+        },
+        "bsrow_5": {
+          "type": "row",
+          "settings": {
+            "tab": "3",
+            "label": "Shipping for 90 nights",
+            "column_1_text": "1 × $4.95",
+            "column_2_text": "3 × $4.95",
+            "column_3_text": "3 × $4.95"
+          }
         }
       },
       "block_order": [
         "tab_tape",
         "tab_strips",
+        "tab_season",
         "row_1",
         "row_2",
         "row_3",
@@ -362,7 +432,12 @@
         "srow_2",
         "srow_3",
         "srow_4",
-        "srow_5"
+        "srow_5",
+        "bsrow_1",
+        "bsrow_2",
+        "bsrow_3",
+        "bsrow_4",
+        "bsrow_5"
       ]
     },
     "gifts": {
@@ -1169,6 +1244,26 @@
       "settings": {
         "mode": "record"
       }
+    },
+    "layers_pair": {
+      "type": "somna-pdp-story",
+      "settings": {
+        "layout": "layers",
+        "layers_mode": "pair",
+        "accent_line": "second",
+        "background_color": "#f3feee",
+        "text_color": "#000000",
+        "heading_color": "#000000",
+        "accent_color": "#98a3de",
+        "card_color": "#f3feee",
+        "card_text_color": "#000000",
+        "padding_top": 24,
+        "padding_bottom": 40,
+        "wave_color": "#0b0f1d",
+        "wave_shape": "drip-5",
+        "pills_motion": "none",
+        "layers_animation": false
+      }
     }
   },
   "order": [
@@ -1177,6 +1272,7 @@
     "how",
     "layers",
     "steps",
+    "layers_pair",
     "compare",
     "gifts",
     "wave_gifts_pair",
