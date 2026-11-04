@@ -1261,7 +1261,8 @@
         "padding_top": 24,
         "padding_bottom": 40,
         "wave_color": "#0b0f1d",
-        "wave_shape": "drip-5"
+        "wave_shape": "drip-5",
+        "layers_mode": "pair"
       }
     }
   },
