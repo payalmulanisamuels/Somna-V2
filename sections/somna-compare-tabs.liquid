@@ -338,6 +338,14 @@
     --somna-mark-size: 34px;
   }
 
+  /* text-only column names (Season Bundle table) read at Figma size */
+  .somna-compare__table thead th:not(:has(img)) .somna-compare__col-name:not(.visually-hidden) {
+    display: block;
+    font-size: clamp(0.9375rem, 1.25vw, 1.125rem);
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
   .somna-compare__value {
     font-size: clamp(1rem, 1.4vw, 1.25rem);
     letter-spacing: 0.04em;
