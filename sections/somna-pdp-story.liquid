@@ -1734,7 +1734,7 @@
     { "type": "color", "id": "card_color", "label": "Pills and icon colour", "default": "#f3feee" },
     { "type": "color", "id": "card_text_color", "label": "Icon circle", "default": "#000000" },
     { "type": "color", "id": "button_color", "label": "Button", "default": "#afbdf8" },
-    { "type": "select", "id": "layers_mode", "label": "What it's made of: show", "options": [{ "value": "single", "label": "One product (the product's own layers)" }, { "value": "pair", "label": "Products side by side (entries with Products in this section)" }], "default": "single", "visible_if": "{{ section.settings.layout == 'layers' }}" },
+    { "type": "select", "id": "layers_mode", "label": "What it's made of: show", "options": [{ "value": "single", "label": "One product" }, { "value": "pair", "label": "Products side by side" }], "default": "single", "visible_if": "{{ section.settings.layout == 'layers' }}", "info": "Side by side = entries with Products in this section (bundles)." },
     { "type": "header", "content": "Lavender style", "info": "Used when the product's content entry has Style = Lavender." },
     { "type": "color", "id": "alt_background_color", "label": "Background", "default": "#afbdf8" },
     { "type": "color", "id": "alt_accent_color", "label": "Heading accent", "default": "#f3feee" },
