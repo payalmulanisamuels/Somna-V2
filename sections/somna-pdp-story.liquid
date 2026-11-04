@@ -4,7 +4,8 @@
   Content comes from the product's PDP section metaobject (custom.pdp_problem / pdp_how /
   pdp_layers / pdp_steps): eyebrow, two-line heading, text, label, image, pills, button and a list of
   PDP features (icon + title + text + optional photo), plus an optional second (solution) image. The section hides itself when the product has
-  no content for the chosen layout.
+  no content for the chosen layout. Entry fields Style, Heading line in the accent colour and Products in this
+  section set per-product looks (Season Bundle).
 {%- endcomment -%}
 {%- render 'somna-shared-styles' -%}
 {%- liquid
@@ -16,17 +17,39 @@
     assign product = all_products[s.preview_product.handle]
   endif
   assign key = 'pdp_' | append: s.layout
-  # a content entry picked in the template wins over the product's metafield (used by the Season Bundle template)
-  assign c = nil
-  if s.content != blank
-    assign c = metaobjects.pdp_section[s.content]
-  endif
-  if c == blank
-    assign c = product.metafields.custom[key].value
-  endif
+  assign c = product.metafields.custom[key].value
+
+  # per-product look, set on the content entry ("Style"): Side by side (problem) or Lavender (steps)
+  assign style = c.style.value | default: 'Default'
   assign split = false
-  if s.layout == 'problem' and s.problem_style == 'split'
+  if s.layout == 'problem' and style == 'Side by side'
     assign split = true
+  endif
+  assign bg = s.background_color
+  assign accent = s.accent_color
+  assign button = s.button_color | default: '#afbdf8'
+  assign wave = s.wave_color
+  if style == 'Lavender'
+    assign bg = s.alt_background_color
+    assign accent = s.alt_accent_color
+    assign button = s.alt_button_color
+    assign wave = s.alt_wave_color
+  endif
+
+  # "What it's made of": an entry with "Products in this section" shows those products as cards side by side.
+  # The template has two layers sections (single before the steps, pair after them, as in Figma); each shows only its own kind.
+  assign related = c.related.value
+  assign layout_class = s.layout
+  if s.layout == 'layers'
+    if s.layers_mode == 'pair'
+      if related == blank
+        assign c = nil
+      else
+        assign layout_class = 'layers_pair'
+      endif
+    elsif related != blank
+      assign c = nil
+    endif
   endif
 -%}
 {%- if c != blank -%}
@@ -34,13 +57,14 @@
   assign features = c.features.value
   assign image = c.image.value
   assign accent_first = false
-  if s.accent_line == 'first'
+  assign accent_pos = c.accent_line.value | default: s.accent_line | downcase
+  if accent_pos == 'first'
     assign accent_first = true
   endif
 -%}
 <div
-  class="somna-pdp-story somna-pdp-story--{{ s.layout }}{% if split %} somna-pdp-story--split{% endif %}"
-  style="--somna-story-bg: {{ s.background_color }}; --somna-story-fg: {{ s.text_color }}; --somna-story-heading: {{ s.heading_color }}; --somna-story-accent: {{ s.accent_color }}; --somna-story-card: {{ s.card_color }}; --somna-story-card-fg: {{ s.card_text_color }}; --somna-story-button: {{ s.button_color | default: '#afbdf8' }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
+  class="somna-pdp-story somna-pdp-story--{{ layout_class }}{% if split %} somna-pdp-story--split{% endif %}"
+  style="--somna-story-bg: {{ bg }}; --somna-story-fg: {{ s.text_color }}; --somna-story-heading: {{ s.heading_color }}; --somna-story-accent: {{ accent }}; --somna-story-card: {{ s.card_color }}; --somna-story-card-fg: {{ s.card_text_color }}; --somna-story-button: {{ button }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
 >
   <div class="somna-pdp-story__inner somna-container">
     <div class="somna-pdp-story__copy">
@@ -61,7 +85,7 @@
       {%- endif -%}
     </div>
 
-    {%- case s.layout -%}
+    {%- case layout_class -%}
       {%- when 'problem' -%}
         {%- if split -%}
           {%- comment -%} two panels side by side: the problem (label + bullets bottom-left) and the fix (bottom-right) {%- endcomment -%}
@@ -174,33 +198,23 @@
       {%- when 'layers_pair' -%}
         {%- comment -%} two products' "What it's made of" entries side by side (Season Bundle) {%- endcomment -%}
         <div class="somna-pdp-story__pair">
-          {%- for side in (1..2) -%}
-            {%- liquid
-              if side == 1
-                assign entry = metaobjects.pdp_section[s.pair_left]
-                assign card_title = s.pair_left_title
-              else
-                assign entry = metaobjects.pdp_section[s.pair_right]
-                assign card_title = s.pair_right_title
-              endif
-            -%}
-            {%- if side == 2 -%}<span class="somna-pdp-story__pair-plus" aria-hidden="true"></span>{%- endif -%}
+          {%- for entry in related limit: 2 -%}
+            {%- assign card_title = entry.admin_name.value | split: ' – ' | first | split: ' - ' | first -%}
+            {%- unless forloop.first -%}<span class="somna-pdp-story__pair-plus" aria-hidden="true"></span>{%- endunless -%}
             <div class="somna-pdp-story__pair-card">
               {%- if card_title != blank -%}<h3 class="somna-pdp-story__pair-title">{{ card_title }}</h3>{%- endif -%}
-              {%- if entry != blank -%}
-                <div class="somna-pdp-story__pair-body">
-                  {%- assign entry_image = entry.image.value -%}
-                  {%- if entry_image -%}{{ entry_image | image_url: width: 640 | image_tag: loading: 'lazy', widths: '320, 480, 640', sizes: '(min-width: 990px) 260px, 45vw', class: 'somna-pdp-story__pair-image', alt: card_title }}{%- endif -%}
-                  {%- assign entry_features = entry.features.value -%}
-                  {%- if entry_features != blank -%}
-                    <ol class="somna-pdp-story__layers">
-                      {%- for f in entry_features -%}
-                        <li><h4>{{ f.title.value }}</h4>{%- if f.text != blank -%}<p>{{ f.text.value }}</p>{%- endif -%}</li>
-                      {%- endfor -%}
-                    </ol>
-                  {%- endif -%}
-                </div>
-              {%- endif -%}
+              <div class="somna-pdp-story__pair-body">
+                {%- assign entry_image = entry.image.value -%}
+                {%- if entry_image -%}{{ entry_image | image_url: width: 640 | image_tag: loading: 'lazy', widths: '320, 480, 640', sizes: '(min-width: 990px) 260px, 45vw', class: 'somna-pdp-story__pair-image', alt: card_title }}{%- endif -%}
+                {%- assign entry_features = entry.features.value -%}
+                {%- if entry_features != blank -%}
+                  <ol class="somna-pdp-story__layers">
+                    {%- for f in entry_features -%}
+                      <li><h4>{{ f.title.value }}</h4>{%- if f.text != blank -%}<p>{{ f.text.value }}</p>{%- endif -%}</li>
+                    {%- endfor -%}
+                  </ol>
+                {%- endif -%}
+              </div>
             </div>
           {%- endfor -%}
         </div>
@@ -262,8 +276,8 @@
     {%- endcase -%}
   </div>
 </div>
-{%- if section.settings.wave_color != blank -%}
-  {%- render 'somna-wave', top: section.settings.background_color, bottom: section.settings.wave_color, shape: section.settings.wave_shape -%}
+{%- if wave != blank -%}
+  {%- render 'somna-wave', top: bg, bottom: wave, shape: section.settings.wave_shape -%}
 {%- endif -%}
 {%- endif -%}
 
@@ -292,7 +306,7 @@
 </script>
 {%- endif -%}
 
-{%- if s.layout == 'layers' and s.layers_animation and c != blank -%}
+{%- if layout_class == 'layers' and s.layers_animation and c != blank -%}
 <script src="{{ 'gsap.min.js' | asset_url }}" defer></script>
 <script src="{{ 'gsap-scroll-trigger.min.js' | asset_url }}" defer></script>
 <script type="module">
@@ -1702,17 +1716,10 @@
         { "value": "problem", "label": "Problem (Sound familiar?)" },
         { "value": "how", "label": "How it works" },
         { "value": "layers", "label": "What it's made of" },
-        { "value": "layers_pair", "label": "What it's made of: two products" },
         { "value": "steps", "label": "Three steps" }
       ],
       "default": "problem"
     },
-    { "type": "text", "id": "content", "label": "Content entry handle", "info": "Optional. The handle of a PDP section entry (Content > Metaobjects), e.g. season-bundle-problem. Used instead of the product's matching metafield." },
-    { "type": "select", "id": "problem_style", "label": "Problem style", "options": [{ "value": "crossfade", "label": "One picture (problem fades to fix)" }, { "value": "split", "label": "Two panels side by side" }], "default": "crossfade", "visible_if": "{{ section.settings.layout == 'problem' }}" },
-    { "type": "text", "id": "pair_left", "label": "Left product entry handle", "visible_if": "{{ section.settings.layout == 'layers_pair' }}", "info": "A \"What it's made of\" PDP section entry, e.g. mouth-tape-layers. Its image and layers fill the card." },
-    { "type": "text", "id": "pair_left_title", "label": "Left card title", "default": "Mouth Tape", "visible_if": "{{ section.settings.layout == 'layers_pair' }}" },
-    { "type": "text", "id": "pair_right", "label": "Right product entry handle", "visible_if": "{{ section.settings.layout == 'layers_pair' }}", "info": "e.g. nasal-strips-layers" },
-    { "type": "text", "id": "pair_right_title", "label": "Right card title", "default": "Nasal Strip", "visible_if": "{{ section.settings.layout == 'layers_pair' }}" },
     { "type": "product", "id": "preview_product", "label": "Product for the theme editor", "info": "Only used where there is no product." },
     { "type": "video", "id": "video", "label": "Three steps: fallback video", "info": "The \"Watch how it works\" popup plays the product's steps metaobject \"video\" field, or the product metafield custom.how_it_works_video. This video is used only when neither is set." },
     { "type": "text", "id": "video_button_label", "label": "Three steps: button label", "default": "Watch how it works", "info": "Used when the steps metaobject has no button label." },
@@ -1727,6 +1734,12 @@
     { "type": "color", "id": "card_color", "label": "Pills and icon colour", "default": "#f3feee" },
     { "type": "color", "id": "card_text_color", "label": "Icon circle", "default": "#000000" },
     { "type": "color", "id": "button_color", "label": "Button", "default": "#afbdf8" },
+    { "type": "select", "id": "layers_mode", "label": "What it's made of: show", "options": [{ "value": "single", "label": "One product" }, { "value": "pair", "label": "Products side by side" }], "default": "single", "visible_if": "{{ section.settings.layout == 'layers' }}", "info": "Side by side = entries with Products in this section (bundles)." },
+    { "type": "header", "content": "Lavender style", "info": "Used when the product's content entry has Style = Lavender." },
+    { "type": "color", "id": "alt_background_color", "label": "Background", "default": "#afbdf8" },
+    { "type": "color", "id": "alt_accent_color", "label": "Heading accent", "default": "#f3feee" },
+    { "type": "color", "id": "alt_button_color", "label": "Button", "default": "#f3feee" },
+    { "type": "color", "id": "alt_wave_color", "label": "Colour below the wave", "default": "#f3feee" },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 32 },
     { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 32 },
     { "type": "header", "content": "Bottom wave" },
