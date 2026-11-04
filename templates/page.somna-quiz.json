@@ -251,7 +251,8 @@
         "v2_cursor": true,
         "result_extras": true,
         "perk_1": "Free shipping",
-        "ship_single": "FREE shipping"
+        "ship_single": "FREE shipping",
+        "retake_label": ""
       }
     }
   },
