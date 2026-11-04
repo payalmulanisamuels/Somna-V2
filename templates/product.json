@@ -404,12 +404,150 @@
             "column_2_text": "3 × $4.95",
             "column_3_text": "3 × $4.95"
           }
+        },
+        "tab_color": {
+          "type": "tab",
+          "settings": {
+            "name": "The Color Set",
+            "label": "Color Set",
+            "column_2_label": "1 Pack",
+            "column_3_label": "Drugstore Strips",
+            "column_4_label": "",
+            "highlight": false,
+            "only_on_match": true,
+            "eyebrow": "Do the maths",
+            "heading": "<em>THE COLOR SET</em> VS ONE PACK",
+            "text": "Same SOMNA strips, fewer orders and more extras."
+          }
+        },
+        "tab_sleep": {
+          "type": "tab",
+          "settings": {
+            "name": "Sleep Bundle",
+            "label": "Season Bundle",
+            "column_2_label": "Sleep Bundle",
+            "column_3_label": "Strips Only",
+            "column_4_label": "",
+            "highlight": false,
+            "only_on_match": true,
+            "eyebrow": "Made for your nights",
+            "heading": "<em>THE BUNDLE</em> VS SHORTER RUNS",
+            "text": "Same SOMNA strips and tape, fewer orders and more extras."
+          }
+        },
+        "csrow_1": {
+          "type": "row",
+          "settings": {
+            "tab": "4",
+            "label": "Drug-free",
+            "column_1": true,
+            "column_2": true,
+            "column_3": true,
+            "column_4": false
+          }
+        },
+        "csrow_2": {
+          "type": "row",
+          "settings": {
+            "tab": "4",
+            "label": "Nothing inside your nose",
+            "column_1": true,
+            "column_2": true,
+            "column_3": true,
+            "column_4": false
+          }
+        },
+        "csrow_3": {
+          "type": "row",
+          "settings": {
+            "tab": "4",
+            "label": "3 free gifts on first order",
+            "column_1": true,
+            "column_2": false,
+            "column_3": false,
+            "column_4": false
+          }
+        },
+        "csrow_4": {
+          "type": "row",
+          "settings": {
+            "tab": "4",
+            "label": "Nights per delivery",
+            "column_1_text": "90",
+            "column_2_text": "30",
+            "column_3_text": "Varies"
+          }
+        },
+        "csrow_5": {
+          "type": "row",
+          "settings": {
+            "tab": "4",
+            "label": "Price per night",
+            "column_1_text": "$0.67",
+            "column_2_text": "$0.67",
+            "column_3_text": "Varies"
+          }
+        },
+        "slrow_1": {
+          "type": "row",
+          "settings": {
+            "tab": "5",
+            "label": "Covers your nose",
+            "column_1": true,
+            "column_2": true,
+            "column_3": true,
+            "column_4": false
+          }
+        },
+        "slrow_2": {
+          "type": "row",
+          "settings": {
+            "tab": "5",
+            "label": "Covers your lips",
+            "column_1": true,
+            "column_2": true,
+            "column_3": false,
+            "column_4": false
+          }
+        },
+        "slrow_3": {
+          "type": "row",
+          "settings": {
+            "tab": "5",
+            "label": "3 free gifts on first order",
+            "column_1": true,
+            "column_2": true,
+            "column_3": false,
+            "column_4": false
+          }
+        },
+        "slrow_4": {
+          "type": "row",
+          "settings": {
+            "tab": "5",
+            "label": "Nights per box",
+            "column_1_text": "90",
+            "column_2_text": "30",
+            "column_3_text": "30"
+          }
+        },
+        "slrow_5": {
+          "type": "row",
+          "settings": {
+            "tab": "5",
+            "label": "Price per night",
+            "column_1_text": "$1.33 for both",
+            "column_2_text": "$1.33 for both",
+            "column_3_text": "$0.67"
+          }
         }
       },
       "block_order": [
         "tab_tape",
         "tab_strips",
         "tab_season",
+        "tab_color",
+        "tab_sleep",
         "row_1",
         "row_2",
         "row_3",
@@ -424,7 +562,17 @@
         "bsrow_2",
         "bsrow_3",
         "bsrow_4",
-        "bsrow_5"
+        "bsrow_5",
+        "csrow_1",
+        "csrow_2",
+        "csrow_3",
+        "csrow_4",
+        "csrow_5",
+        "slrow_1",
+        "slrow_2",
+        "slrow_3",
+        "slrow_4",
+        "slrow_5"
       ],
       "settings": {
         "eyebrow": "Made for your nights",
@@ -1264,6 +1412,26 @@
         "wave_shape": "drip-5",
         "layers_mode": "pair"
       }
+    },
+    "layers_after": {
+      "type": "somna-pdp-story",
+      "settings": {
+        "layout": "layers",
+        "layers_animation": false,
+        "pills_motion": "none",
+        "accent_line": "second",
+        "background_color": "#f3feee",
+        "text_color": "#000000",
+        "heading_color": "#000000",
+        "accent_color": "#98a3de",
+        "card_color": "#f3feee",
+        "card_text_color": "#000000",
+        "padding_top": 24,
+        "padding_bottom": 40,
+        "wave_color": "#0b0f1d",
+        "wave_shape": "drip-5",
+        "layers_mode": "after"
+      }
     }
   },
   "order": [
@@ -1272,6 +1440,7 @@
     "how",
     "layers",
     "steps",
+    "layers_after",
     "layers_pair",
     "compare",
     "gifts",
