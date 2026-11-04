@@ -857,6 +857,13 @@
     }
   }
 
+  /* small laptops: the visual is narrower, so the pair shrinks to stay clear of the labels */
+  @media screen and (min-width: 990px) and (max-width: 1199px) {
+    .somna-pdp-story__visual--pair .somna-pdp-story__product {
+      --pair-h: 19vw;
+    }
+  }
+
   .somna-pdp-story__point-icon {
     display: grid;
     place-items: center;
