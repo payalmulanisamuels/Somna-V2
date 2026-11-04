@@ -26,12 +26,27 @@
   if only_tab == 0 and tab_blocks.size == 1
     assign only_tab = 1
   endif
+
+  # intro: the shown tab may bring its own eyebrow / heading / text (Season Bundle table)
+  assign intro_eyebrow = s.eyebrow
+  assign intro_heading = s.heading
+  assign intro_text = s.text
+  if only_tab > 0
+    assign shown_index = only_tab | minus: 1
+    assign shown_tab = tab_blocks[shown_index]
+    if shown_tab.settings.heading != blank
+      assign intro_eyebrow = shown_tab.settings.eyebrow
+      assign intro_heading = shown_tab.settings.heading
+      assign intro_text = shown_tab.settings.text
+    endif
+  endif
 -%}
 
 {%- capture tabs_markup -%}
   {%- assign active_set = false -%}
   {%- for tab in tab_blocks -%}
     {%- if only_tab > 0 and forloop.index != only_tab -%}{%- continue -%}{%- endif -%}
+    {%- if only_tab == 0 and tab.settings.only_on_match -%}{%- continue -%}{%- endif -%}
     {%- assign tab_index = forloop.index | append: '' -%}
     {%- assign row_count = 0 -%}
     {%- for row in row_blocks -%}{%- if row.settings.tab == tab_index -%}{%- assign row_count = row_count | plus: 1 -%}{%- endif -%}{%- endfor -%}
@@ -57,9 +72,9 @@
 >
   <div class="somna-compare__inner somna-container">
     <div class="somna-compare__intro">
-      {%- if s.eyebrow != blank -%}<p class="somna-compare__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
-      {%- if s.heading != blank -%}<h2 class="somna-compare__heading">{{ s.heading }}</h2>{%- endif -%}
-      {%- if s.text != blank -%}<p class="somna-compare__text">{{ s.text }}</p>{%- endif -%}
+      {%- if intro_eyebrow != blank -%}<p class="somna-compare__eyebrow">{{ intro_eyebrow }}</p>{%- endif -%}
+      {%- if intro_heading != blank -%}<h2 class="somna-compare__heading">{{ intro_heading }}</h2>{%- endif -%}
+      {%- if intro_text != blank -%}<p class="somna-compare__text">{{ intro_text }}</p>{%- endif -%}
     </div>
 
     <div class="somna-compare__body">
@@ -68,7 +83,11 @@
       {%- assign first_panel = true -%}
       {%- for tab in tab_blocks -%}
         {%- if only_tab > 0 and forloop.index != only_tab -%}{%- continue -%}{%- endif -%}
+        {%- if only_tab == 0 and tab.settings.only_on_match -%}{%- continue -%}{%- endif -%}
         {%- assign tab_index = forloop.index | append: '' -%}
+        {%- comment -%} a text-only tab (no Somna image) always shows its column names {%- endcomment -%}
+        {%- assign text_only = false -%}
+        {%- if tab.settings.image == blank -%}{%- assign text_only = true -%}{%- endif -%}
         {%- assign row_count = 0 -%}
         {%- for row in row_blocks -%}{%- if row.settings.tab == tab_index -%}{%- assign row_count = row_count | plus: 1 -%}{%- endif -%}{%- endfor -%}
         {%- if row_count > 0 -%}
@@ -79,6 +98,7 @@
             aria-labelledby="{{ uid }}-tab-{{ forloop.index }}"
             tabindex="0"
             {% unless first_panel %}hidden{% endunless %}
+            {% if tab.settings.highlight == false %}style="--somna-highlight: transparent;"{% endif %}
           >
             <div class="somna-compare__scroll">
               <table class="somna-compare__table">
@@ -99,7 +119,7 @@
                       {%- assign cols = cols | append: n | append: ',' -%}
                       <th scope="col">
                         {%- if tab.settings[img_key] != blank -%}{{ tab.settings[img_key] | image_url: width: 180 | image_tag: loading: 'lazy', alt: '', width: 80, height: 80 }}{%- endif -%}
-                        <span class="somna-compare__col-name{% unless s.show_column_names %} visually-hidden{% endunless %}">{{ tab.settings[label_key] }}</span>
+                        <span class="somna-compare__col-name{% unless s.show_column_names or text_only %} visually-hidden{% endunless %}">{{ tab.settings[label_key] }}</span>
                       </th>
                     {%- endfor -%}
                   </tr>
@@ -507,7 +527,7 @@
     {
       "type": "tab",
       "name": "Tab",
-      "limit": 2,
+      "limit": 3,
       "settings": [
         { "type": "text", "id": "name", "label": "Tab name", "default": "Mouth Tape" },
         { "type": "image_picker", "id": "image", "label": "Somna column image" },
@@ -517,7 +537,13 @@
         { "type": "image_picker", "id": "column_3_image", "label": "Column 3 image" },
         { "type": "text", "id": "column_3_label", "label": "Column 3 name", "default": "Chin straps" },
         { "type": "image_picker", "id": "column_4_image", "label": "Column 4 image" },
-        { "type": "text", "id": "column_4_label", "label": "Column 4 name", "default": "Mouthguards" }
+        { "type": "text", "id": "column_4_label", "label": "Column 4 name", "default": "Mouthguards" },
+        { "type": "checkbox", "id": "highlight", "label": "Highlight the first column", "default": true },
+        { "type": "checkbox", "id": "only_on_match", "label": "Only on the product with this name", "info": "Hides this tab everywhere else (e.g. a tab for one bundle).", "default": false },
+        { "type": "header", "content": "Heading for this tab", "info": "Optional. Used when this is the only tab shown (product pages); empty uses the section heading." },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+        { "type": "text", "id": "heading", "label": "Heading", "info": "Wrap words in <em></em> for the accent colour." },
+        { "type": "text", "id": "text", "label": "Text under the heading" }
       ]
     },
     {
@@ -530,7 +556,8 @@
           "label": "Tab",
           "options": [
             { "value": "1", "label": "First tab" },
-            { "value": "2", "label": "Second tab" }
+            { "value": "2", "label": "Second tab" },
+            { "value": "3", "label": "Third tab" }
           ],
           "default": "1"
         },

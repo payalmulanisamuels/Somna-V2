@@ -32,9 +32,14 @@
   if bags < 1
     assign bags = 1
   endif
+  # per-product overrides: Nights, PDP – Closing text, PDP – Closing sticker (e.g. Season Bundle: 90 nights)
+  assign mf = product.metafields.custom
+  assign nights = mf.nights.value | default: s.nights_per_bag
+  assign cta_text = mf.pdp_cta_text.value | default: s.text
+  assign cta_sticker = mf.pdp_cta_sticker.value | default: s.sticker
   assign night = 0
-  if s.nights_per_bag > 0
-    assign night = price | divided_by: bags | divided_by: s.nights_per_bag
+  if nights > 0
+    assign night = price | divided_by: bags | divided_by: nights
   endif
   assign image = s.image | default: product.metafields.custom.pdp_how.value.image.value
 -%}
@@ -48,7 +53,7 @@
         <span style="color: {{ s.line_1_color }};">{{ s.line_1 }}</span>
         <span style="color: {{ s.line_2_color }};">{{ s.line_2 }}</span>
       </h2>
-      {%- if s.text != blank -%}<p class="somna-pdp-cta__text">{{ s.text | replace: '[price]', price_money }}</p>{%- endif -%}
+      {%- if cta_text != blank -%}<p class="somna-pdp-cta__text">{{ cta_text | replace: '[price]', price_money }}</p>{%- endif -%}
       <form action="{{ routes.cart_add_url }}" method="post" class="somna-pdp-cta__form">
         <input type="hidden" name="id" value="{{ v.id }}">
         {%- if plan_id != blank -%}<input type="hidden" name="selling_plan" value="{{ plan_id }}">{%- endif -%}
@@ -61,7 +66,7 @@
     </div>
     <div class="somna-pdp-cta__media">
       {%- if image -%}<div class="somna-pdp-cta__product">{{ image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300, 450, 600', sizes: '(min-width: 750px) 290px, 60vw' }}</div>{%- endif -%}
-      {%- if s.sticker != blank and night > 0 -%}<p class="somna-pdp-cta__sticker{% if s.sticker_motion != 'none' %} somna-shake--{{ s.sticker_motion }}{% endif %}">{{ s.sticker | replace: '[night]', night_money }}</p>{%- endif -%}
+      {%- if cta_sticker != blank and night > 0 -%}<p class="somna-pdp-cta__sticker{% if s.sticker_motion != 'none' %} somna-shake--{{ s.sticker_motion }}{% endif %}">{{ cta_sticker | replace: '[night]', night_money }}</p>{%- endif -%}
     </div>
   </div>
 </somna-pdp-cta>

@@ -24,17 +24,21 @@
 {%- liquid
   assign mf = product.metafields.custom
   assign images = product.media | where: 'media_type', 'image'
-  # gallery images added in the template (blocks) come first; product photos follow unless switched off
-  assign gallery_blocks = section.blocks | where: 'type', 'gallery_image'
-  if gallery_blocks.size > 0
-    assign block_images = gallery_blocks | map: 'settings' | map: 'image' | compact
-    if s.gallery_product_images
-      assign images = block_images | concat: images
-    else
-      assign images = block_images
-    endif
+  # extra gallery images from the product's "PDP – Extra gallery images" field come first, then the product photos
+  assign extra_images = mf.pdp_gallery.value
+  if extra_images != blank
+    assign images = extra_images | concat: images
   endif
   assign first_image = images | first
+  # gallery layout "auto": thumbnails go below when the first photo is landscape (Season Bundle), beside it otherwise
+  assign gallery_below = false
+  if s.gallery_layout == 'below'
+    assign gallery_below = true
+  elsif s.gallery_layout == 'auto' and first_image.aspect_ratio > 1
+    assign gallery_below = true
+  endif
+  # per-night next to the price: the product's Nights field, else the section's nights per bag
+  assign price_nights = mf.nights.value | default: s.nights_per_bag
   assign selected_index = s.selected_position | minus: 1
   assign current = product.selected_variant
   if current == blank
@@ -81,11 +85,13 @@
 -%}
 
 <somna-pdp-buy
-  class="somna-pdp-hero{% if s.gallery_layout == 'below' %} somna-pdp-hero--gallery-below{% endif %}"
+  class="somna-pdp-hero{% if gallery_below %} somna-pdp-hero--gallery-below{% endif %}"
   data-interval="{{ product.selling_plan_groups.first.selling_plans.first.options.first.value | escape }}"
   data-currency="{{ cart.currency.iso_code }}"
   data-locale="{{ request.locale.iso_code }}"
   data-nights="{{ s.nights_per_bag }}"
+  data-price-nights="{{ price_nights }}"
+  data-night-label="{{ mf.pdp_night_label.value | escape }}"
   data-gift-min="{{ s.gift_min_bags }}"
   style="--somna-pdp-bg: {{ s.background_color }}; --somna-panel: {{ s.panel_color }}; --somna-mint: {{ s.mint_color }}; --somna-chip: {{ s.chip_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
 >
@@ -207,30 +213,15 @@
         </p>
       {%- endif -%}
       <h1 class="somna-pdp-hero__title"><span class="somna-pdp-hero__brand">{{ s.brand }}</span> {{ product.title }}</h1>
-      {%- assign tagline = s.tagline | default: mf.pdp_tagline.value -%}
-      {%- if tagline != blank -%}<p class="somna-pdp-hero__tagline">{{ tagline | newline_to_br }}</p>{%- endif -%}
+      {%- if mf.pdp_tagline != blank -%}<p class="somna-pdp-hero__tagline">{{ mf.pdp_tagline.value | newline_to_br }}</p>{%- endif -%}
 
-      {%- comment -%} features picked in the template win over the product's metafield (Season Bundle) {%- endcomment -%}
-      {%- if s.features != blank -%}
-        {%- assign feature_handles = s.features | split: ',' -%}
+      {%- assign features = mf.pdp_hero_features.value -%}
+      {%- if features != blank -%}
         <ul class="somna-pdp-hero__features" role="list">
-          {%- for fh in feature_handles -%}
-            {%- assign fh = fh | strip -%}
-            {%- assign f = metaobjects.pdp_feature[fh] -%}
-            {%- if f != blank -%}
-              <li><span class="somna-pdp-hero__feature-icon">{% render 'somna-pdp-icon', name: f.icon.value, variant: 'figma' %}</span>{{ f.title.value }}</li>
-            {%- endif -%}
+          {%- for f in features -%}
+            <li><span class="somna-pdp-hero__feature-icon">{% render 'somna-pdp-icon', name: f.icon.value, variant: 'figma' %}</span>{{ f.title.value }}</li>
           {%- endfor -%}
         </ul>
-      {%- else -%}
-        {%- assign features = mf.pdp_hero_features.value -%}
-        {%- if features != blank -%}
-          <ul class="somna-pdp-hero__features" role="list">
-            {%- for f in features -%}
-              <li><span class="somna-pdp-hero__feature-icon">{% render 'somna-pdp-icon', name: f.icon.value, variant: 'figma' %}</span>{{ f.title.value }}</li>
-            {%- endfor -%}
-          </ul>
-        {%- endif -%}
       {%- endif -%}
 
       <p class="somna-pdp-hero__price">
@@ -240,26 +231,20 @@
         {%- assign pct = 0 -%}
         {%- if compare > 0 -%}{%- assign pct = compare | minus: price | times: 100 | divided_by: compare -%}{%- endif -%}
         <span class="somna-pdp-hero__save" data-save{% if pct == 0 %} hidden{% endif %}>{{ s.save_label | replace: '[percent]', pct }}</span>
-        {%- if s.price_night_label != blank and s.nights_per_bag > 0 -%}
-          <span class="somna-pdp-hero__price-night" data-price-night>{{ price | divided_by: s.nights_per_bag | money }}{{ s.price_night_label }}</span>
+        {%- if mf.pdp_night_label != blank and price_nights > 0 -%}
+          <span class="somna-pdp-hero__price-night" data-price-night>{{ price | divided_by: price_nights | money }}{{ mf.pdp_night_label.value }}</span>
         {%- endif -%}
       </p>
-      {%- if s.savings_note != blank -%}<p class="somna-pdp-hero__savings">{{ s.savings_note }}</p>{%- endif -%}
+      {%- if mf.pdp_savings_note != blank -%}<p class="somna-pdp-hero__savings">{{ mf.pdp_savings_note.value }}</p>{%- endif -%}
 
-      {%- if s.box_product_1 != blank or s.box_product_2 != blank -%}
+      {%- assign box_products = mf.pdp_box_products.value -%}
+      {%- assign box_notes = mf.pdp_box_notes.value -%}
+      {%- if box_products != blank -%}
         <div class="somna-pdp-hero__box">
           {%- if s.box_heading != blank -%}<h2 class="somna-pdp-hero__box-title">{{ s.box_heading }}</h2>{%- endif -%}
           <ul class="somna-pdp-hero__box-list" role="list">
-            {%- for side in (1..2) -%}
-              {%- liquid
-                if side == 1
-                  assign bp = s.box_product_1
-                  assign bnote = s.box_note_1
-                else
-                  assign bp = s.box_product_2
-                  assign bnote = s.box_note_2
-                endif
-              -%}
+            {%- for bp in box_products limit: 2 -%}
+              {%- assign bnote = box_notes[forloop.index0] -%}
               {%- if bp != blank -%}
                 <li class="somna-pdp-hero__box-item">
                   <a class="somna-pdp-hero__box-card" href="{{ bp.url }}">
@@ -273,7 +258,7 @@
               {%- endif -%}
             {%- endfor -%}
           </ul>
-          {%- if s.gifts_bar != blank -%}<p class="somna-pdp-hero__gifts-bar">{{ s.gifts_bar }}</p>{%- endif -%}
+          {%- if mf.pdp_gifts_bar != blank -%}<p class="somna-pdp-hero__gifts-bar">{{ mf.pdp_gifts_bar.value }}</p>{%- endif -%}
         </div>
       {%- endif -%}
 
@@ -419,7 +404,8 @@
         const compare = this.base(v, price) > price ? this.base(v, price) : 0;
         const c = q('[data-compare]'); c.hidden = !compare; c.textContent = compare ? this.money(compare).replace(/[.,]00(?=\D*$)/, '') : '';
         const priceNight = q('[data-price-night]');
-        if (priceNight && this.nights) priceNight.textContent = this.money(Math.round(price / (this.bags(v) * this.nights))) + {{ s.price_night_label | json }};
+        const priceNights = Number(this.dataset.priceNights) || 0;
+        if (priceNight && priceNights) priceNight.textContent = this.money(Math.round(price / priceNights)) + (this.dataset.nightLabel || '');
         const pct = this.pct(price, v);
         const save = q('[data-save]'); save.hidden = !pct; save.textContent = this.labels.save.replace('[percent]', pct);
         this.querySelectorAll('[data-pack]').forEach((input) => {
@@ -1856,21 +1842,11 @@
     { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified Buyer" },
     { "type": "text", "id": "videos_heading", "label": "Videos heading", "default": "Real Nights, On Camera" },
     { "type": "text", "id": "play_label", "label": "Play label (screen readers)", "default": "Play video" },
-    { "type": "checkbox", "id": "gallery_product_images", "label": "Also show the product's own photos", "info": "Only applies when Gallery image blocks are added.", "default": true },
-    { "type": "select", "id": "gallery_layout", "label": "Gallery layout", "options": [{ "value": "side", "label": "Thumbnails beside a portrait photo" }, { "value": "below", "label": "Thumbnails below a landscape photo" }], "default": "side" },
+    { "type": "select", "id": "gallery_layout", "label": "Gallery layout", "options": [{ "value": "side", "label": "Thumbnails beside a portrait photo" }, { "value": "below", "label": "Thumbnails below a landscape photo" }, { "value": "auto", "label": "Automatic (below when the first photo is landscape)" }], "default": "side" },
     { "type": "header", "content": "Buy panel" },
     { "type": "text", "id": "rating_format", "label": "Rating text", "info": "[rating] and [count] come from the product's review metafield.", "default": "[rating]/5 · [count] reviews" },
     { "type": "text", "id": "brand", "label": "Brand before the title", "default": "somna." },
-    { "type": "textarea", "id": "tagline", "label": "Tagline", "info": "Optional. Empty uses the product's PDP – Tagline metafield." },
-    { "type": "text", "id": "features", "label": "Hero feature handles", "info": "Optional. PDP feature entry handles separated by commas, e.g. sb-hero-nose-lips,sb-hero-90-nights. Empty uses the product's PDP – Hero features metafield." },
-    { "type": "text", "id": "price_night_label", "label": "Per-night text next to the price", "info": "Optional, e.g. \"/night for both\". Uses Nights per bag. Empty hides it." },
-    { "type": "text", "id": "savings_note", "label": "Note under the price", "info": "Optional. Empty hides it." },
-    { "type": "text", "id": "box_heading", "label": "What's in the box: heading", "default": "What's in the Box?" },
-    { "type": "product", "id": "box_product_1", "label": "What's in the box: product 1", "info": "Optional. Pick products to show the bundle contents." },
-    { "type": "text", "id": "box_note_1", "label": "What's in the box: note 1" },
-    { "type": "product", "id": "box_product_2", "label": "What's in the box: product 2" },
-    { "type": "text", "id": "box_note_2", "label": "What's in the box: note 2" },
-    { "type": "text", "id": "gifts_bar", "label": "Gifts bar under the box", "info": "Optional. Shown under the What's in the box cards." },
+    { "type": "text", "id": "box_heading", "label": "What's in the box: heading", "info": "Shown when the product has PDP – What's in the box products.", "default": "What's in the Box?" },
     { "type": "text", "id": "save_label", "label": "Save badge", "info": "[percent] is worked out from the compare-at price.", "default": "Save [percent]%" },
     { "type": "text", "id": "percent_suffix", "label": "Discount after the plan names", "default": " · [percent]% off" },
     { "type": "text", "id": "packs_label", "label": "Pack label", "default": "Choose Your Pack" },
@@ -1904,11 +1880,6 @@
     { "type": "select", "id": "wave_shape", "label": "Wave shape", "options": [{ "value": "drip-1", "label": "Drip 1" }, { "value": "drip-2", "label": "Drip 2" }, { "value": "drip-3", "label": "Drip 3" }, { "value": "drip-4", "label": "Drip 4" }, { "value": "drip-5", "label": "Drip 5" }, { "value": "drip-6", "label": "Drip 6" }, { "value": "drip-7", "label": "Drip 7" }, { "value": "drip-8", "label": "Drip 8" }, { "value": "drip-9", "label": "Drip 9" }, { "value": "drip-10", "label": "Drip 10" }, { "value": "drip-11", "label": "Drip 11" }, { "value": "soft-1", "label": "Soft 1" }, { "value": "soft-2", "label": "Soft 2" }, { "value": "sine", "label": "Rolling wave (animated)" }], "default": "drip-1" }
   ],
   "blocks": [
-    {
-      "type": "gallery_image",
-      "name": "Gallery image",
-      "settings": [{ "type": "image_picker", "id": "image", "label": "Image" }]
-    },
     {
       "type": "video",
       "name": "Video",
