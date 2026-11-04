@@ -537,7 +537,11 @@
           pairImgs.forEach((im, i) => {
             const r = im.getBoundingClientRect();
             const centre = r.left + r.width / 2;
-            const dx = i === 0 ? x - (centre - (this.product.getBoundingClientRect().left + this.product.getBoundingClientRect().width / 2)) : Math.max(160, v.right + 40 - centre);
+            const copy = this.closest('.somna-pdp-story__inner')?.querySelector('.somna-pdp-story__copy')?.getBoundingClientRect();
+            // tape: from just after the text (or 220px to the left); strip: from beyond the right edge of the visual
+            const dx = i === 0
+              ? Math.min(-140, copy && copy.right < r.left ? copy.right + 40 - r.left : -220)
+              : Math.max(160, v.right + 40 - centre);
             const delay = i * 200;
             add(im, [
               { transform: `translate3d(${dx}px, 0, 0) rotateY(0deg)`, opacity: 0, offset: 0 },
