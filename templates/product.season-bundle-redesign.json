@@ -6,6 +6,7 @@
         "drip_edges": true,
         "badge_text": "Up to 60% off",
         "sticker_text": "",
+        "gallery_layout": "below",
         "verified_label": "Verified Buyer",
         "videos_heading": "Real Nights, On Camera",
         "rating_format": "[rating]/5 · [count] reviews",
