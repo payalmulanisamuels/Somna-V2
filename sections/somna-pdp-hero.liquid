@@ -24,6 +24,16 @@
 {%- liquid
   assign mf = product.metafields.custom
   assign images = product.media | where: 'media_type', 'image'
+  # gallery images added in the template (blocks) come first; product photos follow unless switched off
+  assign gallery_blocks = section.blocks | where: 'type', 'gallery_image'
+  if gallery_blocks.size > 0
+    assign block_images = gallery_blocks | map: 'settings' | map: 'image' | compact
+    if s.gallery_product_images
+      assign images = block_images | concat: images
+    else
+      assign images = block_images
+    endif
+  endif
   assign first_image = images | first
   assign selected_index = s.selected_position | minus: 1
   assign current = product.selected_variant
@@ -1644,7 +1654,7 @@
 
     .somna-pdp-hero--gallery-below .somna-pdp-hero__thumbs {
       grid-auto-flow: column;
-      grid-auto-columns: minmax(0, 1fr);
+      grid-auto-columns: calc((100% - 32px) / 5);
       height: auto;
       min-height: 0;
       margin: 0;
@@ -1846,6 +1856,7 @@
     { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified Buyer" },
     { "type": "text", "id": "videos_heading", "label": "Videos heading", "default": "Real Nights, On Camera" },
     { "type": "text", "id": "play_label", "label": "Play label (screen readers)", "default": "Play video" },
+    { "type": "checkbox", "id": "gallery_product_images", "label": "Also show the product's own photos", "info": "Only applies when Gallery image blocks are added.", "default": true },
     { "type": "select", "id": "gallery_layout", "label": "Gallery layout", "options": [{ "value": "side", "label": "Thumbnails beside a portrait photo" }, { "value": "below", "label": "Thumbnails below a landscape photo" }], "default": "side" },
     { "type": "header", "content": "Buy panel" },
     { "type": "text", "id": "rating_format", "label": "Rating text", "info": "[rating] and [count] come from the product's review metafield.", "default": "[rating]/5 · [count] reviews" },
@@ -1893,6 +1904,11 @@
     { "type": "select", "id": "wave_shape", "label": "Wave shape", "options": [{ "value": "drip-1", "label": "Drip 1" }, { "value": "drip-2", "label": "Drip 2" }, { "value": "drip-3", "label": "Drip 3" }, { "value": "drip-4", "label": "Drip 4" }, { "value": "drip-5", "label": "Drip 5" }, { "value": "drip-6", "label": "Drip 6" }, { "value": "drip-7", "label": "Drip 7" }, { "value": "drip-8", "label": "Drip 8" }, { "value": "drip-9", "label": "Drip 9" }, { "value": "drip-10", "label": "Drip 10" }, { "value": "drip-11", "label": "Drip 11" }, { "value": "soft-1", "label": "Soft 1" }, { "value": "soft-2", "label": "Soft 2" }, { "value": "sine", "label": "Rolling wave (animated)" }], "default": "drip-1" }
   ],
   "blocks": [
+    {
+      "type": "gallery_image",
+      "name": "Gallery image",
+      "settings": [{ "type": "image_picker", "id": "image", "label": "Image" }]
+    },
     {
       "type": "video",
       "name": "Video",

@@ -58,7 +58,9 @@
         endif
       -%}
       <a class="somna-pdp-pair__card" href="{{ pair.url }}">
-        {%- if pair.featured_image -%}{{ pair.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: pair.featured_image.alt | default: pair.title, widths: '300, 450, 600', sizes: '(min-width: 750px) 185px, 60vw' }}{%- endif -%}
+        {%- assign card_image = s.card_image | default: pair.featured_image -%}
+        {%- if s.card_style == 'wide' -%}{%- assign sizes_attr = '(min-width: 750px) 488px, 90vw' -%}{%- else -%}{%- assign sizes_attr = '(min-width: 750px) 185px, 60vw' -%}{%- endif -%}
+        {%- if card_image -%}{{ card_image | image_url: width: 1000 | image_tag: loading: 'lazy', alt: card_image.alt | default: pair.title, widths: '300, 450, 600, 800, 1000', sizes: sizes_attr }}{%- endif -%}
         <span class="somna-pdp-pair__name">{{ pair.title }}</span>
         {%- if s.card_note != blank -%}<span class="somna-pdp-pair__note">{{ s.card_note }}</span>{%- endif -%}
         {%- capture from_money -%}{{ from_price | money }}{%- endcapture -%}
@@ -436,6 +438,7 @@
     { "type": "text", "id": "heading", "label": "Heading before the product name", "default": "Pair it with" },
     { "type": "text", "id": "heading_accent", "label": "Accent line", "info": "Optional. Replaces the product name in the heading." },
     { "type": "text", "id": "card_note", "label": "Line under the product name", "info": "Optional." },
+    { "type": "image_picker", "id": "card_image", "label": "Card image", "info": "Optional. Empty uses the product's featured image." },
     { "type": "select", "id": "card_style", "label": "Card style", "options": [{ "value": "compact", "label": "Compact (portrait photo)" }, { "value": "wide", "label": "Wide (landscape photo)" }], "default": "compact" },
     { "type": "text", "id": "from_label", "label": "Price line", "info": "[price] is the lowest price, subscription included.", "default": "From [price]" },
     { "type": "text", "id": "sub_note", "label": "Subscription note", "default": "Subscribe & Save" },
