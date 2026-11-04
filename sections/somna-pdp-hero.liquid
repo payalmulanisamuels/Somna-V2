@@ -1804,6 +1804,27 @@
       margin-left: 0;
     }
   }
+
+  /* small laptops / tablets: the panel is too narrow for two cards side by side, so they stack */
+  @media screen and (min-width: 750px) and (max-width: 1199px) {
+    .somna-pdp-hero__box-list {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 26px;
+    }
+
+    .somna-pdp-hero__box-item + .somna-pdp-hero__box-item::before {
+      top: -13px;
+      left: 50%;
+    }
+
+    .somna-pdp-hero__box-card {
+      min-height: 72px;
+    }
+
+    .somna-pdp-hero__box-thumb {
+      width: 72px;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
