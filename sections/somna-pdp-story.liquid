@@ -17,6 +17,10 @@
     assign product = all_products[s.preview_product.handle]
   endif
   assign key = 'pdp_' | append: s.layout
+  # "after the steps" reads its own field (Color Set: Figma puts What it's made of after the steps)
+  if s.layout == 'layers' and s.layers_mode == 'after'
+    assign key = 'pdp_layers_after'
+  endif
   assign c = product.metafields.custom[key].value
 
   # per-product look, set on the content entry ("Style"): Side by side (problem) or Lavender (steps)
@@ -41,7 +45,11 @@
   assign related = c.related.value
   assign layout_class = s.layout
   if s.layout == 'layers'
-    if s.layers_mode == 'pair'
+    if s.layers_mode == 'after'
+      if related != blank
+        assign c = nil
+      endif
+    elsif s.layers_mode == 'pair'
       if related == blank
         assign c = nil
       else
@@ -1802,7 +1810,7 @@
     { "type": "color", "id": "card_color", "label": "Pills and icon colour", "default": "#f3feee" },
     { "type": "color", "id": "card_text_color", "label": "Icon circle", "default": "#000000" },
     { "type": "color", "id": "button_color", "label": "Button", "default": "#afbdf8" },
-    { "type": "select", "id": "layers_mode", "label": "What it's made of: show", "options": [{ "value": "single", "label": "One product" }, { "value": "pair", "label": "Products side by side" }], "default": "single", "visible_if": "{{ section.settings.layout == 'layers' }}", "info": "Side by side = entries with Products in this section (bundles)." },
+    { "type": "select", "id": "layers_mode", "label": "What it's made of: show", "options": [{ "value": "single", "label": "One product" }, { "value": "pair", "label": "Products side by side" }, { "value": "after", "label": "One product, after the steps" }], "default": "single", "visible_if": "{{ section.settings.layout == 'layers' }}", "info": "Side by side = entries with Products in this section (bundles). After the steps reads PDP – What it's made of (after steps)." },
     { "type": "header", "content": "Lavender style", "info": "Used when the product's content entry has Style = Lavender." },
     { "type": "color", "id": "alt_background_color", "label": "Background", "default": "#afbdf8" },
     { "type": "color", "id": "alt_accent_color", "label": "Heading accent", "default": "#f3feee" },

@@ -67,6 +67,28 @@
     assign compare = 0
   endif
 
+  # products with a Color option plus a size option (Sleep Bundle): colour swatches + one pack per size
+  assign color_option = nil
+  assign color_idx = -1
+  assign size_idx = 0
+  if product.options_with_values.size == 2
+    for o in product.options_with_values
+      assign oname = o.name | downcase | strip
+      if oname == 'color' or oname == 'colour'
+        assign color_option = o
+        assign color_idx = forloop.index0
+      endif
+    endfor
+    if color_idx == 0
+      assign size_idx = 1
+    endif
+  endif
+  assign current_color = ''
+  if color_option
+    assign current_color = current.options[color_idx]
+  endif
+  assign hero_sticker = mf.pdp_hero_sticker.value | default: s.sticker_text
+
   assign rating = ''
   assign rating_count = ''
   assign rating_raw = mf.custom_review_rating_review_count.value | strip_html | strip
@@ -94,12 +116,14 @@
   data-price-nights="{{ price_nights }}"
   data-night-label="{{ mf.pdp_night_label.value | escape }}"
   data-gift-min="{{ s.gift_min_bags }}"
+  data-color-index="{{ color_idx }}"
+  data-size-index="{{ size_idx }}"
   style="--somna-pdp-bg: {{ s.background_color }}; --somna-panel: {{ s.panel_color }}; --somna-mint: {{ s.mint_color }}; --somna-chip: {{ s.chip_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
 >
   <script type="application/json" data-variants>
     [
     {%- for v in product.variants -%}
-      { "id": {{ v.id }}, "title": {{ v.title | json }}, "available": {{ v.available | json }}, "price": {{ v.price }}, "compare": {{ v.compare_at_price | default: 0 }}, "plans": [
+      { "id": {{ v.id }}, "title": {{ v.title | json }}, "options": {{ v.options | json }}, "image": {% if v.featured_media %}{{ v.featured_media | image_url: width: 1100 | json }}{% else %}null{% endif %}, "available": {{ v.available | json }}, "price": {{ v.price }}, "compare": {{ v.compare_at_price | default: 0 }}, "plans": [
         {%- for a in v.selling_plan_allocations -%}{ "id": {{ a.selling_plan.id }}, "price": {{ a.price }} }{% unless forloop.last %},{% endunless %}{%- endfor -%}
       ] }{% unless forloop.last %},{% endunless %}
     {%- endfor -%}
@@ -127,7 +151,7 @@
       </div>
 
       {%- if s.badge_text != blank -%}<p class="somna-pdp-hero__badge{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}"><span>{{ s.badge_text }}</span></p>{%- endif -%}
-      {%- if s.sticker_text != blank -%}<p class="somna-pdp-hero__sticker{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}" style="--somna-shake-delay: 0.7s;">{{ s.sticker_text }}</p>{%- endif -%}
+      {%- if hero_sticker != blank -%}<p class="somna-pdp-hero__sticker{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}" style="--somna-shake-delay: 0.7s;">{{ hero_sticker }}</p>{%- endif -%}
     </div>
 
     <div class="somna-pdp-hero__side">
@@ -240,6 +264,8 @@
 
       {%- assign box_products = mf.pdp_box_products.value -%}
       {%- assign box_notes = mf.pdp_box_notes.value -%}
+      {%- assign box_titles = mf.pdp_box_titles.value -%}
+      {%- assign box_colors = mf.pdp_box_colors.value -%}
       {%- if box_products != blank -%}
         <div class="somna-pdp-hero__box">
           {%- if s.box_heading != blank -%}<h2 class="somna-pdp-hero__box-title">{{ s.box_heading }}</h2>{%- endif -%}
@@ -251,8 +277,14 @@
                   <a class="somna-pdp-hero__box-card" href="{{ bp.url }}">
                     {%- if bp.featured_image -%}{{ bp.featured_image | image_url: width: 180, height: 180, crop: 'center' | image_tag: loading: 'lazy', alt: '', width: 86, height: 92, class: 'somna-pdp-hero__box-thumb' }}{%- endif -%}
                     <span class="somna-pdp-hero__box-text">
-                      <span class="somna-pdp-hero__box-name">{{ bp.title }}</span>
-                      {%- if bnote != blank -%}<span class="somna-pdp-hero__box-note">{{ bnote }} <span aria-hidden="true">→</span></span>{%- endif -%}
+                      <span class="somna-pdp-hero__box-name">{{ box_titles[forloop.index0] | default: bp.title }}</span>
+                      {%- if bnote != blank -%}<span class="somna-pdp-hero__box-note">{{ bnote }}{% if box_colors == blank %} <span aria-hidden="true">→</span>{% endif %}</span>{%- endif -%}
+                      {%- if forloop.first and box_colors != blank -%}
+                        <span class="somna-pdp-hero__box-colors">
+                          {%- if s.box_colors_label != blank -%}<span>{{ s.box_colors_label }}</span>{%- endif -%}
+                          {%- for c in box_colors -%}<span class="somna-pdp-hero__box-color"><span class="somna-pdp-hero__dot" style="--somna-dot: {% render 'somna-swatch-color', name: c %};" aria-hidden="true"></span>{{ c }}</span>{%- endfor -%}
+                        </span>
+                      {%- endif -%}
                     </span>
                   </a>
                 </li>
@@ -267,26 +299,48 @@
         <input type="hidden" name="id" value="{{ current.id }}" data-id>
         <input type="hidden" name="selling_plan" value="{% if mode == 'sub' and alloc %}{{ alloc.selling_plan.id }}{% endif %}" data-plan-input>
 
+        {%- if color_option -%}
+          <fieldset class="somna-pdp-hero__colors">
+            <legend><span>{{ color_option.name }}</span> : <span data-color-name>{{ current_color }}</span></legend>
+            <div class="somna-pdp-hero__swatches">
+              {%- for val in color_option.values -%}
+                {%- capture sw -%}{%- if val.swatch.color -%}{{ val.swatch.color }}{%- else -%}{% render 'somna-swatch-color', name: val.name %}{%- endif -%}{%- endcapture -%}
+                <label class="somna-pdp-hero__swatch" style="--somna-dot: {{ sw | strip }};">
+                  <input type="radio" name="{{ section.id }}-color" value="{{ val.name | escape }}" data-color{% if val.name == current_color %} checked{% endif %}>
+                  <span class="visually-hidden">{{ val.name }}</span>
+                </label>
+              {%- endfor -%}
+            </div>
+          </fieldset>
+        {%- endif -%}
+
         <fieldset class="somna-buy__packs somna-pdp-hero__packs"{% if product.has_only_default_variant %} hidden{% endif %}>
           <legend>{{ s.packs_label }}</legend>
           <div class="somna-buy__pack-list">
+            {%- assign pack_n = 0 -%}
             {%- for v in product.variants -%}
+              {%- if color_option and v.options[color_idx] != current_color -%}{%- continue -%}{%- endif -%}
+              {%- assign pack_n = pack_n | plus: 1 -%}
               {%- liquid
+                assign v_name = v.title
+                if color_option
+                  assign v_name = v.options[size_idx]
+                endif
                 assign v_alloc = v.selling_plan_allocations | first
                 if mode == 'sub' and v_alloc
                   assign v_price = v_alloc.price
                 else
                   assign v_price = v.price
                 endif
-                assign bags = v.title | split: ' ' | first | plus: 0
+                assign bags = v_name | split: ' ' | first | plus: 0
                 if bags < 1
                   assign bags = 1
                 endif
               -%}
               <label class="somna-buy__pack{% unless v.available %} is-sold-out{% endunless %}">
-                {%- if forloop.index == s.badge_position and s.badge_label != blank -%}<span class="somna-buy__pack-badge">{{ s.badge_label }}</span>{%- endif -%}
-                <input type="radio" name="{{ section.id }}-pack" value="{{ forloop.index0 }}" data-pack{% if v.id == current.id %} checked{% endif %}{% unless v.available %} disabled{% endunless %}>
-                <span class="somna-buy__pack-name">{{ v.title }}</span>
+                {%- if pack_n == s.badge_position and s.badge_label != blank -%}<span class="somna-buy__pack-badge">{{ s.badge_label }}</span>{%- endif -%}
+                <input type="radio" name="{{ section.id }}-pack" value="{{ forloop.index0 }}" data-pack{% if color_option %} data-size="{{ v_name | escape }}"{% endif %}{% if v.id == current.id %} checked{% endif %}{% unless v.available %} disabled{% endunless %}>
+                <span class="somna-buy__pack-name">{{ v_name }}</span>
                 <span class="somna-buy__pack-price" data-pack-price>{{ v_price | money }}</span>
                 {%- assign v_compare = v.compare_at_price | default: 0 -%}
                 {%- if v_price < v.price and v.price > v_compare -%}{%- assign v_compare = v.price -%}{%- endif -%}
@@ -339,6 +393,22 @@
           {%- endfor -%}
         </ul>
       {%- endif -%}
+
+      {%- comment -%} upgrade card: product + wording from the product's "PDP – Upgrade card" fields {%- endcomment -%}
+      {%- assign upsell = mf.pdp_upsell_product.value -%}
+      {%- if upsell != blank and upsell.id != product.id -%}
+        <div class="somna-pdp-hero__upsell">
+          {%- if mf.pdp_upsell_label != blank -%}<p class="somna-pdp-hero__upsell-label">{{ mf.pdp_upsell_label.value }}</p>{%- endif -%}
+          <a class="somna-pdp-hero__upsell-card" href="{{ upsell.url }}">
+            {%- if upsell.featured_image -%}{{ upsell.featured_image | image_url: width: 260, height: 190, crop: 'center' | image_tag: loading: 'lazy', alt: '', width: 120, height: 88, class: 'somna-pdp-hero__upsell-thumb' }}{%- endif -%}
+            <span class="somna-pdp-hero__upsell-text">
+              <span class="somna-pdp-hero__upsell-title">{{ mf.pdp_upsell_heading.value | default: upsell.title }}</span>
+              {%- if mf.pdp_upsell_text != blank -%}<span class="somna-pdp-hero__upsell-desc">{{ mf.pdp_upsell_text.value }}</span>{%- endif -%}
+            </span>
+            <span class="somna-pdp-hero__upsell-button">{{ mf.pdp_upsell_button.value | default: s.upsell_button }} <span aria-hidden="true">→</span></span>
+          </a>
+        </div>
+      {%- endif -%}
     </div>
   </div>
 
@@ -371,6 +441,8 @@
         this.planSelect = this.querySelector('[data-plan]');
         this.nights = Number(this.dataset.nights) || 0;
         this.giftMin = Number(this.dataset.giftMin) || 99;
+        this.ci = Number(this.dataset.colorIndex);
+        this.si = Number(this.dataset.sizeIndex) || 0;
         this.labels = { add: {{ s.add_label | json }}, soldOut: {{ s.sold_out_label | json }}, added: {{ s.added_label | json }}, error: {{ s.error_label | json }}, night: {{ s.night_label | json }}, save: {{ s.save_label | json }}, pct: {{ s.percent_suffix | json }} };
         this.money = (c) => somnaMoney(c, this.dataset.currency, this.dataset.locale);
         this.addEventListener('change', this.onChange);
@@ -438,9 +510,29 @@
         add.disabled = !v.available;
         q('[data-add-label]').textContent = v.available ? `${this.labels.add} · ${this.money(price)}` : this.labels.soldOut;
       }
+      // colour swatches: point every pack at the variant with that colour and its size, then show that colour's photo
+      setColor(color) {
+        this.querySelectorAll('[data-pack]').forEach((input) => {
+          const i = this.variants.findIndex((x) => x.options[this.ci] === color && x.options[this.si] === input.dataset.size);
+          if (i > -1) { input.value = i; input.disabled = !this.variants[i].available; input.closest('label').classList.toggle('is-sold-out', !this.variants[i].available); }
+        });
+        const checked = this.querySelector('[data-pack]:checked') || this.querySelector('[data-pack]');
+        if (checked) this.v = Number(checked.value);
+        const name = this.querySelector('[data-color-name]');
+        if (name) name.textContent = color;
+        const v = this.variants[this.v];
+        const img = this.querySelector('[data-main]');
+        if (img && v && v.image) {
+          img.removeAttribute('srcset');
+          img.src = v.image;
+          this.querySelectorAll('[data-media]').forEach((b) => b.setAttribute('aria-current', 'false'));
+        }
+        this.update();
+      }
       onChange = (e) => {
         const t = e.target;
         if (t.matches('[data-pack]')) { this.v = Number(t.value); this.update(); }
+        else if (t.matches('[data-color]')) this.setColor(t.value);
         else if (t.matches('[data-mode-input]')) { this.mode = t.value; this.update(); }
         else if (t.matches('[data-plan]')) { this.mode = 'sub'; this.update(); }
       };
@@ -1783,6 +1875,196 @@
     text-transform: uppercase;
   }
 
+  /* one product in the box (Color Set): the card takes the full row */
+  .somna-pdp-hero__box-list:has(> :only-child) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .somna-pdp-hero__box-colors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    align-items: center;
+    margin-top: 2px;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+  }
+
+  .somna-pdp-hero__box-color {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    letter-spacing: 0;
+  }
+
+  .somna-pdp-hero__dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--somna-dot);
+  }
+
+  /* colour swatches (Sleep Bundle) */
+  .somna-pdp-hero__colors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .somna-pdp-hero__colors legend {
+    float: left;
+    padding: 0;
+    color: #f3feee;
+    font-size: clamp(1.25rem, 1.75vw, 1.5rem);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .somna-pdp-hero__swatches {
+    display: flex;
+    gap: 18px;
+  }
+
+  .somna-pdp-hero__swatch {
+    position: relative;
+    display: block;
+    width: 56px;
+    height: 56px;
+    border: 1px solid rgb(255 255 255 / 0.6);
+    border-radius: 50%;
+    background: var(--somna-dot);
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+  }
+
+  .somna-pdp-hero__swatch input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .somna-pdp-hero__swatch:has(input:checked) {
+    box-shadow: 0 0 0 3px #0b0f1d, 0 0 0 5px var(--somna-mint);
+  }
+
+  .somna-pdp-hero__swatch:has(input:focus-visible) {
+    outline: 2px solid var(--somna-chip);
+    outline-offset: 6px;
+  }
+
+  /* upgrade card under the perks (Color Set "Add the tape?", Sleep Bundle "Go for 90 nights?") */
+  .somna-pdp-hero__upsell {
+    display: grid;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .somna-pdp-hero__upsell-label {
+    margin: 0;
+    color: #f3feee;
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .somna-pdp-hero__upsell-card {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    padding: 10px 16px 10px 10px;
+    border: 1px solid rgb(255 255 255 / 0.22);
+    border-radius: 6px;
+    background: #2e3134;
+    color: #f3feee;
+    text-decoration: none;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+
+  .somna-pdp-hero__upsell-card:hover {
+    border-color: var(--somna-chip);
+    background: #383c40;
+  }
+
+  .somna-pdp-hero__upsell-card:focus-visible {
+    outline: 2px solid var(--somna-chip);
+    outline-offset: 2px;
+  }
+
+  .somna-pdp-hero__upsell-thumb {
+    flex: none;
+    width: 120px;
+    height: 88px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
+  .somna-pdp-hero__upsell-text {
+    display: grid;
+    flex: 1;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .somna-pdp-hero__upsell-title {
+    font-size: clamp(1.125rem, 1.7vw, 1.5rem);
+    font-weight: 500;
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+
+  .somna-pdp-hero__upsell-desc {
+    color: #9a9a9a;
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
+  .somna-pdp-hero__upsell-button {
+    flex: none;
+    padding: 22px 26px;
+    border-radius: 12px;
+    background: var(--somna-chip);
+    color: #000;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 1199px) {
+    .somna-pdp-hero__upsell-card {
+      flex-wrap: wrap;
+    }
+
+    .somna-pdp-hero__upsell-thumb {
+      width: 88px;
+      height: 72px;
+    }
+
+    .somna-pdp-hero__upsell-text {
+      flex-basis: calc(100% - 104px);
+    }
+
+    .somna-pdp-hero__upsell-button {
+      flex: 1;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .somna-pdp-hero__swatch {
+      width: 44px;
+      height: 44px;
+    }
+  }
+
   @media screen and (min-width: 990px) and (max-width: 1299px) {
     .somna-pdp-hero__box-list {
       gap: 24px;
@@ -1836,7 +2118,7 @@
     { "type": "checkbox", "id": "drip_edges", "label": "Drippy edges", "default": true },
     { "type": "header", "content": "Gallery" },
     { "type": "text", "id": "badge_text", "label": "Round badge", "default": "Up to 60% off" },
-    { "type": "text", "id": "sticker_text", "label": "Sticker on the image", "default": "Bestseller" },
+    { "type": "text", "id": "sticker_text", "label": "Sticker on the image", "info": "A product's PDP – Image sticker replaces it.", "default": "Bestseller" },
     { "type": "select", "id": "badge_motion", "label": "Badge and sticker animation", "info": "A short shake every few seconds. Off for visitors who prefer reduced motion.", "options": [{ "value": "none", "label": "None" }, { "value": "wiggle", "label": "Wiggle" }, { "value": "swing", "label": "Tilt-swing" }, { "value": "pop", "label": "Pop-jiggle" }], "default": "pop" },
     { "type": "select", "id": "rating_source", "label": "Rating line from", "options": [{ "value": "metafield", "label": "Product rating metafield" }, { "value": "judgeme", "label": "Judge.me (same numbers as the Reviews section)" }], "default": "metafield", "info": "Judge.me falls back to the metafield when the product has no reviews." },
     { "type": "checkbox", "id": "quote_from_judgeme", "label": "Quote card: use a Judge.me review when the product has no Hero quote", "info": "Picks a short, named 5★ review of this product.", "default": true },
@@ -1848,6 +2130,8 @@
     { "type": "text", "id": "rating_format", "label": "Rating text", "info": "[rating] and [count] come from the product's review metafield.", "default": "[rating]/5 · [count] reviews" },
     { "type": "text", "id": "brand", "label": "Brand before the title", "default": "somna." },
     { "type": "text", "id": "box_heading", "label": "What's in the box: heading", "info": "Shown when the product has PDP – What's in the box products.", "default": "What's in the Box?" },
+    { "type": "text", "id": "box_colors_label", "label": "What's in the box: colours text", "info": "Before the colour dots (PDP – What's in the box colours).", "default": "Strip colors in this set:" },
+    { "type": "text", "id": "upsell_button", "label": "Upgrade card: button", "info": "Used when the product's PDP – Upgrade card: button is empty.", "default": "Upgrade" },
     { "type": "text", "id": "save_label", "label": "Save badge", "info": "[percent] is worked out from the compare-at price.", "default": "Save [percent]%" },
     { "type": "text", "id": "percent_suffix", "label": "Discount after the plan names", "default": " · [percent]% off" },
     { "type": "text", "id": "packs_label", "label": "Pack label", "default": "Choose Your Pack" },

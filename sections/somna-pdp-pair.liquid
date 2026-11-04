@@ -38,6 +38,7 @@
         {%- else -%}
           <h2 class="somna-pdp-pair__heading">{{ s.heading }} <span>{{ pair.title }}</span></h2>
         {%- endif -%}
+        {%- if mf.pdp_pair_text != blank -%}<p class="somna-pdp-pair__text">{{ mf.pdp_pair_text.value | newline_to_br }}</p>{%- endif -%}
         <svg class="somna-pdp-pair__arrow" viewBox="0 0 180 140" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="somna-pdp-pair__arrow-line" pathLength="420" d="M8 4c-4 46 8 96 66 106 26 4 48-6 48-24 0-17-22-22-30-8-10 18 18 34 82 24"/><path class="somna-pdp-pair__arrow-head" d="M158 88l18 14-22 10" fill="currentColor"/></svg>
       {%- endif -%}
 
@@ -90,6 +91,14 @@
   .somna-pdp-pair {
     background: var(--somna-pair-bg);
     color: #0b0f1d;
+  }
+
+  .somna-pdp-pair__text {
+    max-width: 30em;
+    margin: 4px 0 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25;
   }
 
   .somna-pdp-pair__inner {
