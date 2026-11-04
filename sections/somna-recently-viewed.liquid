@@ -36,16 +36,30 @@
     style="--somna-rv-bg: {{ s.background_color }}; --somna-rv-card: {{ s.card_color }}; --somna-rv-button: {{ s.button_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
   >
     <div class="somna-rv__inner somna-container">
-      {%- if s.eyebrow != blank -%}<p class="somna-rv__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
-      {%- if s.heading != blank -%}<h2 class="somna-rv__heading">{{ s.heading }}</h2>{%- endif -%}
-      <ul class="somna-rv__list" role="list" data-list></ul>
+      <div class="somna-rv__head">
+        <div>
+          {%- if s.eyebrow != blank -%}<p class="somna-rv__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
+          {%- if s.heading != blank -%}<h2 class="somna-rv__heading">{{ s.heading }}</h2>{%- endif -%}
+        </div>
+        {%- comment -%} arrows show only when the cards don't all fit (desktop/tablet); phones swipe {%- endcomment -%}
+        <div class="somna-rv__nav" data-nav hidden>
+          <button type="button" class="somna-rv__arrow" data-prev aria-controls="SomnaRVList-{{ section.id }}" aria-label="{{ s.prev_label | escape }}" disabled>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" class="somna-rv__arrow" data-next aria-controls="SomnaRVList-{{ section.id }}" aria-label="{{ s.next_label | escape }}">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <ul class="somna-rv__list" id="SomnaRVList-{{ section.id }}" role="list" data-list></ul>
     </div>
   </div>
 
   <script>
     (function () {
       var root = document.getElementById('SomnaRV-{{ section.id }}');
-      if (!root) return;
+      if (!root || root.dataset.ready) return;
+      root.dataset.ready = '1';
       var key = {{ key | json }};
       var threshold = {{ s.threshold }};
       var max = {{ s.max_products }};
@@ -57,6 +71,35 @@
       list = list.slice(0, max);
 
       var ul = root.querySelector('[data-list]');
+
+      // Slider: native horizontal scroll (touch swipe, trackpad) plus prev/next arrows that move by the number of
+      // whole cards in view, measured from the real card width and gap. Arrows hide when everything fits.
+      var nav = root.querySelector('[data-nav]');
+      var prev = root.querySelector('[data-prev]');
+      var next = root.querySelector('[data-next]');
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var step = function () {
+        var card = ul.querySelector('.somna-rv__card');
+        var gap = parseFloat(getComputedStyle(ul).columnGap) || 0;
+        if (!card) return ul.clientWidth;
+        var w = card.getBoundingClientRect().width + gap;
+        return Math.max(1, Math.floor((ul.clientWidth + gap) / w)) * w;
+      };
+      var update = function () {
+        var max = ul.scrollWidth - ul.clientWidth;
+        nav.hidden = max <= 2;
+        prev.disabled = ul.scrollLeft <= 2;
+        next.disabled = ul.scrollLeft >= max - 2;
+      };
+      var queued = false;
+      ul.addEventListener('scroll', function () {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(function () { queued = false; update(); });
+      }, { passive: true });
+      prev.addEventListener('click', function () { ul.scrollBy({ left: -step(), behavior: reduce ? 'auto' : 'smooth' }); });
+      next.addEventListener('click', function () { ul.scrollBy({ left: step(), behavior: reduce ? 'auto' : 'smooth' }); });
+      if (window.ResizeObserver) new ResizeObserver(update).observe(ul);
       var labels = { from: {{ s.price_prefix | json }}, sub: {{ s.subscribe_label | json }}, cta: {{ s.button_label | json }} };
       // Reserve the space before the request finishes so nothing below jumps.
       ul.innerHTML = list.map(function () { return '<li class="somna-rv__card is-loading" aria-hidden="true"><span class="somna-rv__media"></span></li>'; }).join('');
@@ -91,6 +134,8 @@
             '<a class="somna-rv__button" href="' + esc(p.url) + '">' + esc(labels.cta) + '<span class="visually-hidden">: ' + esc(p.title) + '</span></a>' +
           '</li>';
         }).join('');
+        ul.scrollLeft = 0;
+        update();
       });
     })();
   </script>
@@ -114,6 +159,53 @@
     text-transform: uppercase;
   }
 
+  .somna-rv__head {
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .somna-rv__nav {
+    display: flex;
+    flex: none;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .somna-rv__nav[hidden] {
+    display: none;
+  }
+
+  .somna-rv__arrow {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 2px solid #f3feee;
+    border-radius: 50%;
+    background: transparent;
+    color: #f3feee;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+  }
+
+  .somna-rv__arrow:hover:not(:disabled) {
+    background: #f3feee;
+    color: #0b0f1d;
+  }
+
+  .somna-rv__arrow:focus-visible {
+    outline: 2px solid var(--somna-rv-button);
+    outline-offset: 3px;
+  }
+
+  .somna-rv__arrow:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
   .somna-rv__heading {
     margin: 0 0 20px;
     font-family: var(--font-accent--family);
@@ -132,6 +224,7 @@
     padding: 0 0 8px;
     list-style: none;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
   }
@@ -140,7 +233,10 @@
     display: none;
   }
 
+  /* position: relative keeps each card's screen-reader label inside the scrolling list
+     (without it those labels stretched the whole page sideways on phones and tablets) */
   .somna-rv__card {
+    position: relative;
     display: flex;
     flex-direction: column;
     scroll-snap-align: start;
@@ -219,6 +315,13 @@
       animation: none;
     }
   }
+
+  /* phones keep the existing swipe-only layout */
+  @media screen and (max-width: 749px) {
+    .somna-rv__nav {
+      display: none;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -289,6 +392,8 @@
       "label": "Button label",
       "default": "Shop now"
     },
+    { "type": "text", "id": "prev_label", "label": "Previous arrow (screen readers)", "default": "Previous products" },
+    { "type": "text", "id": "next_label", "label": "Next arrow (screen readers)", "default": "Next products" },
     {
       "type": "color",
       "id": "background_color",
