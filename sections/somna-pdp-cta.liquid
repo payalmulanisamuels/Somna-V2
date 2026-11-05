@@ -389,22 +389,27 @@
       margin-top: 18px;
     }
 
-    /* Figma: a ~300px button, not full width */
+    /* compact on phones: a ~260px button and a smaller product picture */
     .somna-pdp-cta__button {
       width: auto;
-      min-width: min(100%, 300px);
-      min-height: 56px;
-      border-radius: 14px;
-      font-size: 1.0625rem;
+      min-width: min(100%, 260px);
+      min-height: 48px;
+      padding: 0 24px;
+      border-radius: 12px;
+      font-size: 0.9375rem;
     }
 
     .somna-pdp-cta__media {
-      width: 240px;
+      width: min(180px, 48vw);
+    }
+
+    .somna-pdp-cta__media:has(.somna-pdp-cta__product--pair) {
+      width: min(260px, 68vw);
     }
 
     .somna-pdp-cta__sticker {
-      left: -18%;
-      font-size: 0.6875rem;
+      left: -22%;
+      font-size: 0.625rem;
     }
   }
 {% endstylesheet %}

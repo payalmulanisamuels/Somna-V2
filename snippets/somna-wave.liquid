@@ -18,6 +18,7 @@
   @param {boolean} [flip] - mirror horizontally
   @param {boolean} [drops] - show the small drops (default true)
   @param {boolean} [animate] - rolling motion (default true)
+  @param {boolean} [mobile_full] - Figma shapes: show the whole shape on phones (a shallow, many-crest wave) instead of its enlarged middle
   @param {number} [height] - K2 only: maximum height in px on large screens (default 140)
   @param {number} [height_mobile] - K2 only: minimum height in px on small screens (default 48)
   @param {number} [roll] - seconds for one wave length to roll past (default 8)
@@ -87,6 +88,9 @@
     endif
     if overlap
       assign classes = classes | append: ' somna-wave--overlap'
+    endif
+    if mobile_full
+      assign classes = classes | append: ' somna-wave--mobile-full'
     endif
   -%}
   <div
@@ -261,6 +265,14 @@
 
     .somna-wave--shape.somna-wave--overlap {
       margin-block-end: calc(var(--somna-wave-units) * 100vw / -560);
+    }
+
+    .somna-wave--shape.somna-wave--mobile-full svg {
+      --somna-wave-u: calc(100cqi / 1440);
+    }
+
+    .somna-wave--shape.somna-wave--mobile-full.somna-wave--overlap {
+      margin-block-end: calc(var(--somna-wave-units) * 100vw / -1440);
     }
   }
 {% endstylesheet %}
