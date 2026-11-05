@@ -375,11 +375,11 @@
       transition: grid-template-columns 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .somna-match__cards[data-active='0'] {
+    .somna-match__cards[data-active='0']:has(> .somna-match__card:nth-child(2):last-child) {
       grid-template-columns: 1.55fr 1fr;
     }
 
-    .somna-match__cards[data-active='1'] {
+    .somna-match__cards[data-active='1']:has(> .somna-match__card:nth-child(2):last-child) {
       grid-template-columns: 1fr 1.55fr;
     }
 
