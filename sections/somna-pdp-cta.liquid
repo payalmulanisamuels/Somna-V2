@@ -278,10 +278,12 @@
     height: auto;
   }
 
-  /* tape + strip side by side (bundles) */
+  /* tape + strip side by side (bundles, Figma 4654:113): the tape picture is mirrored and turned so it
+     leans like the Figma tape, the strip stands close beside it, bottoms level */
   .somna-pdp-cta__product--pair {
     display: flex;
     align-items: flex-end;
+    justify-content: center;
   }
 
   .somna-pdp-cta__media:has(.somna-pdp-cta__product--pair) {
@@ -289,13 +291,15 @@
   }
 
   .somna-pdp-cta__product--pair img {
-    width: 58%;
-    min-width: 0;
+    flex: none;
+    width: 54%;
+    transform: scaleX(-1) rotate(-10deg);
   }
 
   .somna-pdp-cta__product--pair img + img {
-    width: 46%;
-    margin-left: -4%;
+    width: 42%;
+    margin-left: -16%;
+    transform: none;
   }
 
   .somna-pdp-cta__sticker {
