@@ -208,19 +208,20 @@
           {%- assign photo_handles = photo_handles | append: ',' | append: bp.handle -%}
         {%- endfor -%}
         {%- assign photo_handles = photo_handles | split: ',' -%}
-        {%- for ph in photo_handles -%}
-          {%- assign src_data = all_products[ph].metafields.judgeme.review_widget_data.value -%}
-          <!-- rv-photos {{ ph }} {{ src_data.photo_gallery.size }} -->
-          {%- for rv in src_data.photo_gallery -%}
-            {%- for pic in rv.pictures_urls -%}
-              {%- if photo_count >= s.gallery_limit -%}{%- break -%}{%- endif -%}
+        {%- comment -%} take one photo from each product in turn (Season Bundle: Strips, Tape, Strips, Tape…) {%- endcomment -%}
+        {%- for i in (0..11) -%}
+          {%- for ph in photo_handles -%}
+            {%- if photo_count >= s.gallery_limit -%}{%- break -%}{%- endif -%}
+            {%- assign photo_rv = all_products[ph].metafields.judgeme.review_widget_data.value.photo_gallery[i] -%}
+            {%- assign pic = photo_rv.pictures_urls | first -%}
+            {%- if pic -%}
               {%- assign pic_src = pic.original | default: pic.huge | split: '&width=' | first -%}
               {%- unless jm_photos contains pic_src -%}
-                {%- assign rv_first = rv.reviewer_name | split: ' ' | first | replace: '|', '' | replace: '^', '' -%}
+                {%- assign rv_first = photo_rv.reviewer_name | split: ' ' | first | replace: '|', '' | replace: '^', '' -%}
                 {%- assign jm_photos = jm_photos | append: pic_src | append: '|' | append: rv_first | append: '^' -%}
                 {%- assign photo_count = photo_count | plus: 1 -%}
               {%- endunless -%}
-            {%- endfor -%}
+            {%- endif -%}
           {%- endfor -%}
         {%- endfor -%}
       {%- endif -%}
