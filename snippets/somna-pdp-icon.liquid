@@ -21,7 +21,7 @@
 {%- endif -%}
 {%- if variant == 'figma' and key == 'sits-outside' -%}
 {%- comment -%} Sits outside: a nose in profile with arrows pointing outward (supplied artwork, redrawn as strokes) {%- endcomment -%}
-<svg class="somna-pdp-icon somna-pdp-icon--figma {{ class }}" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path stroke-width="2" d="M32 18c0 7-3.5 11-5.2 14.5-1.8 3.5-2.2 6-1.2 7.7.8 1.2 2.4 1.7 4.9 1.7h6.8c2.3 0 4-1.5 4.6-3.7"/><path stroke-width="2.4" d="M20 25.7h-4.3M17.7 23.7l-2 2 2 2M44 25.7h4.3M46.3 23.7l2 2-2 2"/></svg>
+<svg class="somna-pdp-icon somna-pdp-icon--figma {{ class }}" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><g transform="translate(32 30) scale(1.35) translate(-32 -30)"><path stroke-width="1.6" d="M32 18c0 7-3.5 11-5.2 14.5-1.8 3.5-2.2 6-1.2 7.7.8 1.2 2.4 1.7 4.9 1.7h6.8c2.3 0 4-1.5 4.6-3.7"/><path stroke-width="1.9" d="M20 25.7h-4.3M17.7 23.7l-2 2 2 2M44 25.7h4.3M46.3 23.7l2 2-2 2"/></g></svg>
 {%- elsif figma_d != blank -%}
 <svg class="somna-pdp-icon somna-pdp-icon--figma {{ class }}" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="{{ figma_d }}"/></svg>
 {%- elsif key != blank -%}
