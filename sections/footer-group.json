@@ -13,31 +13,46 @@
   "sections": {
     "footer_somna": {
       "type": "footer",
-      "settings": {
-        "section_width": "page-width",
-        "gap": 40,
-        "background_color": "#f3feee",
-        "padding-block-start": 24,
-        "padding-block-end": 24
-      },
       "blocks": {
         "brand": {
           "type": "group",
           "settings": {
             "content_direction": "column",
             "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
             "gap": 40,
             "width": "fill",
             "custom_width": 100,
             "width_mobile": "fill",
+            "custom_width_mobile": 100,
             "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
             "border_radius": 0,
+            "somna_edge": "none",
+            "somna_edge_mobile": "same",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
-            "padding-inline-end": 0,
-            "horizontal_alignment_flex_direction_column": "flex-start",
-            "vertical_alignment_flex_direction_column": "center"
+            "padding-inline-end": 0
           },
           "blocks": {
             "logo": {
@@ -54,7 +69,15 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
-                "text_color": "#0b3fa6"
+                "text_color": "#0b3fa6",
+                "accent_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {}
             },
@@ -63,18 +86,40 @@
               "settings": {
                 "content_direction": "row",
                 "vertical_on_mobile": true,
+                "horizontal_alignment": "space-between",
+                "vertical_alignment": "flex-start",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
                 "gap": 32,
                 "width": "fill",
                 "custom_width": 100,
                 "width_mobile": "fill",
+                "custom_width_mobile": 100,
                 "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
                 "border_radius": 0,
+                "somna_edge": "none",
+                "somna_edge_mobile": "same",
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
-                "padding-inline-end": 0,
-                "horizontal_alignment": "space-between",
-                "vertical_alignment": "flex-start"
+                "padding-inline-end": 0
               },
               "blocks": {
                 "shop": {
@@ -83,9 +128,17 @@
                     "menu": "",
                     "heading": "SHOP",
                     "menu_spacing": 8,
+                    "show_as_accordion": false,
+                    "accordion_icon": "caret",
+                    "accordion_dividers": false,
+                    "background_color": "",
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
-                    "link_preset": "paragraph"
+                    "link_preset": "paragraph",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
                   },
                   "blocks": {
                     "shop_1": {
@@ -94,7 +147,8 @@
                         "label": "Strips",
                         "link": "/products/nasal-strips",
                         "icon": "none"
-                      }
+                      },
+                      "blocks": {}
                     },
                     "shop_2": {
                       "type": "_somna-link",
@@ -102,7 +156,8 @@
                         "label": "Tapes",
                         "link": "/products/mouth-tape",
                         "icon": "none"
-                      }
+                      },
+                      "blocks": {}
                     },
                     "shop_3": {
                       "type": "_somna-link",
@@ -110,7 +165,8 @@
                         "label": "Bundles",
                         "link": "/collections/all",
                         "icon": "none"
-                      }
+                      },
+                      "blocks": {}
                     }
                   },
                   "block_order": [
@@ -125,9 +181,17 @@
                     "menu": "",
                     "heading": "SUPPORT",
                     "menu_spacing": 8,
+                    "show_as_accordion": false,
+                    "accordion_icon": "caret",
+                    "accordion_dividers": false,
+                    "background_color": "",
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
-                    "link_preset": "paragraph"
+                    "link_preset": "paragraph",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
                   },
                   "blocks": {
                     "support_1": {
@@ -136,7 +200,8 @@
                         "label": "Contact",
                         "link": "/pages/contact",
                         "icon": "none"
-                      }
+                      },
+                      "blocks": {}
                     },
                     "support_2": {
                       "type": "_somna-link",
@@ -144,7 +209,8 @@
                         "label": "Shipping",
                         "link": "/pages/shipping-policy",
                         "icon": "none"
-                      }
+                      },
+                      "blocks": {}
                     },
                     "support_3": {
                       "type": "_somna-link",
@@ -152,7 +218,8 @@
                         "label": "Returns",
                         "link": "/pages/return-refund-policy",
                         "icon": "none"
-                      }
+                      },
+                      "blocks": {}
                     }
                   },
                   "block_order": [
@@ -167,9 +234,17 @@
                     "menu": "",
                     "heading": "LEARN",
                     "menu_spacing": 8,
+                    "show_as_accordion": false,
+                    "accordion_icon": "caret",
+                    "accordion_dividers": false,
+                    "background_color": "",
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
-                    "link_preset": "paragraph"
+                    "link_preset": "paragraph",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
                   },
                   "blocks": {
                     "learn_1": {
@@ -178,7 +253,8 @@
                         "label": "How to use",
                         "link": "/pages/how-to-use",
                         "icon": "none"
-                      }
+                      },
+                      "blocks": {}
                     },
                     "learn_2": {
                       "type": "_somna-link",
@@ -186,7 +262,8 @@
                         "label": "FAQs",
                         "link": "/pages/support",
                         "icon": "none"
-                      }
+                      },
+                      "blocks": {}
                     }
                   },
                   "block_order": [
@@ -200,9 +277,17 @@
                     "menu": "",
                     "heading": "CONNECT",
                     "menu_spacing": 8,
+                    "show_as_accordion": false,
+                    "accordion_icon": "caret",
+                    "accordion_dividers": false,
+                    "background_color": "",
                     "text_color": "#0a1a4a",
                     "heading_preset": "h5",
-                    "link_preset": "paragraph"
+                    "link_preset": "paragraph",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
                   },
                   "blocks": {
                     "connect_1": {
@@ -211,15 +296,18 @@
                         "label": "Instagram",
                         "link": "https://www.instagram.com/somnasleep_official",
                         "icon": "instagram"
-                      }
+                      },
+                      "blocks": {}
                     },
                     "connect_2": {
                       "type": "_somna-link",
+                      "disabled": true,
                       "settings": {
                         "label": "TikTok",
                         "link": "",
                         "icon": "tiktok"
-                      }
+                      },
+                      "blocks": {}
                     },
                     "connect_3": {
                       "type": "_somna-link",
@@ -227,7 +315,8 @@
                         "label": "X",
                         "link": "",
                         "icon": "x"
-                      }
+                      },
+                      "blocks": {}
                     },
                     "connect_4": {
                       "type": "_somna-link",
@@ -235,7 +324,8 @@
                         "label": "Facebook",
                         "link": "",
                         "icon": "facebook"
-                      }
+                      },
+                      "blocks": {}
                     }
                   },
                   "block_order": [
@@ -268,7 +358,10 @@
                 "case": "none",
                 "wrap": "pretty",
                 "text_color": "#000000",
+                "accent_color": "",
                 "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -291,7 +384,10 @@
                 "case": "none",
                 "wrap": "pretty",
                 "text_color": "#000000",
+                "accent_color": "",
                 "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -310,19 +406,17 @@
       },
       "block_order": [
         "brand"
-      ]
+      ],
+      "settings": {
+        "section_width": "page-width",
+        "gap": 40,
+        "background_color": "#f3feee",
+        "padding-block-start": 24,
+        "padding-block-end": 24
+      }
     },
     "footer_utilities_somna": {
       "type": "footer-utilities",
-      "settings": {
-        "section_width": "page-width",
-        "gap": 12,
-        "background_color": "#f3feee",
-        "divider_thickness": 0,
-        "divider_color": "#f3feee",
-        "padding-block-start": 8,
-        "padding-block-end": 32
-      },
       "blocks": {
         "copyright": {
           "type": "footer-copyright",
@@ -338,7 +432,16 @@
       "block_order": [
         "copyright"
       ],
-      "disabled": true
+      "disabled": true,
+      "settings": {
+        "section_width": "page-width",
+        "gap": 12,
+        "background_color": "#f3feee",
+        "divider_thickness": 0,
+        "divider_color": "#f3feee",
+        "padding-block-start": 8,
+        "padding-block-end": 32
+      }
     }
   },
   "order": [
