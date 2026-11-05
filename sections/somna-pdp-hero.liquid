@@ -636,10 +636,41 @@
       };
     });
   }
+
+  // Links to the buy box: #pack-N (e.g. "Choose 2+ packs") selects pack N and scrolls to the packs;
+  // #buy (e.g. "Try Somna risk-free") scrolls to the top of the buy box. Without a buy box they stay normal links.
+  if (!window.somnaPackLinks) {
+    window.somnaPackLinks = true;
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[href*="#pack-"], a[href$="#buy"]');
+      const buy = link && document.querySelector('somna-pdp-buy');
+      if (!buy) return;
+      e.preventDefault();
+      const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (link.getAttribute('href').endsWith('#buy')) {
+        (buy.querySelector('.somna-pdp-hero__panel') || buy).scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+        return;
+      }
+      const n = parseInt(link.getAttribute('href').split('#pack-')[1], 10);
+      const input = buy.querySelectorAll('[data-pack]')[n - 1];
+      if (input && !input.disabled && !input.checked) {
+        input.checked = true;
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      const packs = buy.querySelector('.somna-pdp-hero__packs');
+      const target = packs && !packs.hidden ? packs : buy.querySelector('.somna-pdp-hero__panel') || buy;
+      target.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
+    });
+  }
 </script>
 {%- endif -%}
 
 {% stylesheet %}
+  /* "#buy" links scroll here: keep the panel clear of the sticky header */
+  .somna-pdp-hero__panel {
+    scroll-margin-top: calc(var(--header-height, 64px) + 16px);
+  }
+
   somna-pdp-buy {
     display: block;
     background: var(--somna-pdp-bg);
