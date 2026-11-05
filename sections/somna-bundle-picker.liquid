@@ -32,14 +32,15 @@
       "thumb": {{ img | image_url: width: 300 | json }},
       "alt": {{ img.alt | default: p.title | json }},
       "variants": [
+        {%- assign once_factor = 100 | minus: settings.somna_once_discount -%}
         {%- for v in p.variants -%}
           {%- assign alloc = v.selling_plan_allocations | first -%}
           {
             "id": {{ v.id }},
             "title": {{ v.title | json }},
             "available": {{ v.available | json }},
-            "once": {{ v.price }},
-            "onceCompare": {{ v.compare_at_price | default: 0 }},
+            "once": {{ v.price | times: once_factor | divided_by: 100 }},
+            "onceCompare": {% assign v_cmp = v.compare_at_price | default: 0 %}{% if v.price > v_cmp %}{{ v.price }}{% else %}{{ v_cmp }}{% endif %},
             "sub": {% if alloc %}{{ alloc.price }}{% else %}null{% endif %},
             "plan": {% if alloc %}{{ alloc.selling_plan.id }}{% else %}null{% endif %}
           }{% unless forloop.last %},{% endunless %}
@@ -158,7 +159,8 @@
       variant(i = this.active) { return this.products[i].variants[this.variantIndex[i]]; }
       priceFor(v) {
         const sub = this.mode === 'sub' && v.plan != null;
-        return { price: sub ? v.sub : v.once, compare: sub ? (v.sub < v.once ? v.once : 0) : (v.onceCompare > v.once ? v.onceCompare : 0), plan: sub ? v.plan : null };
+        const full = Math.max(v.once, v.onceCompare);
+        return { price: sub ? v.sub : v.once, compare: sub ? (v.sub < full ? full : 0) : (v.onceCompare > v.once ? v.onceCompare : 0), plan: sub ? v.plan : null };
       }
       render() {
         const p = this.products[this.active];

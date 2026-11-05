@@ -1848,6 +1848,21 @@
         "id": "currency_code_enabled_cart_total",
         "label": "t:settings.cart_total",
         "default": true
+      },
+      {
+        "type": "header",
+        "content": "Somna one-time sale"
+      },
+      {
+        "type": "range",
+        "id": "somna_once_discount",
+        "label": "One-time purchase discount shown",
+        "info": "Shown on product pages and the homepage buy box / bundles: one-time price = regular price minus this %, with the regular price struck through. Keep it equal to your automatic one-time discount (Discounts → \"Sale\"), which is what checkout applies. 0 = show regular prices.",
+        "min": 0,
+        "max": 90,
+        "step": 5,
+        "unit": "%",
+        "default": 50
       }
     ]
   },

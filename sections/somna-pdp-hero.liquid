@@ -53,11 +53,14 @@
   if has_plans == false
     assign mode = 'once'
   endif
+  # one-time price = regular price minus the theme's one-time sale % (the automatic "Sale" discount applies it at checkout)
+  assign once_factor = 100 | minus: settings.somna_once_discount
+  assign current_once = current.price | times: once_factor | divided_by: 100
   assign alloc = current.selling_plan_allocations | first
   if mode == 'sub' and alloc
     assign price = alloc.price
   else
-    assign price = current.price
+    assign price = current_once
   endif
   assign compare = current.compare_at_price | default: 0
   if price < current.price and current.price > compare
@@ -123,7 +126,7 @@
   <script type="application/json" data-variants>
     [
     {%- for v in product.variants -%}
-      { "id": {{ v.id }}, "title": {{ v.title | json }}, "options": {{ v.options | json }}, "image": {% if v.featured_media %}{{ v.featured_media | image_url: width: 1100 | json }}{% else %}null{% endif %}, "available": {{ v.available | json }}, "price": {{ v.price }}, "compare": {{ v.compare_at_price | default: 0 }}, "plans": [
+      { "id": {{ v.id }}, "title": {{ v.title | json }}, "options": {{ v.options | json }}, "image": {% if v.featured_media %}{{ v.featured_media | image_url: width: 1100 | json }}{% else %}null{% endif %}, "available": {{ v.available | json }}, "price": {{ v.price | times: once_factor | divided_by: 100 }}, "compare": {% assign v_cmp = v.compare_at_price | default: 0 %}{% if v.price > v_cmp %}{{ v.price }}{% else %}{{ v_cmp }}{% endif %}, "plans": [
         {%- for a in v.selling_plan_allocations -%}{ "id": {{ a.selling_plan.id }}, "price": {{ a.price }} }{% unless forloop.last %},{% endunless %}{%- endfor -%}
       ] }{% unless forloop.last %},{% endunless %}
     {%- endfor -%}
@@ -362,10 +365,11 @@
                   assign v_name = v.options[size_idx]
                 endif
                 assign v_alloc = v.selling_plan_allocations | first
+                assign v_once = v.price | times: once_factor | divided_by: 100
                 if mode == 'sub' and v_alloc
                   assign v_price = v_alloc.price
                 else
-                  assign v_price = v.price
+                  assign v_price = v_once
                 endif
                 assign bags = v_name | split: ' ' | first | plus: 0
                 if bags < 1
@@ -414,7 +418,7 @@
               {%- endif -%}
             </div>
           {%- endif -%}
-          <label class="somna-buy__mode somna-pdp-hero__once"><input type="radio" name="{{ section.id }}-mode" value="once" data-mode-input{% if mode == 'once' %} checked{% endif %}> <span class="somna-buy__mode-label">{{ s.once_label }}<span data-once-pct></span></span> <span class="somna-buy__mode-price" data-price-once>{{ current.price | money }}</span></label>
+          <label class="somna-buy__mode somna-pdp-hero__once"><input type="radio" name="{{ section.id }}-mode" value="once" data-mode-input{% if mode == 'once' %} checked{% endif %}> <span class="somna-buy__mode-label">{{ s.once_label }}<span data-once-pct></span></span> <span class="somna-buy__mode-price" data-price-once>{{ current_once | money }}</span></label>
         </fieldset>
 
         <button type="submit" name="add" class="somna-buy__add somna-pdp-hero__add" data-add{% unless current.available %} disabled{% endunless %}>
@@ -501,7 +505,7 @@
         return v.plans.find((p) => p.id === id) || v.plans[0];
       }
       priceOf(v, mode = this.mode) { const p = mode === 'sub' && v.plans.length ? (this.plan(v) || v.plans[0]) : null; return p ? p.price : v.price; }
-      base(v, price) { return Math.max(v.compare || 0, price < v.price ? v.price : 0); }
+      base(v, price) { return Math.max(v.compare || 0, price < v.price ? v.price : 0); } // v.compare = regular price (or compare-at), v.price = one-time sale price
       pct(price, v) { const base = this.base(v, price); return base > price ? Math.round((1 - price / base) * 100) : 0; }
       priceHTML(p) { const [a, b] = this.money(p).split('.'); return b ? `${a}<sup>${b}</sup>` : a; }
       update() {

@@ -32,9 +32,10 @@
         {%- endfor -%}
       ],
       "variants": [
+        {%- assign once_factor = 100 | minus: settings.somna_once_discount -%}
         {%- for v in p.variants -%}
           {%- assign alloc = v.selling_plan_allocations | first -%}
-          { "id": {{ v.id }}, "title": {{ v.title | json }}, "available": {{ v.available | json }}, "once": {{ v.price }}, "onceCompare": {{ v.compare_at_price | default: 0 }}, "sub": {% if alloc %}{{ alloc.price }}{% else %}null{% endif %}, "plan": {% if alloc %}{{ alloc.selling_plan.id }}{% else %}null{% endif %} }{% unless forloop.last %},{% endunless %}
+          { "id": {{ v.id }}, "title": {{ v.title | json }}, "available": {{ v.available | json }}, "once": {{ v.price | times: once_factor | divided_by: 100 }}, "onceCompare": {% assign v_cmp = v.compare_at_price | default: 0 %}{% if v.price > v_cmp %}{{ v.price }}{% else %}{{ v_cmp }}{% endif %}, "sub": {% if alloc %}{{ alloc.price }}{% else %}null{% endif %}, "plan": {% if alloc %}{{ alloc.selling_plan.id }}{% else %}null{% endif %} }{% unless forloop.last %},{% endunless %}
         {%- endfor -%}
       ]
     }{% unless forloop.last %},{% endunless %}
@@ -73,8 +74,8 @@
 
           <fieldset class="somna-buy__modes">
             <legend class="visually-hidden">{{ s.mode_label }}</legend>
-            <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="sub" data-mode-input> <span class="somna-buy__mode-label">{{ s.sub_label }}</span> <span class="somna-buy__mode-price" data-price-sub></span></label>
-            <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="once" data-mode-input> <span class="somna-buy__mode-label">{{ s.once_label }}</span> <span class="somna-buy__mode-price" data-price-once></span></label>
+            <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="sub" data-mode-input> <span class="somna-buy__mode-label">{{ s.sub_label }}<span class="somna-buy__mode-pct" data-sub-pct></span></span> <span class="somna-buy__mode-price" data-price-sub></span></label>
+            <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="once" data-mode-input> <span class="somna-buy__mode-label">{{ s.once_label }}<span class="somna-buy__mode-pct" data-once-pct></span></span> <span class="somna-buy__mode-price" data-price-once></span></label>
           </fieldset>
 
           <button type="button" class="somna-buy__add" data-add><span data-add-label>{{ s.add_label }}</span></button>
@@ -126,7 +127,8 @@
       }
       esc(t) { const d = document.createElement('div'); d.textContent = t == null ? '' : String(t); return d.innerHTML; }
       bags(v) { const n = parseInt(String(v.title).replace(/[^0-9]/g, ''), 10); return n > 0 ? n : 1; }
-      price(v, mode = this.mode) { const sub = mode === 'sub' && v.plan != null; return { price: sub ? v.sub : v.once, compare: sub ? (v.sub < v.once ? v.once : 0) : (v.onceCompare > v.once ? v.onceCompare : 0), plan: sub ? v.plan : null }; }
+      price(v, mode = this.mode) { const sub = mode === 'sub' && v.plan != null; return { price: sub ? v.sub : v.once, compare: sub ? (v.sub < Math.max(v.once, v.onceCompare) ? Math.max(v.once, v.onceCompare) : 0) : (v.onceCompare > v.once ? v.onceCompare : 0), plan: sub ? v.plan : null }; }
+      pct(v, mode) { const pr = this.price(v, mode); return pr.compare > pr.price ? Math.round((1 - pr.price / pr.compare) * 100) : 0; }
       render(first) {
         const p = this.products[this.p];
         const v = p.variants[this.v[this.p]];
@@ -150,6 +152,9 @@
         this.querySelectorAll('[data-mode-input]').forEach((r) => { r.checked = r.value === this.mode; r.disabled = r.value === 'sub' && v.plan == null; });
         q('[data-price-sub]').textContent = v.plan != null ? this.money(v.sub) : '';
         q('[data-price-once]').textContent = this.money(v.once);
+        const sp = v.plan != null ? this.pct(v, 'sub') : 0, op = this.pct(v, 'once');
+        q('[data-sub-pct]').textContent = sp ? ` · ${sp}% off` : '';
+        q('[data-once-pct]').textContent = op ? ` · ${op}% off` : '';
         const pr = this.price(v);
         const add = q('[data-add]');
         add.disabled = !v.available;
