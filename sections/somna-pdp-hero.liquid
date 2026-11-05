@@ -291,7 +291,7 @@
         {%- if compare > 0 -%}{%- assign pct = compare | minus: price | times: 100 | divided_by: compare -%}{%- endif -%}
         <span class="somna-pdp-hero__save" data-save{% if pct == 0 %} hidden{% endif %}>{{ s.save_label | replace: '[percent]', pct }}</span>
         {%- if mf.pdp_night_label != blank and price_nights > 0 -%}
-          <span class="somna-pdp-hero__price-night" data-price-night>{{ price | divided_by: price_nights | money }}{{ mf.pdp_night_label.value }}</span>
+          <span class="somna-pdp-hero__price-night" data-price-night>{{ price | times: 1.0 | divided_by: price_nights | round | money }}{{ mf.pdp_night_label.value }}</span>
         {%- endif -%}
       </p>
       {%- if mf.pdp_savings_note != blank -%}<p class="somna-pdp-hero__savings">{{ mf.pdp_savings_note.value }}</p>{%- endif -%}
@@ -397,7 +397,7 @@
                 {%- if bags >= s.gift_min_bags and s.gift_label != blank -%}
                   <span class="somna-pdp-hero__gift">{{ s.gift_label }}</span>
                 {%- elsif s.nights_per_bag > 0 -%}
-                  <span class="somna-buy__pack-night" data-pack-night>{{ v_price | divided_by: bags | divided_by: s.nights_per_bag | money }}{{ s.night_label }}</span>
+                  <span class="somna-buy__pack-night" data-pack-night>{{ v_price | times: 1.0 | divided_by: bags | divided_by: s.nights_per_bag | round | money }}{{ s.night_label }}</span>
                 {%- endif -%}
               </label>
             {%- endfor -%}
