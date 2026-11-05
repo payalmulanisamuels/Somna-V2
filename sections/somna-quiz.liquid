@@ -329,7 +329,7 @@
                     assign rbags = 1
                   endif
                   assign rnights = rp.metafields.custom.nights.value | default: 30
-                  assign rnight = rprice | divided_by: rbags | divided_by: rnights
+                  assign rnight = rprice | times: 1.0 | divided_by: rbags | divided_by: rnights | round
                   assign rsticker = rp.metafields.custom.pdp_cta_sticker.value | default: '[night] a night'
                 endif
               -%}

@@ -43,7 +43,7 @@
   assign cta_sticker = mf.pdp_cta_sticker.value | default: s.sticker
   assign night = 0
   if nights > 0
-    assign night = price | divided_by: bags | divided_by: nights
+    assign night = price | times: 1.0 | divided_by: bags | divided_by: nights | round
   endif
   # image: the product's "PDP – Closing image", else the section image, else the How it works picture.
   # Bundles whose How it works has two pictures (tape + strip) show both, as in Figma 4654:113.

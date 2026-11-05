@@ -74,7 +74,7 @@
                 {{ t_price | money }}
                 {%- if t_regular > t_price %} · <s>{{ t_regular | money_without_trailing_zeros }}</s>{% endif -%}
                 {%- assign nights = trend.metafields.custom.nights.value | default: 0 -%}
-                {%- if nights > 0 %} · <em>{{ t_price | divided_by: nights | money }}{{ s.night_label }}</em>{% endif -%}
+                {%- if nights > 0 %} · <em>{{ t_price | times: 1.0 | divided_by: nights | round | money }}{{ s.night_label }}</em>{% endif -%}
               </span>
             </span>
           </a>
