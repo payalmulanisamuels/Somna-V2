@@ -221,7 +221,7 @@
                     endif
                   endfor
                 -%}
-                <li class="somna-pdp-hero__video">
+                <li class="somna-pdp-hero__video" style="--somna-video-ar: {{ vid.aspect_ratio | default: 0.8 }};">
                   {%- if src != blank -%}
                     <button type="button" class="somna-pdp-hero__play" data-video="{{ src }}" aria-label="{{ s.play_label | escape }}{% if vid.alt != blank %}: {{ vid.alt | escape }}{% endif %}">
                       {%- if vid.preview_image -%}{{ vid.preview_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: '', width: 181, height: 299 }}{%- endif -%}
@@ -246,7 +246,7 @@
                   endfor
                 endif
               -%}
-              <li class="somna-pdp-hero__video" {{ block.shopify_attributes }}>
+              <li class="somna-pdp-hero__video"{% if b.video != blank %} style="--somna-video-ar: {{ b.video.aspect_ratio }};"{% endif %} {{ block.shopify_attributes }}>
                 {%- if src != blank -%}
                   <button type="button" class="somna-pdp-hero__play" data-video="{{ src }}" aria-label="{{ s.play_label | escape }}{% if b.caption != blank %}: {{ b.caption | escape }}{% endif %}">
                     {%- if poster -%}{{ poster | image_url: width: 400 | image_tag: loading: 'lazy', alt: '', width: 181, height: 299 }}{%- endif -%}
@@ -1353,42 +1353,61 @@
       font-size: 0.9375rem;
     }
 
-    .somna-pdp-hero__quote {
+    /* tighter left column: less space around the review quote, smaller quote and video heading */
+    .somna-pdp-hero__gallery-wrap {
+      gap: 20px;
+    }
+
+    .somna-pdp-hero__side {
       gap: 14px;
-      padding: 12px 16px;
+    }
+
+    .somna-pdp-hero__quote {
+      gap: 12px;
+      padding: 8px 14px;
     }
 
     .somna-pdp-hero__avatar {
-      width: 54px;
-      height: 54px;
+      width: 44px;
+      height: 44px;
     }
 
     .somna-pdp-hero__avatar--initial {
-      font-size: 1.25rem;
+      font-size: 1.125rem;
     }
 
     .somna-pdp-hero__stars {
       margin-bottom: 2px;
-      font-size: 0.9375rem;
-    }
-
-    .somna-pdp-hero__quote blockquote {
-      font-size: 1rem;
-      line-height: 1.15;
-    }
-
-    .somna-pdp-hero__quote figcaption {
-      margin-top: 4px;
       font-size: 0.8125rem;
     }
 
+    .somna-pdp-hero__quote blockquote {
+      font-size: 0.875rem;
+      line-height: 1.2;
+    }
+
+    .somna-pdp-hero__quote figcaption {
+      margin-top: 2px;
+      font-size: 0.75rem;
+    }
+
     .somna-pdp-hero__videos-title {
-      margin-bottom: 12px;
-      font-size: 1.75rem;
+      margin-bottom: 10px;
+      font-size: 1.375rem;
+    }
+
+    /* videos keep the 212px row height but each card takes its video's own shape (4:5, 9:16 …),
+       so the whole frame shows — no crop, no black bars */
+    .somna-pdp-hero__video-list {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
     }
 
     .somna-pdp-hero__video {
-      aspect-ratio: 1;
+      flex: none;
+      height: 212px;
+      aspect-ratio: var(--somna-video-ar, 0.8);
     }
   }
 
