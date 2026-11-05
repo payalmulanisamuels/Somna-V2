@@ -1032,6 +1032,9 @@
       "settings": {
         "eyebrow": "1,000+ people already sleep better with Somna.",
         "avatars": "shopify://shop_images/somna-v2-steps-avatars.png",
+        "avatar_1": "shopify://shop_images/somna-v2-hero-reviewer-1.jpg",
+        "avatar_2": "shopify://shop_images/somna-v2-hero-reviewer-2.jpg",
+        "avatar_3": "shopify://shop_images/somna-v2-hero-reviewer-3.jpg",
         "rating_text": "★★★★★ 4.6/5 Average Rating",
         "image": "shopify://shop_images/somna-v2-steps-model.png",
         "heading": "Three Steps. Zero Fuss.",
