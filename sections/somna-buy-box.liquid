@@ -24,6 +24,12 @@
       "points": {{ block.settings.points | newline_to_br | split: '<br />' | json }},
       "popular": {{ block.settings.popular_label | json }},
       "popularIndex": {{ block.settings.popular_position | minus: 1 }},
+      "badges": [
+        {%- if block.settings.popular_label != blank -%}{ "i": {{ block.settings.popular_position | minus: 1 }}, "label": {{ block.settings.popular_label | json }} },{%- endif -%}
+        {%- if block.settings.badge_2_label != blank -%}{ "i": {{ block.settings.badge_2_position | minus: 1 }}, "label": {{ block.settings.badge_2_label | json }} },{%- endif -%}
+        {%- if block.settings.badge_3_label != blank -%}{ "i": {{ block.settings.badge_3_position | minus: 1 }}, "label": {{ block.settings.badge_3_label | json }} },{%- endif -%}
+        null
+      ],
       "nights": {{ block.settings.nights_per_bag | default: 0 }},
       "media": [
         {%- assign imgs = p.media | where: 'media_type', 'image' -%}
@@ -145,7 +151,8 @@
         q('[data-packs]').innerHTML = p.variants.map((x, i) => {
           const pr = this.price(x);
           const night = p.nights > 0 ? `<span class="somna-buy__pack-night">${this.money(Math.round(pr.price / (this.bags(x) * p.nights)))}${this.esc(this.labels.night)}</span>` : '';
-          const badge = i === p.popularIndex && p.popular ? `<span class="somna-buy__pack-badge">${this.esc(p.popular)}</span>` : '';
+          const b = p.badges.find((x) => x && x.i === i);
+          const badge = b ? `<span class="somna-buy__pack-badge">${this.esc(b.label)}</span>` : '';
           return `<label class="somna-buy__pack${x.available ? '' : ' is-sold-out'}">${badge}<input type="radio" name="${this.id || 'buy'}-pack-${this.p}" value="${i}" data-pack${i === this.v[this.p] ? ' checked' : ''}${x.available ? '' : ' disabled'}>
             <span class="somna-buy__pack-name">${this.esc(x.title)}</span><span class="somna-buy__pack-price">${this.money(pr.price)}</span>${pr.compare ? `<s>${this.money(pr.compare)}</s>` : ''}${night}</label>`;
         }).join('');
@@ -842,6 +849,10 @@
         { "type": "textarea", "id": "points", "label": "Points", "info": "One per line." },
         { "type": "range", "id": "popular_position", "label": "Highlighted pack (position)", "min": 1, "max": 6, "step": 1, "default": 2 },
         { "type": "text", "id": "popular_label", "label": "Highlighted pack badge", "default": "Most popular" },
+        { "type": "range", "id": "badge_2_position", "label": "Second badge (position)", "min": 1, "max": 6, "step": 1, "default": 2 },
+        { "type": "text", "id": "badge_2_label", "label": "Second badge", "default": "Most popular" },
+        { "type": "range", "id": "badge_3_position", "label": "Third badge (position)", "min": 1, "max": 6, "step": 1, "default": 3 },
+        { "type": "text", "id": "badge_3_label", "label": "Third badge", "default": "Best value" },
         { "type": "number", "id": "nights_per_bag", "label": "Nights per bag", "info": "Used for the per-night price. Leave empty to hide it.", "default": 30 }
       ]
     },

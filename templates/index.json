@@ -2759,6 +2759,10 @@
             "points": "Drug-free\nStays on all night\nGentle on skin\nSits outside",
             "popular_position": 1,
             "popular_label": "Recommended",
+            "badge_2_position": 2,
+            "badge_2_label": "Most popular",
+            "badge_3_position": 3,
+            "badge_3_label": "Best value",
             "nights_per_bag": 30
           }
         },
@@ -2773,6 +2777,10 @@
             "points": "Drug-free\nStays on all night\nGentle on skin\n3 colors",
             "popular_position": 1,
             "popular_label": "Recommended",
+            "badge_2_position": 2,
+            "badge_2_label": "Most popular",
+            "badge_3_position": 3,
+            "badge_3_label": "Best value",
             "nights_per_bag": 30
           }
         },

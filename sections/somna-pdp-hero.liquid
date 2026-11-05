@@ -377,7 +377,17 @@
                 endif
               -%}
               <label class="somna-buy__pack{% unless v.available %} is-sold-out{% endunless %}">
-                {%- if pack_n == s.badge_position and s.badge_label != blank -%}<span class="somna-buy__pack-badge">{{ s.badge_label }}</span>{%- endif -%}
+                {%- liquid
+                  assign pack_badge = ''
+                  if pack_n == s.badge_position
+                    assign pack_badge = s.badge_label
+                  elsif pack_n == s.badge_2_position
+                    assign pack_badge = s.badge_2_label
+                  elsif pack_n == s.badge_3_position
+                    assign pack_badge = s.badge_3_label
+                  endif
+                -%}
+                {%- if pack_badge != blank -%}<span class="somna-buy__pack-badge">{{ pack_badge }}</span>{%- endif -%}
                 <input type="radio" name="{{ section.id }}-pack" value="{{ forloop.index0 }}" data-pack{% if color_option %} data-size="{{ v_name | escape }}"{% endif %}{% if v.id == current.id %} checked{% endif %}{% unless v.available %} disabled{% endunless %}>
                 <span class="somna-buy__pack-name">{{ v_name }}</span>
                 <span class="somna-buy__pack-price" data-pack-price>{{ v_price | money }}</span>
@@ -2366,6 +2376,10 @@
     { "type": "range", "id": "selected_position", "label": "Pack selected by default", "min": 1, "max": 6, "step": 1, "default": 1 },
     { "type": "range", "id": "badge_position", "label": "Pack with the badge", "min": 1, "max": 6, "step": 1, "default": 1 },
     { "type": "text", "id": "badge_label", "label": "Pack badge", "default": "Recommended" },
+    { "type": "range", "id": "badge_2_position", "label": "Pack with the second badge", "min": 1, "max": 6, "step": 1, "default": 2 },
+    { "type": "text", "id": "badge_2_label", "label": "Second pack badge", "default": "Most popular" },
+    { "type": "range", "id": "badge_3_position", "label": "Pack with the third badge", "min": 1, "max": 6, "step": 1, "default": 3 },
+    { "type": "text", "id": "badge_3_label", "label": "Third pack badge", "default": "Best value" },
     { "type": "text", "id": "gift_label", "label": "Gift note on bigger packs", "default": "+3 free gifts" },
     { "type": "number", "id": "gift_min_bags", "label": "Gift note from this many bags", "default": 2 },
     { "type": "number", "id": "nights_per_bag", "label": "Nights per bag", "info": "Used for the per-night price. 0 hides it.", "default": 30 },
