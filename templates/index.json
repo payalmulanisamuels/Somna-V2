@@ -1034,6 +1034,8 @@
         "avatar_1": "shopify://shop_images/somna-v2-hero-reviewer-1.jpg",
         "avatar_2": "shopify://shop_images/somna-v2-hero-reviewer-2.jpg",
         "avatar_3": "shopify://shop_images/somna-v2-hero-reviewer-3.jpg",
+        "avatar_4": "shopify://shop_images/Precision_nasal_strip_design_correction-4.png",
+        "avatar_5": "shopify://shop_images/somna_selfie_strips_runner.png",
         "avatars": "shopify://shop_images/somna-v2-steps-avatars.png",
         "rating_text": "★★★★★ 4.6/5 Average Rating",
         "image": "shopify://shop_images/somna-v2-steps-model.png",
@@ -1544,17 +1546,6 @@
             "label": "Would recommend Somna"
           }
         },
-        "jm_review_1": {
-          "type": "judgeme_review",
-          "settings": {
-            "product": "nasal-strips",
-            "review_id": "a261754a-9faa-4d75-89f0-28be0023b65e",
-            "text_source": "body",
-            "max_words": 26,
-            "photo_focus": "center top",
-            "show_product": false
-          }
-        },
         "jm_review_2": {
           "type": "judgeme_review",
           "settings": {
@@ -1582,6 +1573,17 @@
           "settings": {
             "product": "the-colour-set",
             "review_id": "3455499f-74e6-440f-ae9d-4cd706e1c9c9",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "center top",
+            "show_product": false
+          }
+        },
+        "jm_review_1": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "nasal-strips",
+            "review_id": "a261754a-9faa-4d75-89f0-28be0023b65e",
             "text_source": "body",
             "max_words": 26,
             "photo_focus": "center top",
@@ -1648,10 +1650,10 @@
         "stat_1",
         "stat_2",
         "stat_3",
-        "jm_review_1",
         "jm_review_2",
         "jm_review_3",
         "jm_review_4",
+        "jm_review_1",
         "jm_review_5",
         "jm_review_6",
         "jm_review_7",
