@@ -267,13 +267,17 @@
   }
 
   /* ---------- Final CTA: copy on black at the top, pouches below ---------- */
+  /* Figma mobile: the whole photo (600x920) at full width under the copy, nothing cut at the sides;
+     a little extra black above it so the pouches clear the button */
   [id$='__final_cta'] .hero {
-    --hero-min-height: 680px;
-    min-height: 680px;
+    --hero-min-height: calc(100vw * 920 / 600 + 48px);
+    min-height: calc(100vw * 920 / 600 + 48px);
+    background: #000;
   }
 
   [id$='__final_cta'] img.hero__media {
-    object-position: center top;
+    object-fit: contain;
+    object-position: center bottom;
   }
 
   [id$='__final_cta'] .hero__content-wrapper {
