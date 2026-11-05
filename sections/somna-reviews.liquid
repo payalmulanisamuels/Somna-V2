@@ -533,7 +533,7 @@
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 20px 32px;
+    gap: 20px 36px;
     padding: 24px 20px 18px;
   }
 
@@ -545,49 +545,69 @@
     grid-template-columns: auto minmax(0, 1fr);
   }
 
+  /* Figma 4557:1323 / 4781:9983: the stars run the full width of the rating, the count sits right
+     under them, left-aligned with the stars */
   .somna-reviews__score {
     display: grid;
-    justify-items: start;
-    gap: 4px;
+    justify-items: stretch;
+    align-content: center;
+    gap: 0;
+  }
+
+  .somna-reviews__score .somna-reviews__stars {
+    display: flex;
+    justify-content: space-between;
+    gap: 2px;
+    margin-block-start: var(--somna-rv-stars-gap, 12px);
+  }
+
+  .somna-reviews__score .somna-reviews__star {
+    width: var(--somna-rv-star-size, 19px);
+    height: var(--somna-rv-star-size, 19px);
   }
 
   .somna-reviews__average {
     margin: 0;
     font-family: var(--font-accent--family);
     font-weight: var(--font-accent--weight);
-    font-size: clamp(3.5rem, 6vw, 5.5rem);
+    font-size: clamp(3.5rem, 5.6vw, 5rem);
     line-height: 1;
+    justify-self: start;
   }
 
   .somna-reviews__count {
-    margin: 0;
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
-    opacity: 0.6;
+    margin: 2px 0 0;
+    font-size: 0.875rem;
+    line-height: 1.3;
+    letter-spacing: 0.08em;
+    color: #686868;
   }
 
+  /* Figma: rows 24px apart (17px on phones), label · bar · % */
   .somna-reviews__bars {
     display: grid;
-    gap: 4px;
+    gap: 0;
     margin: 0;
     padding: 0;
     list-style: none;
-    font-size: 0.8125rem;
+    font-size: 1.125rem;
   }
 
   .somna-reviews__bars li {
     display: grid;
-    grid-template-columns: 2.2em minmax(0, 1fr) 3em;
+    grid-template-columns: 3.75em minmax(0, 1fr) 3.75em;
     align-items: center;
-    gap: 12px;
+    min-height: 24px;
+    line-height: 1.3;
   }
 
   .somna-reviews__bar-label {
-    font-weight: 700;
+    font-weight: 600;
+    letter-spacing: 0.08em;
   }
 
   .somna-reviews__bar {
-    height: 5px;
+    height: 7px;
     border-radius: 3px;
     background: var(--somna-rv-track, #d8ddd4);
     overflow: hidden;
@@ -602,8 +622,9 @@
 
   .somna-reviews__bar-pct {
     text-align: end;
-    font-size: 0.6875rem;
-    opacity: 0.7;
+    font-size: 0.875rem;
+    letter-spacing: 0.08em;
+    color: #686868;
   }
 
   .somna-reviews__gallery {
@@ -1276,7 +1297,7 @@
     .somna-reviews__summary,
     .somna-reviews__summary--no-photos {
       grid-template-columns: auto minmax(0, 1fr);
-      gap: 16px;
+      gap: 16px 28px;
       padding: 16px;
     }
 
@@ -1288,8 +1309,30 @@
       font-size: 3.25rem;
     }
 
+    .somna-reviews__score {
+      --somna-rv-star-size: 13px;
+      --somna-rv-stars-gap: 8px;
+    }
+
+    .somna-reviews__count {
+      font-size: 0.6875rem;
+    }
+
+    .somna-reviews__bars {
+      font-size: 0.8125rem;
+    }
+
     .somna-reviews__bars li {
-      gap: 8px;
+      grid-template-columns: 2.2em minmax(0, 1fr) 2.6em;
+      min-height: 17px;
+    }
+
+    .somna-reviews__bar {
+      height: 5px;
+    }
+
+    .somna-reviews__bar-pct {
+      font-size: 0.6875rem;
     }
 
     .somna-reviews__gallery {
