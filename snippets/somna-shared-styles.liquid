@@ -319,6 +319,15 @@
     font-weight: 800 !important;
   }
 
+  /* Hero (desktop/tablet): height follows the content instead of the screen ("full screen" left a tall empty
+     band under the rating on laptop screens, e.g. 13" MacBook), so the gap to "Recently viewed" is the same
+     on every screen: content + the section's bottom padding. Phones already do this (somna-home-mobile.css). */
+  @media screen and (min-width: 750px) {
+    [id$='__hero_jVaWmY'] :is(.hero, .hero__container) {
+      min-height: 0 !important;
+    }
+  }
+
   /* Page scrollbar in dark blue (the window, and .page-wrapper, which scrolls the page on desktop) */
   html,
   .page-wrapper {
