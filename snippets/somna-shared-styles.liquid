@@ -3,6 +3,52 @@
   section renders it so the stylesheet below is bundled once with the theme styles.
 {%- endcomment -%}
 {% stylesheet %}
+  /* Homepage hero (Figma 4397:1502): the small reviewer photos by "Join 1,000+ people…" are round, ringed in mint
+     and overlap, the left one on top. Phones keep their sizes from assets/somna-home-mobile.css. */
+  [class*='__avatars'].group-block .image-block__image {
+    box-sizing: border-box;
+    aspect-ratio: 1;
+    border: 1.5px solid #f3feee;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  [class*='__avatars'].group-block .image-block:nth-child(1) {
+    position: relative;
+    z-index: 3;
+  }
+
+  [class*='__avatars'].group-block .image-block:nth-child(2) {
+    position: relative;
+    z-index: 2;
+  }
+
+  @media screen and (min-width: 750px) {
+    .shopify-section [class*='__avatars'].group-block {
+      width: auto;
+      flex: none;
+    }
+
+    [class*='__avatars'].group-block > .layout-panel-flex {
+      gap: 0;
+    }
+
+    [class*='__avatars'].group-block .image-block {
+      flex: none;
+      width: 24px !important;
+    }
+
+    [class*='__avatars'].group-block .image-block + .image-block {
+      margin-left: -7px;
+    }
+
+    [class*='__avatars'].group-block .image-block__image {
+      width: 100%;
+      height: auto;
+      border-width: 2px;
+    }
+  }
+
   :is(somna-compare-tabs, somna-proof, somna-buy-box, somna-bundle-picker) {
     display: block;
   }
