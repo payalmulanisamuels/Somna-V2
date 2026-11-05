@@ -11,15 +11,12 @@
   "sections": {
     "hero": {
       "type": "somna-page-hero",
-      "blocks": {},
-      "block_order": [],
       "settings": {
         "show_breadcrumb": false,
         "home_label": "Home",
         "breadcrumb_label": "",
         "eyebrow": "Contact us",
         "heading": "We're here <em>to help.</em>",
-        "tagline": "",
         "text": "<p>Questions about your order, your subscription, or how to use your somna? Send us a message. We read every one.</p>",
         "image": "shopify://shop_images/somna-v2-sleep-bundle.png",
         "image_position": "object-position: center",
@@ -107,10 +104,8 @@
       "type": "somna-contact",
       "settings": {
         "anchor": "contact-form",
-        "eyebrow": "",
         "heading": "Quick <em>answers.</em>",
         "text": "<p>Get what you need faster: check these before sending a message.</p>",
-        "direct_label": "",
         "email": "hello@somnasleep.com",
         "response_time": "Typically within 1 business day.",
         "form_heading": "Send us <em>a message.</em>",
@@ -133,7 +128,8 @@
         "enquiry_placeholder": "Order & delivery",
         "message_label": "Message",
         "message_placeholder": "Tell us how we can help…",
-        "submit_label": "Send message"
+        "submit_label": "Send message",
+        "direct_label": ""
       },
       "blocks": {
         "track": {
@@ -159,7 +155,6 @@
           "settings": {
             "label": "Read the FAQ",
             "link": "/pages/support",
-            "icon": "",
             "dark": false
           }
         }
