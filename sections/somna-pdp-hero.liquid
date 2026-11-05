@@ -1127,13 +1127,20 @@
     }
   }
 
+  /* badges are mint (theme light colour); the selected pack's badge turns lavender */
   .somna-pdp-hero__packs .somna-buy__pack-badge {
     top: -14px;
     padding: 4px 22px;
     border-radius: 6px;
-    background: var(--somna-chip);
+    background: var(--somna-mint);
+    color: #000;
     font-size: 0.8625rem;
     font-weight: 600;
+    transition: background-color 0.2s;
+  }
+
+  .somna-pdp-hero__packs .somna-buy__pack:has(input:checked) .somna-buy__pack-badge {
+    background: var(--somna-chip);
   }
 
   .somna-pdp-hero__packs .somna-buy__pack-name {
@@ -1208,16 +1215,19 @@
     align-items: center;
   }
 
+  /* own chevron with room on the right (the native arrow sat against the border) */
   .somna-pdp-hero__plan {
     width: 100%;
     min-height: 38px;
-    padding: 0 10px;
+    padding: 0 40px 0 10px;
     border: 1px solid #000;
     border-radius: 4px;
-    background: #fff;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 16px center / 12px 8px;
     color: #000;
     font: inherit;
     font-size: 0.9375rem;
+    appearance: none;
+    cursor: pointer;
   }
 
   .somna-pdp-hero__plan:disabled {
@@ -1771,7 +1781,7 @@
       width: calc(100% / var(--somna-plan-scale));
       min-height: 44px;
       margin-bottom: calc(44px * (var(--somna-plan-scale) - 1));
-      padding: 0 12px;
+      padding: 0 44px 0 12px;
       border-radius: 6px;
       font-size: 1rem;
       letter-spacing: 0.06em;
