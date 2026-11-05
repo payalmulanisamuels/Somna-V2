@@ -1541,31 +1541,48 @@
             "label": "Would recommend Somna"
           }
         },
-        "review_1": {
-          "type": "review",
+        "jm_review_1": {
+          "type": "judgeme_review",
           "settings": {
-            "avatar": "shopify://shop_images/somna-v2-review-avatar.png",
-            "rating": 5,
-            "quote": "\"I finally have a bedtime routine I actually stick to.\"",
-            "name": ""
+            "product": "nasal-strips",
+            "review_id": "a261754a-9faa-4d75-89f0-28be0023b65e",
+            "text_source": "body",
+            "max_chars": 110,
+            "photo_focus": "center top",
+            "show_product": false
           }
         },
-        "review_2": {
-          "type": "review",
+        "jm_review_2": {
+          "type": "judgeme_review",
           "settings": {
-            "avatar": "shopify://shop_images/somna-v2-review-avatar.png",
-            "rating": 5,
-            "quote": "\"Three weeks in and I actually look forward to bedtime\"",
-            "name": ""
+            "product": "nasal-strips",
+            "review_id": "c17f44c3-cd15-4eb9-96cb-a7afd0ed41a2",
+            "text_source": "body",
+            "max_chars": 110,
+            "photo_focus": "right top",
+            "show_product": false
           }
         },
-        "review_3": {
-          "type": "review",
+        "jm_review_3": {
+          "type": "judgeme_review",
           "settings": {
-            "avatar": "shopify://shop_images/somna-v2-review-avatar.png",
-            "rating": 5,
-            "quote": "\"Goes on in seconds and its still there when the alarm goes off\"",
-            "name": ""
+            "product": "mouth-tape",
+            "review_id": "8ae1524e-8249-458b-8fd4-e07f4b5d05be",
+            "text_source": "body",
+            "max_chars": 110,
+            "photo_focus": "right top",
+            "show_product": false
+          }
+        },
+        "jm_review_4": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "the-colour-set",
+            "review_id": "3455499f-74e6-440f-ae9d-4cd706e1c9c9",
+            "text_source": "body",
+            "max_chars": 110,
+            "photo_focus": "center top",
+            "show_product": false
           }
         }
       },
@@ -1573,9 +1590,10 @@
         "stat_1",
         "stat_2",
         "stat_3",
-        "review_1",
-        "review_2",
-        "review_3"
+        "jm_review_1",
+        "jm_review_2",
+        "jm_review_3",
+        "jm_review_4"
       ],
       "settings": {
         "eyebrow": "Don't just take our word for it",

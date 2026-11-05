@@ -1,18 +1,21 @@
 {%- comment -%}
   Somna V2 — "Real people. Real nights."
   Stat rings (count up + ring fill once, when scrolled into view) and a review card slider.
-  Blocks: Stat (value 0–100, label) and Review (avatar, rating, quote, name).
-  Values and reviews come from the editor; nothing is generated.
-  Reduced motion: final values shown immediately, no animation.
+  Blocks: Stat (value 0–100, label), Judge.me review (a real photo review: product + review ID; photo, stars,
+  text and name come from Judge.me) and Review (manual: avatar, rating, quote, name).
+  The review row is a slider: autoplays (pauses on hover, focus or touch), drag with the mouse, swipe, arrows.
+  Reduced motion: final values shown immediately, no animation, no autoplay.
 {%- endcomment -%}
 {%- render 'somna-shared-styles' -%}
 {%- liquid
   assign s = section.settings
   assign stats = section.blocks | where: 'type', 'stat'
   assign reviews = section.blocks | where: 'type', 'review'
+  assign jm_reviews = section.blocks | where: 'type', 'judgeme_review'
 -%}
 <somna-proof
   class="somna-proof"
+  data-autoplay="{{ s.autoplay_seconds }}"
   style="background: {{ s.background_color }}; color: {{ s.text_color }}; --somna-accent: {{ s.accent_color }}; --somna-ring: {{ s.ring_color }}; --somna-card: {{ s.card_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
 >
   <div class="somna-proof__inner somna-container">
@@ -41,9 +44,41 @@
       {%- endif -%}
     </div>
 
-    {%- if reviews.size > 0 -%}
+    {%- if reviews.size > 0 or jm_reviews.size > 0 -%}
       <div class="somna-proof__slider">
         <ul class="somna-proof__reviews" role="list" data-track tabindex="0" aria-label="{{ s.reviews_label | escape }}">
+          {%- for block in jm_reviews -%}
+            {%- comment -%} the review is looked up in its product's Judge.me photo reviews; not found = not shown {%- endcomment -%}
+            {%- assign jr = nil -%}
+            {%- assign jr_id = block.settings.review_id | strip -%}
+            {%- if block.settings.product != blank and jr_id != blank -%}
+              {%- for r in block.settings.product.metafields.judgeme.review_widget_data.value.photo_gallery -%}
+                {%- if r.uuid == jr_id -%}{%- assign jr = r -%}{%- break -%}{%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+            {%- if jr -%}
+              {%- assign jr_pic = jr.pictures_urls | first -%}
+              {%- assign jr_src = jr_pic.original | default: jr_pic.huge | split: '&width=' | first -%}
+              {%- assign jr_parts = jr.reviewer_name | strip | split: ' ' -%}
+              {%- assign jr_name = jr_parts | first -%}
+              {%- if jr_parts.size > 1 -%}{%- assign jr_last = jr_parts | last | slice: 0 | upcase -%}{%- assign jr_name = jr_parts | first | append: ' ' | append: jr_last | append: '.' -%}{%- endif -%}
+              {%- assign jr_text = jr.body_html | strip_html | strip -%}
+              {%- if block.settings.text_source == 'title' -%}{%- assign jr_text = jr.title | strip -%}{%- endif -%}
+              {%- assign jr_rating = jr.rating | plus: 0 -%}
+              <li class="somna-proof__review" {{ block.shopify_attributes }}>
+                {%- if jr_src != blank -%}
+                  <img class="somna-proof__avatar somna-proof__avatar--photo" src="{{ jr_src }}&width=160" alt="{{ 'Photo from ' | append: jr_name | append: '’s review' | escape }}" width="64" height="64" loading="lazy" decoding="async" style="object-position: {{ block.settings.photo_focus | default: 'center' }};">
+                {%- endif -%}
+                <div>
+                  <span class="somna-proof__stars" role="img" aria-label="{{ jr_rating }} out of 5 stars">
+                    {%- for i in (1..5) -%}<span{% if i > jr_rating %} class="is-off"{% endif %}>★</span>{%- endfor -%}
+                  </span>
+                  <blockquote class="somna-proof__quote">“{{ jr_text | truncate: block.settings.max_chars }}”</blockquote>
+                  <p class="somna-proof__name">{{ jr_name }}{% if jr.verified_buyer %} · {{ s.verified_label }}{% endif %}{% if block.settings.show_product %} · {{ block.settings.product.title }}{% endif %}</p>
+                </div>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
           {%- for block in reviews -%}
             {%- assign b = block.settings -%}
             <li class="somna-proof__review" {{ block.shopify_attributes }}>
@@ -100,7 +135,61 @@
           this.nav.addEventListener('click', this.onNav);
           this.ro = new ResizeObserver(() => { this.nav.hidden = this.track.scrollWidth <= this.track.clientWidth + 2; });
           this.ro.observe(this.track);
+          this.drag();
+          if (!reduce) this.autoplay();
         }
+      }
+      /* mouse: drag the row sideways (touch already swipes natively) */
+      drag() {
+        const t = this.track;
+        let x0 = 0, left0 = 0, moved = false, id = null;
+        t.addEventListener('pointerdown', (e) => {
+          if (e.pointerType !== 'mouse' || e.button !== 0) return;
+          id = e.pointerId; x0 = e.clientX; left0 = t.scrollLeft; moved = false;
+        });
+        t.addEventListener('pointermove', (e) => {
+          if (e.pointerId !== id) return;
+          const dx = e.clientX - x0;
+          if (!moved && Math.abs(dx) > 4) { moved = true; t.setPointerCapture(id); t.classList.add('is-dragging'); }
+          if (moved) t.scrollLeft = left0 - dx;
+        });
+        const end = (e) => {
+          if (e.pointerId !== id) return;
+          id = null;
+          if (!moved) return;
+          t.classList.remove('is-dragging');
+          // settle on the nearest card
+          const card = t.querySelector('.somna-proof__review');
+          const step = card ? card.getBoundingClientRect().width + 24 : t.clientWidth;
+          t.scrollTo({ left: Math.round(t.scrollLeft / step) * step, behavior: 'smooth' });
+        };
+        t.addEventListener('pointerup', end);
+        t.addEventListener('pointercancel', end);
+        t.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+        t.addEventListener('dragstart', (e) => e.preventDefault());
+      }
+      /* next card every few seconds, back to the start after the last; pauses while hovered, focused,
+         touched or off screen */
+      autoplay() {
+        const t = this.track;
+        const delay = (Number(this.dataset.autoplay) || 4) * 1000;
+        let paused = false, visible = false;
+        const pause = () => { paused = true; };
+        const resume = () => { paused = false; };
+        this.addEventListener('pointerenter', pause);
+        this.addEventListener('pointerleave', resume);
+        this.addEventListener('focusin', pause);
+        this.addEventListener('focusout', resume);
+        t.addEventListener('touchstart', () => { paused = true; clearTimeout(this.touchT); this.touchT = setTimeout(resume, delay * 2); }, { passive: true });
+        this.vio = new IntersectionObserver((en) => { visible = en[0].isIntersecting; }, { threshold: 0.3 });
+        this.vio.observe(t);
+        this.timer = setInterval(() => {
+          if (paused || !visible || document.hidden || t.scrollWidth <= t.clientWidth + 2) return;
+          const card = t.querySelector('.somna-proof__review');
+          const step = card ? card.getBoundingClientRect().width + 24 : t.clientWidth;
+          const end = t.scrollLeft + t.clientWidth >= t.scrollWidth - 4;
+          t.scrollTo({ left: end ? 0 : t.scrollLeft + step, behavior: 'smooth' });
+        }, delay);
       }
       count(ring) {
         const target = Number(ring.dataset.value) || 0;
@@ -117,6 +206,8 @@
       disconnectedCallback() {
         this.io?.disconnect();
         this.ro?.disconnect();
+        this.vio?.disconnect();
+        clearInterval(this.timer);
         this.nav?.removeEventListener('click', this.onNav);
       }
     });
@@ -235,6 +326,23 @@
     .somna-proof__reviews {
       grid-auto-columns: min(383px, calc((100% - 48px) / 3));
     }
+  }
+
+  .somna-proof__reviews {
+    cursor: grab;
+    overscroll-behavior-x: contain;
+  }
+
+  .somna-proof__reviews.is-dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+    user-select: none;
+  }
+
+  .somna-proof__avatar--photo {
+    width: 64px;
+    height: 64px;
+    border: 2px solid #98a3de;
   }
 
   .somna-proof__reviews::-webkit-scrollbar {
@@ -414,6 +522,11 @@
       width: 40px;
     }
 
+    .somna-proof__avatar--photo {
+      width: 52px;
+      height: 52px;
+    }
+
     .somna-proof__quote {
       font-size: 0.875rem;
     }
@@ -437,6 +550,8 @@
     { "type": "text", "id": "reviews_label", "label": "Reviews label (screen readers)", "default": "Customer reviews" },
     { "type": "text", "id": "prev_label", "label": "Previous button label", "default": "Previous reviews" },
     { "type": "text", "id": "next_label", "label": "Next button label", "default": "Next reviews" },
+    { "type": "range", "id": "autoplay_seconds", "label": "Reviews: seconds per slide (autoplay)", "min": 2, "max": 10, "step": 1, "unit": "s", "default": 4 },
+    { "type": "text", "id": "verified_label", "label": "Verified buyer label", "default": "Verified buyer" },
     { "type": "color", "id": "background_color", "label": "Background", "default": "#000000" },
     { "type": "color", "id": "text_color", "label": "Text", "default": "#f3feee" },
     { "type": "color", "id": "accent_color", "label": "Accent (italic text)", "default": "#98a3de" },
@@ -456,6 +571,19 @@
       "settings": [
         { "type": "range", "id": "value", "label": "Percentage", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 92 },
         { "type": "text", "id": "label", "label": "Label", "default": "Found it easy to use" }
+      ]
+    },
+    {
+      "type": "judgeme_review",
+      "name": "Judge.me review",
+      "settings": [
+        { "type": "paragraph", "content": "Shows one real Judge.me photo review: its photo, stars, text and the reviewer's name. If it can't be found in the product's photo reviews, the card is hidden." },
+        { "type": "product", "id": "product", "label": "Product the review is for" },
+        { "type": "text", "id": "review_id", "label": "Judge.me review ID" },
+        { "type": "select", "id": "text_source", "label": "Text", "options": [{ "value": "body", "label": "Review text" }, { "value": "title", "label": "Review title" }], "default": "body" },
+        { "type": "range", "id": "max_chars", "label": "Max characters", "min": 60, "max": 200, "step": 10, "default": 110 },
+        { "type": "select", "id": "photo_focus", "label": "Photo focus", "options": [{ "value": "center", "label": "Centre" }, { "value": "center top", "label": "Top" }, { "value": "left top", "label": "Top left" }, { "value": "right top", "label": "Top right" }, { "value": "left center", "label": "Left" }, { "value": "right center", "label": "Right" }], "default": "center" },
+        { "type": "checkbox", "id": "show_product", "label": "Show product name", "default": false }
       ]
     },
     {
