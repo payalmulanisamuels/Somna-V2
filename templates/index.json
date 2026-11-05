@@ -2697,20 +2697,6 @@
     "buy_box": {
       "type": "somna-buy-box",
       "blocks": {
-        "tape": {
-          "type": "product",
-          "settings": {
-            "product": "mouth-tape",
-            "tab_label": "Mouth Tape",
-            "title": "Mouth Tape",
-            "rating_text": "★★★★★ 4.6/5 (3,600+ reviews)",
-            "description": "The tape that sits on the outside of your lips and stays put till morning. 30 per bag.",
-            "points": "Drug-free\nStays on all night\nGentle on skin\n3 colors",
-            "popular_position": 1,
-            "popular_label": "Recommended",
-            "nights_per_bag": 30
-          }
-        },
         "strips": {
           "type": "product",
           "settings": {
@@ -2720,6 +2706,20 @@
             "rating_text": "★★★★★ 4.6/5 (3,600+ reviews)",
             "description": "The strip that sits on the outside of your nose and stays put till morning. 30 per bag.",
             "points": "Drug-free\nStays on all night\nGentle on skin\nSits outside",
+            "popular_position": 1,
+            "popular_label": "Recommended",
+            "nights_per_bag": 30
+          }
+        },
+        "tape": {
+          "type": "product",
+          "settings": {
+            "product": "mouth-tape",
+            "tab_label": "Mouth Tape",
+            "title": "Mouth Tape",
+            "rating_text": "★★★★★ 4.6/5 (3,600+ reviews)",
+            "description": "The tape that sits on the outside of your lips and stays put till morning. 30 per bag.",
+            "points": "Drug-free\nStays on all night\nGentle on skin\n3 colors",
             "popular_position": 1,
             "popular_label": "Recommended",
             "nights_per_bag": 30
@@ -2755,8 +2755,8 @@
         }
       },
       "block_order": [
-        "tape",
         "strips",
+        "tape",
         "q1",
         "q2",
         "q3",
@@ -2776,7 +2776,7 @@
         "added_label": "Added to your cart.",
         "error_label": "Couldn’t add to cart. Please try again.",
         "sold_out_label": "Sold out",
-        "legal": "<p>Subscribe & Save renews every 30 days. Pause or cancel anytime.<br>30-Night Money-Back Guarantee</p>",
+        "legal": "<p>Subscribe & Save renews every 30 days. Pause or cancel anytime.<br/>30-Night Money-Back Guarantee</p>",
         "background_color": "#afbdf8",
         "panel_color": "#000000",
         "mint_color": "#f3feee",
