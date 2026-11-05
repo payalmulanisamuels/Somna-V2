@@ -911,7 +911,7 @@
               "type": "button",
               "settings": {
                 "label": "CHOOSE 2+ PACKS",
-                "link": "shopify://collections/all",
+                "link": "/collections/all#pack-2",
                 "style_class": "button-custom",
                 "custom_button_background": "#000000",
                 "custom_button_text": "#ffffff",
@@ -1169,7 +1169,7 @@
           "type": "button",
           "settings": {
             "label": "TRY SOMNA RISK-FREE",
-            "link": "shopify://collections/all",
+            "link": "/collections/all#buy",
             "style_class": "button-custom",
             "custom_button_background": "#ffffff",
             "custom_button_text": "#000000",
