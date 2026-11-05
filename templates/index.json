@@ -2897,7 +2897,8 @@
             "product": "the-colour-set",
             "image": "shopify://shop_images/somna-v2-color-set.png",
             "subtitle": "",
-            "badge": ""
+            "badge": "Up to 60% off",
+            "nights": 90
           }
         },
         "p3": {
@@ -2906,7 +2907,8 @@
             "product": "season-bundle",
             "image": "shopify://shop_images/somna-v2-season-bundle.png",
             "subtitle": "",
-            "badge": ""
+            "badge": "Up to 60% off",
+            "nights": 90
           }
         }
       },
