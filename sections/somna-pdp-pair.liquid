@@ -458,6 +458,34 @@
       font-weight: 300;
     }
   }
+
+  /* Mobile, wide card (Figma 4759:7535 / 4781:9521): compact card, ~44px button */
+  @media screen and (max-width: 749px) {
+    .somna-pdp-pair--wide .somna-pdp-pair__card {
+      padding: 14px 14px 16px;
+      border-radius: 20px;
+    }
+
+    .somna-pdp-pair--wide .somna-pdp-pair__card img {
+      margin-bottom: 12px;
+    }
+
+    .somna-pdp-pair--wide .somna-pdp-pair__name {
+      font-size: 1.25rem;
+    }
+
+    .somna-pdp-pair--wide .somna-pdp-pair__note,
+    .somna-pdp-pair--wide .somna-pdp-pair__meta {
+      font-size: 0.8125rem;
+    }
+
+    .somna-pdp-pair--wide .somna-pdp-pair__button {
+      min-height: 44px;
+      margin-top: 12px;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
