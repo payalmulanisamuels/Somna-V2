@@ -41,7 +41,15 @@
   if nights > 0
     assign night = price | divided_by: bags | divided_by: nights
   endif
-  assign image = product.metafields.custom.pdp_cta_image.value | default: s.image | default: product.metafields.custom.pdp_how.value.image.value
+  # image: the product's "PDP – Closing image", else the section image, else the How it works picture.
+  # Bundles whose How it works has two pictures (tape + strip) show both, as in Figma 4654:113.
+  assign how = product.metafields.custom.pdp_how.value
+  assign image = product.metafields.custom.pdp_cta_image.value | default: s.image
+  assign image_2 = nil
+  if image == blank
+    assign image = how.image.value
+    assign image_2 = how.image_after.value
+  endif
 -%}
 {%- capture price_money -%}{{ price | money }}{%- endcapture -%}
 {%- capture night_money -%}{{ night | money }}{%- endcapture -%}
@@ -65,7 +73,12 @@
       {%- if s.note != blank -%}<p class="somna-pdp-cta__note">{{ s.note }}</p>{%- endif -%}
     </div>
     <div class="somna-pdp-cta__media">
-      {%- if image -%}<div class="somna-pdp-cta__product">{{ image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300, 450, 600', sizes: '(min-width: 750px) 290px, 60vw' }}</div>{%- endif -%}
+      {%- if image and image_2 -%}
+        <div class="somna-pdp-cta__product somna-pdp-cta__product--pair">
+          {{ image | image_url: width: 500 | image_tag: loading: 'lazy', widths: '250, 375, 500', sizes: '(min-width: 750px) 150px, 30vw', alt: '' }}
+          {{ image_2 | image_url: width: 500 | image_tag: loading: 'lazy', widths: '250, 375, 500', sizes: '(min-width: 750px) 140px, 30vw', alt: '' }}
+        </div>
+      {%- elsif image -%}<div class="somna-pdp-cta__product">{{ image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300, 450, 600', sizes: '(min-width: 750px) 290px, 60vw' }}</div>{%- endif -%}
       {%- if cta_sticker != blank and night > 0 -%}<p class="somna-pdp-cta__sticker{% if s.sticker_motion != 'none' %} somna-shake--{{ s.sticker_motion }}{% endif %}">{{ cta_sticker | replace: '[night]', night_money }}</p>{%- endif -%}
     </div>
   </div>
@@ -263,6 +276,22 @@
     display: block;
     width: 100%;
     height: auto;
+  }
+
+  /* tape + strip side by side (bundles) */
+  .somna-pdp-cta__product--pair {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .somna-pdp-cta__product--pair img {
+    width: 52%;
+    min-width: 0;
+  }
+
+  .somna-pdp-cta__product--pair img + img {
+    width: 48%;
+    margin-left: -6%;
   }
 
   .somna-pdp-cta__sticker {
