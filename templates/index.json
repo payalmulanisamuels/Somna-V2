@@ -2034,11 +2034,27 @@
     "ugc": {
       "type": "somna-media-strip",
       "blocks": {
+        "card_6": {
+          "type": "card",
+          "settings": {
+            "enabled": true,
+            "video": "shopify://files/videos/SOMNA_Nasal_Testimonial_V5_4x5.mp4",
+            "video_url": "",
+            "caption": "",
+            "title": "",
+            "name": "",
+            "text": "",
+            "product": "",
+            "product_link": "",
+            "duration": "",
+            "video_link": ""
+          }
+        },
         "card_1": {
           "type": "card",
           "settings": {
             "enabled": true,
-            "video": "shopify://files/videos/0706(1)-1.mp4",
+            "video": "shopify://files/videos/SOMNA_Nasal_Testimonial_V8_4x5.mp4",
             "video_url": "",
             "caption": "My new bedtime habit",
             "title": "",
@@ -2054,9 +2070,25 @@
           "type": "card",
           "settings": {
             "enabled": true,
-            "video": "shopify://files/videos/0706(2)-1.mp4",
+            "video": "shopify://files/videos/SOMNA_Nasal_Testimonial_V6_4x5.mp4",
             "video_url": "",
             "caption": "30 nights later",
+            "title": "",
+            "name": "",
+            "text": "",
+            "product": "",
+            "product_link": "",
+            "duration": "",
+            "video_link": ""
+          }
+        },
+        "card_4": {
+          "type": "card",
+          "settings": {
+            "enabled": true,
+            "video": "shopify://files/videos/SOMNA_Nasal_Testimonial_V7_4x5.mp4",
+            "video_url": "",
+            "caption": "Why I switched",
             "title": "",
             "name": "",
             "text": "",
@@ -2081,63 +2113,14 @@
             "duration": "",
             "video_link": ""
           }
-        },
-        "card_4": {
-          "type": "card",
-          "settings": {
-            "enabled": true,
-            "video": "shopify://files/videos/0706-1.mp4",
-            "video_url": "",
-            "caption": "Why I switched",
-            "title": "",
-            "name": "",
-            "text": "",
-            "product": "",
-            "product_link": "",
-            "duration": "",
-            "video_link": ""
-          }
-        },
-        "card_5": {
-          "type": "card",
-          "settings": {
-            "enabled": true,
-            "video": "shopify://files/videos/0706(3)-1.mp4",
-            "video_url": "",
-            "caption": "",
-            "title": "",
-            "name": "",
-            "text": "",
-            "product": "",
-            "product_link": "",
-            "duration": "",
-            "video_link": ""
-          }
-        },
-        "card_6": {
-          "type": "card",
-          "settings": {
-            "enabled": true,
-            "video_url": "",
-            "image": "shopify://shop_images/somna-v2-ugc-2.png",
-            "caption": "",
-            "title": "",
-            "name": "",
-            "text": "",
-            "product": "",
-            "product_link": "",
-            "duration": "",
-            "video_link": ""
-          }
         }
       },
       "block_order": [
+        "card_6",
         "card_1",
         "card_2",
-        "card_3",
         "card_4",
-        "card_5",
-        "card_6"
+        "card_3"
       ],
       "settings": {
         "enabled": true,
