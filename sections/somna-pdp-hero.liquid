@@ -1311,6 +1311,17 @@
       align-content: start;
     }
 
+    /* thumbnails, main photo and buy panel all start on the same line; the "Up to 60% off" badge sits
+       a little higher, clear of the thumbnails (thumb column 96px + 8px) */
+    .somna-pdp-hero__thumbs {
+      --somna-thumbs-offset: 0px;
+    }
+
+    .somna-pdp-hero__badge {
+      top: -26px;
+      left: 104px;
+    }
+
     .somna-pdp-hero__panel {
       grid-area: panel;
       display: flex;
@@ -1335,7 +1346,7 @@
     }
 
     .somna-pdp-hero__badge {
-      left: 62px;
+      left: 84px;
     }
 
     .somna-pdp-hero__features {
