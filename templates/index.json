@@ -1547,7 +1547,7 @@
             "product": "nasal-strips",
             "review_id": "a261754a-9faa-4d75-89f0-28be0023b65e",
             "text_source": "body",
-            "max_chars": 110,
+            "max_words": 26,
             "photo_focus": "center top",
             "show_product": false
           }
@@ -1558,7 +1558,7 @@
             "product": "nasal-strips",
             "review_id": "c17f44c3-cd15-4eb9-96cb-a7afd0ed41a2",
             "text_source": "body",
-            "max_chars": 110,
+            "max_words": 26,
             "photo_focus": "right top",
             "show_product": false
           }
@@ -1569,7 +1569,7 @@
             "product": "mouth-tape",
             "review_id": "8ae1524e-8249-458b-8fd4-e07f4b5d05be",
             "text_source": "body",
-            "max_chars": 110,
+            "max_words": 26,
             "photo_focus": "right top",
             "show_product": false
           }
@@ -1580,7 +1580,7 @@
             "product": "the-colour-set",
             "review_id": "3455499f-74e6-440f-ae9d-4cd706e1c9c9",
             "text_source": "body",
-            "max_chars": 110,
+            "max_words": 26,
             "photo_focus": "center top",
             "show_product": false
           }

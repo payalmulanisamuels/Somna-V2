@@ -73,7 +73,7 @@
                   <span class="somna-proof__stars" role="img" aria-label="{{ jr_rating }} out of 5 stars">
                     {%- for i in (1..5) -%}<span{% if i > jr_rating %} class="is-off"{% endif %}>★</span>{%- endfor -%}
                   </span>
-                  <blockquote class="somna-proof__quote">“{{ jr_text | truncate: block.settings.max_chars }}”</blockquote>
+                  <blockquote class="somna-proof__quote">“{{ jr_text | truncatewords: block.settings.max_words, '…' }}”</blockquote>
                   <p class="somna-proof__name">{{ jr_name }}{% if jr.verified_buyer %} · {{ s.verified_label }}{% endif %}{% if block.settings.show_product %} · {{ block.settings.product.title }}{% endif %}</p>
                 </div>
               </li>
@@ -581,7 +581,7 @@
         { "type": "product", "id": "product", "label": "Product the review is for" },
         { "type": "text", "id": "review_id", "label": "Judge.me review ID" },
         { "type": "select", "id": "text_source", "label": "Text", "options": [{ "value": "body", "label": "Review text" }, { "value": "title", "label": "Review title" }], "default": "body" },
-        { "type": "range", "id": "max_chars", "label": "Max characters", "min": 60, "max": 200, "step": 10, "default": 110 },
+        { "type": "range", "id": "max_words", "label": "Max words", "info": "Longer reviews end with “…” after a whole word.", "min": 8, "max": 40, "step": 1, "default": 26 },
         { "type": "select", "id": "photo_focus", "label": "Photo focus", "options": [{ "value": "center", "label": "Centre" }, { "value": "center top", "label": "Top" }, { "value": "left top", "label": "Top left" }, { "value": "right top", "label": "Top right" }, { "value": "left center", "label": "Left" }, { "value": "right center", "label": "Right" }], "default": "center" },
         { "type": "checkbox", "id": "show_product", "label": "Show product name", "default": false }
       ]
