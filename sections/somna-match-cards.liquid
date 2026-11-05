@@ -318,6 +318,33 @@
     }
   }
 
+  /* Phones + tablets: both cards share the same rows (photo · title · subtitle · ticks · button), so the tick
+     lists start on the same line and the buttons line up even when one subtitle wraps to two lines */
+  @media screen and (max-width: 989px) {
+    @supports (grid-template-rows: subgrid) {
+      .somna-match__cards {
+        grid-template-rows: repeat(5, auto);
+      }
+
+      .somna-match__card {
+        display: grid;
+        grid-row: span 5;
+        grid-template-rows: subgrid;
+        row-gap: 0;
+      }
+
+      .somna-match__body {
+        display: contents;
+      }
+
+      .somna-match__media { grid-row: 1; }
+      .somna-match__title { grid-row: 2; padding: 12px 8px 0; }
+      .somna-match__subtitle { grid-row: 3; padding-inline: 8px; }
+      .somna-match__points { grid-row: 4; align-content: start; padding-inline: 8px; }
+      .somna-match__button { grid-row: 5; margin-inline: 8px; }
+    }
+  }
+
   /* Desktop with a mouse or trackpad: hovered / focused card widens, fixed height */
   @media (hover: hover) and (pointer: fine) and (min-width: 990px) {
     .somna-match__cards {
