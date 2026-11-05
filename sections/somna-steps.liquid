@@ -12,10 +12,29 @@
   style="background: {{ s.background_color }}; color: {{ s.text_color }}; --somna-btn: {{ s.button_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
 >
   <div class="somna-container">
-    {%- if s.eyebrow != blank or s.avatars != blank or s.rating_text != blank -%}
+    {%- liquid
+      assign avatar_count = 0
+      for i in (1..5)
+        assign key = 'avatar_' | append: i
+        if s[key] != blank
+          assign avatar_count = avatar_count | plus: 1
+        endif
+      endfor
+    -%}
+    {%- if s.eyebrow != blank or s.avatars != blank or avatar_count > 0 or s.rating_text != blank -%}
       <div class="somna-steps__proof">
         {%- if s.eyebrow != blank -%}<p class="somna-steps__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
-        {%- if s.avatars != blank -%}
+        {%- if avatar_count > 0 -%}
+          {%- comment -%} real reviewer photos, round and overlapping (same look as the homepage hero) {%- endcomment -%}
+          <span class="somna-steps__avatars somna-steps__avatars--photos">
+            {%- for i in (1..5) -%}
+              {%- assign key = 'avatar_' | append: i -%}
+              {%- if s[key] != blank -%}
+                {{ s[key] | image_url: width: 96, height: 96, crop: 'center' | image_tag: alt: '', loading: 'lazy', width: 48, height: 48 }}
+              {%- endif -%}
+            {%- endfor -%}
+          </span>
+        {%- elsif s.avatars != blank -%}
           {{ s.avatars | image_url: width: 240 | image_tag: class: 'somna-steps__avatars', alt: '', loading: 'lazy', width: 120 }}
         {%- endif -%}
         {%- if s.rating_text != blank -%}<p class="somna-steps__rating">{{ s.rating_text }}</p>{%- endif -%}
@@ -105,6 +124,24 @@
   .somna-steps__avatars {
     width: 104px;
     height: auto;
+  }
+
+  .somna-steps__avatars--photos {
+    display: inline-flex;
+    width: auto;
+  }
+
+  .somna-steps__avatars--photos img {
+    box-sizing: border-box;
+    width: 28px;
+    height: 28px;
+    border: 2px solid #f3feee;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .somna-steps__avatars--photos img + img {
+    margin-left: -8px;
   }
 
   .somna-steps__rating {
@@ -283,6 +320,20 @@
       width: 72px;
     }
 
+    .somna-steps__avatars--photos {
+      width: auto;
+    }
+
+    .somna-steps__avatars--photos img {
+      width: 20px;
+      height: 20px;
+      border-width: 1.5px;
+    }
+
+    .somna-steps__avatars--photos img + img {
+      margin-left: -5px;
+    }
+
     .somna-steps__rating {
       font-size: 0.75rem;
     }
@@ -347,6 +398,11 @@
   "settings": [
     { "type": "header", "content": "Social proof" },
     { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "image_picker", "id": "avatar_1", "label": "Reviewer photo 1", "info": "Real reviewer photos, shown round and overlapping. When set, they replace the avatars image below." },
+    { "type": "image_picker", "id": "avatar_2", "label": "Reviewer photo 2" },
+    { "type": "image_picker", "id": "avatar_3", "label": "Reviewer photo 3" },
+    { "type": "image_picker", "id": "avatar_4", "label": "Reviewer photo 4" },
+    { "type": "image_picker", "id": "avatar_5", "label": "Reviewer photo 5" },
     { "type": "image_picker", "id": "avatars", "label": "Avatars image" },
     { "type": "text", "id": "rating_text", "label": "Rating text", "info": "Only use a figure you can verify." },
     { "type": "header", "content": "Steps" },
