@@ -93,6 +93,17 @@
       {%- endif -%}
     </div>
 
+    {%- comment -%} snoring (approved demo): sound waves and z's at the metaobject's "mouth position" (left %, top %)
+      on the problem picture (both layouts); with the problem/solution loop it shows only while the problem picture does {%- endcomment -%}
+    {%- capture snore_html -%}
+      {%- if image and c.snore_spot != blank -%}
+        {%- assign spot = c.snore_spot.value | remove: '%' | split: ',' -%}
+        <span class="somna-snore" style="left: {{ spot[0] | strip }}%; top: {{ spot[1] | strip }}%;" aria-hidden="true">
+          <svg class="somna-snore__waves" viewBox="0 0 46 46" focusable="false"><path d="M8 30a8 8 0 0 0 6-10"/><path d="M14 36a16 16 0 0 0 10-20"/><path d="M20 42a24 24 0 0 0 14-30"/></svg>
+          <span class="somna-snore__z">z</span><span class="somna-snore__z">z</span><span class="somna-snore__z">Z</span>
+        </span>
+      {%- endif -%}
+    {%- endcapture -%}
     {%- case layout_class -%}
       {%- when 'problem' -%}
         {%- if split -%}
@@ -102,6 +113,7 @@
           <div class="somna-pdp-story__split">
             <div class="somna-pdp-story__panel">
               {%- if image -%}{{ image | image_url: width: 1300 | image_tag: loading: 'lazy', widths: '500, 700, 1000, 1300', sizes: '(min-width: 990px) 636px, 100vw', class: 'somna-pdp-story__panel-image' }}{%- endif -%}
+              {{- snore_html -}}
               {%- if c.label != blank -%}<p class="somna-pdp-story__panel-tag">{{ c.label.value }}</p>{%- endif -%}
               {%- if features != blank -%}
                 <ul class="somna-pdp-story__panel-list" role="list">
@@ -133,15 +145,7 @@
           <div class="somna-pdp-story__frame{% if image and image_after %} has-after{% endif %}">
             {%- if image -%}{{ image | image_url: width: 1500 | image_tag: loading: 'lazy', widths: '600, 900, 1200, 1500', sizes: '(min-width: 990px) 753px, 100vw', class: 'somna-pdp-story__before' }}{%- endif -%}
             {%- if image and image_after -%}{{ image_after | image_url: width: 1500 | image_tag: loading: 'lazy', widths: '600, 900, 1200, 1500', sizes: '(min-width: 990px) 753px, 100vw', class: 'somna-pdp-story__after' }}{%- endif -%}
-            {%- comment -%} snoring (approved demo): sound waves and z's at the metaobject's "mouth position" (left %, top %),
-              only while the first image shows {%- endcomment -%}
-            {%- if image and c.snore_spot != blank -%}
-              {%- assign spot = c.snore_spot.value | remove: '%' | split: ',' -%}
-              <span class="somna-snore" style="left: {{ spot[0] | strip }}%; top: {{ spot[1] | strip }}%;" aria-hidden="true">
-                <svg class="somna-snore__waves" viewBox="0 0 46 46" focusable="false"><path d="M8 30a8 8 0 0 0 6-10"/><path d="M14 36a16 16 0 0 0 10-20"/><path d="M20 42a24 24 0 0 0 14-30"/></svg>
-                <span class="somna-snore__z">z</span><span class="somna-snore__z">z</span><span class="somna-snore__z">Z</span>
-              </span>
-            {%- endif -%}
+            {{- snore_html -}}
             {%- if features != blank -%}
               <ul class="somna-pdp-story__bullets" role="list">
                 {%- for f in features -%}
@@ -729,8 +733,8 @@
     animation: somnaStoryFadeIn 7s ease-in-out infinite;
   }
 
-  /* Snoring (Mouth Tape problem image): sized in container units so it scales with the picture on every screen */
-  .somna-pdp-story__frame:has(.somna-snore) {
+  /* Snoring (problem image): sized in container units so it scales with the picture on every screen */
+  :is(.somna-pdp-story__frame, .somna-pdp-story__panel):has(.somna-snore) {
     container-type: inline-size;
   }
 

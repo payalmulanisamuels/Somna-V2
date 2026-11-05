@@ -1334,6 +1334,7 @@
         "top_color": "#f3feee",
         "bottom_color": "#afbdf8",
         "shape": "soft-2",
+        "mobile_full": true,
         "overlap": false,
         "flip": false,
         "drops": true,

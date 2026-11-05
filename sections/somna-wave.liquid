@@ -11,7 +11,8 @@
   animate: section.settings.animate,
   roll: section.settings.roll,
   height: section.settings.height,
-  height_mobile: section.settings.height_mobile
+  height_mobile: section.settings.height_mobile,
+  mobile_full: section.settings.mobile_full
 -%}
 
 {% schema %}
@@ -51,6 +52,13 @@
       "type": "checkbox",
       "id": "flip",
       "label": "Flip horizontally",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_full",
+      "label": "Phones: show the whole wave",
+      "info": "Drip and Soft shapes only. Off: phones show the middle of the shape, larger. On: the whole shape, shallower with more crests.",
       "default": false
     },
     {
