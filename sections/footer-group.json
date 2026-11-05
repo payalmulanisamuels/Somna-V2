@@ -322,7 +322,7 @@
                       "type": "_somna-link",
                       "settings": {
                         "label": "Facebook",
-                        "link": "",
+                        "link": "https://www.facebook.com/somnaofficial",
                         "icon": "facebook"
                       },
                       "blocks": {}
