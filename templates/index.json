@@ -1298,6 +1298,22 @@
     "compare": {
       "type": "somna-compare-tabs",
       "blocks": {
+        "tab_strips": {
+          "type": "tab",
+          "settings": {
+            "name": "Nasal Strips",
+            "image": "shopify://shop_images/somna-v2-compare-somna.png",
+            "label": "somna.",
+            "column_2_label": "Drugstore strips",
+            "column_3_label": "Medicated sprays",
+            "column_4_label": "Nasal dilators",
+            "highlight": true,
+            "only_on_match": false,
+            "eyebrow": "",
+            "heading": "",
+            "text": ""
+          }
+        },
         "tab_tape": {
           "type": "tab",
           "settings": {
@@ -1310,22 +1326,6 @@
             "column_3_label": "Chin straps",
             "column_4_image": "shopify://shop_images/somna-v2-compare-mouth-guard.png",
             "column_4_label": "Mouthguards",
-            "highlight": true,
-            "only_on_match": false,
-            "eyebrow": "",
-            "heading": "",
-            "text": ""
-          }
-        },
-        "tab_strips": {
-          "type": "tab",
-          "settings": {
-            "name": "Nasal Strips",
-            "image": "shopify://shop_images/somna-v2-compare-somna.png",
-            "label": "somna.",
-            "column_2_label": "Drugstore strips",
-            "column_3_label": "Medicated sprays",
-            "column_4_label": "Nasal dilators",
             "highlight": true,
             "only_on_match": false,
             "eyebrow": "",
@@ -1601,6 +1601,8 @@
         "reviews_label": "Customer reviews",
         "prev_label": "Previous reviews",
         "next_label": "Next reviews",
+        "autoplay_seconds": 4,
+        "verified_label": "Verified buyer",
         "background_color": "#000000",
         "text_color": "#f3feee",
         "accent_color": "#98a3de",
@@ -2623,7 +2625,7 @@
               "type": "button",
               "settings": {
                 "label": "CLAIM MY 3 GIFTS →",
-                "link": "shopify://collections/all",
+                "link": "shopify://products/sleep-bundle",
                 "open_in_new_tab": false,
                 "style_class": "button-custom",
                 "custom_button_background": "#98a3de",
