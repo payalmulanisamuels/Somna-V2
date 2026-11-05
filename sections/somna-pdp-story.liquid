@@ -133,6 +133,15 @@
           <div class="somna-pdp-story__frame{% if image and image_after %} has-after{% endif %}">
             {%- if image -%}{{ image | image_url: width: 1500 | image_tag: loading: 'lazy', widths: '600, 900, 1200, 1500', sizes: '(min-width: 990px) 753px, 100vw', class: 'somna-pdp-story__before' }}{%- endif -%}
             {%- if image and image_after -%}{{ image_after | image_url: width: 1500 | image_tag: loading: 'lazy', widths: '600, 900, 1200, 1500', sizes: '(min-width: 990px) 753px, 100vw', class: 'somna-pdp-story__after' }}{%- endif -%}
+            {%- comment -%} snoring (approved demo): sound waves and z's at the metaobject's "mouth position" (left %, top %),
+              only while the first image shows {%- endcomment -%}
+            {%- if image and c.snore_spot != blank -%}
+              {%- assign spot = c.snore_spot.value | remove: '%' | split: ',' -%}
+              <span class="somna-snore" style="left: {{ spot[0] | strip }}%; top: {{ spot[1] | strip }}%;" aria-hidden="true">
+                <svg class="somna-snore__waves" viewBox="0 0 46 46" focusable="false"><path d="M8 30a8 8 0 0 0 6-10"/><path d="M14 36a16 16 0 0 0 10-20"/><path d="M20 42a24 24 0 0 0 14-30"/></svg>
+                <span class="somna-snore__z">z</span><span class="somna-snore__z">z</span><span class="somna-snore__z">Z</span>
+              </span>
+            {%- endif -%}
             {%- if features != blank -%}
               <ul class="somna-pdp-story__bullets" role="list">
                 {%- for f in features -%}
@@ -717,6 +726,99 @@
   .somna-pdp-story__frame.has-after .somna-pdp-story__bullets--after,
   .somna-pdp-story__tag-after {
     animation: somnaStoryFadeIn 7s ease-in-out infinite;
+  }
+
+  /* Snoring (Mouth Tape problem image): sized in container units so it scales with the picture on every screen */
+  .somna-pdp-story__frame:has(.somna-snore) {
+    container-type: inline-size;
+  }
+
+  .somna-snore {
+    position: absolute;
+    z-index: 1;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .somna-pdp-story__frame.has-after .somna-snore {
+    animation: somnaSnoreShow 7s ease-in-out infinite;
+  }
+
+  .somna-snore__waves {
+    position: absolute;
+    left: 0.5cqw;
+    top: -4cqw;
+    width: max(6.1cqw, 26px);
+    max-width: none;
+    height: auto;
+    overflow: visible;
+  }
+
+  .somna-snore__waves path {
+    fill: none;
+    stroke: #f3feee;
+    stroke-width: 3;
+    stroke-linecap: round;
+    opacity: 0;
+    transform-origin: 0 100%;
+    animation: somnaSnoreWave 2.4s ease-out infinite;
+  }
+
+  .somna-snore__waves path:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .somna-snore__waves path:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  .somna-snore__z {
+    position: absolute;
+    left: 3.5cqw;
+    top: -4.5cqw;
+    font-family: var(--font-accent--family);
+    font-size: max(2.1cqw, 10px);
+    line-height: 1;
+    color: #f3feee;
+    opacity: 0;
+    animation: somnaSnoreZ 3.6s ease-in-out infinite;
+  }
+
+  .somna-snore__z:nth-of-type(2) {
+    font-size: max(2.9cqw, 13px);
+    animation-delay: 1.2s;
+  }
+
+  .somna-snore__z:nth-of-type(3) {
+    font-size: max(3.7cqw, 16px);
+    animation-delay: 2.4s;
+  }
+
+  @keyframes somnaSnoreWave {
+    0% { opacity: 0; transform: scale(0.7); }
+    25% { opacity: 1; }
+    60% { opacity: 0.9; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.15); }
+  }
+
+  @keyframes somnaSnoreZ {
+    0% { opacity: 0; translate: 0 0; rotate: -10deg; }
+    20% { opacity: 1; }
+    100% { opacity: 0; translate: 9.3cqw -12cqw; rotate: 12deg; }
+  }
+
+  /* visible with the open-mouth picture only, gone a little before the taped picture fades in */
+  @keyframes somnaSnoreShow {
+    0%, 38% { opacity: 1; }
+    44%, 96% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-snore {
+      display: none;
+    }
   }
 
   @keyframes somnaStoryFade {
