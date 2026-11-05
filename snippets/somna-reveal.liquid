@@ -5,7 +5,7 @@
   Opt an element (and everything inside it) out with data-no-reveal.
 {%- endcomment -%}
 <style>
-  @media screen and (min-width: 750px) and (prefers-reduced-motion: no-preference) {
+  @media screen and (prefers-reduced-motion: no-preference) {
     .somna-r {
       opacity: 0;
       translate: 0 var(--somna-r-y, 24px);
@@ -18,6 +18,18 @@
 
     .somna-r--item {
       --somna-r-y: 20px;
+    }
+
+    /* phones: smaller movement (the duration is shortened in the script) */
+    @media (max-width: 749px) {
+      .somna-r {
+        --somna-r-y: 16px;
+      }
+
+      .somna-r--image,
+      .somna-r--item {
+        --somna-r-y: 14px;
+      }
     }
 
     .somna-r.is-in {
