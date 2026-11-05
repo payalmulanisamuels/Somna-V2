@@ -1547,7 +1547,7 @@
             "product": "nasal-strips",
             "review_id": "a261754a-9faa-4d75-89f0-28be0023b65e",
             "text_source": "body",
-            "max_chars": 110,
+            "max_words": 26,
             "photo_focus": "center top",
             "show_product": false
           }
@@ -1558,7 +1558,7 @@
             "product": "nasal-strips",
             "review_id": "c17f44c3-cd15-4eb9-96cb-a7afd0ed41a2",
             "text_source": "body",
-            "max_chars": 110,
+            "max_words": 26,
             "photo_focus": "right top",
             "show_product": false
           }
@@ -1569,7 +1569,7 @@
             "product": "mouth-tape",
             "review_id": "8ae1524e-8249-458b-8fd4-e07f4b5d05be",
             "text_source": "body",
-            "max_chars": 110,
+            "max_words": 26,
             "photo_focus": "right top",
             "show_product": false
           }
@@ -1580,10 +1580,65 @@
             "product": "the-colour-set",
             "review_id": "3455499f-74e6-440f-ae9d-4cd706e1c9c9",
             "text_source": "body",
-            "max_chars": 110,
+            "max_words": 26,
             "photo_focus": "center top",
             "show_product": false
+          },
+        "jm_review_5": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "mouth-tape",
+            "review_id": "9ec38235-f248-4647-970c-0676fc446824",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "center",
+            "show_product": false
           }
+        },
+        "jm_review_6": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "sleep-bundle",
+            "review_id": "91ca7179-9208-4fd0-a644-bcaf56edb28f",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "center",
+            "show_product": false
+          }
+        },
+        "jm_review_7": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "mouth-tape",
+            "review_id": "888c0da5-3411-4d1f-8c99-013411f729e8",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "center",
+            "show_product": false
+          }
+        },
+        "jm_review_8": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "mouth-tape",
+            "review_id": "6724fdcd-fe00-47da-b4e7-f16a6d5dc003",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "center",
+            "show_product": false
+          }
+        },
+        "jm_review_9": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "mouth-tape",
+            "review_id": "d2fa9362-0fa1-4287-8e2e-5435a222b0e3",
+            "text_source": "title",
+            "max_words": 26,
+            "photo_focus": "center",
+            "show_product": false
+          }
+        }
         }
       },
       "block_order": [
@@ -1593,7 +1648,12 @@
         "jm_review_1",
         "jm_review_2",
         "jm_review_3",
-        "jm_review_4"
+        "jm_review_4",
+        "jm_review_5",
+        "jm_review_6",
+        "jm_review_7",
+        "jm_review_8",
+        "jm_review_9"
       ],
       "settings": {
         "eyebrow": "Don't just take our word for it",
