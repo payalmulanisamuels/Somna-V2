@@ -575,7 +575,7 @@
                 "avatar": {
                   "type": "image",
                   "settings": {
-                    "image": "shopify://shop_images/somna-v2-hero-review-avatar.png",
+                    "image": "shopify://shop_images/somna_selfie_strips_bedroom.png",
                     "link": "",
                     "image_ratio": "square",
                     "width": "custom",
@@ -812,7 +812,7 @@
                     "a1": {
                       "type": "image",
                       "settings": {
-                        "image": "shopify://shop_images/somna-v2-hero-avatar-1.png",
+                        "image": "shopify://shop_images/somna-v2-hero-reviewer-3.jpg",
                         "link": "",
                         "image_ratio": "square",
                         "width": "custom",
@@ -835,7 +835,7 @@
                     "a2": {
                       "type": "image",
                       "settings": {
-                        "image": "shopify://shop_images/somna-v2-hero-avatar-2.png",
+                        "image": "shopify://shop_images/somna-v2-hero-reviewer-2.jpg",
                         "link": "",
                         "image_ratio": "square",
                         "width": "custom",
@@ -858,7 +858,7 @@
                     "a3": {
                       "type": "image",
                       "settings": {
-                        "image": "shopify://shop_images/somna-v2-hero-avatar-3.png",
+                        "image": "shopify://shop_images/somna-v2-hero-reviewer-1.jpg",
                         "link": "",
                         "image_ratio": "square",
                         "width": "custom",
@@ -975,6 +975,8 @@
         "price_prefix": "From",
         "subscribe_label": "Subscribe & Save",
         "button_label": "Shop now",
+        "prev_label": "Previous products",
+        "next_label": "Next products",
         "background_color": "#0b0f1d",
         "card_color": "#f3feee",
         "button_color": "#afbdf8",
@@ -1306,7 +1308,12 @@
             "column_3_image": "shopify://shop_images/somna-v2-compare-chin-strap.png",
             "column_3_label": "Chin straps",
             "column_4_image": "shopify://shop_images/somna-v2-compare-mouth-guard.png",
-            "column_4_label": "Mouthguards"
+            "column_4_label": "Mouthguards",
+            "highlight": true,
+            "only_on_match": false,
+            "eyebrow": "",
+            "heading": "",
+            "text": ""
           }
         },
         "tab_strips": {
@@ -1317,7 +1324,12 @@
             "label": "somna.",
             "column_2_label": "Drugstore strips",
             "column_3_label": "Medicated sprays",
-            "column_4_label": "Nasal dilators"
+            "column_4_label": "Nasal dilators",
+            "highlight": true,
+            "only_on_match": false,
+            "eyebrow": "",
+            "heading": "",
+            "text": ""
           }
         },
         "row_1": {
@@ -1328,7 +1340,11 @@
             "column_1": true,
             "column_2": true,
             "column_3": true,
-            "column_4": true
+            "column_4": true,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
           }
         },
         "row_2": {
@@ -1339,7 +1355,11 @@
             "column_1": true,
             "column_2": true,
             "column_3": true,
-            "column_4": false
+            "column_4": false,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
           }
         },
         "row_3": {
@@ -1350,7 +1370,11 @@
             "column_1": true,
             "column_2": true,
             "column_3": false,
-            "column_4": true
+            "column_4": true,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
           }
         },
         "row_4": {
@@ -1361,7 +1385,11 @@
             "column_1": true,
             "column_2": false,
             "column_3": false,
-            "column_4": false
+            "column_4": false,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
           }
         },
         "row_5": {
@@ -1372,7 +1400,11 @@
             "column_1": true,
             "column_2": false,
             "column_3": false,
-            "column_4": false
+            "column_4": false,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
           }
         },
         "srow_1": {
@@ -1383,7 +1415,11 @@
             "column_1": true,
             "column_2": true,
             "column_3": false,
-            "column_4": true
+            "column_4": true,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
           }
         },
         "srow_2": {
@@ -1394,7 +1430,11 @@
             "column_1": true,
             "column_2": true,
             "column_3": true,
-            "column_4": false
+            "column_4": false,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
           }
         },
         "srow_3": {
@@ -1405,7 +1445,11 @@
             "column_1": true,
             "column_2": false,
             "column_3": false,
-            "column_4": false
+            "column_4": false,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
           }
         },
         "srow_4": {
@@ -1416,7 +1460,11 @@
             "column_1": true,
             "column_2": false,
             "column_3": false,
-            "column_4": false
+            "column_4": false,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
           }
         },
         "srow_5": {
@@ -1427,7 +1475,11 @@
             "column_1": true,
             "column_2": false,
             "column_3": false,
-            "column_4": false
+            "column_4": false,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
           }
         }
       },
@@ -3398,6 +3450,7 @@
         "chip_low": "3 & below",
         "chip_photos": "with photos",
         "more_label": "Show more reviews ↓",
+        "app_mobile_more": false,
         "empty_text": "No reviews match this filter yet.",
         "error_text": "Reviews couldn't be loaded right now.",
         "retry_label": "Try again",
