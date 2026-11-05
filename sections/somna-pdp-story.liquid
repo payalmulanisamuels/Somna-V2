@@ -1843,6 +1843,14 @@
       letter-spacing: 0.04em;
     }
   }
+  /* desktop: step pictures cut from one combined photo showed thin edge lines; trim 2% of each edge
+     (zoom 1.04 + clip) so only the picture shows, same size and rounded corners */
+  @media screen and (min-width: 750px) {
+    .somna-pdp-story__step img {
+      scale: 1.04;
+      clip-path: inset(2% round 12px);
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

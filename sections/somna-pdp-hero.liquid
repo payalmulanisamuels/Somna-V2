@@ -131,7 +131,7 @@
   </script>
 
   <div class="somna-pdp-hero__inner somna-container">
-    {%- comment -%} wrapper: on desktop the gallery stays in view inside it while a long buy panel scrolls {%- endcomment -%}
+    {%- comment -%} left column (gallery + quote + videos): on desktop it stays in view while a long buy panel scrolls {%- endcomment -%}
     <div class="somna-pdp-hero__gallery-wrap">
     <div class="somna-pdp-hero__gallery">
       {%- if images.size > 1 -%}
@@ -154,7 +154,6 @@
 
       {%- if s.badge_text != blank -%}<p class="somna-pdp-hero__badge{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}"><span>{{ s.badge_text }}</span></p>{%- endif -%}
       {%- if hero_sticker != blank -%}<p class="somna-pdp-hero__sticker{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}" style="--somna-shake-delay: 0.7s;">{{ hero_sticker }}</p>{%- endif -%}
-    </div>
     </div>
 
     <div class="somna-pdp-hero__side">
@@ -231,6 +230,7 @@
           </ul>
         </div>
       {%- endif -%}
+    </div>
     </div>
 
     <div class="somna-pdp-hero__panel{% if s.drip_edges %} somna-edge-drip-bottom{% endif %}">
@@ -1203,33 +1203,28 @@
     /* Both columns end on the same line, as in Figma:
        - buy panel shorter than the left column (Nasal Strips, Mouth Tape, Season Bundle): the panel
          stretches and its rows spread out evenly;
-       - buy panel taller (Colour Set, Sleep Bundle): the quote + videos end level with the panel and the
-         gallery stays in view beside the panel (sticky inside its own row) while it scrolls. */
+       - buy panel taller (Colour Set, Sleep Bundle): the left column (gallery, quote, videos — always
+         together, no gap) stays in view beside the panel while it scrolls and ends level with it. */
     .somna-pdp-hero__inner {
       --somna-content-width: 1355px;
       grid-template-columns: minmax(0, 577px) minmax(0, 742px);
-      grid-template-rows: 1fr auto;
-      grid-template-areas:
-        'gallery panel'
-        'side panel';
+      grid-template-areas: 'gallery panel';
       justify-content: center;
       align-items: stretch;
       gap: 32px 36px;
     }
 
     .somna-pdp-hero__gallery-wrap {
-      display: block;
       grid-area: gallery;
-    }
-
-    .somna-pdp-hero__gallery {
+      align-self: start;
       position: sticky;
       top: calc(var(--header-height, 64px) + 16px);
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
     }
 
     .somna-pdp-hero__side {
-      grid-area: side;
-      align-self: end;
       align-content: start;
     }
 
