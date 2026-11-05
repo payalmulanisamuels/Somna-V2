@@ -20,6 +20,7 @@
   assign somna_sale_factor = 100
   if settings.somna_once_discount > 0 and product_resource.selling_plan_groups.size > 0
     assign somna_sale_factor = 100 | minus: settings.somna_once_discount
+    assign compare_at_price = compare_at_price | default: 0
     if selected_variant.price > compare_at_price
       assign compare_at_price = selected_variant.price
     endif
