@@ -24,7 +24,7 @@
     '[data-no-reveal]', 'header', 'footer', 'dialog', 'iframe', 'details:not([open]) > :not(summary)',
     'somna-pdp-how', 'somna-pdp-layers', '.somna-pdp-layers-traveller', '.somna-pdp-story__visual', '.somna-pdp-story__frame',
     '.somna-pdp-story__bullets', '.somna-pdp-story__layers', '.somna-pdp-cta__media', '.somna-pdp-pair svg',
-    '.somna-icon', '[class*="somna-shake--"]', '.somna-wave', 'somna-wave', 'marquee-component', 'slideshow-component',
+    '.somna-icon', '[class*="somna-shake--"]', '.somna-signup__form', '.somna-wave', 'somna-wave', 'marquee-component', 'slideshow-component',
     '.slideshow', 'svg',
   ].join(',');
   // containers holding one of these are left alone too (so the custom animation's parent never moves)
