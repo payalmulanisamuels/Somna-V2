@@ -512,7 +512,7 @@
                   "type": "button",
                   "settings": {
                     "label": "SHOP NOW  →",
-                    "link": "shopify://collections/all",
+                    "link": "shopify://products/sleep-bundle",
                     "open_in_new_tab": false,
                     "style_class": "button-custom",
                     "custom_button_background": "#afbdf8",
@@ -3432,6 +3432,8 @@
         "track_color": "#d8ddd4",
         "show_gallery": true,
         "gallery_limit": 6,
+        "gallery_source": "judgeme",
+        "photo_alt": "Photo from [name]'s review",
         "sheet_url": "https://docs.google.com/spreadsheets/d/1pOrOzI06fWZ82O1l47xT8u4N2zk5FmM9/edit?gid=405744366#gid=405744366",
         "initial_count": 4,
         "batch_size": 4,
