@@ -66,7 +66,9 @@
       on:click="/toggle"
     >
       <span class="svg-wrapper header-drawer-icon header-drawer-icon--open">
-        {{- 'icon-menu.svg' | inline_asset_content -}}
+        {%- comment -%} phones: Somna's three-line menu icon (mobile Figma 4781:9530) {%- endcomment -%}
+        {{- 'icon-menu.svg' | inline_asset_content | replace_first: '<svg ', '<svg class="mobile:hidden" ' -}}
+        <svg class="desktop:hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" fill="none"><path d="M1.14 1.14h19.69M1.14 10.98h19.69M1.14 20.83h19.69" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
       </span>
       <span class="svg-wrapper header-drawer-icon header-drawer-icon--close">
         {{- 'icon-close-menu.svg' | inline_asset_content -}}
