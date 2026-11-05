@@ -962,7 +962,16 @@
         "reflection_opacity": 75,
         "padding-block-start": 56,
         "padding-block-end": 72
-      }
+      },
+      "custom_css": [
+        "[class*=\"__avatars\"] {width: auto !important; flex: none;}",
+        "[class*=\"__avatars\"] .layout-panel-flex {gap: 0;}",
+        "[class*=\"__avatars\"] .image-block {position: relative; width: 24px !important; flex: none;}",
+        "[class*=\"__avatars\"] .image-block:nth-child(1) {z-index: 3;}",
+        "[class*=\"__avatars\"] .image-block:nth-child(2) {z-index: 2;}",
+        "[class*=\"__avatars\"] .image-block + .image-block {margin-left: -7px;}",
+        "[class*=\"__avatars\"] .image-block__image {box-sizing: border-box; border: 2px solid #f3feee !important; border-radius: 50% !important; aspect-ratio: 1; object-fit: cover;}"
+      ]
     },
     "recently_viewed": {
       "type": "somna-recently-viewed",
