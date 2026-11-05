@@ -466,7 +466,7 @@
   </div>
 
   {%- if sticker_blocks.size > 0 -%}
-    <ul class="somna-pdp-hero__stickers somna-container" role="list">
+    <ul class="somna-pdp-hero__stickers somna-stickers somna-container" role="list">
       {%- for block in sticker_blocks -%}
         <li class="{% if s.sticker_motion != 'none' %}somna-shake--{{ s.sticker_motion }}{% endif %}" style="--somna-tilt: {{ block.settings.tilt }}deg; --somna-shake-delay: {{ forloop.index0 | times: 0.3 }}s;" {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
       {%- endfor -%}
@@ -777,8 +777,8 @@
     text-transform: uppercase;
   }
 
-  .somna-pdp-hero__sticker,
-  .somna-pdp-hero__stickers li {
+  /* the row of trust stickers under the hero uses the shared .somna-stickers (snippets/somna-shared-styles) */
+  .somna-pdp-hero__sticker {
     padding: 8px 18px;
     border: 2px solid #000;
     border-radius: 999px;
@@ -1265,17 +1265,8 @@
     stroke-width: 1.2;
   }
 
-  .somna-pdp-hero__stickers {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px 32px;
-    justify-content: center;
+  .somna-pdp-hero__stickers.somna-stickers {
     margin-block: 40px 0;
-    list-style: none;
-  }
-
-  .somna-pdp-hero__stickers li {
-    rotate: var(--somna-tilt, 0deg);
   }
 
   /* desktop (Figma 1440): gallery + quote + videos on the left, buy panel on the right */
@@ -1552,11 +1543,11 @@
     }
 
     /* trust stickers under the hero stay on one row */
-    .somna-pdp-hero__stickers {
+    .somna-pdp-hero__stickers.somna-stickers {
       gap: 12px;
     }
 
-    .somna-pdp-hero__stickers li {
+    .somna-pdp-hero__stickers.somna-stickers > li {
       padding: 8px 14px;
       font-size: 0.875rem;
     }
@@ -1910,7 +1901,7 @@
       padding-inline: 6px;
     }
 
-    .somna-pdp-hero__stickers li {
+    .somna-pdp-hero__stickers.somna-stickers > li {
       padding: 4px 9px;
       font-size: 0.65rem;
       box-shadow: 2px 3px 0 #000;

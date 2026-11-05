@@ -22,6 +22,25 @@
       </div>
     {%- endif -%}
 
+    {%- if s.layout == 'stickers' -%}
+      {%- comment -%} trust stickers: the block titles as tilted pills (shared .somna-stickers) {%- endcomment -%}
+      <ul class="somna-stickers somna-cards__stickers" role="list">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign tilt = '-1.7'
+            case forloop.index0
+              when 1
+                assign tilt = '1.2'
+              when 2
+                assign tilt = '-2.4'
+              when 3
+                assign tilt = '1.3'
+            endcase
+          -%}
+          <li class="somna-shake--swing" style="--somna-tilt: {{ tilt }}deg; --somna-shake-delay: {{ forloop.index0 | times: 0.3 }}s;" {{ block.shopify_attributes }}>{{ block.settings.title | escape }}</li>
+        {%- endfor -%}
+      </ul>
+    {%- else -%}
     <ul class="somna-cards__list" role="list">
       {%- for block in section.blocks -%}
         {%- assign b = block.settings -%}
@@ -47,6 +66,7 @@
         </li>
       {%- endfor -%}
     </ul>
+    {%- endif -%}
   </div>
 </div>
 
@@ -335,7 +355,7 @@
   "tag": "section",
   "class": "somna-cards-section",
   "settings": [
-    { "type": "select", "id": "layout", "label": "Look", "options": [{ "value": "cards", "label": "Cards" }, { "value": "badges", "label": "Badges" }], "default": "cards" },
+    { "type": "select", "id": "layout", "label": "Look", "options": [{ "value": "cards", "label": "Cards" }, { "value": "badges", "label": "Badges" }, { "value": "stickers", "label": "Stickers (titles only, tilted pills)" }], "default": "cards" },
     { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
     { "type": "inline_richtext", "id": "heading", "label": "Heading", "info": "Italic words take the accent colour." },
     { "type": "richtext", "id": "text", "label": "Text" },

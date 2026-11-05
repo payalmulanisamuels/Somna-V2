@@ -12,7 +12,7 @@
 -%}
 <somna-contact
   id="{{ s.anchor | default: 'contact-form' | handleize }}"
-  class="somna-contact"
+  class="somna-contact somna-contact--{{ s.style | default: 'panel' }}"
   style="--scf-bg: {{ s.background_color }}; --scf-panel: {{ s.panel_color }}; --scf-accent: {{ s.accent_color }}; --scf-card: {{ s.card_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
 >
   <div class="somna-container somna-contact__grid">
@@ -20,6 +20,24 @@
       {%- if s.eyebrow != blank -%}<p class="somna-contact__eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
       {%- if s.heading != blank -%}<h2 class="somna-contact__heading somna-accent">{{ s.heading }}</h2>{%- endif -%}
       {%- if s.text != blank -%}<div class="somna-contact__text">{{ s.text }}</div>{%- endif -%}
+
+      {%- comment -%} quick links (Figma "Quick answers"): one block per link {%- endcomment -%}
+      {%- if section.blocks.size > 0 -%}
+        <ul class="somna-contact__links" role="list">
+          {%- for block in section.blocks -%}
+            {%- assign b = block.settings -%}
+            <li {{ block.shopify_attributes }}>
+              <a class="somna-contact__link{% if b.dark %} somna-contact__link--dark{% endif %}" href="{{ b.link | default: '#' }}">
+                <span class="somna-contact__link-icon" aria-hidden="true">
+                  {%- if b.icon != blank -%}<span class="somna-contact__mask" style="--scf-mask: url('{{ b.icon | image_url: width: 120 }}');"></span>{%- else -%}{%- render 'somna-line-icon', name: 'question', class: 'somna-contact__svg', stroke: 1.6 -%}{%- endif -%}
+                </span>
+                <span class="somna-contact__link-label">{{ b.label | escape }}</span>
+                <span class="somna-contact__link-arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
 
       {%- if s.email != blank -%}
         <div class="somna-contact__direct">
@@ -38,8 +56,8 @@
       {%- endif -%}
     </div>
 
-    <div class="somna-contact__panel{% if s.drip_edge %} somna-edge-drip-bottom{% endif %}">
-      {%- if s.form_heading != blank -%}<h2 class="somna-contact__form-heading">{{ s.form_heading | escape }}</h2>{%- endif -%}
+    <div class="somna-contact__panel{% if s.drip_edge and s.style != 'card' %} somna-edge-drip-bottom{% endif %}">
+      {%- if s.form_heading != blank -%}<h2 class="somna-contact__form-heading">{{ s.form_heading }}</h2>{%- endif -%}
 
       <div data-no-reveal>
       {%- form 'contact', id: form_id, class: 'somna-contact__form' -%}
@@ -80,11 +98,18 @@
             <p class="somna-contact__error" id="{{ form_id }}-email-error" data-error hidden>{{ s.required_error | escape }}</p>
           </div>
 
+          {%- if s.second_field == 'order' -%}
+            <div class="somna-contact__field">
+              <label for="{{ form_id }}-order">{{ s.order_label | escape }}</label>
+              <input id="{{ form_id }}-order" type="text" name="contact[{{ s.order_label | escape }}]" autocomplete="off" placeholder="{{ s.order_placeholder | escape }}" value="{{ form[s.order_label] | escape }}">
+            </div>
+          {%- else -%}
           <div class="somna-contact__field">
             <label for="{{ form_id }}-phone">{{ s.phone_label | escape }}</label>
             <input id="{{ form_id }}-phone" type="tel" name="contact[phone]" autocomplete="tel" pattern="[0-9\-\+\s\(\)\.]*" placeholder="{{ s.phone_placeholder | escape }}" value="{{ form.phone | escape }}" aria-describedby="{{ form_id }}-phone-error" data-pattern-error="{{ s.phone_error | escape }}">
             <p class="somna-contact__error" id="{{ form_id }}-phone-error" data-error hidden>{{ s.phone_error | escape }}</p>
           </div>
+          {%- endif -%}
 
           <div class="somna-contact__field">
             <label for="{{ form_id }}-enquiry">{{ s.enquiry_label | escape }} <span class="somna-contact__req" aria-hidden="true">*</span></label>
@@ -505,6 +530,249 @@
     color: #6d1010;
   }
 
+
+  /* Quick links (Figma 4859:1636 / 1643): lavender buttons, the dark one inverted; icons are masks so they take the text colour */
+  .somna-contact__links {
+    display: grid;
+    gap: 28px;
+    max-width: 464px;
+    margin: 18px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-contact__link {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    min-height: 50px;
+    padding: 0 22px 0 8px;
+    border: 2.437px solid #000;
+    border-radius: 8px;
+    background: var(--scf-accent);
+    color: #000;
+    box-shadow: 3.249px 4.061px 0 #000;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    text-decoration: none;
+    transition: translate 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .somna-contact__link--dark {
+    border-color: var(--scf-accent);
+    background: #000;
+    color: #f3feee;
+    box-shadow: 3.249px 4.061px 0 var(--scf-accent);
+  }
+
+  .somna-contact__link:hover {
+    translate: -2px -2px;
+    box-shadow: 5px 6px 0 #000;
+  }
+
+  .somna-contact__link--dark:hover {
+    box-shadow: 5px 6px 0 var(--scf-accent);
+  }
+
+  .somna-contact__link:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 3px;
+  }
+
+  .somna-contact__link-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 50px;
+    height: 40px;
+  }
+
+  .somna-contact__mask {
+    width: 40px;
+    height: 36px;
+    background: currentColor;
+    -webkit-mask: var(--scf-mask) center / contain no-repeat;
+    mask: var(--scf-mask) center / contain no-repeat;
+  }
+
+  .somna-contact__link-label {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .somna-contact__link-arrow {
+    flex: none;
+    font-size: 1.125rem;
+  }
+
+  /* "Card" style (Figma 4859:1355): headings in Boldonse with a lavender second part, the form in a mint card with
+     a black border and offset shadow, inputs with the same border/shadow, black Send button */
+  .somna-contact--card .somna-contact__heading {
+    font-size: clamp(2rem, 3.2vw, 2.874rem);
+    text-wrap: initial;
+  }
+
+  .somna-contact--card .somna-contact__heading em {
+    color: #98a3de;
+    font-style: normal;
+  }
+
+  .somna-contact--card .somna-contact__text {
+    font-size: 1.018rem;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+  }
+
+  .somna-contact--card .somna-contact__direct {
+    gap: 12px;
+    align-items: center;
+    margin-top: 22px;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+  }
+
+  .somna-contact--card .somna-contact__direct-icon {
+    width: 64px;
+    height: 48px;
+    border-radius: 0;
+    background: none;
+    color: #000;
+  }
+
+  .somna-contact--card .somna-contact__direct-icon .somna-contact__svg {
+    width: 52px;
+    height: 44px;
+  }
+
+  .somna-contact--card .somna-contact__direct-body {
+    gap: 2px;
+    font-size: 1.018rem;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+  }
+
+  .somna-contact--card .somna-contact__direct-label {
+    font-size: 0.875rem;
+  }
+
+  .somna-contact--card .somna-contact__email {
+    font-size: 1.125rem;
+  }
+
+  .somna-contact--card .somna-contact__response {
+    font-size: 0.9375rem;
+  }
+
+  .somna-contact--card .somna-contact__panel {
+    padding: 24px 20px 26px;
+    border: 2.437px solid #000;
+    border-radius: 21px;
+    background: var(--scf-card-bg, #f3feee);
+    color: #000;
+    box-shadow: 3.249px 4.061px 0 #000;
+  }
+
+  .somna-contact--card .somna-contact__form-heading {
+    margin-bottom: 20px;
+    color: #000;
+    font-size: clamp(1.75rem, 2.7vw, 2.418rem);
+  }
+
+  .somna-contact--card .somna-contact__form-heading em {
+    display: block;
+    color: #98a3de;
+    font-style: normal;
+  }
+
+  /* required fields keep their browser/JS checks; the Figma shows no asterisks */
+  .somna-contact--card :is(.somna-contact__required-note, .somna-contact__req) {
+    display: none;
+  }
+
+  .somna-contact--card .somna-contact__fields {
+    gap: 14px 24px;
+  }
+
+  .somna-contact--card .somna-contact__field {
+    gap: 4px;
+  }
+
+  .somna-contact--card .somna-contact__field label {
+    color: #000;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .somna-contact--card .somna-contact__field :is(input, select, textarea) {
+    min-height: 48px;
+    padding: 10px 12px;
+    border: 2.437px solid #000;
+    border-radius: 8px;
+    background: #f3feee;
+    box-shadow: 3.249px 4.061px 0 #000;
+    font-size: 0.9375rem;
+    letter-spacing: 0.08em;
+  }
+
+  .somna-contact--card .somna-contact__field textarea {
+    min-height: 92px;
+  }
+
+  .somna-contact--card .somna-contact__field :is(input, textarea)::placeholder,
+  .somna-contact--card .somna-contact__select select:invalid {
+    color: #000;
+  }
+
+  .somna-contact--card .somna-contact__field :is(input, select, textarea):hover,
+  .somna-contact--card .somna-contact__field :is(input, select, textarea):focus-visible {
+    border-color: #000;
+    box-shadow: 3.249px 4.061px 0 var(--scf-accent);
+  }
+
+  .somna-contact--card .somna-contact__field [aria-invalid='true'] {
+    border-color: #c62828;
+  }
+
+  .somna-contact--card .somna-contact__error {
+    color: #c62828;
+  }
+
+  .somna-contact--card .somna-contact__submit {
+    min-height: 58px;
+    margin-top: 18px;
+    border-radius: 15px;
+    background: #000;
+    color: #f2fdee;
+    filter: drop-shadow(0 4.8px 7.2px rgb(0 0 0 / 0.25));
+    font-size: clamp(1.125rem, 1.67vw, 1.5rem);
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  .somna-contact--card .somna-contact__submit:hover:not(:disabled) {
+    background: var(--scf-accent);
+    color: #000;
+  }
+
+  .somna-contact--card .somna-contact__submit:focus-visible {
+    outline-color: #000;
+  }
+
+  @media screen and (min-width: 990px) {
+    .somna-contact--card .somna-contact__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 601px);
+      gap: 48px;
+    }
+
+    .somna-contact--card .somna-contact__panel {
+      padding: 24px 26px 22px;
+    }
+  }
+
   @media screen and (min-width: 750px) {
     .somna-contact__grid {
       grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
@@ -568,6 +836,7 @@
   "class": "somna-contact-section",
   "settings": [
     { "type": "text", "id": "anchor", "label": "Anchor", "default": "contact-form", "info": "Link to the form with #contact-form." },
+    { "type": "select", "id": "style", "label": "Style", "options": [{ "value": "panel", "label": "Navy form panel" }, { "value": "card", "label": "Mint form card with black border" }], "default": "panel" },
     { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
     { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Send us a <em>message</em>" },
     { "type": "richtext", "id": "text", "label": "Text" },
@@ -576,12 +845,15 @@
     { "type": "text", "id": "email", "label": "Email", "default": "hello@somnasleep.com" },
     { "type": "text", "id": "response_time", "label": "Response time", "default": "Typically within 1 business day." },
     { "type": "header", "content": "Form" },
-    { "type": "text", "id": "form_heading", "label": "Form heading" },
+    { "type": "inline_richtext", "id": "form_heading", "label": "Form heading", "info": "Card style: italic words start a new line in lavender." },
     { "type": "text", "id": "required_note", "label": "Required note", "default": "Required fields" },
     { "type": "text", "id": "name_label", "label": "Name label", "default": "Full name" },
     { "type": "text", "id": "name_placeholder", "label": "Name placeholder", "default": "Your full name" },
     { "type": "text", "id": "email_label", "label": "Email label", "default": "Email address" },
     { "type": "text", "id": "email_placeholder", "label": "Email placeholder", "default": "you@example.com" },
+    { "type": "select", "id": "second_field", "label": "Third field", "options": [{ "value": "phone", "label": "Phone number" }, { "value": "order", "label": "Order number" }], "default": "phone" },
+    { "type": "text", "id": "order_label", "label": "Order number label", "default": "Order number, optional", "info": "Also used as the field name in the message you receive." },
+    { "type": "text", "id": "order_placeholder", "label": "Order number placeholder", "default": "e.g. #12345" },
     { "type": "text", "id": "phone_label", "label": "Phone label", "default": "Phone number" },
     { "type": "text", "id": "phone_placeholder", "label": "Phone placeholder", "default": "Optional" },
     { "type": "text", "id": "enquiry_label", "label": "Enquiry label", "default": "Enquiry type", "info": "Also used as the field name in the message you receive." },
@@ -605,6 +877,18 @@
     { "type": "color", "id": "accent_color", "label": "Accent", "default": "#afbdf8" },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 24 },
     { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 72 }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Quick link",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Track your order" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "image_picker", "id": "icon", "label": "Icon", "info": "Transparent PNG; drawn in the text colour. Empty: a question-mark line icon." },
+        { "type": "checkbox", "id": "dark", "label": "Dark button", "default": false }
+      ]
+    }
   ],
   "presets": [{ "name": "Somna contact form" }]
 }

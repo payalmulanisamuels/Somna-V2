@@ -11,11 +11,11 @@
   assign crumb = s.breadcrumb_label | default: page.title
 -%}
 <div
-  class="somna-page-hero somna-page-hero--image-{{ s.image_side }}"
+  class="somna-page-hero somna-page-hero--image-{{ s.image_side }} somna-page-hero--{{ s.style | default: 'panel' }}"
   style="--sph-bg: {{ s.background_color }}; --sph-panel: {{ s.panel_color }}; --sph-media: {{ s.media_color | default: s.panel_color }}; --sph-fit: {{ s.image_fit }}; --sph-accent: {{ s.accent_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
 >
   <div class="somna-container somna-page-hero__grid">
-    <div class="somna-page-hero__media">
+    <div class="somna-page-hero__media{% if s.style == 'open' and s.drip_edge %} somna-edge-drip-bottom{% endif %}">
       {%- if s.image != blank -%}
         {{
           s.image
@@ -33,7 +33,7 @@
       {%- endif -%}
     </div>
 
-    <div class="somna-page-hero__panel{% if s.drip_edge %} somna-edge-drip-bottom{% endif %}">
+    <div class="somna-page-hero__panel{% if s.drip_edge and s.style != 'open' %} somna-edge-drip-bottom{% endif %}">
       {%- if s.show_breadcrumb -%}
         <nav class="somna-page-hero__crumbs" aria-label="{{ 'accessibility.breadcrumbs' | t | default: 'Breadcrumb' }}">
           <a href="{{ routes.root_url }}">{{ s.home_label | escape }}</a>
@@ -55,6 +55,7 @@
               {{ block.shopify_attributes }}
             >
               {{- b.label | escape -}}
+              {%- if b.style == 'pill' -%}<span class="somna-page-hero__pill-arrow" aria-hidden="true">↓</span>{%- endif -%}
             </a>
           {%- endfor -%}
         </div>
@@ -259,6 +260,100 @@
     }
   }
 
+  /* "Open" style (Figma 4859:1355 Contact, 4859:1740 How to use): text straight on the lavender band,
+     heading with the second line in mint, photo on the right with a navy drip hanging under it. */
+  .somna-page-hero--open .somna-page-hero__panel {
+    gap: 0;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    color: #000;
+  }
+
+  .somna-page-hero--open .somna-page-hero__eyebrow {
+    margin-bottom: 6px;
+    color: #0a1a4a;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    line-height: 1.3;
+  }
+
+  .somna-page-hero--open .somna-page-hero__title {
+    color: #000;
+    font-size: clamp(2.25rem, 3.86vw, 3.4766rem);
+    line-height: 1.35;
+    text-wrap: initial;
+  }
+
+  .somna-page-hero--open .somna-page-hero__title em {
+    display: block;
+    color: var(--sph-accent);
+    font-style: normal;
+  }
+
+  .somna-page-hero--open .somna-page-hero__tagline {
+    color: #000;
+  }
+
+  .somna-page-hero--open .somna-page-hero__text {
+    max-width: 503px;
+    margin-top: 6px;
+    color: #000;
+    font-size: clamp(1rem, 1.37vw, 1.2315rem);
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+  }
+
+  .somna-page-hero--open .somna-page-hero__text a {
+    color: inherit;
+  }
+
+  .somna-page-hero--open .somna-page-hero__media {
+    --somna-drip-h: clamp(40px, 6.4vw, 92px);
+    align-self: center;
+    border-radius: 0;
+    background: var(--sph-media);
+  }
+
+  .somna-page-hero--open .somna-page-hero__image {
+    min-height: 0;
+    aspect-ratio: 523 / 305;
+  }
+
+  /* jump links under the text (How to use: "Nasal Strips ↓") */
+  .somna-page-hero__button--pill {
+    gap: 6px;
+    min-height: 34px;
+    padding: 0 14px;
+    border: 1.5px solid #000;
+    border-radius: 999px;
+    background: #f3feee;
+    color: #000;
+    box-shadow: 2px 2px 0 #000;
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+    text-transform: none;
+  }
+
+  .somna-page-hero__button--pill:hover {
+    border-color: #000;
+    background: #000;
+    color: #f3feee;
+  }
+
+  @media screen and (min-width: 750px) {
+    .somna-page-hero--open .somna-page-hero__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 523px);
+      align-items: center;
+      gap: 48px;
+    }
+
+    .somna-page-hero--open .somna-page-hero__media {
+      order: 2;
+    }
+  }
+
   @keyframes somna-page-hero-in {
     from {
       opacity: 0;
@@ -296,6 +391,7 @@
     { "type": "text", "id": "image_position", "label": "Image focal point", "default": "object-position: center", "info": "CSS, e.g. object-position: 60% 40%" },
     { "type": "select", "id": "image_fit", "label": "Image fit", "options": [{ "value": "cover", "label": "Fill" }, { "value": "contain", "label": "Fit (cut-outs)" }], "default": "cover" },
     { "type": "color", "id": "media_color", "label": "Image background", "info": "Shows around cut-out images. Empty uses the panel colour." },
+    { "type": "select", "id": "style", "label": "Style", "options": [{ "value": "panel", "label": "Navy panel beside the photo" }, { "value": "open", "label": "Open: text on the background, photo on the right" }], "default": "panel", "info": "Open: italic words in the heading start a new line in the accent colour; the drip hangs under the photo." },
     { "type": "select", "id": "image_side", "label": "Image side", "options": [{ "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }], "default": "left" },
     { "type": "checkbox", "id": "drip_edge", "label": "Drip edge on panel", "default": true },
     { "type": "header", "content": "Colours" },
@@ -313,7 +409,7 @@
       "settings": [
         { "type": "text", "id": "label", "label": "Label", "default": "Shop now" },
         { "type": "url", "id": "link", "label": "Link" },
-        { "type": "select", "id": "style", "label": "Style", "options": [{ "value": "primary", "label": "Filled" }, { "value": "secondary", "label": "Outline" }], "default": "primary" }
+        { "type": "select", "id": "style", "label": "Style", "options": [{ "value": "primary", "label": "Filled" }, { "value": "secondary", "label": "Outline" }, { "value": "pill", "label": "Small pill with ↓ (jump link)" }], "default": "primary" }
       ]
     }
   ],

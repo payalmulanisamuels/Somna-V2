@@ -387,6 +387,32 @@
     92% { transform: scale(1) rotate(0deg); }
   }
 
+  /* Trust stickers ("30-Night Guarantee", "Arrives in 7–9 business days" …): mint pills with a black border and
+     offset shadow, each slightly tilted (Figma 4859:1733). Used by the PDP hero and the Somna cards "Stickers" look. */
+  .somna-stickers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 32px;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-stickers > li {
+    padding: 8px 18px;
+    border: 2px solid #000;
+    border-radius: 999px;
+    background: #f3feee;
+    color: #000;
+    box-shadow: 3px 4px 0 #000;
+    font-family: var(--font-accent--family);
+    font-size: 1.0625rem;
+    line-height: 1.4;
+    white-space: nowrap;
+    rotate: var(--somna-tilt, 0deg);
+  }
+
   .somna-shake--wiggle { animation: somnaShakeWiggle 3.2s ease-in-out var(--somna-shake-delay, 0s) infinite; }
   .somna-shake--swing { animation: somnaShakeSwing 3.6s ease-in-out var(--somna-shake-delay, 0s) infinite; transform-origin: 50% 0; }
   .somna-shake--pop { animation: somnaShakePop 3.4s cubic-bezier(0.3, 0.7, 0.4, 1) var(--somna-shake-delay, 0s) infinite; }
