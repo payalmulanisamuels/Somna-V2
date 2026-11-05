@@ -101,6 +101,7 @@
       next.addEventListener('click', function () { ul.scrollBy({ left: step(), behavior: reduce ? 'auto' : 'smooth' }); });
       if (window.ResizeObserver) new ResizeObserver(update).observe(ul);
       var labels = { from: {{ s.price_prefix | json }}, sub: {{ s.subscribe_label | json }}, cta: {{ s.button_label | json }} };
+      var onceOff = {{ settings.somna_once_discount | default: 0 }};
       // Reserve the space before the request finishes so nothing below jumps.
       ul.innerHTML = list.map(function () { return '<li class="somna-rv__card is-loading" aria-hidden="true"><span class="somna-rv__media"></span></li>'; }).join('');
       root.hidden = false;
@@ -125,12 +126,21 @@
           var img = p.featured_image ? p.featured_image.replace(/^\/\//, 'https://') : '';
           var src = img ? img + (img.indexOf('?') > -1 ? '&' : '?') + 'width=600' : '';
           var sub = p.selling_plan_groups && p.selling_plan_groups.length ? '<span class="somna-rv__sub">' + esc(labels.sub) + '</span>' : '';
+          // lowest price: Subscribe & Save plan price, else the one-time sale price (regular minus the sale %)
+          var hasPlans = !!(p.selling_plan_groups && p.selling_plan_groups.length);
+          var low = { price: p.price_min, compare: 0 };
+          (p.variants || []).forEach(function (v) {
+            var cands = [hasPlans ? Math.round(v.price * (100 - onceOff) / 100) : v.price];
+            (v.selling_plan_allocations || []).forEach(function (a) { cands.push(a.price); });
+            var best = Math.min.apply(null, cands);
+            if (best <= low.price) low = { price: best, compare: Math.max(v.price, v.compare_at_price || 0) };
+          });
           return '<li class="somna-rv__card">' +
             '<a class="somna-rv__media" href="' + esc(p.url) + '" tabindex="-1" aria-hidden="true">' +
               (src ? '<img src="' + esc(src) + '" alt="" width="600" height="468" loading="lazy" decoding="async">' : '') +
             '</a>' +
             '<h3 class="somna-rv__title"><a href="' + esc(p.url) + '">' + esc(p.title) + '</a></h3>' +
-            '<p class="somna-rv__price">' + esc(labels.from) + ' ' + money(p.price_min) + sub + '</p>' +
+            '<p class="somna-rv__price">' + esc(labels.from) + ' ' + money(low.price) + (low.compare > low.price ? ' <s>' + money(low.compare) + '</s>' : '') + sub + '</p>' +
             '<a class="somna-rv__button" href="' + esc(p.url) + '">' + esc(labels.cta) + '<span class="visually-hidden">: ' + esc(p.title) + '</span></a>' +
           '</li>';
         }).join('');

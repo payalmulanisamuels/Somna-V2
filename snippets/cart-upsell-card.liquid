@@ -52,6 +52,10 @@
   if show_card
     # 2. Price: subscription price (first plan) when enabled or required
     assign upsell_price = upsell_variant.price
+    if settings.somna_once_discount > 0 and product.selling_plan_groups.size > 0
+      assign upsell_once_factor = 100 | minus: settings.somna_once_discount
+      assign upsell_price = upsell_variant.price | times: upsell_once_factor | divided_by: 100
+    endif
     assign upsell_selling_plan = ''
     if settings.upsell_add_as_subscription or product.requires_selling_plan
       assign upsell_allocation = upsell_variant.selling_plan_allocations.first
