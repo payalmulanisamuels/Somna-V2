@@ -201,15 +201,16 @@
       {%- endcomment -%}
       {%- assign jm_photos = '' -%}
       {%- if s.gallery_source == 'judgeme' and rv_product -%}
-        {%- assign photo_sources = rv_product.metafields.custom.pdp_box_products.value -%}
         {%- assign photo_count = 0 -%}
-        {%- for n in (0..2) -%}
-          {%- if n == 0 -%}
-            {%- assign src_data = jm -%}
-          {%- else -%}
-            {%- assign src_index = n | minus: 1 -%}
-            {%- assign src_data = photo_sources[src_index].metafields.judgeme.review_widget_data.value -%}
-          {%- endif -%}
+        {%- comment -%} handles: this product, then its "What's in the box" products {%- endcomment -%}
+        {%- assign photo_handles = rv_product.handle -%}
+        {%- for bp in rv_product.metafields.custom.pdp_box_products.value -%}
+          {%- assign photo_handles = photo_handles | append: ',' | append: bp.handle -%}
+        {%- endfor -%}
+        {%- assign photo_handles = photo_handles | split: ',' -%}
+        {%- for ph in photo_handles -%}
+          {%- assign src_data = all_products[ph].metafields.judgeme.review_widget_data.value -%}
+          <!-- rv-photos {{ ph }} {{ src_data.photo_gallery.size }} -->
           {%- for rv in src_data.photo_gallery -%}
             {%- for pic in rv.pictures_urls -%}
               {%- if photo_count >= s.gallery_limit -%}{%- break -%}{%- endif -%}
