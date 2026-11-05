@@ -310,12 +310,13 @@
      Plays by itself (~3.2s, soft ease-in-out; approved demo E) when the section is a third of the way up the screen: the "How it works" product leaves its spot,
      flips and travels down-right into this section, turns into the stacked layers, the layers peel
      apart one after another (first up-left, last down-right), then the descriptions appear 1 -> n.
-     Rewinds when scrolled back above it. Desktop + tablet only (mobile design pending); off for reduced motion.
+     Rewinds when scrolled back above it. Phones (under 750px): no travelling picture (the sections stack), the
+     layers simply appear stacked and peel apart the same way. Off for reduced motion.
      Layer offsets are measured from the layer images themselves, so it works for 3 or 4 layers. */
   if (!customElements.get('somna-pdp-layers')) {
     customElements.define('somna-pdp-layers', class extends HTMLElement {
       async connectedCallback() {
-        if (matchMedia('(prefers-reduced-motion: reduce)').matches || innerWidth < 750) return;
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         this.layers = [...this.querySelectorAll('.somna-pdp-story__layer')];
         const section = this.closest('.somna-pdp-story');
         this.items = section ? [...section.querySelectorAll('.somna-pdp-story__layers li')] : [];
@@ -361,7 +362,7 @@
         const mid = { x: centres.reduce((a, c) => a + c.x, 0) / centres.length, y: centres.reduce((a, c) => a + c.y, 0) / centres.length };
         const box = () => this.getBoundingClientRect();
         // the "How it works" picture that travels into this section (optional)
-        this.source = document.querySelector('.somna-pdp-story--how .somna-pdp-story__product img');
+        this.source = innerWidth < 750 ? null : document.querySelector('.somna-pdp-story--how .somna-pdp-story__product img');
         // only when "How it works" sits right before this section (Nasal Strips / Mouth Tape). If another story
         // section is in between (Color Set: steps come first), the layers simply appear stacked and peel apart.
         const howSection = this.source?.closest('.shopify-section');
@@ -1978,7 +1979,7 @@
     { "type": "product", "id": "preview_product", "label": "Product for the theme editor", "info": "Only used where there is no product." },
     { "type": "video", "id": "video", "label": "Three steps: fallback video", "info": "The \"Watch how it works\" popup plays the product's steps metaobject \"video\" field, or the product metafield custom.how_it_works_video. This video is used only when neither is set." },
     { "type": "text", "id": "video_button_label", "label": "Three steps: button label", "default": "Watch how it works", "info": "Used when the steps metaobject has no button label." },
-    { "type": "checkbox", "id": "layers_animation", "label": "Animate \"What it's made of\"", "info": "When every layer has its own image: the How it works product travels in and peels into the layers as you scroll. Desktop and tablet; off for reduced motion.", "default": true },
+    { "type": "checkbox", "id": "layers_animation", "label": "Animate \"What it's made of\"", "info": "When every layer has its own image: the How it works product travels in and peels into the layers as you scroll (phones: the layers peel apart without the travel). Off for reduced motion.", "default": true },
     { "type": "select", "id": "pills_motion", "label": "Pill badges animation", "info": "A short shake every few seconds, one pill after another. Off for reduced motion.", "options": [{ "value": "none", "label": "None" }, { "value": "wiggle", "label": "Wiggle" }, { "value": "swing", "label": "Tilt-swing" }, { "value": "pop", "label": "Pop-jiggle" }], "default": "swing" },
     { "type": "checkbox", "id": "how_animation", "label": "Animate \"How it works\"", "info": "Hop-flip of the product and icons 1 → 4 when the section comes on screen. Off for visitors who prefer reduced motion.", "default": true },
     { "type": "select", "id": "accent_line", "label": "Heading line in the accent colour", "options": [{ "value": "first", "label": "First line" }, { "value": "second", "label": "Second line" }], "default": "first" },
