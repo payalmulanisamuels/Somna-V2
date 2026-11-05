@@ -15,6 +15,16 @@
   assign selected_variant = product_resource.selected_or_first_available_variant
   assign price = selected_variant.price
   assign compare_at_price = selected_variant.compare_at_price
+  # Somna one-time sale: products with Subscribe & Save plans are in the automatic one-time "Sale" discount,
+  # so cards show the one-time price (regular minus settings.somna_once_discount) against the regular price
+  assign somna_sale_factor = 100
+  if settings.somna_once_discount > 0 and product_resource.selling_plan_groups.size > 0
+    assign somna_sale_factor = 100 | minus: settings.somna_once_discount
+    if selected_variant.price > compare_at_price
+      assign compare_at_price = selected_variant.price
+    endif
+    assign price = selected_variant.price | times: somna_sale_factor | divided_by: 100
+  endif
 
   assign show_compare_price = false
   if compare_at_price > price
@@ -38,8 +48,8 @@
   endif
 
   if is_product_card
-    assign price_min = product_resource.price_min
-    assign price_max = product_resource.price_max
+    assign price_min = product_resource.price_min | times: somna_sale_factor | divided_by: 100
+    assign price_max = product_resource.price_max | times: somna_sale_factor | divided_by: 100
     assign has_volume_pricing = product_resource.quantity_price_breaks_configured? | default: false
   else
     # Product page: only use selected variant's pricing

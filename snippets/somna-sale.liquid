@@ -2,10 +2,11 @@
   Sale settings, shared by the buy box, size cards, sticky bar, cart and product cards.
   Shopify doesn't give themes the automatic discount, so its % is set here once.
 
-  - once_off: one-time purchase % off at checkout (automatic discount "Halloween Sale", 40%).
+  - once_off: one-time purchase % off at checkout (automatic discount "Sale"), from the theme setting
+    Prices → "One-time purchase discount shown" (settings.somna_once_discount).
   - text: sale wording for the buy box banner ("UP TO 50% OFF + 3 FREE GIFTS ...").
 
-  Sale end: set somna_sale_on to false. One-time prices then show the normal variant price.
+  Sale end: set the theme setting to 0. One-time prices then show the normal variant price.
 
   Usage:
     capture somna_once_off
@@ -16,8 +17,11 @@
   @param {string} get - 'once_off' (number, 0 when the sale is off) or 'text' (blank when off)
 {%- enddoc -%}
 {%- liquid
-  assign somna_sale_on = true
-  assign somna_sale_once_off = 40
+  assign somna_sale_once_off = settings.somna_once_discount | default: 0
+  assign somna_sale_on = false
+  if somna_sale_once_off > 0
+    assign somna_sale_on = true
+  endif
   assign somna_sale_text = 'UP TO 50% OFF'
 
   if get == 'once_off'

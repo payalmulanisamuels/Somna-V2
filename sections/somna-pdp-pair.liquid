@@ -53,11 +53,28 @@
             {%- if trend.featured_image -%}{{ trend.featured_image | image_url: width: 300 | image_tag: loading: 'lazy', alt: '', width: 117, height: 89 }}{%- endif -%}
             <span>
               <span class="somna-pdp-pair__trend-title">{{ trend.title }}</span>
+              {%- liquid
+                # lowest price: Subscribe & Save plan, else the one-time sale price; regular price struck
+                assign tv = trend.selected_or_first_available_variant
+                assign t_regular = tv.compare_at_price | default: 0
+                if tv.price > t_regular
+                  assign t_regular = tv.price
+                endif
+                assign t_price = tv.price
+                if trend.selling_plan_groups.size > 0
+                  assign t_factor = 100 | minus: settings.somna_once_discount
+                  assign t_price = tv.price | times: t_factor | divided_by: 100
+                  assign t_alloc = tv.selling_plan_allocations | first
+                  if t_alloc and t_alloc.price < t_price
+                    assign t_price = t_alloc.price
+                  endif
+                endif
+              -%}
               <span class="somna-pdp-pair__trend-price">
-                {{ trend.price | money }}
-                {%- if trend.compare_at_price > trend.price %} · <s>{{ trend.compare_at_price | money_without_trailing_zeros }}</s>{% endif -%}
+                {{ t_price | money }}
+                {%- if t_regular > t_price %} · <s>{{ t_regular | money_without_trailing_zeros }}</s>{% endif -%}
                 {%- assign nights = trend.metafields.custom.nights.value | default: 0 -%}
-                {%- if nights > 0 %} · <em>{{ trend.price | divided_by: nights | money }}{{ s.night_label }}</em>{% endif -%}
+                {%- if nights > 0 %} · <em>{{ t_price | divided_by: nights | money }}{{ s.night_label }}</em>{% endif -%}
               </span>
             </span>
           </a>

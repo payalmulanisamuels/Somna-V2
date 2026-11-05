@@ -24,6 +24,10 @@
   assign alloc = v.selling_plan_allocations | first
   assign plan_id = ''
   assign price = v.price
+  if product.selling_plan_groups.size > 0
+    assign once_factor = 100 | minus: settings.somna_once_discount
+    assign price = v.price | times: once_factor | divided_by: 100
+  endif
   if s.use_subscription and alloc
     assign price = alloc.price
     assign plan_id = alloc.selling_plan.id
