@@ -1784,12 +1784,38 @@
     filter: drop-shadow(0 18px 16px rgb(0 0 0 / 0.2));
   }
 
-  /* Mobile, bundles (Figma 4781:9521 / 4767:8277 / 4759:7535): only "The problem" panel shows,
-     and the two "What it's made of" cards sit side by side with a one-column list */
+  /* Mobile, bundles (Figma 4781:9521 / 4767:8277 / 4759:7535): "The problem" and "The fix" share one spot and
+     cross-fade in a loop (same 7s timing as the Mouth Tape problem picture); the two "What it's made of"
+     cards sit side by side with a one-column list */
   @media screen and (max-width: 749px) {
+    .somna-pdp-story__split:has(> .somna-pdp-story__panel--after) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .somna-pdp-story__split:has(> .somna-pdp-story__panel--after) > .somna-pdp-story__panel {
+      grid-area: 1 / 1;
+    }
+
+    .somna-pdp-story__split:has(> .somna-pdp-story__panel--after) > .somna-pdp-story__panel:not(.somna-pdp-story__panel--after) {
+      animation: somnaStoryFade 7s ease-in-out infinite;
+    }
+
+    .somna-pdp-story__panel--after {
+      animation: somnaStoryFadeIn 7s ease-in-out infinite;
+    }
+  }
+
+  @media screen and (max-width: 749px) and (prefers-reduced-motion: reduce) {
+    .somna-pdp-story__split > .somna-pdp-story__panel {
+      animation: none;
+    }
+
     .somna-pdp-story__panel--after {
       display: none;
     }
+  }
+
+  @media screen and (max-width: 749px) {
 
     .somna-pdp-story__pair {
       grid-template-columns: repeat(2, minmax(0, 1fr));
