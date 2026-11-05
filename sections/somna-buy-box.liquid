@@ -605,17 +605,30 @@
       font-size: 1.125rem;
     }
 
+    /* Figma 4186:876: the photo is as tall as the black panel (tops and bottoms line up),
+       the thumbnails sit under the photo, the questions under the panel */
     .somna-buy__grid {
       grid-template-columns: minmax(0, 540px) minmax(0, 560px);
       grid-template-areas:
-        'gallery panel'
-        'gallery faq';
+        'main panel'
+        'thumbs faq';
       justify-content: center;
+      align-items: start;
       gap: 12px 56px;
     }
 
     .somna-buy__gallery {
-      grid-area: gallery;
+      display: contents;
+    }
+
+    .somna-buy__main {
+      grid-area: main;
+      align-self: stretch;
+      min-height: 420px;
+    }
+
+    .somna-buy__thumbs {
+      grid-area: thumbs;
     }
 
     .somna-buy__side {
@@ -637,15 +650,15 @@
     }
 
     .somna-buy__main {
-      aspect-ratio: 540 / 340;
+      aspect-ratio: auto;
     }
 
     .somna-buy__thumbs {
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
     .somna-buy__thumb {
-      aspect-ratio: 100 / 66;
+      aspect-ratio: 113 / 101;
       border-radius: 10px;
     }
 
