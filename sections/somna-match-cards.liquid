@@ -368,12 +368,58 @@
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  /* Phones + tablets (touch): tapping a card widens it like the desktop hover; tap again to reset */
+  @media screen and (max-width: 989px) {
+    .somna-match__cards:has(> .somna-match__card:nth-child(2):last-child) {
+      grid-template-columns: 1fr 1fr;
+      transition: grid-template-columns 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .somna-match__cards[data-active='0'] {
+      grid-template-columns: 1.55fr 1fr;
+    }
+
+    .somna-match__cards[data-active='1'] {
+      grid-template-columns: 1fr 1.55fr;
+    }
+
     .somna-match__card {
-      transition: none;
+      cursor: pointer;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .somna-match__card.is-active {
+      box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-match__card,
+    .somna-match__cards {
+      transition: none !important;
     }
   }
 {% endstylesheet %}
+
+<script type="module">
+  /* touch screens: tap a card (not its button) to widen it, tap again to reset */
+  {
+    const list = document.querySelector('#shopify-section-{{ section.id }} .somna-match__cards');
+    const cards = list ? [...list.children] : [];
+    if (cards.length === 2) {
+      list.addEventListener('click', (e) => {
+        if (matchMedia('(min-width: 990px) and (hover: hover)').matches || e.target.closest('a')) return;
+        const card = e.target.closest('.somna-match__card');
+        if (!card) return;
+        const i = String(cards.indexOf(card));
+        const off = list.dataset.active === i;
+        if (off) delete list.dataset.active;
+        else list.dataset.active = i;
+        cards.forEach((c) => c.classList.toggle('is-active', !off && c === card));
+      });
+    }
+  }
+</script>
 
 {% schema %}
 {

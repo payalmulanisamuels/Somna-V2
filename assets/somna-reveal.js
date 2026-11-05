@@ -18,13 +18,14 @@
  * with short staggers (button 0.2s, nothing waits more than 0.3s or for a slow image), instead of each
  * element waiting until it is itself scrolled to — so the button never lags behind the rest.
  *
- * Desktop + tablet only (>= 750px; mobile design pending). Off for prefers-reduced-motion.
+ * All screen sizes (phones: a shorter, smaller fade). Off for prefers-reduced-motion.
  * No library; one passive scroll listener for the whole page (checks only tracked elements).
  */
 (() => {
   if (window.SomnaReveal) return;
 
-  const MQ = matchMedia('(min-width: 750px) and (prefers-reduced-motion: no-preference)');
+  const MQ = matchMedia('(prefers-reduced-motion: no-preference)');
+  const PHONE = matchMedia('(max-width: 749px)');
   const SKIP = [
     '[data-no-reveal]', 'header', 'footer', 'dialog', 'iframe', 'details:not([open]) > :not(summary)',
     'somna-pdp-how', 'somna-pdp-layers', '.somna-pdp-layers-traveller', '.somna-pdp-story__visual', '.somna-pdp-story__frame',
@@ -130,7 +131,7 @@
       const step = group ? 0.06 : type === 'item' || type === 'line' ? 0.12 : 0.08;
       const delay = group ? Math.min(0.3, BASE_G[type] + i * step) : Math.min(0.6, BASE[type] + i * step);
       const go = () => {
-        el.style.setProperty('--somna-r-d', t.d + 's');
+        el.style.setProperty('--somna-r-d', (PHONE.matches ? t.d * 0.83 : t.d) + 's');
         el.style.setProperty('--somna-r-delay', delay + 's');
         if (t.e) el.style.setProperty('--somna-r-e', t.e);
         el.classList.add('is-in');
