@@ -30,7 +30,7 @@
   {%- endif -%}
 {%- else -%}
   <div
-    class="somna-rv"
+    class="somna-rv{% if s.layout == 'compact' %} somna-rv--compact{% endif %}"
     id="SomnaRV-{{ section.id }}"
     hidden
     style="--somna-rv-bg: {{ s.background_color }}; --somna-rv-card: {{ s.card_color }}; --somna-rv-button: {{ s.button_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
@@ -324,6 +324,56 @@
     animation: somna-rv-pulse 1.2s ease-in-out infinite alternate;
   }
 
+  /* Compact layout (product pages, approved demo): a short row of side-by-side cards — image left,
+     title / price / button right */
+  .somna-rv--compact .somna-rv__head {
+    margin-bottom: 18px;
+  }
+
+  .somna-rv--compact .somna-rv__eyebrow {
+    margin-bottom: 8px;
+  }
+
+  .somna-rv--compact .somna-rv__list {
+    grid-auto-columns: min(318px, 84vw);
+    gap: 20px;
+  }
+
+  .somna-rv--compact .somna-rv__card {
+    display: grid;
+    grid-template-columns: 118px minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr;
+    column-gap: 14px;
+    padding: 10px;
+    border-radius: 16px;
+  }
+
+  .somna-rv--compact .somna-rv__media {
+    grid-row: 1 / 4;
+    align-self: stretch;
+    min-height: 118px;
+    margin: 0;
+    aspect-ratio: auto;
+    border-radius: 12px;
+  }
+
+  .somna-rv--compact .somna-rv__title {
+    margin: 2px 0 0;
+    font-size: 1.0625rem;
+  }
+
+  .somna-rv--compact .somna-rv__price {
+    flex-wrap: wrap;
+    gap: 2px 8px;
+    margin: 4px 0 8px;
+  }
+
+  .somna-rv--compact .somna-rv__button {
+    min-height: 34px;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+  }
+
   @keyframes somna-rv-pulse {
     to { opacity: 0.5; }
   }
@@ -357,6 +407,17 @@
         { "value": "record", "label": "Record views only (product page)" }
       ],
       "default": "show"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Card layout",
+      "options": [
+        { "value": "cards", "label": "Tall cards (image on top)" },
+        { "value": "compact", "label": "Compact (image left, details right)" }
+      ],
+      "default": "cards",
+      "visible_if": "{{ section.settings.mode == 'show' }}"
     },
     {
       "type": "range",
