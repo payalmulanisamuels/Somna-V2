@@ -190,7 +190,45 @@
 
     {%- if s.show_summary -%}
       {%- assign avg = sum_avg | plus: 0.0 -%}
-      <div class="somna-reviews__summary{% if joined %} is-joined{% endif %}{% unless s.show_gallery and photo_blocks.size > 0 %} somna-reviews__summary--no-photos{% endunless %}">
+      {%- comment -%}
+        Customer photos: on product pages, the real photos customers attached to their Judge.me reviews of this
+        product (Judge.me keeps them in the product's review metafield). The "Summary photo" blocks are only the
+        fallback (homepage, or a product without photo reviews).
+      {%- endcomment -%}
+      {%- comment -%}
+        Bundles have few photo reviews of their own, so their "What's in the box" products' photo reviews fill the rest
+        (Season Bundle → Nasal Strips + Mouth Tape). Each entry: image URL (without width) | reviewer's first name.
+      {%- endcomment -%}
+      {%- assign jm_photos = '' -%}
+      {%- if s.gallery_source == 'judgeme' and rv_product -%}
+        {%- assign photo_sources = rv_product.metafields.custom.pdp_box_products.value -%}
+        {%- assign photo_count = 0 -%}
+        {%- for n in (0..2) -%}
+          {%- if n == 0 -%}
+            {%- assign src_data = jm -%}
+          {%- else -%}
+            {%- assign src_index = n | minus: 1 -%}
+            {%- assign src_data = photo_sources[src_index].metafields.judgeme.review_widget_data.value -%}
+          {%- endif -%}
+          {%- for rv in src_data.photo_gallery -%}
+            {%- for pic in rv.pictures_urls -%}
+              {%- if photo_count >= s.gallery_limit -%}{%- break -%}{%- endif -%}
+              {%- assign pic_src = pic.original | default: pic.huge | split: '&width=' | first -%}
+              {%- unless jm_photos contains pic_src -%}
+                {%- assign rv_first = rv.reviewer_name | split: ' ' | first | replace: '|', '' | replace: '^', '' -%}
+                {%- assign jm_photos = jm_photos | append: pic_src | append: '|' | append: rv_first | append: '^' -%}
+                {%- assign photo_count = photo_count | plus: 1 -%}
+              {%- endunless -%}
+            {%- endfor -%}
+          {%- endfor -%}
+        {%- endfor -%}
+      {%- endif -%}
+      {%- assign jm_photo_list = jm_photos | split: '^' -%}
+      {%- assign has_gallery = false -%}
+      {%- if s.show_gallery -%}
+        {%- if jm_photo_list.size > 0 or photo_blocks.size > 0 -%}{%- assign has_gallery = true -%}{%- endif -%}
+      {%- endif -%}
+      <div class="somna-reviews__summary{% if joined %} is-joined{% endif %}{% unless has_gallery %} somna-reviews__summary--no-photos{% endunless %}">
         <div class="somna-reviews__score">
           <p class="somna-reviews__average">{{ sum_avg | escape }}</p>
           {%- if s.show_summary_stars -%}
@@ -213,7 +251,17 @@
           {%- endfor -%}
         </ul>
 
-        {%- if s.show_gallery and photo_blocks.size > 0 -%}
+        {%- if has_gallery and jm_photo_list.size > 0 -%}
+          <ul class="somna-reviews__gallery" role="list">
+            {%- for entry in jm_photo_list -%}
+              {%- assign pic_src = entry | split: '|' | first -%}
+              {%- assign rv_first = entry | split: '|' | last -%}
+              <li>
+                <img src="{{ pic_src }}&width=240" srcset="{{ pic_src }}&width=160 160w, {{ pic_src }}&width=240 240w" sizes="120px" alt="{{ s.photo_alt | replace: '[name]', rv_first | escape }}" width="120" height="120" loading="lazy" decoding="async">
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- elsif has_gallery -%}
           <ul class="somna-reviews__gallery" role="list">
             {%- for block in photo_blocks limit: s.gallery_limit -%}
               {%- if block.settings.image != blank -%}
@@ -1391,6 +1439,8 @@
     { "type": "color", "id": "track_color", "label": "Bar track colour", "default": "#d8ddd4" },
     { "type": "checkbox", "id": "show_gallery", "label": "Show customer photos", "info": "Add photos as “Summary photo” blocks; drag them to change the order.", "default": true },
     { "type": "range", "id": "gallery_limit", "label": "Photos to show", "min": 1, "max": 12, "step": 1, "default": 6 },
+    { "type": "select", "id": "gallery_source", "label": "Photos come from", "options": [{ "value": "judgeme", "label": "Judge.me review photos" }, { "value": "blocks", "label": "Summary photo blocks" }], "default": "judgeme", "info": "Judge.me: the photos customers added to their reviews of this product. Products without photo reviews (and the homepage) use the blocks." },
+    { "type": "text", "id": "photo_alt", "label": "Review photo description", "info": "[name] = reviewer's first name.", "default": "Photo from [name]'s review" },
 
     { "type": "header", "content": "Customer reviews (Google Sheet)" },
     { "type": "url", "id": "sheet_url", "label": "Google Sheet link", "info": "The sheet's share link (anyone with the link can view), or a published CSV / Apps Script JSON URL. Columns are matched by header: reviewer_name, review_title, review_body, rating, reviewer_photo, product_title, and optional date, verified, avatar." },
