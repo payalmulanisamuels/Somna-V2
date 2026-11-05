@@ -2,7 +2,7 @@
   Somna V2 — closing "Small change. Softer nights." call to action on the product page.
   Adds the chosen pack of this product (subscription when the product has a plan) through
   assets/somna-cart.js. Prices are the product's real ones: [price] = the button price,
-  [night] = that price per night. The image defaults to the product's "How it works" photo.
+  [night] = that price per night. The image is the product's "PDP – Closing image", else the section image, else its "How it works" photo.
 {%- endcomment -%}
 {%- render 'somna-shared-styles' -%}
 {%- liquid
@@ -41,7 +41,7 @@
   if nights > 0
     assign night = price | divided_by: bags | divided_by: nights
   endif
-  assign image = s.image | default: product.metafields.custom.pdp_how.value.image.value
+  assign image = product.metafields.custom.pdp_cta_image.value | default: s.image | default: product.metafields.custom.pdp_how.value.image.value
 -%}
 {%- capture price_money -%}{{ price | money }}{%- endcapture -%}
 {%- capture night_money -%}{{ night | money }}{%- endcapture -%}
