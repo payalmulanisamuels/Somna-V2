@@ -75,8 +75,8 @@
     <div class="somna-pdp-cta__media">
       {%- if image and image_2 -%}
         <div class="somna-pdp-cta__product somna-pdp-cta__product--pair">
-          {{ image | image_url: width: 500 | image_tag: loading: 'lazy', widths: '250, 375, 500', sizes: '(min-width: 750px) 150px, 30vw', alt: '' }}
-          {{ image_2 | image_url: width: 500 | image_tag: loading: 'lazy', widths: '250, 375, 500', sizes: '(min-width: 750px) 140px, 30vw', alt: '' }}
+          {{ image | image_url: width: 500 | image_tag: loading: 'lazy', widths: '250, 375, 500', sizes: '(min-width: 750px) 240px, 50vw', alt: '' }}
+          {{ image_2 | image_url: width: 500 | image_tag: loading: 'lazy', widths: '250, 375, 500', sizes: '(min-width: 750px) 190px, 40vw', alt: '' }}
         </div>
       {%- elsif image -%}<div class="somna-pdp-cta__product">{{ image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300, 450, 600', sizes: '(min-width: 750px) 290px, 60vw' }}</div>{%- endif -%}
       {%- if cta_sticker != blank and night > 0 -%}<p class="somna-pdp-cta__sticker{% if s.sticker_motion != 'none' %} somna-shake--{{ s.sticker_motion }}{% endif %}">{{ cta_sticker | replace: '[night]', night_money }}</p>{%- endif -%}
@@ -284,14 +284,18 @@
     align-items: flex-end;
   }
 
+  .somna-pdp-cta__media:has(.somna-pdp-cta__product--pair) {
+    width: min(100%, 400px);
+  }
+
   .somna-pdp-cta__product--pair img {
-    width: 52%;
+    width: 58%;
     min-width: 0;
   }
 
   .somna-pdp-cta__product--pair img + img {
-    width: 48%;
-    margin-left: -6%;
+    width: 46%;
+    margin-left: -4%;
   }
 
   .somna-pdp-cta__sticker {
