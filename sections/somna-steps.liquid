@@ -50,12 +50,33 @@
           </ol>
         </div>
 
-        {%- if s.button_label != blank and s.button_link != blank -%}
-          <a class="somna-steps__button" href="{{ s.button_link }}">
-            <svg class="somna-steps__play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="12"/><path d="M9.5 7.5v9l7-4.5z" fill="#fff"/></svg>
-            <span>{{ s.button_label }}</span>
-          </a>
-          {%- if s.button_note != blank -%}<p class="somna-steps__note">{{ s.button_note }}</p>{%- endif -%}
+        {%- assign has_video = false -%}
+        {%- if s.video != blank and s.video.sources != blank -%}{%- assign has_video = true -%}{%- endif -%}
+        {%- if s.button_label != blank -%}
+          {%- if has_video -%}
+            {%- comment -%} plays the video in the same popup as the product pages (assets/somna-video-modal.js) {%- endcomment -%}
+            <button type="button" class="somna-steps__button" aria-haspopup="dialog" aria-controls="SomnaHowVideo-{{ section.id }}" data-somna-video-open>
+              <svg class="somna-steps__play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="12"/><path d="M9.5 7.5v9l7-4.5z" fill="#fff"/></svg>
+              <span>{{ s.button_label }}</span>
+            </button>
+          {%- elsif s.button_link != blank -%}
+            <a class="somna-steps__button" href="{{ s.button_link }}">
+              <svg class="somna-steps__play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="12"/><path d="M9.5 7.5v9l7-4.5z" fill="#fff"/></svg>
+              <span>{{ s.button_label }}</span>
+            </a>
+          {%- endif -%}
+          {%- if has_video or s.button_link != blank -%}
+            {%- if s.button_note != blank -%}<p class="somna-steps__note">{{ s.button_note }}</p>{%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
+        {%- if has_video and s.button_label != blank -%}
+          <dialog id="SomnaHowVideo-{{ section.id }}" class="somna-video-modal" aria-label="{{ s.button_label | escape }}" data-somna-video-modal>
+            <button type="button" class="somna-video-modal__close" aria-label="{{ 'accessibility.close' | t | default: 'Close' }}" data-somna-video-close>
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+            </button>
+            {{ s.video | video_tag: controls: true, playsinline: true, preload: 'none', class: 'somna-video-modal__video', image_size: '1080x' }}
+          </dialog>
+          <script src="{{ 'somna-video-modal.js' | asset_url }}" defer></script>
         {%- endif -%}
       </div>
     </div>
@@ -200,6 +221,13 @@
     box-shadow: 0 6px 16px rgb(0 0 0 / 0.15);
   }
 
+  button.somna-steps__button {
+    width: 100%;
+    border: 0;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
   .somna-steps__play {
     flex: none;
     width: 1.4em;
@@ -328,6 +356,7 @@
     { "type": "image_picker", "id": "thumbs", "label": "Step thumbnails", "info": "Shown beside the step list." },
     { "type": "text", "id": "button_label", "label": "Button label" },
     { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "video", "id": "video", "label": "Button video", "info": "When set, the button opens this video in a popup (same as the product pages) instead of following the link." },
     { "type": "text", "id": "button_note", "label": "Note under the button (phones)", "default": "✓ 30-Night Money-Back Guarantee" },
     { "type": "header", "content": "Colours and spacing" },
     { "type": "color", "id": "background_color", "label": "Background", "default": "#f3feee" },

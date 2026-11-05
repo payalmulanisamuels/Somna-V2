@@ -290,28 +290,7 @@
 {%- endif -%}
 
 {%- if s.layout == 'steps' -%}
-<script type="module">
-  /* "Watch how it works": plays the steps video in a native modal dialog (Esc, backdrop and the X close it; closing pauses) */
-  const root = document.getElementById('shopify-section-{{ section.id }}');
-  const modal = root?.querySelector('[data-somna-video-modal]');
-  const opener = root?.querySelector('[data-somna-video-open]');
-  if (modal && opener) {
-    const video = modal.querySelector('video');
-    opener.addEventListener('click', () => {
-      modal.showModal();
-      if (video) {
-        video.currentTime = 0;
-        video.play().catch(() => {});
-      }
-    });
-    modal.querySelector('[data-somna-video-close]')?.addEventListener('click', () => modal.close());
-    modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); });
-    modal.addEventListener('close', () => {
-      video?.pause();
-      opener.focus();
-    });
-  }
-</script>
+<script src="{{ 'somna-video-modal.js' | asset_url }}" defer></script>
 {%- endif -%}
 
 {%- if layout_class == 'layers' and s.layers_animation and c != blank -%}
