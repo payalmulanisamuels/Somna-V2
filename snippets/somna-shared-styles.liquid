@@ -286,6 +286,21 @@
     }
   }
 
+  /* FAQ rows: the Somna cursor's moon sits just left of the real pointer, so aiming it at the plus icon
+     put the pointer past the row's right edge, where clicks did nothing. The row's click area now
+     reaches 32px past the plus (mouse/trackpad only, so phones get no extra width). */
+  @media (hover: hover) and (pointer: fine) {
+    [id$='faq'] .details__header {
+      position: relative;
+    }
+
+    [id$='faq'] .details__header::after {
+      content: '';
+      position: absolute;
+      inset: 0 -32px 0 0;
+    }
+  }
+
   /* Content pages (Contact, How to use, Support): FAQ blocks line up with the 1160px Somna sections,
      and the FAQ buttons (e.g. "Manage my subscription") match the other page buttons. */
   main[data-template^='page'] [id$='faq'] .custom-section-content {
