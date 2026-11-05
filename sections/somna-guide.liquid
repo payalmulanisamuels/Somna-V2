@@ -14,6 +14,79 @@
   class="somna-guide somna-guide--media-{{ s.media_side }}"
   style="--sg-bg: {{ s.background_color }}; --sg-fg: {{ s.text_color }}; --sg-card: {{ s.card_color }}; --sg-card-fg: {{ s.card_text_color }}; --sg-accent: {{ s.accent_color }}; --sg-note: {{ s.note_color }}; --sg-note-fg: {{ s.note_text_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
 >
+  {%- if s.layout == 'split' -%}
+    {%- comment -%}
+      Split (Figma 4859:1740): product cut-out on the left with the heading over its lower edge and the "How it works"
+      text under it; numbered step rows (photo + number + text) and the note on the right. Without steps the heading,
+      text and an optional product card sit on the right (Using them together); a second image adds "+" between the two.
+    {%- endcomment -%}
+    <div class="somna-container somna-guide__split{% if steps.size == 0 %} somna-guide__split--copy{% endif %}">
+      <div class="somna-guide__left">
+        <div class="somna-guide__figure somna-guide__figure--{{ s.image_align | default: 'right' }}">
+          {%- if s.image != blank -%}{{ s.image | image_url: width: 900 | image_tag: widths: '400, 600, 900', sizes: '(min-width: 990px) 340px, 60vw', loading: 'lazy', class: 'somna-guide__cutout', alt: s.image.alt | default: '' }}{%- endif -%}
+          {%- if s.image_2 != blank -%}
+            <span class="somna-guide__plus" aria-hidden="true">+</span>
+            {{ s.image_2 | image_url: width: 900 | image_tag: widths: '400, 600, 900', sizes: '(min-width: 990px) 300px, 50vw', loading: 'lazy', class: 'somna-guide__cutout somna-guide__cutout--2', alt: s.image_2.alt | default: '' }}
+          {%- endif -%}
+          {%- if steps.size > 0 and s.heading != blank -%}<h2 class="somna-guide__heading somna-guide__heading--over">{{ s.heading }}</h2>{%- endif -%}
+        </div>
+        {%- if steps.size > 0 and s.text != blank -%}
+          <div class="somna-guide__text somna-guide__text--split">{%- if s.label != blank -%}<strong>{{ s.label | escape }}: </strong>{%- endif -%}{{ s.text | remove: '<p>' | remove: '</p>' }}</div>
+        {%- endif -%}
+      </div>
+
+      <div class="somna-guide__right">
+        {%- if steps.size > 0 -%}
+          <ol class="somna-guide__rows" role="list">
+            {%- for block in steps -%}
+              {%- assign b = block.settings -%}
+              <li class="somna-guide__row" {{ block.shopify_attributes }}>
+                <div class="somna-guide__row-photo">
+                  {%- if b.image != blank -%}{{ b.image | image_url: width: 600 | image_tag: widths: '300, 600', sizes: '253px', loading: 'lazy', style: b.image_position, alt: b.title }}{%- endif -%}
+                </div>
+                <div class="somna-guide__row-body">
+                  <p class="somna-guide__row-num">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</p>
+                  <p class="somna-guide__row-text">{{ b.text | default: b.title | escape }}</p>
+                </div>
+              </li>
+            {%- endfor -%}
+          </ol>
+          {%- if s.note != blank -%}<div class="somna-guide__plain-note">{{ s.note }}</div>{%- endif -%}
+        {%- else -%}
+          {%- if s.heading != blank -%}<h2 class="somna-guide__heading">{{ s.heading }}</h2>{%- endif -%}
+          {%- if s.text != blank -%}<div class="somna-guide__plain-note">{{ s.text }}</div>{%- endif -%}
+          {%- assign cp = s.card_product -%}
+          {%- if cp != blank -%}
+            {%- liquid
+              assign cv = cp.selected_or_first_available_variant
+              assign once_factor = 100 | minus: settings.somna_once_discount
+              assign low = cv.price
+              if cp.selling_plan_groups.size > 0
+                assign low = cv.price | times: once_factor | divided_by: 100
+                for a in cv.selling_plan_allocations
+                  if a.price < low
+                    assign low = a.price
+                  endif
+                endfor
+              endif
+              assign card_img = s.card_image | default: cp.featured_image
+            -%}
+            <div class="somna-guide__card">
+              <a class="somna-guide__card-media" href="{{ cp.url }}" tabindex="-1" aria-hidden="true">
+                {%- if card_img != blank -%}{{ card_img | image_url: width: 300 | image_tag: loading: 'lazy', alt: '' }}{%- endif -%}
+              </a>
+              <div class="somna-guide__card-body">
+                {%- if s.card_rating != blank -%}<p class="somna-guide__card-rating"><span aria-hidden="true">★★★★★</span> {{ s.card_rating | escape }}</p>{%- endif -%}
+                <p class="somna-guide__card-title"><a href="{{ cp.url }}">{{ s.card_title | default: cp.title | escape }}</a></p>
+                {%- if s.card_text != blank -%}<p class="somna-guide__card-text">{%- capture low_money -%}{{ low | money }}{%- endcapture -%}{{ s.card_text | replace: '[price]', low_money | escape }}</p>{%- endif -%}
+              </div>
+              <a class="somna-guide__card-button" href="{{ cp.url }}">{{ s.card_button | escape }}<span class="visually-hidden">: {{ cp.title | escape }}</span></a>
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+    </div>
+  {%- else -%}
   <div class="somna-container">
     <div class="somna-guide__intro">
       <div class="somna-guide__media">
@@ -71,6 +144,7 @@
       </div>
     {%- endif -%}
   </div>
+  {%- endif -%}
 </div>
 
 {% stylesheet %}
@@ -298,6 +372,282 @@
     margin-top: 6px;
   }
 
+
+  /* ---- Split layout (Figma 4859:1740) ---- */
+  .somna-guide__split {
+    display: grid;
+    gap: 28px;
+  }
+
+  .somna-guide__figure {
+    position: relative;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-height: 260px;
+  }
+
+  .somna-guide__figure--right {
+    justify-content: flex-end;
+  }
+
+  .somna-guide__cutout {
+    display: block;
+    width: auto;
+    max-width: 62%;
+    height: clamp(260px, 31vw, 448px);
+    object-fit: contain;
+  }
+
+  .somna-guide__split--copy .somna-guide__cutout {
+    max-width: 46%;
+    height: clamp(240px, 28.6vw, 412px);
+  }
+
+  .somna-guide__plus {
+    flex: none;
+    font-family: var(--font-accent--family);
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    line-height: 1;
+  }
+
+  .somna-guide__heading--over {
+    position: absolute;
+    right: 4px;
+    bottom: 16px;
+    max-width: 300px;
+    font-size: clamp(2rem, 3.2vw, 2.874rem);
+    line-height: 1.35;
+  }
+
+  .somna-guide__text--split {
+    max-width: 558px;
+    margin-top: 24px;
+    font-size: clamp(0.9375rem, 1.37vw, 1.2315rem);
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+  }
+
+  .somna-guide__rows {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-guide__row {
+    display: grid;
+    grid-template-columns: minmax(0, 253px) minmax(0, 1fr);
+    gap: 19px;
+    align-items: start;
+  }
+
+  .somna-guide__row-photo {
+    overflow: hidden;
+    aspect-ratio: 253 / 154;
+    border-radius: 10px;
+    background: #fff;
+  }
+
+  .somna-guide__row-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-guide__row:hover .somna-guide__row-photo img {
+    transform: scale(1.05);
+  }
+
+  .somna-guide__row-body {
+    display: grid;
+    gap: 2px;
+    max-width: 335px;
+  }
+
+  .somna-guide__row-num {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.75rem, 2.7vw, 2.4525rem);
+    line-height: 1.35;
+  }
+
+  .somna-guide__row-text {
+    margin: 0;
+    font-size: clamp(0.9375rem, 1.48vw, 1.3284rem);
+    font-weight: 700;
+    line-height: 1.18;
+  }
+
+  .somna-guide__plain-note {
+    max-width: 630px;
+    margin-top: 26px;
+    font-size: clamp(0.9375rem, 1.48vw, 1.3284rem);
+    line-height: 1.18;
+  }
+
+  .somna-guide__plain-note p {
+    margin: 0;
+  }
+
+  .somna-guide__split--copy .somna-guide__right .somna-guide__heading {
+    font-size: clamp(2rem, 3.2vw, 2.874rem);
+    line-height: 1.35;
+  }
+
+  .somna-guide__split--copy .somna-guide__plain-note {
+    margin-top: 10px;
+  }
+
+  /* product card (Figma 4884:2021): navy pill with photo, rating, title, price and a lavender button */
+  .somna-guide__card {
+    display: grid;
+    grid-template-columns: 126px minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    max-width: 610px;
+    margin-top: 36px;
+    padding: 11px 19px 11px 19px;
+    border: 1.4px solid rgb(0 0 0 / 0.1);
+    border-radius: 23px;
+    background: #0b0f1d;
+    color: #f4fef3;
+  }
+
+  .somna-guide__card-media {
+    overflow: hidden;
+    display: block;
+    height: 100px;
+    border-radius: 8px;
+  }
+
+  .somna-guide__card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .somna-guide__card-body {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .somna-guide__card-rating {
+    margin: 0;
+    color: #7e7e7e;
+    font-size: 0.9375rem;
+    font-weight: 300;
+  }
+
+  .somna-guide__card-rating span {
+    color: #efb400;
+  }
+
+  .somna-guide__card-title {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.0625rem, 1.44vw, 1.294rem);
+    line-height: 1.35;
+  }
+
+  .somna-guide__card-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .somna-guide__card-text {
+    margin: 0;
+    color: rgb(244 254 243 / 0.75);
+    font-size: 0.8125rem;
+    font-weight: 300;
+  }
+
+  .somna-guide__card-button {
+    display: grid;
+    place-items: center;
+    min-width: 152px;
+    min-height: 91px;
+    padding: 0 12px;
+    border-radius: 13.5px;
+    background: var(--sg-accent);
+    color: #000;
+    filter: drop-shadow(0 5.6px 8.4px rgb(0 0 0 / 0.25));
+    font-size: clamp(1.0625rem, 1.6vw, 1.4346rem);
+    font-weight: 600;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: translate 0.2s ease, background-color 0.2s ease;
+  }
+
+  .somna-guide__card-button:hover {
+    background: #f3feee;
+    translate: 0 -2px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .somna-guide__split {
+      grid-template-columns: minmax(0, 558px) minmax(0, 633px);
+      justify-content: space-between;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .somna-guide__split--copy {
+      align-items: center;
+    }
+
+    .somna-guide__figure {
+      min-height: 448px;
+    }
+
+    .somna-guide__split--copy .somna-guide__figure {
+      min-height: 412px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .somna-guide__figure {
+      justify-content: center;
+    }
+
+    .somna-guide__heading--over {
+      right: 0;
+      bottom: 8px;
+      max-width: 55%;
+    }
+
+    .somna-guide__row {
+      grid-template-columns: minmax(0, 46%) minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .somna-guide__card {
+      grid-template-columns: 84px minmax(0, 1fr);
+      padding: 10px;
+      border-radius: 16px;
+    }
+
+    .somna-guide__card-media {
+      height: 66px;
+    }
+
+    .somna-guide__card-button {
+      grid-column: 1 / -1;
+      min-height: 46px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-guide__row-photo img,
+    .somna-guide__card-button {
+      transition: none;
+    }
+  }
+
   @media screen and (min-width: 750px) {
     .somna-guide__intro {
       grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
@@ -387,6 +737,9 @@
   "class": "somna-guide-section",
   "settings": [
     { "type": "text", "id": "anchor", "label": "Anchor", "info": "Link to this section with #anchor, e.g. nasal-strips." },
+    { "type": "select", "id": "layout", "label": "Layout", "options": [{ "value": "stacked", "label": "Photo + text, step cards below" }, { "value": "split", "label": "Split: product cut-out left, numbered steps right" }], "default": "stacked" },
+    { "type": "image_picker", "id": "image_2", "label": "Second image (split)", "info": "Split layout without steps: shown after a \"+\" (Using them together)." },
+    { "type": "select", "id": "image_align", "label": "Cut-out position (split)", "options": [{ "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }], "default": "right" },
     { "type": "image_picker", "id": "image", "label": "Image", "info": "Packaging + product photo." },
     { "type": "text", "id": "image_position", "label": "Image focal point", "default": "object-position: center", "info": "CSS, e.g. object-position: 70% 50%" },
     { "type": "select", "id": "media_side", "label": "Image side", "options": [{ "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }], "default": "left" },
@@ -398,6 +751,13 @@
     { "type": "url", "id": "button_link", "label": "Button link" },
     { "type": "text", "id": "steps_heading", "label": "Steps heading", "default": "How to apply" },
     { "type": "richtext", "id": "note", "label": "Note", "info": "Removal or safety guidance under the steps." },
+    { "type": "header", "content": "Product card (split, without steps)" },
+    { "type": "product", "id": "card_product", "label": "Product" },
+    { "type": "image_picker", "id": "card_image", "label": "Card image", "info": "Defaults to the product image." },
+    { "type": "text", "id": "card_rating", "label": "Rating text", "default": "4.6/5 · 3,600+ reviews" },
+    { "type": "text", "id": "card_title", "label": "Title", "info": "Defaults to the product name." },
+    { "type": "text", "id": "card_text", "label": "Price line", "default": "Both, from [price]", "info": "[price] is the lowest price (Subscribe & Save or the one-time sale price)." },
+    { "type": "text", "id": "card_button", "label": "Button", "default": "Shop now" },
     {
       "type": "select",
       "id": "note_icon",
