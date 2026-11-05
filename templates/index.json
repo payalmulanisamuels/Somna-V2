@@ -1587,6 +1587,61 @@
             "photo_focus": "center top",
             "show_product": false
           }
+        },
+        "jm_review_5": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "mouth-tape",
+            "review_id": "9ec38235-f248-4647-970c-0676fc446824",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "center",
+            "show_product": false
+          }
+        },
+        "jm_review_6": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "sleep-bundle",
+            "review_id": "91ca7179-9208-4fd0-a644-bcaf56edb28f",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "center",
+            "show_product": false
+          }
+        },
+        "jm_review_7": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "mouth-tape",
+            "review_id": "888c0da5-3411-4d1f-8c99-013411f729e8",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "center",
+            "show_product": false
+          }
+        },
+        "jm_review_8": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "mouth-tape",
+            "review_id": "6724fdcd-fe00-47da-b4e7-f16a6d5dc003",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "center",
+            "show_product": false
+          }
+        },
+        "jm_review_9": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "mouth-tape",
+            "review_id": "d2fa9362-0fa1-4287-8e2e-5435a222b0e3",
+            "text_source": "title",
+            "max_words": 26,
+            "photo_focus": "center",
+            "show_product": false
+          }
         }
       },
       "block_order": [
@@ -1596,7 +1651,12 @@
         "jm_review_1",
         "jm_review_2",
         "jm_review_3",
-        "jm_review_4"
+        "jm_review_4",
+        "jm_review_5",
+        "jm_review_6",
+        "jm_review_7",
+        "jm_review_8",
+        "jm_review_9"
       ],
       "settings": {
         "eyebrow": "Don't just take our word for it",
@@ -3296,6 +3356,126 @@
               "block_order": [
                 "answer"
               ]
+            },
+            "row_8": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "What’s the difference between the bundles?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Sleep Bundle comes in three colors — Breathe (Blue), Bold (Red), and Night (Black) — same price, same value, just pick your colour. The Colour Set includes all three colors of Strips only, no Tape. Season Bundle is a three-month supply in Black.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000",
+                    "accent_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            },
+            "row_9": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "How does Subscribe & Save work?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>It delivers automatically on your chosen schedule at up to 50% off, and you can skip, pause, or cancel anytime.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000",
+                    "accent_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            },
+            "row_10": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Do you ship outside the United States?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>We currently ship within the United States only.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000",
+                    "accent_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
             }
           },
           "block_order": [
@@ -3305,7 +3485,10 @@
             "row_4",
             "row_5",
             "row_6",
-            "row_7"
+            "row_7",
+            "row_8",
+            "row_9",
+            "row_10"
           ]
         }
       },
