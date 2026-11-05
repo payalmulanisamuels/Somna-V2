@@ -131,6 +131,8 @@
   </script>
 
   <div class="somna-pdp-hero__inner somna-container">
+    {%- comment -%} wrapper: on desktop the gallery stays in view inside it while a long buy panel scrolls {%- endcomment -%}
+    <div class="somna-pdp-hero__gallery-wrap">
     <div class="somna-pdp-hero__gallery">
       {%- if images.size > 1 -%}
         <ul class="somna-pdp-hero__thumbs" role="list">
@@ -152,6 +154,7 @@
 
       {%- if s.badge_text != blank -%}<p class="somna-pdp-hero__badge{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}"><span>{{ s.badge_text }}</span></p>{%- endif -%}
       {%- if hero_sticker != blank -%}<p class="somna-pdp-hero__sticker{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}" style="--somna-shake-delay: 0.7s;">{{ hero_sticker }}</p>{%- endif -%}
+    </div>
     </div>
 
     <div class="somna-pdp-hero__side">
@@ -649,18 +652,28 @@
     outline-offset: 2px;
   }
 
-  .somna-pdp-hero__thumb img,
-  .somna-pdp-hero__main img {
+  .somna-pdp-hero__thumb img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
+  /* the main photo is shown whole (never cropped): its box takes the photo's own shape */
+  .somna-pdp-hero__main img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
   .somna-pdp-hero__main {
-    aspect-ratio: 445 / 614;
     overflow: hidden;
     background: #0b0f1d;
+  }
+
+  /* only a layout box below desktop (the gallery stays a grid item there) */
+  .somna-pdp-hero__gallery-wrap {
+    display: contents;
   }
 
   .somna-pdp-hero__main.somna-edge-drip-top {
@@ -1187,29 +1200,44 @@
     /* Figma 4557:857 / 4557:44: gallery 577 + gap 36 + buy panel 742 = 1355px content.
        Rows: the gallery row keeps its own height and the quote/videos start right under it,
        however tall the buy panel gets (bundles have longer panels). */
+    /* Both columns end on the same line, as in Figma:
+       - buy panel shorter than the left column (Nasal Strips, Mouth Tape, Season Bundle): the panel
+         stretches and its rows spread out evenly;
+       - buy panel taller (Colour Set, Sleep Bundle): the quote + videos end level with the panel and the
+         gallery stays in view beside the panel (sticky inside its own row) while it scrolls. */
     .somna-pdp-hero__inner {
       --somna-content-width: 1355px;
       grid-template-columns: minmax(0, 577px) minmax(0, 742px);
-      grid-template-rows: auto 1fr;
+      grid-template-rows: 1fr auto;
       grid-template-areas:
         'gallery panel'
         'side panel';
       justify-content: center;
+      align-items: stretch;
       gap: 32px 36px;
     }
 
-    .somna-pdp-hero__gallery {
+    .somna-pdp-hero__gallery-wrap {
+      display: block;
       grid-area: gallery;
+    }
+
+    .somna-pdp-hero__gallery {
+      position: sticky;
+      top: calc(var(--header-height, 64px) + 16px);
     }
 
     .somna-pdp-hero__side {
       grid-area: side;
-      align-self: start;
+      align-self: end;
       align-content: start;
     }
 
     .somna-pdp-hero__panel {
       grid-area: panel;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
   }
 
@@ -1394,10 +1422,6 @@
     .somna-pdp-hero__gallery {
       grid-template-columns: minmax(0, 1fr);
       gap: 8px;
-    }
-
-    .somna-pdp-hero__main {
-      aspect-ratio: 368 / 410;
     }
 
     .somna-pdp-hero__main.somna-edge-drip-top {
