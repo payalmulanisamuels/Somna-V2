@@ -321,10 +321,19 @@
   }
 
   @media screen and (min-width: 750px) {
-    /* Figma: heading 50px, button Inter Bold */
+    /* Figma 4654:113: "Softer nights." is 528px wide at 1440 (our Boldonse renders narrower, so ~55px here);
+       the sticker is ~214px wide and the line under the heading ~512px. Button Inter Bold. */
     .somna-pdp-cta__heading {
-      font-size: clamp(2rem, 3.47vw, 3.125rem);
+      font-size: clamp(2rem, 3.84vw, 3.5rem);
       line-height: 1.38;
+    }
+
+    .somna-pdp-cta__text {
+      font-size: 0.8125rem;
+    }
+
+    .somna-pdp-cta__sticker {
+      font-size: 0.8125rem;
     }
 
     .somna-pdp-cta__button {
@@ -359,8 +368,9 @@
       gap: 12px;
     }
 
+    /* Figma 4781:9521: heading 321px wide on a 398px screen, sticker ~179px */
     .somna-pdp-cta__heading {
-      font-size: 1.625rem;
+      font-size: 2.125rem;
     }
 
     .somna-pdp-cta__text {
@@ -390,7 +400,7 @@
 
     .somna-pdp-cta__sticker {
       left: -18%;
-      font-size: 0.8125rem;
+      font-size: 0.6875rem;
     }
   }
 {% endstylesheet %}
