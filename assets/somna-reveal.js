@@ -13,6 +13,11 @@
  * PDP strip / layers / gift drawing / CTA product / shakes / waves, horizontal scrollers, and any
  * element that already has a CSS animation, translate or scale.
  *
+ * Group sections (an element with data-reveal-group inside the section, e.g. "Three Steps. Zero Fuss."):
+ * everything in the section reveals together as soon as the section's top reaches 85% of the screen,
+ * with short staggers (button 0.2s, nothing waits more than 0.3s or for a slow image), instead of each
+ * element waiting until it is itself scrolled to — so the button never lags behind the rest.
+ *
  * Desktop + tablet only (>= 750px; mobile design pending). Off for prefers-reduced-motion.
  * No library; one passive scroll listener for the whole page (checks only tracked elements).
  */
@@ -39,6 +44,8 @@
     button: { rank: 3, d: 0.6 },
   };
   const BASE = { heading: 0, line: 0, text: 0.15, image: 0.1, item: 0.25, button: 0.4 };
+  // group sections: everything together, short and tight
+  const BASE_G = { heading: 0, line: 0, text: 0.08, image: 0.05, item: 0.12, button: 0.2 };
 
   const all = new Map(); // element -> { type, section }
   let pending = false;
@@ -119,8 +126,9 @@
       const counts = n.get(section) || {};
       n.set(section, counts);
       const i = (counts[key] = (counts[key] ?? -1) + 1);
-      const step = type === 'item' || type === 'line' ? 0.12 : 0.08;
-      const delay = Math.min(0.6, BASE[type] + i * step);
+      const group = all.get(el).group;
+      const step = group ? 0.06 : type === 'item' || type === 'line' ? 0.12 : 0.08;
+      const delay = group ? Math.min(0.3, BASE_G[type] + i * step) : Math.min(0.6, BASE[type] + i * step);
       const go = () => {
         el.style.setProperty('--somna-r-d', t.d + 's');
         el.style.setProperty('--somna-r-delay', delay + 's');
@@ -142,7 +150,7 @@
         const once = () => { if (!fired) { fired = true; el.somnaWaiting = false; go(); } };
         el.addEventListener('load', once, { once: true });
         el.addEventListener('error', once, { once: true });
-        setTimeout(once, 1500);
+        setTimeout(once, group ? 400 : 1500);
       } else go();
     });
   }
@@ -158,14 +166,20 @@
     const line = vh * 0.85;
     const show = [];
     const hide = [];
-    for (const el of all.keys()) {
+    const groupIn = new Map(); // group section -> its top has reached the line
+    for (const [el, info] of all) {
       const r = el.getBoundingClientRect();
       if (!r.width && !r.height) continue; // not rendered (closed tab, collapsed) — leave it
       const armed = el.classList.contains('somna-r');
       const playing = el.classList.contains('is-in');
+      let top = r.top;
+      if (info.group) {
+        if (!groupIn.has(info.section)) groupIn.set(info.section, info.section.getBoundingClientRect().top);
+        top = groupIn.get(info.section); // the whole section moves as one
+      }
       if (armed && !playing) {
-        if (r.top < line && !el.somnaWaiting) show.push(el);
-      } else if (r.top >= vh) {
+        if (top < line && !el.somnaWaiting) show.push(el);
+      } else if (top >= vh && r.top >= vh) {
         hide.push(el);
       }
     }
@@ -183,9 +197,12 @@
   function observe(section) {
     if (!section || section.dataset.somnaReveal) return;
     section.dataset.somnaReveal = '1';
+    const group = !!section.querySelector('[data-reveal-group]');
+    const sectionBelow = section.getBoundingClientRect().top >= innerHeight;
     collect(section).forEach(({ el, type }) => {
-      all.set(el, { type, section });
-      if (el.getBoundingClientRect().top >= innerHeight) arm(el); // below the fold: hidden until it scrolls in
+      all.set(el, { type, section, group });
+      // below the fold: hidden until it scrolls in (a group section: only if the section itself is below)
+      if (group ? sectionBelow : el.getBoundingClientRect().top >= innerHeight) arm(el);
     });
     schedule();
   }
