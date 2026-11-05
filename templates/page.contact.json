@@ -11,45 +11,28 @@
   "sections": {
     "hero": {
       "type": "somna-page-hero",
-      "blocks": {
-        "message": {
-          "type": "button",
-          "settings": {
-            "label": "Send a message",
-            "link": "#contact-form",
-            "style": "primary"
-          }
-        },
-        "faq": {
-          "type": "button",
-          "settings": {
-            "label": "Read the FAQs",
-            "link": "/pages/support",
-            "style": "secondary"
-          }
-        }
-      },
-      "block_order": [
-        "message",
-        "faq"
-      ],
+      "blocks": {},
+      "block_order": [],
       "settings": {
-        "show_breadcrumb": true,
+        "show_breadcrumb": false,
         "home_label": "Home",
         "breadcrumb_label": "",
-        "eyebrow": "",
-        "heading": "Contact <em>us</em>",
-        "tagline": "We're here to help.",
-        "text": "<p>Questions about your order, your subscription, or how to use your Somna? Send us a message — we read every one.</p>",
-        "image": "shopify://shop_images/contact-banner.jpg",
-        "image_position": "object-position: 50% 60%",
-        "image_side": "left",
+        "eyebrow": "Contact us",
+        "heading": "We're here <em>to help.</em>",
+        "tagline": "",
+        "text": "<p>Questions about your order, your subscription, or how to use your somna? Send us a message. We read every one.</p>",
+        "image": "shopify://shop_images/somna-v2-sleep-bundle.png",
+        "image_position": "object-position: center",
+        "image_side": "right",
         "drip_edge": true,
         "background_color": "#afbdf8",
         "panel_color": "#0b0f1d",
-        "accent_color": "#afbdf8",
-        "padding_top": 24,
-        "padding_bottom": 48
+        "accent_color": "#f3feee",
+        "padding_top": 136,
+        "padding_bottom": 24,
+        "style": "open",
+        "image_fit": "cover",
+        "media_color": "#0b0f1d"
       }
     },
     "wave_hero_help": {
@@ -117,27 +100,75 @@
         "accent_color": "#afbdf8",
         "padding_top": 16,
         "padding_bottom": 56
-      }
+      },
+      "disabled": true
     },
     "form": {
       "type": "somna-contact",
       "settings": {
         "anchor": "contact-form",
-        "eyebrow": "Contact form",
-        "heading": "Send us a <em>message</em>",
-        "text": "<p>Tell us what you need and we'll reply by email. If it's about an order, add your order number so we can help faster.</p>",
-        "direct_label": "Or email us directly",
+        "eyebrow": "",
+        "heading": "Quick <em>answers.</em>",
+        "text": "<p>Get what you need faster: check these before sending a message.</p>",
+        "direct_label": "",
         "email": "hello@somnasleep.com",
         "response_time": "Typically within 1 business day.",
-        "form_heading": "How can we help?",
-        "drip_edge": true,
+        "form_heading": "Send us <em>a message.</em>",
+        "drip_edge": false,
         "background_color": "#f3feee",
         "panel_color": "#0b0f1d",
         "card_color": "#afbdf8",
         "accent_color": "#afbdf8",
-        "padding_top": 16,
-        "padding_bottom": 72
-      }
+        "padding_top": 96,
+        "padding_bottom": 64,
+        "style": "card",
+        "name_label": "Name",
+        "name_placeholder": "Your name",
+        "email_label": "Email address",
+        "email_placeholder": "you@example.com",
+        "second_field": "order",
+        "order_label": "Order number, optional",
+        "order_placeholder": "e.g. #12345",
+        "enquiry_label": "What's this about?",
+        "enquiry_placeholder": "Order & delivery",
+        "message_label": "Message",
+        "message_placeholder": "Tell us how we can help…",
+        "submit_label": "Send message"
+      },
+      "blocks": {
+        "track": {
+          "type": "link",
+          "settings": {
+            "label": "Track your order",
+            "link": "/pages/track-order",
+            "icon": "shopify://shop_images/somna-v2-mask-truck.png",
+            "dark": false
+          }
+        },
+        "subscription": {
+          "type": "link",
+          "settings": {
+            "label": "Manage your subscription",
+            "link": "/pages/manage-subscriptions",
+            "icon": "shopify://shop_images/somna-v2-mask-refresh.png",
+            "dark": true
+          }
+        },
+        "faq": {
+          "type": "link",
+          "settings": {
+            "label": "Read the FAQ",
+            "link": "/pages/support",
+            "icon": "",
+            "dark": false
+          }
+        }
+      },
+      "block_order": [
+        "track",
+        "subscription",
+        "faq"
+      ]
     },
     "wave_form_trust": {
       "type": "somna-wave",
@@ -160,7 +191,7 @@
           "type": "card",
           "settings": {
             "icon": "box",
-            "title": "Free shipping",
+            "title": "30-Night Guarantee",
             "text": "On every order, no minimum."
           }
         },
@@ -168,7 +199,7 @@
           "type": "card",
           "settings": {
             "icon": "shield",
-            "title": "30-night guarantee",
+            "title": "Arrives in 7–9 business days",
             "text": "Counted from the day it's delivered."
           }
         },
@@ -176,7 +207,7 @@
           "type": "card",
           "settings": {
             "icon": "truck",
-            "title": "Delivered in 7–9 business days",
+            "title": "Skip or cancel anytime",
             "text": "From the day your order ships."
           }
         },
@@ -184,7 +215,7 @@
           "type": "card",
           "settings": {
             "icon": "lock",
-            "title": "Secure payment",
+            "title": "Secure checkout",
             "text": ""
           }
         }
@@ -196,7 +227,7 @@
         "payment"
       ],
       "settings": {
-        "layout": "badges",
+        "layout": "stickers",
         "eyebrow": "",
         "heading": "",
         "text": "",
@@ -205,8 +236,8 @@
         "card_color": "#0b0f1d",
         "card_text_color": "#f3feee",
         "accent_color": "#afbdf8",
-        "padding_top": 8,
-        "padding_bottom": 40
+        "padding_top": 48,
+        "padding_bottom": 56
       }
     },
     "wave_trust_newsletter": {
