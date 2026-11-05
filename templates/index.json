@@ -1336,7 +1336,7 @@
         "row_1": {
           "type": "row",
           "settings": {
-            "tab": "1",
+            "tab": "2",
             "label": "Drug-free",
             "column_1": true,
             "column_2": true,
@@ -1351,7 +1351,7 @@
         "row_2": {
           "type": "row",
           "settings": {
-            "tab": "1",
+            "tab": "2",
             "label": "Nothing in your mouth",
             "column_1": true,
             "column_2": true,
@@ -1366,7 +1366,7 @@
         "row_3": {
           "type": "row",
           "settings": {
-            "tab": "1",
+            "tab": "2",
             "label": "Nothing around your head",
             "column_1": true,
             "column_2": true,
@@ -1381,7 +1381,7 @@
         "row_4": {
           "type": "row",
           "settings": {
-            "tab": "1",
+            "tab": "2",
             "label": "Made for lips",
             "column_1": true,
             "column_2": false,
@@ -1396,7 +1396,7 @@
         "row_5": {
           "type": "row",
           "settings": {
-            "tab": "1",
+            "tab": "2",
             "label": "Pairs with Nasal Strips",
             "column_1": true,
             "column_2": false,
@@ -1411,7 +1411,7 @@
         "srow_1": {
           "type": "row",
           "settings": {
-            "tab": "2",
+            "tab": "1",
             "label": "Drug-free",
             "column_1": true,
             "column_2": true,
@@ -1426,7 +1426,7 @@
         "srow_2": {
           "type": "row",
           "settings": {
-            "tab": "2",
+            "tab": "1",
             "label": "Nothing inside your nose",
             "column_1": true,
             "column_2": true,
@@ -1441,7 +1441,7 @@
         "srow_3": {
           "type": "row",
           "settings": {
-            "tab": "2",
+            "tab": "1",
             "label": "Structural strip design",
             "column_1": true,
             "column_2": false,
@@ -1456,7 +1456,7 @@
         "srow_4": {
           "type": "row",
           "settings": {
-            "tab": "2",
+            "tab": "1",
             "label": "Pairs with Mouth Tape",
             "column_1": true,
             "column_2": false,
@@ -1471,7 +1471,7 @@
         "srow_5": {
           "type": "row",
           "settings": {
-            "tab": "2",
+            "tab": "1",
             "label": "Three colors to match you",
             "column_1": true,
             "column_2": false,
@@ -1485,8 +1485,8 @@
         }
       },
       "block_order": [
-        "tab_tape",
         "tab_strips",
+        "tab_tape",
         "row_1",
         "row_2",
         "row_3",
