@@ -210,7 +210,7 @@
           "type": "tab",
           "settings": {
             "name": "Mouth Tape",
-            "image": "shopify://shop_images/somna-v2-tape-pouch.png",
+            "image": "shopify://shop_images/tap1.png",
             "label": "somna.",
             "column_2_image": "shopify://shop_images/somna-v2-compare-tape-roll.png",
             "column_2_label": "Surgical tape",
@@ -224,11 +224,14 @@
           "type": "tab",
           "settings": {
             "name": "Nasal Strips",
-            "image": "shopify://shop_images/somna-v2-compare-somna.png",
+            "image": "shopify://shop_images/strip-1_2b080541-bb5f-4874-9f2a-eb53b3f94218.png",
             "label": "somna.",
             "column_2_label": "Drugstore strips",
             "column_3_label": "Medicated sprays",
-            "column_4_label": "Nasal dilators"
+            "column_4_label": "Nasal dilators",
+            "column_2_image": "shopify://shop_images/somna-v2-compare-tape-roll.png",
+            "column_3_image": "shopify://shop_images/image_9ea38f98-97ea-4733-b802-f3c218042972.png",
+            "column_4_image": "shopify://shop_images/image_1.png"
           }
         },
         "row_1": {
