@@ -197,10 +197,37 @@
         </figure>
       {%- endif -%}
 
-      {%- if video_blocks.size > 0 -%}
+      {%- comment -%}
+        "Real Nights, On Camera": the product's own videos (custom.pdp_videos) when set, otherwise the section's
+        video blocks. The video's own preview frame is the poster.
+      {%- endcomment -%}
+      {%- assign product_videos = mf.pdp_videos.value -%}
+      {%- if product_videos.size > 0 or video_blocks.size > 0 -%}
         <div class="somna-pdp-hero__videos">
           {%- if s.videos_heading != blank -%}<h2 class="somna-pdp-hero__videos-title">{{ s.videos_heading }}</h2>{%- endif -%}
           <ul class="somna-pdp-hero__video-list" role="list">
+            {%- if product_videos.size > 0 -%}
+              {%- for vid in product_videos limit: 3 -%}
+                {%- liquid
+                  assign src = ''
+                  assign mp4 = vid.sources | where: 'mime_type', 'video/mp4' | sort: 'height'
+                  assign src = mp4.first.url
+                  for m in mp4
+                    if m.height <= 720
+                      assign src = m.url
+                    endif
+                  endfor
+                -%}
+                <li class="somna-pdp-hero__video">
+                  {%- if src != blank -%}
+                    <button type="button" class="somna-pdp-hero__play" data-video="{{ src }}" aria-label="{{ s.play_label | escape }}{% if vid.alt != blank %}: {{ vid.alt | escape }}{% endif %}">
+                      {%- if vid.preview_image -%}{{ vid.preview_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: '', width: 181, height: 299 }}{%- endif -%}
+                      <span class="somna-pdp-hero__play-icon">{% render 'somna-pdp-icon', name: 'play' %}</span>
+                    </button>
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            {%- else -%}
             {%- for block in video_blocks -%}
               {%- liquid
                 assign b = block.settings
@@ -227,6 +254,7 @@
                 {%- endif -%}
               </li>
             {%- endfor -%}
+            {%- endif -%}
           </ul>
         </div>
       {%- endif -%}
