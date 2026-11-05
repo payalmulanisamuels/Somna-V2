@@ -342,6 +342,21 @@
     color: #f3feee;
   }
 
+  /* phones: text first, then the photo; the band's padding is an inline style from the settings */
+  @media screen and (max-width: 749px) {
+    .somna-page-hero.somna-page-hero--open {
+      padding-block: 40px 16px !important;
+    }
+
+    .somna-page-hero--open .somna-page-hero__grid {
+      gap: 24px;
+    }
+
+    .somna-page-hero--open .somna-page-hero__media {
+      order: 2;
+    }
+  }
+
   @media screen and (min-width: 750px) {
     .somna-page-hero--open .somna-page-hero__grid {
       grid-template-columns: minmax(0, 1fr) minmax(0, 523px);
