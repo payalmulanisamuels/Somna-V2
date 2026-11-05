@@ -176,11 +176,12 @@
     }
   }
 
-  /* Final CTA (desktop/tablet): tall enough that the pouches clear the wave hanging over the photo,
-     content centred in the visible part below the wave, Figma button (bold, 351px) */
+  /* Final CTA (desktop/tablet), Figma 4090:178: the photo is 869px tall at 1440 (60.35vw), wider than it is
+     tall in the same ratio as the image, so it only loses a little at the sides — never the top or bottom.
+     Content centred in the part below the wave, Figma button (bold, 351px) */
   @media screen and (min-width: 750px) {
     [id$='__final_cta'] :is(.hero, .hero__container) {
-      min-height: max(40vw, 520px) !important;
+      min-height: max(60.35vw, 520px) !important;
     }
 
     [id$='__final_cta'] .hero__container {
@@ -188,7 +189,7 @@
     }
 
     [id$='__final_cta'] img.hero__media {
-      object-position: 50% 20% !important;
+      object-position: 72% 50% !important;
     }
 
     [id$='__final_cta'] .button-custom {
