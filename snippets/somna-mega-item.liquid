@@ -11,7 +11,8 @@
   assign p = product
   assign st = settings
   assign mf = p.metafields.custom
-  assign pic = mf.card_image.value | default: p.featured_image
+  # the product's own first photo from admin (same as its product page)
+  assign pic = p.featured_image
   assign best = nil
   for v in p.variants
     for a in v.selling_plan_allocations
@@ -66,7 +67,7 @@
   {%- else -%}
     <a class="somna-mega__item" href="{{ p.url }}"{% if p.url == request.path %} aria-current="page"{% endif %}>
       <span class="somna-mega__thumb">
-        {%- if pic != blank -%}{{ pic | image_url: width: 160 | image_tag: loading: 'lazy', alt: '', width: 72, height: 72 }}{%- endif -%}
+        {%- if pic != blank -%}{{ pic | image_url: width: 288, height: 288, crop: 'center' | image_tag: loading: 'lazy', alt: '', width: 72, height: 72 }}{%- endif -%}
       </span>
       <span class="somna-mega__info">
         <span class="somna-mega__title">{{ p.title | escape }}{{ dots_html }}</span>

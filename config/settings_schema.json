@@ -2845,7 +2845,7 @@
         "type": "product",
         "id": "somna_mega_feature_product",
         "label": "Product",
-        "info": "Its card picture is used when no picture is set."
+        "info": "Its first product photo is used when no picture is set."
       },
       {
         "type": "image_picker",
