@@ -76,14 +76,38 @@
       </somna-collection-chooser>
     {%- else -%}
       <ul class="somna-collection__list" role="list">
-        {%- assign group = s.group | downcase -%}
-        {%- for p in source.products -%}
-          {%- assign p_group = p.metafields.custom.collection_group.value | default: '' | downcase -%}
-          {%- if p_group == group -%}
-            <li class="somna-collection__item">
-              {%- render 'somna-collection-card', product: p, style: s.layout, price_format: s.price_format, button: s.button_label, rating_format: s.rating_format -%}
-            </li>
-          {%- endif -%}
+        {%- liquid
+          # order: products named in "Show first" (by handle), then the rest in collection order
+          assign group = s.group | downcase
+          assign firsts = s.first_handles | remove: ' ' | split: ','
+          assign listed = ''
+          assign ordered = ''
+          for h in firsts
+            for p in source.products
+              if p.handle == h
+                assign ordered = ordered | append: h | append: ','
+              endif
+            endfor
+          endfor
+          for p in source.products
+            unless firsts contains p.handle
+              assign ordered = ordered | append: p.handle | append: ','
+            endunless
+          endfor
+          assign ordered = ordered | split: ','
+        -%}
+        {%- for h in ordered -%}
+          {%- for p in source.products -%}
+            {%- if p.handle == h -%}
+              {%- assign p_group = p.metafields.custom.collection_group.value | default: '' | downcase -%}
+              {%- if p_group == group -%}
+                <li class="somna-collection__item">
+                  {%- render 'somna-collection-card', product: p, style: s.layout, price_format: s.price_format, button: s.button_label, rating_format: s.rating_format -%}
+                </li>
+              {%- endif -%}
+              {%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
         {%- endfor -%}
       </ul>
     {%- endif -%}
@@ -540,6 +564,7 @@
     { "type": "select", "id": "layout", "label": "Layout", "options": [{ "value": "singles", "label": "Singles: text left, dark cards" }, { "value": "bundles", "label": "Bundles: centred heading, mint cards" }, { "value": "chooser", "label": "Chooser: answer chips change the card" }], "default": "singles" },
     { "type": "text", "id": "group", "label": "Collection group", "default": "Single", "info": "Singles and Bundles layouts: lists the collection's products whose \"Collection group\" field is this value (Single or Bundle)." },
     { "type": "collection", "id": "collection", "label": "Fallback collection", "info": "Used when the page isn't a collection page." },
+    { "type": "text", "id": "first_handles", "label": "Show first (product handles)", "info": "Comma-separated, e.g. nasal-strips, mouth-tape. The rest follow in collection order." },
     { "type": "text", "id": "anchor", "label": "Anchor (for jump links)", "info": "e.g. singles → link to #singles" },
     { "type": "inline_richtext", "id": "heading", "label": "Heading", "info": "Italic words start a new line in the accent colour." },
     { "type": "richtext", "id": "text", "label": "Text" },
