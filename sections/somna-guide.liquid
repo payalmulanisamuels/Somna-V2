@@ -11,7 +11,7 @@
 -%}
 <div
   {% if s.anchor != blank %}id="{{ s.anchor | handleize }}"{% endif %}
-  class="somna-guide somna-guide--media-{{ s.media_side }}"
+  class="somna-guide somna-guide--media-{{ s.media_side }}{% if s.layout == 'split' %} somna-guide--split{% endif %}"
   style="--sg-bg: {{ s.background_color }}; --sg-fg: {{ s.text_color }}; --sg-card: {{ s.card_color }}; --sg-card-fg: {{ s.card_text_color }}; --sg-accent: {{ s.accent_color }}; --sg-note: {{ s.note_color }}; --sg-note-fg: {{ s.note_text_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
 >
   {%- if s.layout == 'split' -%}
@@ -374,6 +374,10 @@
 
 
   /* ---- Split layout (Figma 4859:1740) ---- */
+  .somna-guide--split {
+    --somna-content-width: 1232px;
+  }
+
   .somna-guide__split {
     display: grid;
     gap: 28px;

@@ -137,7 +137,7 @@
         "padding_top": 72,
         "padding_bottom": 40,
         "layout": "split",
-        "image_align": "right"
+        "image_align": "left"
       }
     },
     "wave_strips_tape": {
