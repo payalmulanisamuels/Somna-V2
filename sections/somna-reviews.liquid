@@ -1141,12 +1141,21 @@
     box-shadow: 0 4px 10px rgb(0 0 0 / 0.25);
   }
 
+  /* fixed so focusing it (when the label is clicked) never makes the page jump */
   .somna-reviews__more-toggle {
-    position: absolute;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 1px;
     height: 1px;
+    margin: 0;
     opacity: 0;
     pointer-events: none;
+  }
+
+  /* no extra empty band under the reviews once they're opened (Judge.me adds 48px at the bottom) */
+  .somna-reviews__app .jdgm-widget .jm-review-widget {
+    padding-bottom: 0 !important;
   }
 
   .somna-reviews__more--app {
