@@ -394,9 +394,13 @@
     flex-wrap: wrap;
     gap: 20px 32px;
     justify-content: center;
+    list-style: none;
+  }
+
+  /* list resets with zero specificity, so a .somna-container on the same list keeps its centring and side padding */
+  :where(.somna-stickers) {
     margin: 0;
     padding: 0;
-    list-style: none;
   }
 
   .somna-stickers > li {
