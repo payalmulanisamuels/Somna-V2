@@ -216,9 +216,15 @@
   }
 
   #cart-drawer .theme-drawer__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 0 6px;
+    white-space: nowrap;
     font-family: var(--font-accent--family);
     font-weight: var(--font-accent--weight);
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     line-height: 1.3;
     text-transform: uppercase;
     color: #f3feee;
@@ -660,10 +666,13 @@
   }
 
   /* summary: Somna totals replace the theme's subtotal / discount rows in the drawer */
+  /* Figma: totals and checkout follow the upsell in the scroll (not pinned over the items) */
   #cart-drawer .cart-drawer__summary {
+    position: static;
     padding-bottom: 0;
     background: #f3feee;
     border-top: 0;
+    mask-image: none;
   }
 
   #cart-drawer .cart-totals > :not(.cart-totals__container),
@@ -747,7 +756,7 @@
   }
 
   #cart-drawer .somna-lock {
-    display: block;
+    display: none;
   }
 
   .hz-trust-badges-wrapper {
@@ -760,6 +769,7 @@
 
   /* guarantee as a full-width lavender bar at the bottom (Figma) */
   #cart-drawer .hz-trust-badges-wrapper {
+    width: calc(100% + 2 * var(--cart-drawer-summary-padding, 16px));
     margin: 14px calc(-1 * var(--cart-drawer-summary-padding, 16px)) 0;
   }
 
