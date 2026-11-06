@@ -12,44 +12,74 @@
     "hero": {
       "type": "somna-page-hero",
       "blocks": {
-        "b1": {
+        "p1": {
           "type": "button",
           "settings": {
-            "label": "Contact us",
-            "link": "/pages/contact",
-            "style": "primary"
+            "label": "Products",
+            "link": "#products",
+            "style": "pill",
+            "active": false
           }
         },
-        "b2": {
+        "p2": {
           "type": "button",
           "settings": {
-            "label": "Manage subscription",
-            "link": "/pages/manage-subscriptions",
-            "style": "secondary"
+            "label": "Subscriptions",
+            "link": "#orders",
+            "style": "pill",
+            "active": false
+          }
+        },
+        "p3": {
+          "type": "button",
+          "settings": {
+            "label": "Shipping",
+            "link": "#shipping",
+            "style": "pill",
+            "active": false
+          }
+        },
+        "p4": {
+          "type": "button",
+          "settings": {
+            "label": "Returns",
+            "link": "#returns",
+            "style": "pill",
+            "active": false
           }
         }
       },
       "block_order": [
-        "b1",
-        "b2"
+        "p1",
+        "p2",
+        "p3",
+        "p4"
       ],
       "settings": {
-        "show_breadcrumb": true,
+        "show_breadcrumb": false,
         "home_label": "Home",
         "breadcrumb_label": "",
         "eyebrow": "Support hub",
-        "heading": "How can we <em>help?</em>",
+        "heading": "How can <em>we help?</em>",
         "tagline": "",
-        "text": "<p>Find answers in seconds. Browse by category below — or contact us directly if you'd rather talk to a person.</p>",
+        "text": "<p>Find answers in seconds. Browse by category below, or contact us directly if you'd rather talk to a person.</p>",
         "image": "shopify://shop_images/tap-new_31b1f5fe-c102-4be9-acb8-2622708d46b1.png",
         "image_position": "object-position: 30% 50%",
         "image_side": "left",
-        "drip_edge": true,
+        "drip_edge": false,
         "background_color": "#afbdf8",
         "panel_color": "#0b0f1d",
-        "accent_color": "#afbdf8",
-        "padding_top": 24,
-        "padding_bottom": 48
+        "accent_color": "#f3feee",
+        "padding_top": 96,
+        "padding_bottom": 40,
+        "style": "card",
+        "search_placeholder": "delivery, cancel, sizing…",
+        "card_eyebrow": "Support hub",
+        "card_heading": "On its way?",
+        "card_text": "Got an order on the way? Check its status here.",
+        "card_icon": "pin",
+        "card_button": "Track order →",
+        "card_link": "/pages/track-order"
       }
     },
     "wave_hero_track": {
@@ -95,7 +125,8 @@
         "accent_color": "#afbdf8",
         "padding_top": 8,
         "padding_bottom": 24
-      }
+      },
+      "disabled": true
     },
     "products_faq": {
       "type": "section",
@@ -328,7 +359,8 @@
         "background_color": "#f3feee",
         "padding-block-start": 24,
         "padding-block-end": 24
-      }
+      },
+      "disabled": true
     },
     "orders_faq": {
       "type": "section",
@@ -545,7 +577,8 @@
         "background_color": "#f3feee",
         "padding-block-start": 24,
         "padding-block-end": 24
-      }
+      },
+      "disabled": true
     },
     "shipping_faq": {
       "type": "section",
@@ -747,7 +780,8 @@
         "background_color": "#f3feee",
         "padding-block-start": 24,
         "padding-block-end": 24
-      }
+      },
+      "disabled": true
     },
     "returns_faq": {
       "type": "section",
@@ -918,7 +952,8 @@
         "background_color": "#f3feee",
         "padding-block-start": 24,
         "padding-block-end": 24
-      }
+      },
+      "disabled": true
     },
     "wave_returns_guarantee": {
       "type": "somna-wave",
@@ -1035,7 +1070,8 @@
         "background_color": "#afbdf8",
         "padding-block-start": 16,
         "padding-block-end": 32
-      }
+      },
+      "disabled": true
     },
     "wave_guarantee_help": {
       "type": "somna-wave",
@@ -1049,27 +1085,28 @@
         "animate": true,
         "height": 140,
         "height_mobile": 48
-      }
+      },
+      "disabled": true
     },
     "help": {
       "type": "somna-policy-band",
       "settings": {
-        "size": "band",
+        "size": "cta",
         "eyebrow": "",
-        "heading": "Still need a hand?",
-        "text": "<p>We're here to help with anything else you need.</p>",
-        "button_label": "Contact us",
+        "heading": "Still stuck?",
+        "text": "<p>We reply within 1 business day.</p>",
+        "button_label": "Contact us →",
         "button_link": "/pages/contact",
         "pills_label": "",
-        "background": "#0b0f1d",
-        "text_color": "#f3feee",
-        "accent": "#afbdf8"
+        "background": "#afbdf8",
+        "text_color": "#000000",
+        "accent": "#000000"
       }
     },
     "wave_help_newsletter": {
       "type": "somna-wave",
       "settings": {
-        "top_color": "#f3feee",
+        "top_color": "#afbdf8",
         "bottom_color": "#000000",
         "shape": "drip-11",
         "overlap": false,
@@ -1140,12 +1177,167 @@
         "height": 140,
         "height_mobile": 48
       }
+    },
+    "faq_cards": {
+      "type": "somna-faq-cards",
+      "blocks": {
+        "t_products": {
+          "type": "topic",
+          "settings": {
+            "title": "Products",
+            "anchor": "products"
+          }
+        },
+        "q_products_1": {
+          "type": "question",
+          "settings": {
+            "question": "What's the difference between Nasal Strips and Mouth Tape?",
+            "answer": "<p>Strips are designed to gently open the nasal passages. Tape is designed to encourage nasal breathing instead of mouth breathing while you sleep. Many people use both together.</p>",
+            "open": false
+          }
+        },
+        "q_products_2": {
+          "type": "question",
+          "settings": {
+            "question": "What's the difference between the bundles?",
+            "answer": "<p>Sleep Bundle comes in three colors — Breathe (Blue), Bold (Red), and Night (Black) — same two products, Strips and Tape, same price either way. The Colour Set includes all three colors of Strips, without Tape. The Season Bundle is a 3-month supply of Black Strips and Black Tape.</p>",
+            "open": false
+          }
+        },
+        "q_products_3": {
+          "type": "question",
+          "settings": {
+            "question": "Can I buy Strips or Tape on their own?",
+            "answer": "<p>Yes — both are available individually if you'd rather start with one.</p>",
+            "open": false
+          }
+        },
+        "q_products_4": {
+          "type": "question",
+          "settings": {
+            "question": "Is Mouth Tape suitable for me?",
+            "answer": "<p>Most people adjust within a few nights. If you have a cold, congestion, or any breathing condition, check with a doctor before use.</p>",
+            "open": false
+          }
+        },
+        "t_orders": {
+          "type": "topic",
+          "settings": {
+            "title": "Ordering & Subscriptions",
+            "anchor": "orders"
+          }
+        },
+        "q_orders_1": {
+          "type": "question",
+          "settings": {
+            "question": "How does Subscribe & Save work?",
+            "answer": "<p>It's up to 50% off every order, delivered automatically on a schedule based on the size you choose. Skip, pause, swap, or cancel anytime from your account.</p>",
+            "open": false
+          }
+        },
+        "q_orders_2": {
+          "type": "question",
+          "settings": {
+            "question": "Can I cancel anytime?",
+            "answer": "<p>Yes — pausing and cancelling are both available anytime from your account, with no fees.</p>",
+            "open": false
+          }
+        },
+        "q_orders_3": {
+          "type": "question",
+          "settings": {
+            "question": "How do I change my order before it ships?",
+            "answer": "<p>Visit <a href=\"/pages/manage-subscriptions\">Manage my subscription →</a> from your account, or contact us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> if your order hasn't shipped yet.</p>",
+            "open": false
+          }
+        },
+        "t_shipping": {
+          "type": "topic",
+          "settings": {
+            "title": "Shipping & Delivery",
+            "anchor": "shipping"
+          }
+        },
+        "q_shipping_1": {
+          "type": "question",
+          "settings": {
+            "question": "How long does delivery take?",
+            "answer": "<p>7–9 business days from when your order ships. Shipping is free on every order.</p>",
+            "open": false
+          }
+        },
+        "q_shipping_2": {
+          "type": "question",
+          "settings": {
+            "question": "How do I track my order?",
+            "answer": "<p>You'll get a tracking link by email once your order ships. You can also <a href=\"/pages/track-order\">track your order here</a>.</p>",
+            "open": false
+          }
+        },
+        "q_shipping_3": {
+          "type": "question",
+          "settings": {
+            "question": "Do you ship outside the US?",
+            "answer": "<p>We currently ship within the United States only.</p>",
+            "open": false
+          }
+        },
+        "t_returns": {
+          "type": "topic",
+          "settings": {
+            "title": "Returns & Guarantee",
+            "anchor": "returns"
+          }
+        },
+        "q_returns_1": {
+          "type": "question",
+          "settings": {
+            "question": "What's your return policy?",
+            "answer": "<p>Every product is covered by our 30-Night Money-Back Guarantee, counted from delivery.</p>",
+            "open": false
+          }
+        },
+        "q_returns_2": {
+          "type": "question",
+          "settings": {
+            "question": "What if my item arrives damaged?",
+            "answer": "<p>Contact the shipping carrier to file a claim, and reach out to us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> — please keep all packaging and damaged goods until the claim is resolved.</p>",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "t_products",
+        "q_products_1",
+        "q_products_2",
+        "q_products_3",
+        "q_products_4",
+        "t_orders",
+        "q_orders_1",
+        "q_orders_2",
+        "q_orders_3",
+        "t_shipping",
+        "q_shipping_1",
+        "q_shipping_2",
+        "q_shipping_3",
+        "t_returns",
+        "q_returns_1",
+        "q_returns_2"
+      ],
+      "settings": {
+        "background_color": "#f3feee",
+        "card_color": "#f3feee",
+        "accent_color": "#afbdf8",
+        "padding_top": 32,
+        "padding_bottom": 40
+      }
     }
   },
   "order": [
     "hero",
     "wave_hero_track",
     "track",
+    "faq_cards",
     "products_faq",
     "orders_faq",
     "shipping_faq",

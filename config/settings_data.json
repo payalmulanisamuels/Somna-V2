@@ -182,7 +182,7 @@
     "somna_drawer_link_2_url": "/pages/support",
     "somna_drawer_link_3_url": "/pages/track-order",
     "somna_drawer_link_4_url": "/pages/manage-subscriptions",
-    "somna_drawer_style": "classic"
+    "somna_drawer_style": "somna"
   },
   "presets": {
     "Horizon": {
