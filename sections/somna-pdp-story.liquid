@@ -464,7 +464,7 @@
         this.st = ScrollTrigger.create({
           // phones: the sections stack, so start once the layers picture itself peeks in at the bottom —
           // the How-it-works strip is still on screen above it and visibly flips down into it
-          trigger: this.phone ? this : section, scroller: this.scroller, start: this.phone ? 'top 82%' : 'top 66%',
+          trigger: this.phone ? this : section, scroller: this.scroller, start: this.phone ? 'top 76%' : 'top 66%',
           onEnter: () => { if (tl.progress() === 0) tl.invalidate(); tl.timeScale(speed).play(); },
           onLeaveBack: () => tl.timeScale(speed * 2).reverse(),
           onRefresh: () => this.handoff?.(),
