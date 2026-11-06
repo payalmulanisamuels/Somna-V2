@@ -94,7 +94,7 @@
         {%- if row_count > 0 -%}
           {%- if tab.settings.sticker != blank -%}<p class="somna-compare__sticker" aria-hidden="true">{{ tab.settings.sticker }}</p>{%- endif -%}
           <div
-            class="somna-compare__panel{% if s.drip_edges %} somna-edge-drip-bottom{% endif %}"
+            class="somna-compare__panel{% if s.drip_edges %} somna-edge-drip-bottom{% endif %}{% if tab.settings.show_names %} somna-compare__panel--named{% endif %}"
             role="tabpanel"
             id="{{ uid }}-panel-{{ forloop.index }}"
             aria-labelledby="{{ uid }}-tab-{{ forloop.index }}"
@@ -568,6 +568,57 @@
 
   .somna-compare__table tr.is-total > .is-somna {
     background: var(--somna-highlight);
+  }
+
+  /* named columns (Sleep Bundle, Season Bundle): every picture in the same 80px box on one line,
+     every column name starts on the same line under it, one name style */
+  .somna-compare__panel--named thead th {
+    vertical-align: top;
+  }
+
+  .somna-compare__panel--named thead img {
+    width: 80px;
+    max-width: 100%;
+    height: 80px;
+    object-fit: contain;
+  }
+
+  .somna-compare__panel--named thead th > span,
+  .somna-compare__panel--named thead .somna-compare__col-name {
+    display: block;
+    margin-top: 8px;
+    color: #000;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .somna-compare__panel--named thead th.is-somna > span {
+    color: #0a3fa8;
+    font-weight: 800;
+  }
+
+  /* the three value columns share the width equally */
+  .somna-compare__panel--named .somna-compare__table {
+    table-layout: fixed;
+  }
+
+  .somna-compare__panel--named .somna-compare__table tbody th {
+    width: 30%;
+  }
+
+  @media screen and (max-width: 749px) {
+    .somna-compare__panel--named thead img {
+      width: 44px;
+      height: 44px;
+    }
+
+    .somna-compare__panel--named thead th > span,
+    .somna-compare__panel--named thead .somna-compare__col-name {
+      margin-top: 4px;
+      font-size: 0.625rem;
+    }
   }
 {% endstylesheet %}
 
