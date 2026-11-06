@@ -139,7 +139,8 @@
             "label": "Track your order",
             "link": "/pages/track-order",
             "icon": "shopify://shop_images/somna-v2-icon-truck.png",
-            "dark": false
+            "dark": false,
+            "icon_size": 40
           }
         },
         "subscription": {
@@ -157,7 +158,8 @@
             "label": "Read the FAQ",
             "link": "/pages/support",
             "dark": false,
-            "icon": "shopify://shop_images/somna-v2-icon-faq.png"
+            "icon": "shopify://shop_images/somna-v2-icon-faq.png",
+            "icon_size": 36
           }
         }
       },
