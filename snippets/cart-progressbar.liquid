@@ -6,6 +6,9 @@
   - 3+1 Bags / 4 months -> both guides (100%)
   - Colour Set + Season Bundle -> 3 months -> both guides (100%)
   - Sleep Bundle -> same rule for 2-Set and 3+1-Set tiers -> both guides (100%)
+  Figma 4782:12094: lavender band with a drip edge (Start · 1 bag · gifts). Rendered again with part: 'nudge' under
+  the items for the "Add 1 more bag" box (same bag count, so the rules live in one place).
+  @param {string} [part] - 'nudge' renders the "+1 bag" box instead of the progress band
 {%- endcomment -%}
 
 {%- liquid
@@ -15,6 +18,7 @@
   # The Colour Set and Season Bundle unlock the guides on their own.
   # Free ($0) lines, e.g. the gifted e-books, are ignored.
   assign total_bags = 0
+  assign one_bag_item = nil
   assign has_guides = false
   assign progress_percent = 0
   assign message = 'You unlocked 3 free Sleep Guides!'
@@ -55,26 +59,40 @@
 
     assign line_bags = item_bags | times: item.quantity
     assign total_bags = total_bags | plus: line_bags
+    if line_bags == 1
+      assign one_bag_item = item
+    endif
   endfor
 
   if has_guides or total_bags >= 2
     assign progress_percent = 100
-    assign message = 'You unlocked 3 <b>FREE gifts</b>!'
+    assign message = 'You unlocked <b>3 free gifts</b>!'
   elsif total_bags == 1
     assign progress_percent = 50
-    assign message = "You're <b>1 bag away</b> from 3 <b>FREE gifts</b>"
+    assign message = "You're 1 bag away from <b>3 free gifts</b>"
   else
     assign progress_percent = 0
-    assign message = "You're <b>1 bag away</b> from 3 <b>FREE gifts</b>"
+    assign message = "You're 1 bag away from <b>3 free gifts</b>"
   endif
 -%}
 
+{%- if part == 'nudge' -%}
+  {%- comment -%} "+1 bag" box: one bag in the cart; the button presses that line's own + (same cart update as the theme) {%- endcomment -%}
+  {%- if total_bags == 1 and has_guides == false and one_bag_item != nil -%}
+    {%- assign per_night = one_bag_item.final_price | divided_by: 30 -%}
+    <div class="somna-nudge" data-line="{{ one_bag_item.index }}">
+      <p class="somna-nudge__text"><b>Add 1 more bag, unlock 3 free gifts.</b> Same {{ per_night | money }} a night. 60 nights covered.</p>
+      <button type="button" class="somna-nudge__button" data-somna-plus="{{ one_bag_item.index }}">+1 bag</button>
+    </div>
+  {%- endif -%}
+{%- else -%}
 <div class="somna-gifts{% if progress_percent == 100 %} is-done{% endif %}">
-  <p class="somna-gifts__msg"><span class="somna-gifts__icon"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="9" width="17" height="11.5" rx="1.5"/><path d="M2.5 9h19M12 9v11.5M12 9c-1.5-3.8-6-4.6-6-2 0 1.6 3 2 6 2zM12 9c1.5-3.8 6-4.6 6-2 0 1.6-3 2-6 2z"/></svg></span><span>{{ message }}</span></p>
+  <p class="somna-gifts__msg"><span>{{ message }}</span></p>
   <div class="somna-gifts__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ progress_percent }}" aria-label="Free gift progress">
     <span class="somna-gifts__fill" style="width: {{ progress_percent }}%;"></span>
-    {%- if progress_percent > 0 and progress_percent < 100 -%}<span class="somna-gifts__dot" style="left: {{ progress_percent }}%;"></span>{%- endif -%}
-    <span class="somna-gifts__end"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="9" width="17" height="11.5" rx="1.5"/><path d="M2.5 9h19M12 9v11.5M12 9c-1.5-3.8-6-4.6-6-2 0 1.6 3 2 6 2zM12 9c1.5-3.8 6-4.6 6-2 0 1.6-3 2-6 2z"/></svg></span>
+    <span class="somna-gifts__node{% if progress_percent >= 50 %} is-on{% endif %}" style="left: 50%;"></span>
+    <span class="somna-gifts__node{% if progress_percent == 100 %} is-on{% endif %}" style="left: 100%;"></span>
   </div>
-  <div class="somna-gifts__steps"><span>1 bag</span><span>2 bags · 3 gifts</span></div>
+  <div class="somna-gifts__steps"><span>Start</span><span>1 bag</span><span>2 bags</span></div>
 </div>
+{%- endif -%}

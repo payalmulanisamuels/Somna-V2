@@ -449,6 +449,9 @@
         {% endfor %}
       </div>
     </form>
+    {%- if context == 'drawer' -%}
+      {% render 'cart-progressbar', part: 'nudge' %}
+    {%- endif -%}
   {%- endif -%}
 </div>
 

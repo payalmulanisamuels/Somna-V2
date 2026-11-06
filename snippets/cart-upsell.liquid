@@ -40,7 +40,14 @@
 
 {%- if upsell_cards != blank -%}
   <div class="hz-minicart-upsell">
-    <h2 class="upsell_heading">{{ settings.fixed_heading | default: 'Complete your sleep system' | escape }}</h2>
+    {%- if settings.upsell_eyebrow != blank -%}<p class="hz-minicart-upsell__eyebrow">{{ settings.upsell_eyebrow | escape }}</p>{%- endif -%}
+    {%- comment -%} heading: *word* in the setting shows in the accent colour (Figma "STUFFY NOSE" lavender) {%- endcomment -%}
+    {%- assign upsell_heading = settings.fixed_heading | default: 'Complete your sleep system' | escape -%}
+    {%- assign heading_parts = upsell_heading | split: '*' -%}
+    <h2 class="upsell_heading">
+      {%- for part in heading_parts -%}{%- assign odd = forloop.index0 | modulo: 2 -%}{%- if odd == 1 -%}<em>{{ part }}</em>{%- else -%}{{ part }}{%- endif -%}{%- endfor -%}
+    </h2>
+    {%- if settings.upsell_text != blank -%}<p class="hz-minicart-upsell__text">{{ settings.upsell_text | escape }}</p>{%- endif -%}
     <div class="hz-minicart-upsell__list">
       {{ upsell_cards }}
     </div>
