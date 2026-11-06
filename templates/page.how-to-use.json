@@ -261,7 +261,7 @@
         "image_align": "left",
         "card_product": "sleep-bundle",
         "card_image": "shopify://shop_images/somna-v2-sleep-bundle.png",
-        "card_rating": "4.6/5 · 3,600+ reviews",
+        "card_rating": "[rating]/5 · [count] reviews",
         "card_title": "The Sleep Bundle",
         "card_text": "Both, from [price]",
         "card_button": "Shop now"
