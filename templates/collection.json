@@ -171,8 +171,7 @@
         "text_color": "#000000",
         "accent_color": "#98a3de",
         "padding_top": 16,
-        "padding_bottom": 24,
-        "first_handles": "nasal-strips, mouth-tape"
+        "padding_bottom": 24
       }
     },
     "wave_singles_bundles": {
@@ -206,8 +205,7 @@
         "text_color": "#f4fef3",
         "accent_color": "#afbdf8",
         "padding_top": 16,
-        "padding_bottom": 24,
-        "first_handles": "sleep-bundle, the-colour-set, season-bundle"
+        "padding_bottom": 24
       }
     },
     "wave_bundles_chooser": {
