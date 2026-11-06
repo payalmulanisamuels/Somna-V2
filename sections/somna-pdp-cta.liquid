@@ -291,7 +291,7 @@
   }
 
   .somna-pdp-cta__media:has(.somna-pdp-cta__product--pair) {
-    width: min(100%, var(--somna-cta-pair, 400px));
+    width: min(100%, 400px);
   }
 
   .somna-pdp-cta__product--pair img {
@@ -349,9 +349,11 @@
       grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
     }
 
-    /* a wider tape + strip picture (setting above 400px) gets an equal column, as in Figma */
-    .somna-pdp-cta__inner:has(.somna-pdp-cta__product--pair) {
-      grid-template-columns: minmax(0, 1fr) minmax(var(--somna-cta-pair, 400px), 0.8fr);
+    /* a larger tape + strip picture (setting above 400px) grows out of its 400px box on both sides, so the
+       text column, button and sticker stay where they are */
+    .somna-pdp-cta__media:has(.somna-pdp-cta__product--pair) .somna-pdp-cta__product--pair {
+      width: var(--somna-cta-pair, 400px);
+      margin-inline: calc((400px - var(--somna-cta-pair, 400px)) / 2);
     }
   }
 
