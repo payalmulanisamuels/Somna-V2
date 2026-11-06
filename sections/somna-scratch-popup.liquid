@@ -69,7 +69,7 @@
   aria-labelledby="somna-screen-1-title"
   aria-hidden="true"
 >
-  <div class="sgp__card" tabindex="-1">
+  <div class="sgp__card{% if s.desktop_layout == 'split' %} sgp__card--split{% endif %}" tabindex="-1">
     <div class="sgp__top">
       <span class="sgp__logo">{{ s.logo_text | default: 'somna.' }}</span>
       <button type="button" class="sgp__close somna-close-btn" aria-label="Close popup">
@@ -195,6 +195,7 @@
     font-family: var(--font-body--family, Inter, sans-serif);
     text-align: center;
     container-type: inline-size;
+    --sgp-u: 1cqw;
     scrollbar-width: none;
     transform: translateY(24px) scale(0.96);
     transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
@@ -210,11 +211,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 6.5cqw 5.4cqw 0 4.7cqw;
+    padding: calc(6.5 * var(--sgp-u)) calc(5.4 * var(--sgp-u)) 0 calc(4.7 * var(--sgp-u));
   }
 
   .sgp__logo {
-    font-size: clamp(1.25rem, 7.3cqw, 1.625rem);
+    font-size: clamp(1.25rem, calc(7.3 * var(--sgp-u)), 1.625rem);
     font-weight: 800;
     letter-spacing: -0.02em;
     line-height: 1;
@@ -244,7 +245,7 @@
     flex: 1;
     flex-direction: column;
     align-items: center;
-    padding: 0 4.7cqw calc(20cqw + 8px);
+    padding: 0 calc(4.7 * var(--sgp-u)) calc(calc(20 * var(--sgp-u)) + 8px);
   }
 
   .sgp__screen-enter { animation: sgpIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
@@ -254,13 +255,13 @@
   @keyframes sgpOut { to { opacity: 0; transform: translateY(-10px); } }
 
   .sgp__pill {
-    margin: 4.4cqw 0 0;
+    margin: calc(4.4 * var(--sgp-u)) 0 0;
     padding: 0.55em 1.6em;
     border: 2px solid var(--sgp-mint);
     border-radius: 7.5px;
     background: var(--sgp-lav);
     color: #000;
-    font-size: clamp(0.625rem, 3.25cqw, 0.75rem);
+    font-size: clamp(0.625rem, calc(3.25 * var(--sgp-u)), 0.75rem);
     font-weight: 800;
     letter-spacing: 0.01em;
     line-height: 1.2;
@@ -268,10 +269,10 @@
   }
 
   .sgp__title {
-    margin: 2.4cqw 0 0;
+    margin: calc(2.4 * var(--sgp-u)) 0 0;
     color: var(--sgp-mint);
     font-family: var(--font-accent--family);
-    font-size: clamp(1.75rem, 10.6cqw, 2.5rem);
+    font-size: clamp(1.75rem, calc(10.6 * var(--sgp-u)), 2.5rem);
     font-weight: var(--font-accent--weight);
     line-height: 1.32;
     text-transform: uppercase;
@@ -281,8 +282,8 @@
   .sgp__title em { color: var(--sgp-lav); font-style: normal; }
 
   .sgp__text {
-    margin: 3cqw 0 0;
-    font-size: clamp(0.8125rem, 3.9cqw, 0.9375rem);
+    margin: calc(3 * var(--sgp-u)) 0 0;
+    font-size: clamp(0.8125rem, calc(3.9 * var(--sgp-u)), 0.9375rem);
     font-weight: 500;
     letter-spacing: -0.01em;
     line-height: 1.45;
@@ -294,8 +295,8 @@
     position: relative;
     display: grid;
     place-items: center;
-    width: min(54cqw, 26dvh);
-    margin: 5cqw 0 0;
+    width: min(calc(54 * var(--sgp-u)), 26dvh);
+    margin: calc(5 * var(--sgp-u)) 0 0;
     padding: 0;
     border: 0;
     background: none;
@@ -368,12 +369,12 @@
     display: grid;
     place-items: center;
     min-height: 48px;
-    margin-top: 6cqw;
+    margin-top: calc(6 * var(--sgp-u));
   }
 
   /* Figma 4954:2927: 208 × 39 mint button, lavender border + glow, Boldonse 16 */
   .sgp__unwrap {
-    min-width: 61cqw;
+    min-width: calc(61 * var(--sgp-u));
     min-height: 44px;
     padding: 0.5em 1.4em;
     border: 2px solid var(--sgp-lav);
@@ -382,7 +383,7 @@
     box-shadow: 0 1.5px 5px 1px var(--sgp-lav);
     color: #000;
     font-family: var(--font-accent--family);
-    font-size: clamp(0.875rem, 4.7cqw, 1.0625rem);
+    font-size: clamp(0.875rem, calc(4.7 * var(--sgp-u)), 1.0625rem);
     font-weight: var(--font-accent--weight);
     letter-spacing: 0.02em;
     line-height: 1.4;
@@ -398,7 +399,7 @@
   .sgp__unwrapping {
     display: none;
     margin: 0;
-    font-size: clamp(0.875rem, 4.4cqw, 1rem);
+    font-size: clamp(0.875rem, calc(4.4 * var(--sgp-u)), 1rem);
     font-weight: 500;
   }
 
@@ -407,38 +408,38 @@
   .is-unwrapping .sgp__fine { visibility: hidden; }
 
   .sgp__fine {
-    margin: 3.5cqw 0 0;
+    margin: calc(3.5 * var(--sgp-u)) 0 0;
     color: var(--sgp-mint);
-    font-size: clamp(0.625rem, 2.95cqw, 0.6875rem);
+    font-size: clamp(0.625rem, calc(2.95 * var(--sgp-u)), 0.6875rem);
     font-weight: 300;
     line-height: 1.5;
     opacity: 0.85;
   }
 
   /* reveal (Figma 4954:2986) */
-  .sgp__title--reveal { margin-top: 3cqw; }
+  .sgp__title--reveal { margin-top: calc(3 * var(--sgp-u)); }
 
   .sgp__reveal {
     position: relative;
     display: grid;
     justify-items: center;
     width: 100%;
-    margin-top: 2cqw;
+    margin-top: calc(2 * var(--sgp-u));
   }
 
   .sgp__reveal-box {
     grid-area: 1 / 1;
     align-self: end;
-    width: min(46cqw, 22dvh);
+    width: min(calc(46 * var(--sgp-u)), 22dvh);
     height: auto;
-    margin-top: 40cqw;
+    margin-top: calc(40 * var(--sgp-u));
     color: var(--sgp-lav);
   }
 
   .sgp__burst--reveal {
     grid-area: 1 / 1;
     align-self: start;
-    width: min(92cqw, 48dvh);
+    width: min(calc(92 * var(--sgp-u)), 48dvh);
     margin-top: 0;
   }
 
@@ -450,15 +451,15 @@
     100% { opacity: 1; transform: none; }
   }
 
-  .sgp__text--reveal { margin-top: 4cqw; font-size: clamp(0.875rem, 4.7cqw, 1.0625rem); font-weight: 600; }
+  .sgp__text--reveal { margin-top: calc(4 * var(--sgp-u)); font-size: clamp(0.875rem, calc(4.7 * var(--sgp-u)), 1.0625rem); font-weight: 600; }
 
-  .sgp__unwrap--claim { margin-top: 3cqw; text-transform: none; }
+  .sgp__unwrap--claim { margin-top: calc(3 * var(--sgp-u)); text-transform: none; }
 
   /* claim */
   .sgp__burst {
     position: relative;
-    width: min(84cqw, 30dvh * 1.5);
-    margin-top: 2cqw;
+    width: min(calc(84 * var(--sgp-u)), 30dvh * 1.5);
+    margin-top: calc(2 * var(--sgp-u));
   }
 
   .sgp__burst svg { display: block; width: 100%; height: auto; }
@@ -478,22 +479,22 @@
     text-transform: uppercase;
   }
 
-  .sgp__burst-big { font-size: clamp(1.125rem, 8.6cqw, 2rem); }
-  .sgp__burst-small { margin-top: 2px; font-family: var(--font-body--family, Inter, sans-serif); font-size: clamp(0.625rem, 3cqw, 0.75rem); font-weight: 700; text-transform: none; }
+  .sgp__burst-big { font-size: clamp(1.125rem, calc(8.6 * var(--sgp-u)), 2rem); }
+  .sgp__burst-small { margin-top: 2px; font-family: var(--font-body--family, Inter, sans-serif); font-size: clamp(0.625rem, calc(3 * var(--sgp-u)), 0.75rem); font-weight: 700; text-transform: none; }
 
   .is-entering .sgp__burst { animation: sgpBurst 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
   @keyframes sgpBurst { from { transform: scale(0.4) rotate(-12deg); opacity: 0; } }
 
-  .sgp__title--claim { margin-top: 2cqw; font-size: clamp(1.75rem, 12.5cqw, 2.875rem); line-height: 1.32; }
+  .sgp__title--claim { margin-top: calc(2 * var(--sgp-u)); font-size: clamp(1.75rem, calc(12.5 * var(--sgp-u)), 2.875rem); line-height: 1.32; }
   .sgp__title--claim > * { display: inline; }
   .sgp__title--claim em { color: var(--sgp-lav); }
   .sgp__title--claim span { color: var(--sgp-mint); }
 
-  .sgp__screen--claim .sgp__text { margin-top: 1.5cqw; font-weight: 400; letter-spacing: 0.04em; }
+  .sgp__screen--claim .sgp__text { margin-top: calc(1.5 * var(--sgp-u)); font-weight: 400; letter-spacing: 0.04em; }
 
-  .sgp__form { display: flex; flex-direction: column; width: 100%; margin-top: 4cqw; text-align: left; }
+  .sgp__form { display: flex; flex-direction: column; width: 100%; margin-top: calc(4 * var(--sgp-u)); text-align: left; }
 
-  .sgp__label { margin: 0 0 6px; font-size: clamp(0.75rem, 3.5cqw, 0.8125rem); }
+  .sgp__label { margin: 0 0 6px; font-size: clamp(0.75rem, calc(3.5 * var(--sgp-u)), 0.8125rem); }
 
   .sgp__input {
     width: 100%;
@@ -537,12 +538,12 @@
   .sgp__btn:disabled { opacity: 0.6; cursor: progress; }
   .sgp__btn:focus-visible { outline: 2px solid var(--sgp-mint); outline-offset: 3px; }
 
-  .sgp__btn--accent { font-family: var(--font-accent--family); font-size: clamp(0.9375rem, 5.2cqw, 1.1875rem); font-weight: var(--font-accent--weight); line-height: 1.4; }
+  .sgp__btn--accent { font-family: var(--font-accent--family); font-size: clamp(0.9375rem, calc(5.2 * var(--sgp-u)), 1.1875rem); font-weight: var(--font-accent--weight); line-height: 1.4; }
 
   .sgp__consent {
-    margin: 4.5cqw 0 0;
+    margin: calc(4.5 * var(--sgp-u)) 0 0;
     color: #a9a9a9;
-    font-size: clamp(0.6875rem, 3.5cqw, 0.75rem);
+    font-size: clamp(0.6875rem, calc(3.5 * var(--sgp-u)), 0.75rem);
     letter-spacing: 0.02em;
     line-height: 1.45;
   }
@@ -555,33 +556,33 @@
     border: 0;
     background: none;
     color: #a9a9a9;
-    font-size: clamp(0.6875rem, 3.5cqw, 0.75rem);
+    font-size: clamp(0.6875rem, calc(3.5 * var(--sgp-u)), 0.75rem);
     cursor: pointer;
   }
 
   .sgp__decline:hover { color: var(--sgp-mint); text-decoration: underline; }
 
-  .sgp__notice { margin: 4cqw 0 0; padding: 10px 12px; border: 1.5px solid var(--sgp-lav); border-radius: 8px; font-size: 0.875rem; }
+  .sgp__notice { margin: calc(4 * var(--sgp-u)) 0 0; padding: 10px 12px; border: 1.5px solid var(--sgp-lav); border-radius: 8px; font-size: 0.875rem; }
 
   /* code */
-  .sgp__gift-small { width: min(30cqw, 15dvh); margin-top: 5cqw; color: var(--sgp-lav); }
+  .sgp__gift-small { width: min(calc(30 * var(--sgp-u)), 15dvh); margin-top: calc(5 * var(--sgp-u)); color: var(--sgp-lav); }
   .is-entering .sgp__gift-small { animation: sgpBurst 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 
-  .sgp__title--code { margin-top: 3cqw; font-size: clamp(1.625rem, 10.4cqw, 2.5rem); line-height: 1.32; }
+  .sgp__title--code { margin-top: calc(3 * var(--sgp-u)); font-size: clamp(1.625rem, calc(10.4 * var(--sgp-u)), 2.5rem); line-height: 1.32; }
 
   .sgp__code {
     display: grid;
     place-items: center;
     width: 100%;
     min-height: 54px;
-    margin-top: 6cqw;
+    margin-top: calc(6 * var(--sgp-u));
     padding: 6px 10px;
     border: 2px solid var(--sgp-lav);
     border-radius: 4px;
     background: #fff;
     color: #000;
     font-family: var(--font-accent--family);
-    font-size: clamp(1.375rem, 9.4cqw, 2.25rem);
+    font-size: clamp(1.375rem, calc(9.4 * var(--sgp-u)), 2.25rem);
     font-weight: var(--font-accent--weight);
     letter-spacing: 0.02em;
     line-height: 1.35;
@@ -597,16 +598,77 @@
     border: 0;
     background: none;
     color: #bdbdbd;
-    font-size: clamp(0.75rem, 3.5cqw, 0.8125rem);
+    font-size: clamp(0.75rem, calc(3.5 * var(--sgp-u)), 0.8125rem);
     cursor: pointer;
   }
 
   .sgp__copy:hover { color: var(--sgp-mint); }
   .sgp__copy:focus-visible { outline: 2px solid var(--sgp-lav); outline-offset: 2px; border-radius: 6px; }
 
-  .sgp__btn--shop { margin-top: 4cqw; min-height: 50px; font-size: clamp(0.875rem, 4.6cqw, 1rem); font-weight: 700; }
+  .sgp__btn--shop { margin-top: calc(4 * var(--sgp-u)); min-height: 50px; font-size: clamp(0.875rem, calc(4.6 * var(--sgp-u)), 1rem); font-weight: 700; }
 
-  .sgp__fine--code { margin-top: 5cqw; font-size: clamp(0.625rem, 3cqw, 0.6875rem); }
+  .sgp__fine--code { margin-top: calc(5 * var(--sgp-u)); font-size: clamp(0.625rem, calc(3 * var(--sgp-u)), 0.6875rem); }
+
+
+  /* Desktop "split" (setting "Desktop layout", like the Halloween popup): a wide card, the picture on the
+     left on a soft lavender glow, the words and buttons on the right. Phones always use the single column. */
+  @media screen and (min-width: 990px) {
+    .sgp__card--split {
+      --sgp-u: 0.38cqw;
+      width: min(840px, 100%);
+      min-height: min(540px, calc(100dvh - 24px));
+    }
+
+    .sgp__card--split::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 50%;
+      background: radial-gradient(60% 55% at 50% 48%, rgb(175 189 248 / 0.28), transparent 70%);
+      pointer-events: none;
+    }
+
+    .sgp__card--split .sgp__top { padding: 26px 26px 0 30px; }
+
+    .sgp__card--split .sgp__screen {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-auto-rows: min-content;
+      align-content: center;
+      column-gap: 40px;
+      padding: 8px 40px 120px 30px;
+    }
+
+    .sgp__card--split .sgp__screen > * { grid-column: 2; }
+
+    .sgp__card--split :is(.sgp__box, .sgp__burst:not(.sgp__burst--reveal), .sgp__reveal, .sgp__gift-small) {
+      grid-column: 1;
+      grid-row: 1 / span 12;
+      align-self: center;
+      justify-self: center;
+      margin: 0;
+    }
+
+    .sgp__card--split .sgp__box { width: 250px; }
+    .sgp__card--split .sgp__screen--claim .sgp__burst { width: 330px; }
+    .sgp__card--split .sgp__gift-small { width: 220px; }
+    .sgp__card--split .sgp__reveal { width: 340px; }
+    .sgp__card--split .sgp__reveal-box { width: 200px; margin-top: 150px; }
+    .sgp__card--split .sgp__burst--reveal { width: 340px; }
+
+    .sgp__card--split .sgp__title { font-size: 2.5rem; }
+    .sgp__card--split .sgp__title--claim { font-size: 2.75rem; }
+    .sgp__card--split .sgp__title--code { font-size: 2.375rem; }
+    .sgp__card--split .sgp__text { font-size: 1rem; }
+    .sgp__card--split .sgp__unwrap { min-width: 240px; font-size: 1.0625rem; }
+    .sgp__card--split .sgp__code { font-size: 2.25rem; }
+    .sgp__card--split .sgp__wave-wrap { height: 90px; }
+    .sgp__card--split .sgp__form,
+    .sgp__card--split .sgp__btn,
+    .sgp__card--split .sgp__code { max-width: 340px; }
+  }
 
   /* lavender wave along the bottom */
   .sgp__wave-wrap {
@@ -614,7 +676,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    height: 20cqw;
+    height: calc(20 * var(--sgp-u));
     color: var(--sgp-lav);
     pointer-events: none;
   }
@@ -765,22 +827,20 @@
     transform: rotate(45deg);
   }
   .sgp-tab--peek .sgp-tab__icon {
-    width: 64px;
-    height: 44px;
-    overflow: hidden;
     align-self: flex-start;
-    margin-left: 6px;
+    margin: 0 0 10px 10px;
     color: var(--sgp-lav);
-    transition: height 0.25s ease;
+    transition: transform 0.25s ease;
   }
   .sgp-tab--peek .sgp-tab__icon svg {
-    width: 64px;
-    height: 60px;
-    margin-top: 6px;
-    filter: drop-shadow(2px 0 0 #000) drop-shadow(-2px 0 0 #000) drop-shadow(0 -2px 0 #000);
+    display: block;
+    width: 58px;
+    height: 55px;
+    overflow: visible;
+    filter: drop-shadow(1.5px 0 0 #000) drop-shadow(-1.5px 0 0 #000) drop-shadow(0 1.5px 0 #000) drop-shadow(0 -1.5px 0 #000) drop-shadow(2px 3px 0 #000);
     animation: sgpTabWiggle 3.5s 1s infinite;
   }
-  .sgp-tab--peek:hover .sgp-tab__icon { height: 54px; }
+  .sgp-tab--peek:hover .sgp-tab__icon { transform: translateY(-4px); }
 
   /* product pages: sit above the sticky add to cart bar */
   html.somna-sticky-on .sgp-tab:is(.sgp-tab--bubble, .sgp-tab--pill) { bottom: calc(var(--somna-sticky-h, 0px) + 16px); }
@@ -977,6 +1037,7 @@
       overlay.addEventListener('click', (event) => { if (event.target === overlay) closePopup(); });
       teaserTab?.addEventListener('click', () => openPopup('teaser'));
       // demo: ?sgp_tab=side|bubble|pill|peek previews another reopen-button look
+      if (new URLSearchParams(location.search).get('sgp_desktop') === 'split') card.classList.add('sgp__card--split');
       const demoTab = new URLSearchParams(location.search).get('sgp_tab');
       if (demoTab && teaserTab) teaserTab.className = teaserTab.className.replace(/sgp-tab--\w+/, 'sgp-tab--' + demoTab.replace(/\W/g, ''));
 
@@ -1162,6 +1223,7 @@
     { "type": "checkbox", "id": "enabled", "label": "Enable popup", "default": true },
     { "type": "checkbox", "id": "editor_preview", "label": "Open it in the theme editor", "default": true, "info": "Only in the editor, so you can see your changes." },
     { "type": "range", "id": "delay_seconds", "label": "Open after", "min": 3, "max": 60, "step": 1, "unit": "s", "default": 10 },
+    { "type": "select", "id": "desktop_layout", "label": "Desktop layout", "options": [{ "value": "stack", "label": "Single column (like phones)" }, { "value": "split", "label": "Wide: picture left, words right" }], "default": "stack" },
     { "type": "text", "id": "discount_code", "label": "Discount code", "default": "WELCOME10", "info": "Shown on the last screen and applied by its button. Must exist under Discounts." },
     { "type": "text", "id": "shop_redirect", "label": "\"Shop now\" goes to", "default": "/collections/all" },
     { "type": "header", "content": "Screen 1 — the box" },
