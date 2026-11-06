@@ -170,7 +170,7 @@
         if (!this.cutouts.length) return;
         this.anims = [];
         this.classList.add('is-pending');
-        this.io = new IntersectionObserver(([e]) => e.isIntersecting && this.play(), { rootMargin: '0px 0px -30% 0px' });
+        this.io = new IntersectionObserver(([e]) => e.isIntersecting && this.play(), { rootMargin: '0px 0px -8% 0px', threshold: 0 });
         this.out = new IntersectionObserver(([e]) => !e.isIntersecting && e.boundingClientRect.top > 0 && this.reset());
         this.io.observe(this);
         this.out.observe(this);
@@ -195,22 +195,22 @@
         this.classList.remove('is-pending');
         const two = this.cutouts.length > 1;
         this.cutouts.forEach((im, i) => {
-          const dx = i === 0 ? -180 : 180;
-          const delay = i * 200;
+          const dx = i === 0 ? -140 : 140;
+          const delay = i * 120;
           add(im, [
             { transform: `translate3d(${dx}px, 0, 0) rotateY(0deg)`, opacity: 0, offset: 0 },
             { opacity: 1, offset: 0.12 },
             { transform: `translate3d(${dx * 0.45}px, ${two ? -90 : -110}px, 0) rotateY(180deg)`, offset: 0.5 },
             { transform: 'translate3d(0, 0, 0) rotateY(360deg)', opacity: 1, offset: 1 },
-          ], { duration: two ? 1100 : 1300, delay, easing: 'cubic-bezier(0.45, 0, 0.55, 1)' });
-          const squash = add(im, [{ scale: '1 1' }, { scale: '1.05 0.94' }, { scale: '0.99 1.02' }, { scale: '1 1' }], { duration: 400, delay: delay + (two ? 1060 : 1250), easing: 'ease-out', fill: 'none' });
+          ], { duration: two ? 750 : 850, delay, easing: 'cubic-bezier(0.45, 0, 0.55, 1)' });
+          const squash = add(im, [{ scale: '1 1' }, { scale: '1.05 0.94' }, { scale: '0.99 1.02' }, { scale: '1 1' }], { duration: 320, delay: delay + (two ? 720 : 820), easing: 'ease-out', fill: 'none' });
           if (i === this.cutouts.length - 1) squash.finished.then(() => this.played && this.classList.add('is-done')).catch(() => {});
         });
         const plus = this.querySelector('.somna-guide__plus');
-        if (plus) add(plus, [{ opacity: 0, transform: 'scale(0.3) rotate(-90deg)' }, { opacity: 1, transform: 'scale(1.15) rotate(0deg)', offset: 0.7 }, { opacity: 1, transform: 'scale(1)' }], { duration: 450, delay: 900, easing: 'ease-out' });
-        const start = two ? 1450 : 1550;
+        if (plus) add(plus, [{ opacity: 0, transform: 'scale(0.3) rotate(-90deg)' }, { opacity: 1, transform: 'scale(1.15) rotate(0deg)', offset: 0.7 }, { opacity: 1, transform: 'scale(1)' }], { duration: 380, delay: 520, easing: 'ease-out' });
+        const start = 150;
         [...this.querySelectorAll('.somna-guide__row')].forEach((row, i) => {
-          add(row, [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 420, delay: start + i * 260, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+          add(row, [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 380, delay: start + i * 120, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
         });
       }
     });
