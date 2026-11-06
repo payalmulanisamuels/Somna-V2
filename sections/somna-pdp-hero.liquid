@@ -25,11 +25,7 @@
 {%- liquid
   assign mf = product.metafields.custom
   assign images = product.media | where: 'media_type', 'image'
-  # extra gallery images from the product's "PDP – Extra gallery images" field come first, then the product photos
-  assign extra_images = mf.pdp_gallery.value
-  if extra_images != blank
-    assign images = extra_images | concat: images
-  endif
+  # gallery = the product's own photos from Shopify admin only (in admin order)
   assign first_image = images | first
   # gallery layout "auto": thumbnails go below when the first photo is landscape (Season Bundle), beside it otherwise
   assign gallery_below = false
