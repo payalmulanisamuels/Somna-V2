@@ -41,7 +41,7 @@
 
       {%- if s.email != blank -%}
         <div class="somna-contact__direct">
-          <span class="somna-contact__direct-icon">{%- render 'somna-line-icon', name: 'mail', class: 'somna-contact__svg', stroke: 1.6 -%}</span>
+          <span class="somna-contact__direct-icon">{%- if s.direct_icon != blank -%}<span class="somna-contact__mask somna-contact__mask--direct" style="--scf-mask: url('{{ s.direct_icon | image_url: width: 160 }}');"></span>{%- else -%}{%- render 'somna-line-icon', name: 'mail', class: 'somna-contact__svg', stroke: 1.6 -%}{%- endif -%}</span>
           <div class="somna-contact__direct-body">
             {%- if s.direct_label != blank -%}<p class="somna-contact__direct-label">{{ s.direct_label | escape }}</p>{%- endif -%}
             <a class="somna-contact__email" href="mailto:{{ s.email | strip }}">{{ s.email | strip | escape }}</a>
@@ -853,6 +853,12 @@
       animation-duration: 2s;
     }
   }
+
+  /* Figma 4859:1660 envelope (transparent PNG with its own padding) */
+  .somna-contact__mask--direct {
+    width: 50px;
+    height: 44px;
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -867,6 +873,7 @@
     { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Send us a <em>message</em>" },
     { "type": "richtext", "id": "text", "label": "Text" },
     { "type": "header", "content": "Direct contact" },
+    { "type": "image_picker", "id": "direct_icon", "label": "Email icon", "info": "Transparent PNG; drawn in black. Empty: a line envelope." },
     { "type": "text", "id": "direct_label", "label": "Label", "default": "Email us directly" },
     { "type": "text", "id": "email", "label": "Email", "default": "hello@somnasleep.com" },
     { "type": "text", "id": "response_time", "label": "Response time", "default": "Typically within 1 business day." },

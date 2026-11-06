@@ -129,7 +129,8 @@
         "message_label": "Message",
         "message_placeholder": "Tell us how we can help…",
         "submit_label": "Send message",
-        "direct_label": ""
+        "direct_label": "",
+        "direct_icon": "shopify://shop_images/somna-v2-icon-envelope.png"
       },
       "blocks": {
         "track": {
@@ -137,7 +138,7 @@
           "settings": {
             "label": "Track your order",
             "link": "/pages/track-order",
-            "icon": "shopify://shop_images/somna-v2-mask-truck.png",
+            "icon": "shopify://shop_images/somna-v2-icon-truck.png",
             "dark": false
           }
         },
@@ -155,7 +156,8 @@
           "settings": {
             "label": "Read the FAQ",
             "link": "/pages/support",
-            "dark": false
+            "dark": false,
+            "icon": "shopify://shop_images/somna-v2-icon-faq.png"
           }
         }
       },
