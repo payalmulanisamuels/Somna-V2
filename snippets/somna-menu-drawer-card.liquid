@@ -10,9 +10,6 @@
 {%- enddoc -%}
 {%- liquid
   assign p = product
-  if p == blank
-    break
-  endif
   assign st = settings
   assign mf = p.metafields.custom
 
@@ -109,6 +106,7 @@
     assign dots = mf.pdp_box_colors.value | join: '|'
   endif
 -%}
+{%- if p != blank -%}
 <a class="somna-md-card somna-md-card--{{ style }}" href="{{ url }}">
   <span class="somna-md-card__media">
     {%- if pic != blank -%}
@@ -136,6 +134,7 @@
   </span>
   {%- if st.somna_drawer_card_button != blank -%}<span class="somna-md-card__btn">{{ st.somna_drawer_card_button | escape }}</span>{%- endif -%}
 </a>
+{%- endif -%}
 
 {% stylesheet %}
   /* Figma 4927:596 (Bestsellers), 4927:624 (bundle tile), 4927:657 (wide). Figma's 5–9px card text is
