@@ -192,7 +192,7 @@
         "settings": {
           "enabled": true,
           "editor_preview": true,
-          "delay_seconds": 7,
+          "delay_seconds": 5,
           "discount_code": "WELCOME10",
           "shop_redirect": "/collections/all",
           "logo_text": "somna.",
