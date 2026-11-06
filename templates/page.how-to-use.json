@@ -680,7 +680,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Shipping is free on every order, with no minimum purchase. We currently ship within the United States only.</p>",
+                    "text": "<p>Standard shipping is a flat $4.95 on every delivery, with no minimum purchase. We currently ship within the United States only.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",

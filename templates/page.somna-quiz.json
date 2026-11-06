@@ -250,8 +250,10 @@
         "v2_sections": true,
         "v2_cursor": true,
         "result_extras": true,
-        "perk_1": "Free shipping",
-        "ship_single": "FREE shipping",
+        "perk_1": "$4.95 shipping",
+        "ship_single": "$4.95 shipping",
+        "ship_free": "$4.95 shipping",
+        "ship_note": "$4.95 US shipping on every delivery",
         "retake_label": ""
       }
     }
