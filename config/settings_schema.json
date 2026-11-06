@@ -2373,9 +2373,22 @@
       },
       {
         "type": "text",
+        "id": "upsell_eyebrow",
+        "label": "Upsell eyebrow",
+        "default": "Sound familiar?"
+      },
+      {
+        "type": "text",
         "id": "fixed_heading",
         "label": "Heading",
-        "default": "Complete your sleep system"
+        "default": "Complete your sleep system",
+        "info": "Put *stars* around words for the accent colour, e.g. *Stuffy nose* at night?"
+      },
+      {
+        "type": "text",
+        "id": "upsell_text",
+        "label": "Upsell text",
+        "default": "Your mouth falls open at night. SOMNA Mouth Tape keeps it gently closed."
       },
       {
         "type": "checkbox",

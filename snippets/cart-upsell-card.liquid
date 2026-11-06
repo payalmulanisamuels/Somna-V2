@@ -109,10 +109,13 @@
 
       <div class="hz-minicart-upsell__bottom">
         <div class="hz-minicart-upsell__price-wrap">
-          {%- if upsell_compare > upsell_price -%}
-            <s class="hz-minicart-upsell__compare">{{ upsell_compare | money }}</s>
-          {%- endif -%}
-          <span class="hz-minicart-upsell__price">{{ upsell_price | money }}</span>
+          {%- unless upsell_variant.title contains 'Default' -%}<span class="hz-minicart-upsell__variant">{{ upsell_variant.title | escape }}</span>{%- endunless -%}
+          <span class="hz-minicart-upsell__prices">
+            <span class="hz-minicart-upsell__price">{{ upsell_price | money }}</span>
+            {%- if upsell_compare > upsell_price -%}
+              <s class="hz-minicart-upsell__compare">{{ upsell_compare | money }}</s>
+            {%- endif -%}
+          </span>
         </div>
 
         <form action="{{ routes.cart_add_url }}" method="post" class="hz-upsell-form" data-ajax-form>
@@ -121,7 +124,7 @@
             <input type="hidden" name="selling_plan" value="{{ upsell_selling_plan }}">
           {%- endif -%}
           <input type="hidden" name="quantity" value="1">
-          <button type="submit" class="hz-upsell-add-btn">Add</button>
+          <button type="submit" class="hz-upsell-add-btn">+ Add</button>
         </form>
       </div>
     </div>
