@@ -348,6 +348,11 @@
     .somna-pdp-cta__inner {
       grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
     }
+
+    /* a wider tape + strip picture (setting above 400px) gets an equal column, as in Figma */
+    .somna-pdp-cta__inner:has(.somna-pdp-cta__product--pair) {
+      grid-template-columns: minmax(0, 1fr) minmax(0, max(0.8fr, var(--somna-cta-pair, 400px)));
+    }
   }
 
   @media screen and (min-width: 750px) and (max-width: 989px) {
