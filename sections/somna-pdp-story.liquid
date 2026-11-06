@@ -1315,6 +1315,18 @@
     letter-spacing: 0.08em;
   }
 
+  /* desktop: "THREE LAYERS. ZERO FUSS." on one line and the text in two wider lines, so the centred heading
+     doesn't leave empty space at both sides */
+  @media screen and (min-width: 990px) {
+    .somna-pdp-story--layers_pair .somna-pdp-story__heading span {
+      display: inline;
+    }
+
+    .somna-pdp-story--layers_pair .somna-pdp-story__text {
+      max-width: 720px;
+    }
+  }
+
   .somna-pdp-story__pair {
     display: grid;
     gap: 32px;
