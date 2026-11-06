@@ -689,6 +689,12 @@
     color: var(--somna-rv-fg, #f3feee);
   }
 
+  /* customer photos show only in the summary box (filled from the same Judge.me photos); hide Judge.me's own
+     photo row above the reviews so they don't appear twice */
+  .somna-reviews__app .jdgm-widget :is(.jm-media-preview, .jm-media-grid) {
+    display: none !important;
+  }
+
   .somna-reviews__app .jdgm-widget {
     --jm-review-widget-star-and-histogram-color: var(--somna-rv-star, #f5c242) !important;
     --jm-review-widget-button-color: var(--somna-rv-chip, #afbdf8) !important;
