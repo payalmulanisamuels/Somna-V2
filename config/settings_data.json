@@ -166,7 +166,22 @@
     "upsell_pair_strips_trigger": "nasal-strips",
     "upsell_pair_strips_recommend": "mouth-tape",
     "upsell_pair_upgrade_recommend": "season-bundle",
-    "fixed_heading": "*Stuffy nose* at night?"
+    "fixed_heading": "*Stuffy nose* at night?",
+    "somna_drawer_bestsellers": [
+      "nasal-strips",
+      "mouth-tape"
+    ],
+    "somna_drawer_bundles": [
+      "sleep-bundle",
+      "the-colour-set",
+      "season-bundle"
+    ],
+    "somna_drawer_quiz_link": "/pages/quiz",
+    "somna_drawer_all_link": "/collections/all",
+    "somna_drawer_link_1_url": "/pages/how-to-use",
+    "somna_drawer_link_2_url": "/pages/support",
+    "somna_drawer_link_3_url": "/pages/track-order",
+    "somna_drawer_link_4_url": "/pages/manage-subscriptions"
   },
   "presets": {
     "Horizon": {
