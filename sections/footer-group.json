@@ -163,7 +163,7 @@
                       "type": "_somna-link",
                       "settings": {
                         "label": "Bundles",
-                        "link": "/collections/all",
+                        "link": "/collections/all#bundles",
                         "icon": "none"
                       },
                       "blocks": {}
