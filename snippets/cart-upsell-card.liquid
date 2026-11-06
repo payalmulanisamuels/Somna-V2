@@ -6,6 +6,11 @@
   @param {string} [title] - Title override. Empty = product title.
   @param {string} [badge] - Badge text. Empty = subscription saving ("SAVE 33%").
   @param {boolean} [is_last] - Last card in the list: always shows the "FREE GIFT" badge.
+  @param {string} [details] - Line under the title instead of the variant name (e.g. "1 pack · 30 nights · $0.67/night").
+  @param {string} [button] - Button label. Empty = "+ Add".
+  @param {object} [cart_item] - A cart line: the card adds one more of that line (same variant and plan, e.g. "+1 bag").
+  @param {string} [swap_key] - A cart line key: "Swap" removes that line, then adds this product.
+  @param {boolean} [no_auto_badge] - Don't fill an empty badge with the saving percentage.
 {%- enddoc -%}
 
 {%- liquid
@@ -16,8 +21,12 @@
     assign show_card = false
   endif
 
+  if cart_item
+    assign upsell_variant = cart_item.variant
+  endif
+
   # 1. Variant: from the setting (name or ID), else first available variant with a subscription plan
-  if show_card
+  if show_card and upsell_variant == nil
     assign variant_setting_clean = variant_setting | strip
     if variant_setting_clean != blank
       assign variant_setting_check = variant_setting_clean | downcase
@@ -64,6 +73,11 @@
         assign upsell_selling_plan = upsell_allocation.selling_plan.id
       endif
     endif
+    # "+1 bag": same plan and price as the line already in the cart
+    if cart_item
+      assign upsell_price = cart_item.final_price
+      assign upsell_selling_plan = cart_item.selling_plan_allocation.selling_plan.id | default: ''
+    endif
     assign upsell_compare = upsell_variant.price
     if upsell_variant.compare_at_price > upsell_compare
       assign upsell_compare = upsell_variant.compare_at_price
@@ -73,7 +87,7 @@
     assign upsell_badge = badge | strip
     if is_last
       assign upsell_badge = 'FREE GIFT'
-    elsif upsell_badge == blank and upsell_compare > upsell_price
+    elsif upsell_badge == blank and upsell_compare > upsell_price and no_auto_badge != true
       assign upsell_save_percent = upsell_compare | minus: upsell_price | times: 100.0 | divided_by: upsell_compare | round
       assign upsell_badge = 'SAVE ' | append: upsell_save_percent | append: '%'
     endif
@@ -112,7 +126,13 @@
 
       <div class="hz-minicart-upsell__bottom">
         <div class="hz-minicart-upsell__price-wrap">
-          {%- unless upsell_variant.title contains 'Default' -%}<span class="hz-minicart-upsell__variant">{{ upsell_variant.title | escape }}</span>{%- endunless -%}
+          {%- if details != blank -%}
+            <span class="hz-minicart-upsell__variant">{{ details | escape }}</span>
+          {%- elsif cart_item -%}
+            <span class="hz-minicart-upsell__variant">{{ upsell_variant.title | escape }}</span>
+          {%- else -%}
+            {%- unless upsell_variant.title contains 'Default' -%}<span class="hz-minicart-upsell__variant">{{ upsell_variant.title | escape }}</span>{%- endunless -%}
+          {%- endif -%}
           <span class="hz-minicart-upsell__prices">
             <span class="hz-minicart-upsell__price">{{ upsell_price | money }}</span>
             {%- if upsell_compare > upsell_price -%}
@@ -121,13 +141,13 @@
           </span>
         </div>
 
-        <form action="{{ routes.cart_add_url }}" method="post" class="hz-upsell-form" data-ajax-form>
+        <form action="{{ routes.cart_add_url }}" method="post" class="hz-upsell-form" data-ajax-form{% if swap_key != blank %} data-swap-key="{{ swap_key }}"{% endif %}>
           <input type="hidden" name="id" value="{{ upsell_variant.id }}">
           {%- if upsell_selling_plan != blank -%}
             <input type="hidden" name="selling_plan" value="{{ upsell_selling_plan }}">
           {%- endif -%}
           <input type="hidden" name="quantity" value="1">
-          <button type="submit" class="hz-upsell-add-btn">+ Add</button>
+          <button type="submit" class="hz-upsell-add-btn">{{ button | default: '+ Add' | escape }}</button>
         </form>
       </div>
     </div>

@@ -1,33 +1,148 @@
 {%- comment -%}
-  "Complete your sleep system" upsell in the cart drawer.
+  Cart drawer upsell (navy band: eyebrow, *accent* heading, text, up to two product cards).
   Settings: Theme settings → Cart Upsell Rules. Card markup: snippets/cart-upsell-card.liquid
+
+  Mode "By what's in the cart" (cart_rules) picks one of six rules, first match wins:
+    5. Sleep Bundle with 2+ bags, or a Season Bundle
+    4. Sleep Bundle, 1 bag          (card variant "[cart]" = +1 bag of the same colour; "Swap" replaces that bag)
+    6. The Color Set
+    3. Nasal Strips + Mouth Tape
+    1. Nasal Strips only
+    2. Mouth Tape only
+  Each rule has its own heading, text and two cards (product, variant, title, details line, badge, button).
+  A card whose product is already in the cart is skipped (except "[cart]" cards).
 {%- endcomment -%}
 
 {%- liquid
-  if settings.upsell_mode == 'fixed_two'
+  assign st = settings
+  assign rule = 0
+  assign rule_item = nil
+
+  if st.upsell_mode == 'cart_rules'
+    assign has_strips = false
+    assign has_tape = false
+    assign has_color = false
+    assign has_season = false
+    assign sleep_bags = 0
+    for item in cart.items
+      if st.ur_strips != blank and item.product_id == st.ur_strips.id
+        assign has_strips = true
+      endif
+      if st.ur_tape != blank and item.product_id == st.ur_tape.id
+        assign has_tape = true
+      endif
+      if st.ur_color != blank and item.product_id == st.ur_color.id
+        assign has_color = true
+      endif
+      if st.ur_season != blank and item.product_id == st.ur_season.id
+        assign has_season = true
+      endif
+      if st.ur_sleep != blank and item.product_id == st.ur_sleep.id
+        # bags on this line: the number in the "1 Bag / 2 Bags / 4 Bags" option × quantity
+        assign line_bags = 1
+        for o in item.variant.options
+          if o contains 'Bag'
+            assign line_bags = o | split: ' ' | first | plus: 0
+          endif
+        endfor
+        if line_bags < 1
+          assign line_bags = 1
+        endif
+        assign sleep_bags = line_bags | times: item.quantity | plus: sleep_bags
+        if rule_item == nil
+          assign rule_item = item
+        endif
+      endif
+    endfor
+
+    if has_season or sleep_bags >= 2
+      assign rule = 5
+    elsif sleep_bags == 1
+      assign rule = 4
+    elsif has_color
+      assign rule = 6
+    elsif has_strips and has_tape
+      assign rule = 3
+    elsif has_strips
+      assign rule = 1
+    elsif has_tape
+      assign rule = 2
+    endif
+
+    if rule > 0
+      assign r = 'ur' | append: rule | append: '_'
+      assign rule_heading_key = r | append: 'heading'
+      assign rule_text_key = r | append: 'text'
+      assign rule_heading = st[rule_heading_key]
+      assign rule_text = st[rule_text_key]
+      capture upsell_cards
+        for side in (1..2)
+          if side == 1
+            assign c = r | append: 'a_'
+          else
+            assign c = r | append: 'b_'
+          endif
+          assign k_product = c | append: 'product'
+          assign k_variant = c | append: 'variant'
+          assign k_title = c | append: 'title'
+          assign k_details = c | append: 'details'
+          assign k_badge = c | append: 'badge'
+          assign k_button = c | append: 'button'
+          assign k_action = c | append: 'action'
+          assign card_product = st[k_product]
+          if card_product == blank
+            continue
+          endif
+          assign card_variant = st[k_variant] | strip
+          assign card_action = st[k_action] | default: 'add'
+          # "[cart]" = the Sleep Bundle line in the cart (same colour, same plan)
+          assign card_item = nil
+          if card_variant == '[cart]'
+            assign card_item = rule_item
+          else
+            # don't offer something that's already in the cart
+            assign in_cart = false
+            for item in cart.items
+              if item.product_id == card_product.id
+                assign in_cart = true
+              endif
+            endfor
+            if in_cart and card_action != 'swap'
+              continue
+            endif
+          endif
+          assign swap_key = ''
+          if card_action == 'swap' and rule_item
+            assign swap_key = rule_item.key
+          endif
+          render 'cart-upsell-card', product: card_product, variant_setting: card_variant, title: st[k_title], details: st[k_details], badge: st[k_badge], button: st[k_button], cart_item: card_item, swap_key: swap_key, no_auto_badge: true
+        endfor
+      endcapture
+    endif
+  elsif st.upsell_mode == 'fixed_two'
     capture upsell_cards
-      render 'cart-upsell-card', product: settings.fixed_product_1, variant_setting: settings.fixed_variant_1, title: settings.fixed_title_1, badge: settings.fixed_badge_1
-      render 'cart-upsell-card', product: settings.fixed_product_2, variant_setting: settings.fixed_variant_2, title: settings.fixed_title_2, badge: settings.fixed_badge_2, is_last: true
+      render 'cart-upsell-card', product: st.fixed_product_1, variant_setting: st.fixed_variant_1, title: st.fixed_title_1, badge: st.fixed_badge_1
+      render 'cart-upsell-card', product: st.fixed_product_2, variant_setting: st.fixed_variant_2, title: st.fixed_title_2, badge: st.fixed_badge_2, is_last: true
     endcapture
   else
-    # Rule-based: recommend the missing half of Strips + Tape, or the upgrade bundle
+    # Rule-based (old): recommend the missing half of Strips + Tape, or the upgrade bundle
     assign has_strips = false
     assign has_tape = false
     for item in cart.items
-      if item.product_id == settings.upsell_pair_strips_trigger.id
+      if item.product_id == st.upsell_pair_strips_trigger.id
         assign has_strips = true
       endif
-      if item.product_id == settings.upsell_pair_tape_trigger.id
+      if item.product_id == st.upsell_pair_tape_trigger.id
         assign has_tape = true
       endif
     endfor
 
     if has_tape and has_strips == false
-      assign upsell_product = settings.upsell_pair_tape_recommend
+      assign upsell_product = st.upsell_pair_tape_recommend
     elsif has_strips and has_tape == false
-      assign upsell_product = settings.upsell_pair_strips_recommend
+      assign upsell_product = st.upsell_pair_strips_recommend
     else
-      assign upsell_product = settings.upsell_pair_upgrade_recommend
+      assign upsell_product = st.upsell_pair_upgrade_recommend
     endif
 
     capture upsell_cards
@@ -36,18 +151,20 @@
   endif
 
   assign upsell_cards = upsell_cards | strip
+  # heading/text: the matched rule's, else the general ones
+  assign upsell_heading = rule_heading | default: st.fixed_heading | default: 'Complete your sleep system' | escape
+  assign upsell_text = rule_text | default: st.upsell_text
 -%}
 
 {%- if upsell_cards != blank -%}
-  <div class="hz-minicart-upsell">
-    {%- if settings.upsell_eyebrow != blank -%}<p class="hz-minicart-upsell__eyebrow">{{ settings.upsell_eyebrow | escape }}</p>{%- endif -%}
+  <div class="hz-minicart-upsell"{% if rule > 0 %} data-upsell-rule="{{ rule }}"{% endif %}>
+    {%- if st.upsell_eyebrow != blank -%}<p class="hz-minicart-upsell__eyebrow">{{ st.upsell_eyebrow | escape }}</p>{%- endif -%}
     {%- comment -%} heading: *word* in the setting shows in the accent colour (Figma "STUFFY NOSE" lavender) {%- endcomment -%}
-    {%- assign upsell_heading = settings.fixed_heading | default: 'Complete your sleep system' | escape -%}
     {%- assign heading_parts = upsell_heading | split: '*' -%}
     <h2 class="upsell_heading">
       {%- for part in heading_parts -%}{%- assign odd = forloop.index0 | modulo: 2 -%}{%- if odd == 1 -%}<em>{{ part }}</em>{%- else -%}{{ part }}{%- endif -%}{%- endfor -%}
     </h2>
-    {%- if settings.upsell_text != blank -%}<p class="hz-minicart-upsell__text">{{ settings.upsell_text | escape }}</p>{%- endif -%}
+    {%- if upsell_text != blank -%}<p class="hz-minicart-upsell__text">{{ upsell_text | escape }}</p>{%- endif -%}
     <div class="hz-minicart-upsell__list">
       {{ upsell_cards }}
     </div>

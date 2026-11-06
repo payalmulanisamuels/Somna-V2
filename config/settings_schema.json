@@ -2361,6 +2361,10 @@
         "label": "Upsell Display Mode",
         "options": [
           {
+            "value": "cart_rules",
+            "label": "By what's in the cart (6 rules below)"
+          },
+          {
             "value": "dynamic",
             "label": "Dynamically Show (Rule-based)"
           },
@@ -2403,6 +2407,736 @@
         "label": "Show star rating",
         "default": true,
         "info": "Uses the product's review metafields (Judge.me)"
+      },
+      {
+        "type": "header",
+        "content": "By what's in the cart: products to look for"
+      },
+      {
+        "type": "paragraph",
+        "content": "First match wins: 5 → 4 → 6 → 3 → 1 → 2. In a heading, *words* show in the accent colour. Card variant: a variant name (e.g. 4 Bags) or [cart] for one more bag of the Sleep Bundle already in the cart. A card isn't shown when its product is already in the cart."
+      },
+      {
+        "type": "product",
+        "id": "ur_strips",
+        "label": "Nasal Strips"
+      },
+      {
+        "type": "product",
+        "id": "ur_tape",
+        "label": "Mouth Tape"
+      },
+      {
+        "type": "product",
+        "id": "ur_sleep",
+        "label": "Sleep Bundle"
+      },
+      {
+        "type": "product",
+        "id": "ur_season",
+        "label": "Season Bundle"
+      },
+      {
+        "type": "product",
+        "id": "ur_color",
+        "label": "The Color Set"
+      },
+      {
+        "type": "header",
+        "content": "Rule 1 · Cart has Nasal Strips"
+      },
+      {
+        "type": "text",
+        "id": "ur1_heading",
+        "label": "Heading",
+        "default": "Add tape for *the full routine.*"
+      },
+      {
+        "type": "text",
+        "id": "ur1_text",
+        "label": "Text",
+        "default": "Strips for your nose, tape for your lips."
+      },
+      {
+        "type": "product",
+        "id": "ur1_a_product",
+        "label": "Card 1: product"
+      },
+      {
+        "type": "text",
+        "id": "ur1_a_variant",
+        "label": "Card 1: variant",
+        "default": "1 Bag"
+      },
+      {
+        "type": "text",
+        "id": "ur1_a_title",
+        "label": "Card 1: title",
+        "default": "Mouth Tape"
+      },
+      {
+        "type": "text",
+        "id": "ur1_a_details",
+        "label": "Card 1: details line",
+        "default": "1 pack · 30 nights · $0.67/night"
+      },
+      {
+        "type": "text",
+        "id": "ur1_a_badge",
+        "label": "Card 1: badge",
+        "default": "Perfect pair"
+      },
+      {
+        "type": "text",
+        "id": "ur1_a_button",
+        "label": "Card 1: button",
+        "default": "+ Add"
+      },
+      {
+        "type": "select",
+        "id": "ur1_a_action",
+        "label": "Card 1: button does",
+        "options": [
+          {
+            "value": "add",
+            "label": "Add to cart"
+          },
+          {
+            "value": "swap",
+            "label": "Swap (replace the Sleep Bundle bag)"
+          }
+        ],
+        "default": "add"
+      },
+      {
+        "type": "product",
+        "id": "ur1_b_product",
+        "label": "Card 2: product"
+      },
+      {
+        "type": "text",
+        "id": "ur1_b_variant",
+        "label": "Card 2: variant"
+      },
+      {
+        "type": "text",
+        "id": "ur1_b_title",
+        "label": "Card 2: title",
+        "default": "The Color Set"
+      },
+      {
+        "type": "text",
+        "id": "ur1_b_details",
+        "label": "Card 2: details line",
+        "default": "3 packs of Strips · 90 nights"
+      },
+      {
+        "type": "text",
+        "id": "ur1_b_badge",
+        "label": "Card 2: badge",
+        "default": "Stock up"
+      },
+      {
+        "type": "text",
+        "id": "ur1_b_button",
+        "label": "Card 2: button",
+        "default": "+ Add"
+      },
+      {
+        "type": "select",
+        "id": "ur1_b_action",
+        "label": "Card 2: button does",
+        "options": [
+          {
+            "value": "add",
+            "label": "Add to cart"
+          },
+          {
+            "value": "swap",
+            "label": "Swap (replace the Sleep Bundle bag)"
+          }
+        ],
+        "default": "add"
+      },
+      {
+        "type": "header",
+        "content": "Rule 2 · Cart has Mouth Tape"
+      },
+      {
+        "type": "text",
+        "id": "ur2_heading",
+        "label": "Heading",
+        "default": "Add strips for *the full routine.*"
+      },
+      {
+        "type": "text",
+        "id": "ur2_text",
+        "label": "Text",
+        "default": "Tape for your lips, strips for your nose."
+      },
+      {
+        "type": "product",
+        "id": "ur2_a_product",
+        "label": "Card 1: product"
+      },
+      {
+        "type": "text",
+        "id": "ur2_a_variant",
+        "label": "Card 1: variant",
+        "default": "1 Bag"
+      },
+      {
+        "type": "text",
+        "id": "ur2_a_title",
+        "label": "Card 1: title",
+        "default": "Nasal Strips"
+      },
+      {
+        "type": "text",
+        "id": "ur2_a_details",
+        "label": "Card 1: details line",
+        "default": "1 pack · 30 nights · $0.67/night"
+      },
+      {
+        "type": "text",
+        "id": "ur2_a_badge",
+        "label": "Card 1: badge",
+        "default": "Perfect pair"
+      },
+      {
+        "type": "text",
+        "id": "ur2_a_button",
+        "label": "Card 1: button",
+        "default": "+ Add"
+      },
+      {
+        "type": "select",
+        "id": "ur2_a_action",
+        "label": "Card 1: button does",
+        "options": [
+          {
+            "value": "add",
+            "label": "Add to cart"
+          },
+          {
+            "value": "swap",
+            "label": "Swap (replace the Sleep Bundle bag)"
+          }
+        ],
+        "default": "add"
+      },
+      {
+        "type": "product",
+        "id": "ur2_b_product",
+        "label": "Card 2: product"
+      },
+      {
+        "type": "text",
+        "id": "ur2_b_variant",
+        "label": "Card 2: variant"
+      },
+      {
+        "type": "text",
+        "id": "ur2_b_title",
+        "label": "Card 2: title",
+        "default": "The Season Bundle"
+      },
+      {
+        "type": "text",
+        "id": "ur2_b_details",
+        "label": "Card 2: details line",
+        "default": "3 Strips + 3 Tape · 90 nights"
+      },
+      {
+        "type": "text",
+        "id": "ur2_b_badge",
+        "label": "Card 2: badge",
+        "default": "Best value"
+      },
+      {
+        "type": "text",
+        "id": "ur2_b_button",
+        "label": "Card 2: button",
+        "default": "+ Add"
+      },
+      {
+        "type": "select",
+        "id": "ur2_b_action",
+        "label": "Card 2: button does",
+        "options": [
+          {
+            "value": "add",
+            "label": "Add to cart"
+          },
+          {
+            "value": "swap",
+            "label": "Swap (replace the Sleep Bundle bag)"
+          }
+        ],
+        "default": "add"
+      },
+      {
+        "type": "header",
+        "content": "Rule 3 · Cart has Strips + Tape (singles)"
+      },
+      {
+        "type": "text",
+        "id": "ur3_heading",
+        "label": "Heading",
+        "default": "Make it *90 nights.*"
+      },
+      {
+        "type": "text",
+        "id": "ur3_text",
+        "label": "Text",
+        "default": "One delivery instead of three."
+      },
+      {
+        "type": "product",
+        "id": "ur3_a_product",
+        "label": "Card 1: product"
+      },
+      {
+        "type": "text",
+        "id": "ur3_a_variant",
+        "label": "Card 1: variant"
+      },
+      {
+        "type": "text",
+        "id": "ur3_a_title",
+        "label": "Card 1: title",
+        "default": "The Season Bundle"
+      },
+      {
+        "type": "text",
+        "id": "ur3_a_details",
+        "label": "Card 1: details line",
+        "default": "3 Strips + 3 Tape · one $4.95 shipping"
+      },
+      {
+        "type": "text",
+        "id": "ur3_a_badge",
+        "label": "Card 1: badge",
+        "default": "Best value"
+      },
+      {
+        "type": "text",
+        "id": "ur3_a_button",
+        "label": "Card 1: button",
+        "default": "+ Add"
+      },
+      {
+        "type": "select",
+        "id": "ur3_a_action",
+        "label": "Card 1: button does",
+        "options": [
+          {
+            "value": "add",
+            "label": "Add to cart"
+          },
+          {
+            "value": "swap",
+            "label": "Swap (replace the Sleep Bundle bag)"
+          }
+        ],
+        "default": "add"
+      },
+      {
+        "type": "product",
+        "id": "ur3_b_product",
+        "label": "Card 2: product"
+      },
+      {
+        "type": "text",
+        "id": "ur3_b_variant",
+        "label": "Card 2: variant"
+      },
+      {
+        "type": "text",
+        "id": "ur3_b_title",
+        "label": "Card 2: title",
+        "default": "The Color Set"
+      },
+      {
+        "type": "text",
+        "id": "ur3_b_details",
+        "label": "Card 2: details line",
+        "default": "3 packs of Strips · 90 nights"
+      },
+      {
+        "type": "text",
+        "id": "ur3_b_badge",
+        "label": "Card 2: badge",
+        "default": "Stock up"
+      },
+      {
+        "type": "text",
+        "id": "ur3_b_button",
+        "label": "Card 2: button",
+        "default": "+ Add"
+      },
+      {
+        "type": "select",
+        "id": "ur3_b_action",
+        "label": "Card 2: button does",
+        "options": [
+          {
+            "value": "add",
+            "label": "Add to cart"
+          },
+          {
+            "value": "swap",
+            "label": "Swap (replace the Sleep Bundle bag)"
+          }
+        ],
+        "default": "add"
+      },
+      {
+        "type": "header",
+        "content": "Rule 4 · Cart has Sleep Bundle · 1 bag"
+      },
+      {
+        "type": "text",
+        "id": "ur4_heading",
+        "label": "Heading",
+        "default": "Unlock your *3 free gifts.*"
+      },
+      {
+        "type": "text",
+        "id": "ur4_text",
+        "label": "Text",
+        "default": "Add 1 more bag, same $1.33 a night."
+      },
+      {
+        "type": "product",
+        "id": "ur4_a_product",
+        "label": "Card 1: product"
+      },
+      {
+        "type": "text",
+        "id": "ur4_a_variant",
+        "label": "Card 1: variant",
+        "default": "[cart]"
+      },
+      {
+        "type": "text",
+        "id": "ur4_a_title",
+        "label": "Card 1: title",
+        "default": "+1 Sleep Bundle bag"
+      },
+      {
+        "type": "text",
+        "id": "ur4_a_details",
+        "label": "Card 1: details line",
+        "default": "Same color · 60 nights total"
+      },
+      {
+        "type": "text",
+        "id": "ur4_a_badge",
+        "label": "Card 1: badge",
+        "default": "+3 free gifts"
+      },
+      {
+        "type": "text",
+        "id": "ur4_a_button",
+        "label": "Card 1: button",
+        "default": "+1 bag"
+      },
+      {
+        "type": "select",
+        "id": "ur4_a_action",
+        "label": "Card 1: button does",
+        "options": [
+          {
+            "value": "add",
+            "label": "Add to cart"
+          },
+          {
+            "value": "swap",
+            "label": "Swap (replace the Sleep Bundle bag)"
+          }
+        ],
+        "default": "add"
+      },
+      {
+        "type": "product",
+        "id": "ur4_b_product",
+        "label": "Card 2: product"
+      },
+      {
+        "type": "text",
+        "id": "ur4_b_variant",
+        "label": "Card 2: variant"
+      },
+      {
+        "type": "text",
+        "id": "ur4_b_title",
+        "label": "Card 2: title",
+        "default": "The Season Bundle"
+      },
+      {
+        "type": "text",
+        "id": "ur4_b_details",
+        "label": "Card 2: details line",
+        "default": "Swap for 90 nights · one delivery"
+      },
+      {
+        "type": "text",
+        "id": "ur4_b_badge",
+        "label": "Card 2: badge",
+        "default": "Best value"
+      },
+      {
+        "type": "text",
+        "id": "ur4_b_button",
+        "label": "Card 2: button",
+        "default": "Swap"
+      },
+      {
+        "type": "select",
+        "id": "ur4_b_action",
+        "label": "Card 2: button does",
+        "options": [
+          {
+            "value": "add",
+            "label": "Add to cart"
+          },
+          {
+            "value": "swap",
+            "label": "Swap (replace the Sleep Bundle bag)"
+          }
+        ],
+        "default": "swap"
+      },
+      {
+        "type": "header",
+        "content": "Rule 5 · Cart has Sleep Bundle 2+ bags or Season Bundle"
+      },
+      {
+        "type": "text",
+        "id": "ur5_heading",
+        "label": "Heading",
+        "default": "Add a little *color.*"
+      },
+      {
+        "type": "text",
+        "id": "ur5_text",
+        "label": "Text",
+        "default": "A different strip for every night."
+      },
+      {
+        "type": "product",
+        "id": "ur5_a_product",
+        "label": "Card 1: product"
+      },
+      {
+        "type": "text",
+        "id": "ur5_a_variant",
+        "label": "Card 1: variant"
+      },
+      {
+        "type": "text",
+        "id": "ur5_a_title",
+        "label": "Card 1: title",
+        "default": "The Color Set"
+      },
+      {
+        "type": "text",
+        "id": "ur5_a_details",
+        "label": "Card 1: details line",
+        "default": "Blue, Red and Black Strips · 90 nights"
+      },
+      {
+        "type": "text",
+        "id": "ur5_a_badge",
+        "label": "Card 1: badge",
+        "default": "New look"
+      },
+      {
+        "type": "text",
+        "id": "ur5_a_button",
+        "label": "Card 1: button",
+        "default": "+ Add"
+      },
+      {
+        "type": "select",
+        "id": "ur5_a_action",
+        "label": "Card 1: button does",
+        "options": [
+          {
+            "value": "add",
+            "label": "Add to cart"
+          },
+          {
+            "value": "swap",
+            "label": "Swap (replace the Sleep Bundle bag)"
+          }
+        ],
+        "default": "add"
+      },
+      {
+        "type": "product",
+        "id": "ur5_b_product",
+        "label": "Card 2: product"
+      },
+      {
+        "type": "text",
+        "id": "ur5_b_variant",
+        "label": "Card 2: variant"
+      },
+      {
+        "type": "text",
+        "id": "ur5_b_title",
+        "label": "Card 2: title"
+      },
+      {
+        "type": "text",
+        "id": "ur5_b_details",
+        "label": "Card 2: details line"
+      },
+      {
+        "type": "text",
+        "id": "ur5_b_badge",
+        "label": "Card 2: badge"
+      },
+      {
+        "type": "text",
+        "id": "ur5_b_button",
+        "label": "Card 2: button",
+        "default": "+ Add"
+      },
+      {
+        "type": "select",
+        "id": "ur5_b_action",
+        "label": "Card 2: button does",
+        "options": [
+          {
+            "value": "add",
+            "label": "Add to cart"
+          },
+          {
+            "value": "swap",
+            "label": "Swap (replace the Sleep Bundle bag)"
+          }
+        ],
+        "default": "add"
+      },
+      {
+        "type": "header",
+        "content": "Rule 6 · Cart has The Color Set"
+      },
+      {
+        "type": "text",
+        "id": "ur6_heading",
+        "label": "Heading",
+        "default": "Complete the *routine.*"
+      },
+      {
+        "type": "text",
+        "id": "ur6_text",
+        "label": "Text",
+        "default": "Tape for your lips, 90 nights to match."
+      },
+      {
+        "type": "product",
+        "id": "ur6_a_product",
+        "label": "Card 1: product"
+      },
+      {
+        "type": "text",
+        "id": "ur6_a_variant",
+        "label": "Card 1: variant",
+        "default": "4 Bags"
+      },
+      {
+        "type": "text",
+        "id": "ur6_a_title",
+        "label": "Card 1: title",
+        "default": "Mouth Tape · 3 packs"
+      },
+      {
+        "type": "text",
+        "id": "ur6_a_details",
+        "label": "Card 1: details line",
+        "default": "90 nights · $0.67/night"
+      },
+      {
+        "type": "text",
+        "id": "ur6_a_badge",
+        "label": "Card 1: badge",
+        "default": "Perfect pair"
+      },
+      {
+        "type": "text",
+        "id": "ur6_a_button",
+        "label": "Card 1: button",
+        "default": "+ Add"
+      },
+      {
+        "type": "select",
+        "id": "ur6_a_action",
+        "label": "Card 1: button does",
+        "options": [
+          {
+            "value": "add",
+            "label": "Add to cart"
+          },
+          {
+            "value": "swap",
+            "label": "Swap (replace the Sleep Bundle bag)"
+          }
+        ],
+        "default": "add"
+      },
+      {
+        "type": "product",
+        "id": "ur6_b_product",
+        "label": "Card 2: product"
+      },
+      {
+        "type": "text",
+        "id": "ur6_b_variant",
+        "label": "Card 2: variant"
+      },
+      {
+        "type": "text",
+        "id": "ur6_b_title",
+        "label": "Card 2: title",
+        "default": "The Season Bundle"
+      },
+      {
+        "type": "text",
+        "id": "ur6_b_details",
+        "label": "Card 2: details line",
+        "default": "Strips + Tape · 90 nights"
+      },
+      {
+        "type": "text",
+        "id": "ur6_b_badge",
+        "label": "Card 2: badge",
+        "default": "Best value"
+      },
+      {
+        "type": "text",
+        "id": "ur6_b_button",
+        "label": "Card 2: button",
+        "default": "+ Add"
+      },
+      {
+        "type": "select",
+        "id": "ur6_b_action",
+        "label": "Card 2: button does",
+        "options": [
+          {
+            "value": "add",
+            "label": "Add to cart"
+          },
+          {
+            "value": "swap",
+            "label": "Swap (replace the Sleep Bundle bag)"
+          }
+        ],
+        "default": "add"
       },
       {
         "type": "header",
