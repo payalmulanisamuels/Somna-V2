@@ -602,3 +602,10 @@
     line-height: 1.25 !important;
   }
 }
+
+/* How to use, phones: less empty space in "Settling in." (the waves add their own) */
+@media screen and (max-width: 749px) {
+  main[data-template^='page'] [id$='__settling'] .section-content-wrapper.layout-panel-flex {
+    padding-block: 20px !important;
+  }
+}
