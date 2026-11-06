@@ -254,21 +254,26 @@
         </ul>
 
         {%- if has_gallery and jm_photo_list.size > 0 -%}
-          <ul class="somna-reviews__gallery" role="list">
+          <ul class="somna-reviews__gallery" role="list"{% if s.photo_popup %} data-photo-popup{% endif %}>
             {%- for entry in jm_photo_list -%}
               {%- assign pic_src = entry | split: '|' | first -%}
               {%- assign rv_first = entry | split: '|' | last -%}
               <li>
-                <img src="{{ pic_src }}&width=240" srcset="{{ pic_src }}&width=160 160w, {{ pic_src }}&width=240 240w" sizes="120px" alt="{{ s.photo_alt | replace: '[name]', rv_first | escape }}" width="120" height="120" loading="lazy" decoding="async">
+                <img src="{{ pic_src }}&width=240" srcset="{{ pic_src }}&width=160 160w, {{ pic_src }}&width=240 240w" sizes="120px" alt="{{ s.photo_alt | replace: '[name]', rv_first | escape }}"{% if s.photo_popup %} tabindex="0" role="button"{% endif %} width="120" height="120" loading="lazy" decoding="async">
               </li>
             {%- endfor -%}
           </ul>
         {%- elsif has_gallery -%}
-          <ul class="somna-reviews__gallery" role="list">
+          <ul class="somna-reviews__gallery" role="list"{% if s.photo_popup %} data-photo-popup{% endif %}>
             {%- for block in photo_blocks limit: s.gallery_limit -%}
               {%- if block.settings.image != blank -%}
                 <li {{ block.shopify_attributes }}>
-                  {{ block.settings.image | image_url: width: 240, height: 240, crop: 'center' | image_tag: loading: 'lazy', alt: block.settings.alt | default: block.settings.image.alt, width: 120, height: 120 }}
+                  {%- assign photo_alt_text = block.settings.alt | default: block.settings.image.alt -%}
+                  {%- if s.photo_popup -%}
+                    {{ block.settings.image | image_url: width: 240, height: 240, crop: 'center' | image_tag: loading: 'lazy', alt: photo_alt_text, width: 120, height: 120, tabindex: '0', role: 'button' }}
+                  {%- else -%}
+                    {{ block.settings.image | image_url: width: 240, height: 240, crop: 'center' | image_tag: loading: 'lazy', alt: photo_alt_text, width: 120, height: 120 }}
+                  {%- endif -%}
                 </li>
               {%- endif -%}
             {%- endfor -%}
@@ -318,6 +323,88 @@
   <template data-somna-review-star>{{ star_svg }}</template>
   <script src="{{ 'somna-reviews.js' | asset_url }}" defer></script>
 {%- endif -%}
+
+{%- comment -%}
+  Customer photo popup: tap a summary photo to see it large, with previous / next arrows, swipe and
+  arrow keys. Nothing loads up front: the popup is built on the first tap and the large photo is
+  fetched only then (plus its neighbours). Demo without the setting: add ?rv_popup=1 to the URL.
+{%- endcomment -%}
+<script>
+  (function () {
+    if (window.__somnaRvLb) return;
+    window.__somnaRvLb = true;
+    var demo = /[?&]rv_popup=1/.test(location.search);
+    var SEL = demo ? '.somna-reviews__gallery img' : '.somna-reviews__gallery[data-photo-popup] img';
+    var dlg, img, count, list = [], at = 0, sx = null;
+    function big(src) {
+      try {
+        var u = new URL(src, location.href);
+        u.searchParams.delete('height'); u.searchParams.delete('crop');
+        u.searchParams.set('width', '1400');
+        return u.toString();
+      } catch (e) { return src; }
+    }
+    function build() {
+      dlg = document.createElement('dialog');
+      dlg.className = 'somna-rv-lb';
+      dlg.setAttribute('aria-label', 'Customer photos');
+      dlg.innerHTML =
+        '<button type="button" class="somna-rv-lb__close" aria-label="Close" data-lb="close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
+        '<button type="button" class="somna-rv-lb__nav somna-rv-lb__nav--prev" aria-label="Previous photo" data-lb="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>' +
+        '<figure class="somna-rv-lb__fig"><img alt="" decoding="async"><figcaption class="somna-rv-lb__count" aria-live="polite"></figcaption></figure>' +
+        '<button type="button" class="somna-rv-lb__nav somna-rv-lb__nav--next" aria-label="Next photo" data-lb="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>';
+      document.body.appendChild(dlg);
+      img = dlg.querySelector('img');
+      count = dlg.querySelector('.somna-rv-lb__count');
+      dlg.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-lb]');
+        if (b) { b.dataset.lb === 'close' ? dlg.close() : go(+b.dataset.lb); return; }
+        if (e.target === dlg) dlg.close();
+      });
+      dlg.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft') go(-1);
+        if (e.key === 'ArrowRight') go(1);
+      });
+      dlg.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+      dlg.addEventListener('touchend', function (e) {
+        if (sx === null) return;
+        var dx = e.changedTouches[0].clientX - sx; sx = null;
+        if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+      }, { passive: true });
+      dlg.addEventListener('close', function () { document.documentElement.classList.remove('somna-rv-lb-open'); });
+    }
+    function show(i) {
+      at = (i + list.length) % list.length;
+      var el = list[at];
+      img.classList.remove('is-in');
+      img.onload = function () { img.classList.add('is-in'); };
+      img.src = big(el.currentSrc || el.src);
+      img.alt = el.alt || '';
+      if (img.complete) img.classList.add('is-in');
+      count.textContent = (at + 1) + ' / ' + list.length;
+      dlg.classList.toggle('is-single', list.length < 2);
+      [at + 1, at - 1].forEach(function (n) { var x = list[(n + list.length) % list.length]; (new Image()).src = big(x.currentSrc || x.src); });
+    }
+    function go(d) { if (list.length > 1) show(at + d); }
+    function open(el) {
+      if (!dlg) build();
+      list = Array.prototype.slice.call(el.closest('.somna-reviews__gallery').querySelectorAll('img'));
+      show(list.indexOf(el));
+      document.documentElement.classList.add('somna-rv-lb-open');
+      dlg.showModal();
+    }
+    document.addEventListener('click', function (e) {
+      var el = e.target.closest && e.target.closest(SEL);
+      if (el) open(el);
+    });
+    document.addEventListener('keydown', function (e) {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches(SEL)) { e.preventDefault(); open(e.target); }
+    });
+    if (demo) document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll(SEL).forEach(function (el) { el.tabIndex = 0; el.setAttribute('role', 'button'); el.closest('ul').setAttribute('data-photo-popup', ''); });
+    });
+  })();
+</script>
 
 {% stylesheet %}
   .somna-reviews {
@@ -1423,6 +1510,50 @@
       animation: none;
     }
   }
+  .somna-reviews__gallery[data-photo-popup] img { cursor: zoom-in; transition: transform 0.2s ease, filter 0.2s ease; }
+  .somna-reviews__gallery[data-photo-popup] img:hover { transform: scale(1.04); filter: brightness(1.05); }
+  .somna-reviews__gallery[data-photo-popup] img:focus-visible { outline: 2px solid #afbdf8; outline-offset: 2px; }
+  html.somna-rv-lb-open { overflow: hidden; }
+  .somna-rv-lb {
+    position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none;
+    margin: 0; padding: 56px 72px; border: 0; background: transparent; color: #fff;
+    display: none; align-items: center; justify-content: center;
+  }
+  .somna-rv-lb[open] { display: flex; animation: somnaRvLbIn 0.2s ease; }
+  .somna-rv-lb::backdrop { background: rgb(11 15 29 / 0.88); }
+  .somna-rv-lb__fig { margin: 0; display: grid; justify-items: center; gap: 12px; max-width: min(100%, 880px); }
+  .somna-rv-lb__fig img {
+    display: block; max-width: 100%; max-height: calc(100dvh - 150px); width: auto; height: auto;
+    border-radius: 14px; background: rgb(255 255 255 / 0.06); opacity: 0; transform: scale(0.98);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .somna-rv-lb__fig img.is-in { opacity: 1; transform: none; }
+  .somna-rv-lb__count { font-size: 0.8125rem; letter-spacing: 0.08em; opacity: 0.8; }
+  .somna-rv-lb__close, .somna-rv-lb__nav {
+    position: absolute; display: grid; place-items: center; width: 46px; height: 46px; padding: 0;
+    border: 0; border-radius: 50%; background: #f3feee; color: #0b0f1d; cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .somna-rv-lb__close:hover, .somna-rv-lb__nav:hover { background: #afbdf8; transform: scale(1.06); }
+  .somna-rv-lb__close:focus-visible, .somna-rv-lb__nav:focus-visible { outline: 2px solid #afbdf8; outline-offset: 3px; }
+  .somna-rv-lb svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .somna-rv-lb__close { top: 16px; right: 16px; width: 42px; height: 42px; }
+  .somna-rv-lb__nav { top: 50%; translate: 0 -50%; }
+  .somna-rv-lb__nav--prev { left: 16px; }
+  .somna-rv-lb__nav--next { right: 16px; }
+  .somna-rv-lb.is-single .somna-rv-lb__nav, .somna-rv-lb.is-single .somna-rv-lb__count { display: none; }
+  @keyframes somnaRvLbIn { from { opacity: 0; } }
+  @media screen and (max-width: 749px) {
+    .somna-rv-lb { padding: 64px 12px 84px; }
+    .somna-rv-lb__fig img { max-height: calc(100dvh - 190px); border-radius: 10px; }
+    .somna-rv-lb__nav { top: auto; bottom: 18px; translate: none; width: 44px; height: 44px; }
+    .somna-rv-lb__nav--prev { left: calc(50% - 60px); }
+    .somna-rv-lb__nav--next { right: calc(50% - 60px); }
+    .somna-rv-lb__count { position: absolute; bottom: 32px; left: 0; right: 0; text-align: center; pointer-events: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .somna-rv-lb[open], .somna-rv-lb__fig img { animation: none; transition: none; }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -1496,6 +1627,7 @@
     { "type": "color", "id": "bar_color", "label": "Bar colour", "default": "#98a3de" },
     { "type": "color", "id": "track_color", "label": "Bar track colour", "default": "#d8ddd4" },
     { "type": "checkbox", "id": "show_gallery", "label": "Show customer photos", "info": "Add photos as “Summary photo” blocks; drag them to change the order.", "default": true },
+    { "type": "checkbox", "id": "photo_popup", "label": "Open photos in a popup", "info": "Tap a photo to see it large, with previous / next arrows.", "default": false },
     { "type": "range", "id": "gallery_limit", "label": "Photos to show", "min": 1, "max": 12, "step": 1, "default": 6 },
     { "type": "select", "id": "gallery_source", "label": "Photos come from", "options": [{ "value": "judgeme", "label": "Judge.me review photos" }, { "value": "blocks", "label": "Summary photo blocks" }], "default": "judgeme", "info": "Judge.me: the photos customers added to their reviews of this product only (none shown if it has no photo reviews). The homepage uses the blocks." },
     { "type": "text", "id": "photo_alt", "label": "Review photo description", "info": "[name] = reviewer's first name.", "default": "Photo from [name]'s review" },
