@@ -29,7 +29,7 @@
             <li {{ block.shopify_attributes }}>
               <a class="somna-contact__link{% if b.dark %} somna-contact__link--dark{% endif %}" href="{{ b.link | default: '#' }}">
                 <span class="somna-contact__link-icon" aria-hidden="true">
-                  {%- if b.icon != blank -%}<span class="somna-contact__mask" style="--scf-mask: url('{{ b.icon | image_url: width: 120 }}');"></span>{%- else -%}{%- render 'somna-line-icon', name: 'question', class: 'somna-contact__svg', stroke: 1.6 -%}{%- endif -%}
+                  {%- if b.icon != blank -%}<span class="somna-contact__mask" style="--scf-mask: url('{{ b.icon | image_url: width: 160 }}');{% if b.icon_size %} width: {{ b.icon_size }}px; height: {{ b.icon_size }}px;{% endif %}"></span>{%- else -%}{%- render 'somna-line-icon', name: 'question', class: 'somna-contact__svg', stroke: 1.6 -%}{%- endif -%}
                 </span>
                 <span class="somna-contact__link-label">{{ b.label | escape }}</span>
                 <span class="somna-contact__link-arrow" aria-hidden="true">→</span>
@@ -919,6 +919,7 @@
         { "type": "text", "id": "label", "label": "Label", "default": "Track your order" },
         { "type": "url", "id": "link", "label": "Link" },
         { "type": "image_picker", "id": "icon", "label": "Icon", "info": "Transparent PNG; drawn in the text colour. Empty: a question-mark line icon." },
+        { "type": "range", "id": "icon_size", "label": "Icon size", "min": 20, "max": 48, "step": 1, "unit": "px", "default": 30 },
         { "type": "checkbox", "id": "dark", "label": "Dark button", "default": false }
       ]
     }
