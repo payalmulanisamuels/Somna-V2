@@ -1012,7 +1012,8 @@
         "padding_top": 40,
         "padding_bottom": 40,
         "wave_color": "#0b0f1d",
-        "wave_shape": "drip-9"
+        "wave_shape": "drip-9",
+        "pointer_motion": "draw_shake"
       }
     },
     "reviews": {
