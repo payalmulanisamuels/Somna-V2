@@ -197,6 +197,15 @@
                     "support_1": {
                       "type": "_somna-link",
                       "settings": {
+                        "label": "Help Center",
+                        "link": "shopify://pages/support",
+                        "icon": "none"
+                      },
+                      "blocks": {}
+                    },
+                    "somna_link_t6WmWm": {
+                      "type": "_somna-link",
+                      "settings": {
                         "label": "Contact",
                         "link": "/pages/contact",
                         "icon": "none"
@@ -224,6 +233,7 @@
                   },
                   "block_order": [
                     "support_1",
+                    "somna_link_t6WmWm",
                     "support_2",
                     "support_3"
                   ]
@@ -259,8 +269,8 @@
                     "learn_2": {
                       "type": "_somna-link",
                       "settings": {
-                        "label": "FAQs",
-                        "link": "/pages/support",
+                        "label": "Sleep  Quiz",
+                        "link": "shopify://pages/quiz",
                         "icon": "none"
                       },
                       "blocks": {}
