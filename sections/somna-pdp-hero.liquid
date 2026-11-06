@@ -2735,10 +2735,27 @@
     }
   }
 
-  /* ---------- Sticky add to cart (Figma 4927:555 / 4927:1736) ---------- */
+  /* ---------- Sticky add to cart (Figma 4927:555 / 4927:1736) ----------
+     Sizes come from a few variables so phones, tablets and desktop stay in proportion:
+     phones follow the Figma 398px frame scaled to the screen, desktop is a compact floating card. */
   .somna-sticky-atc {
     --sa-mint: #f3feee;
     --sa-lav: #afbdf8;
+    --sa-pad: 10px;
+    --sa-thumb: 52px;
+    --sa-title: clamp(0.9375rem, 4.2vw, 1.125rem);
+    --sa-meta: 0.75rem;
+    --sa-add-w: 76px;
+    --sa-add-font: 0.875rem;
+    --sa-banner: clamp(0.625rem, 2.9vw, 0.75rem);
+    --sa-heading: clamp(1.375rem, 6.6vw, 1.75rem);
+    --sa-mode: 0.8125rem;
+    --sa-row-h: 64px;
+    --sa-radio: 22px;
+    --sa-name: 1.0625rem;
+    --sa-row-meta: 0.75rem;
+    --sa-price: 1.0625rem;
+    --sa-badge: 0.75rem;
     position: fixed;
     inset: auto 0 0;
     z-index: 30;
@@ -2766,10 +2783,10 @@
 
   .somna-sticky-atc__banner {
     margin: 0;
-    padding: 8px 12px;
+    padding: 6px 10px;
     border-bottom: 1.5px solid #000;
     background: var(--sa-lav);
-    font-size: clamp(0.6875rem, 3.25vw, 0.8125rem);
+    font-size: var(--sa-banner);
     font-weight: 500;
     letter-spacing: 0.03em;
     line-height: 1.3;
@@ -2778,9 +2795,9 @@
 
   .somna-sticky-atc__main {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     align-items: stretch;
-    padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+    padding: var(--sa-pad) var(--sa-pad) calc(var(--sa-pad) + env(safe-area-inset-bottom));
   }
 
   .somna-sticky-atc__card {
@@ -2789,11 +2806,11 @@
     gap: 10px;
     align-items: center;
     min-width: 0;
-    padding: 6px 10px 6px 6px;
+    padding: 5px 10px 5px 5px;
     border: 2px solid #000;
-    border-radius: 10px;
+    border-radius: 9px;
     background: var(--sa-mint);
-    box-shadow: 3px 4px 0 #000;
+    box-shadow: 2.5px 3px 0 #000;
     color: #000;
     text-align: left;
     cursor: pointer;
@@ -2806,13 +2823,13 @@
 
   .somna-sticky-atc__card:active {
     transform: translate(2px, 2px);
-    box-shadow: 1px 2px 0 #000;
+    box-shadow: 0.5px 1px 0 #000;
   }
 
   .somna-sticky-atc__thumb {
     flex: none;
-    width: 66px;
-    height: 66px;
+    width: var(--sa-thumb);
+    height: var(--sa-thumb);
     overflow: hidden;
     border-radius: 6px;
     background: #0b1d6b;
@@ -2829,30 +2846,31 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
     min-width: 0;
   }
 
   .somna-sticky-atc__title {
     overflow: hidden;
     font-family: var(--font-accent--family);
-    font-size: clamp(1rem, 4.6vw, 1.5rem);
+    font-size: var(--sa-title);
     font-weight: var(--font-accent--weight);
-    line-height: 1.1;
+    line-height: 1.15;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .somna-sticky-atc__meta {
-    font-size: 0.8125rem;
-    letter-spacing: 0.04em;
+    overflow: hidden;
+    font-size: var(--sa-meta);
+    letter-spacing: 0.03em;
+    text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .somna-sticky-atc__caret {
     flex: none;
     width: 10px;
-    margin-left: -4px;
     transition: transform 0.3s ease;
   }
 
@@ -2862,19 +2880,17 @@
 
   .somna-sticky-atc__add {
     flex: none;
-    width: 84px;
-    padding: 6px 4px;
+    width: var(--sa-add-w);
+    padding: 4px 6px;
     border: 2px solid #000;
-    border-radius: 10px;
+    border-radius: 9px;
     background: #000;
-    box-shadow: 3px 4px 0 var(--sa-lav);
-    outline: 2px solid var(--sa-lav);
-    outline-offset: -4px;
+    box-shadow: 2.5px 3px 0 var(--sa-lav);
     color: var(--sa-mint);
     font-family: var(--font-accent--family);
-    font-size: 1rem;
+    font-size: var(--sa-add-font);
     font-weight: var(--font-accent--weight);
-    line-height: 1.05;
+    line-height: 1.1;
     text-transform: uppercase;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
@@ -2926,14 +2942,14 @@
     bottom: 100%;
     left: 0;
     z-index: 1;
-    max-height: calc(100dvh - var(--somna-sticky-h, 140px) - 40px);
+    max-height: calc(100dvh - var(--somna-sticky-h, 120px) - 32px);
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: 22px 20px 24px;
-    border-radius: 18px 18px 0 0;
+    padding: 16px 16px 20px;
+    border-radius: 16px 16px 0 0;
     background: #000;
     color: var(--sa-mint);
-    transform: translateY(calc(100% + var(--somna-sticky-h, 140px)));
+    transform: translateY(calc(100% + var(--somna-sticky-h, 120px)));
     transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
     pointer-events: auto;
   }
@@ -2949,16 +2965,16 @@
   .somna-sticky-atc__sheet-head {
     display: flex;
     gap: 12px;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
-    margin-bottom: 18px;
+    margin-bottom: 14px;
   }
 
   .somna-sticky-atc__heading {
     margin: 0;
     color: var(--sa-lav);
     font-family: var(--font-accent--family);
-    font-size: clamp(1.5rem, 7.4vw, 2.25rem);
+    font-size: var(--sa-heading);
     font-weight: var(--font-accent--weight);
     line-height: 1.1;
     text-transform: uppercase;
@@ -2973,8 +2989,8 @@
     display: grid;
     flex: none;
     place-items: center;
-    width: 40px;
-    height: 40px;
+    width: 34px;
+    height: 34px;
     padding: 0;
     border: 0;
     border-radius: 50%;
@@ -2982,6 +2998,11 @@
     color: var(--sa-mint);
     cursor: pointer;
     transition: transform 0.3s ease, background-color 0.2s ease;
+  }
+
+  .somna-sticky-atc__close svg {
+    width: 20px;
+    height: 20px;
   }
 
   .somna-sticky-atc__close:hover {
@@ -2992,12 +3013,12 @@
   .somna-sticky-atc__modes {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 4px;
-    margin: 0 0 14px;
-    padding: 4px;
+    gap: 3px;
+    margin: 0 0 10px;
+    padding: 3px;
     border: 2px solid var(--sa-mint);
     border-radius: 40px;
-    box-shadow: 3px 4px 0 var(--sa-mint);
+    box-shadow: 2.5px 3px 0 var(--sa-mint);
   }
 
   .somna-sticky-atc__mode {
@@ -3006,15 +3027,15 @@
     gap: 0 4px;
     align-items: center;
     justify-content: center;
-    min-height: 52px;
-    padding: 4px 10px;
+    min-height: 40px;
+    padding: 3px 8px;
     border: 0;
     border-radius: 32px;
     background: transparent;
     color: var(--sa-mint);
-    font-size: 0.9375rem;
+    font-size: var(--sa-mode);
     font-weight: 500;
-    line-height: 1.25;
+    line-height: 1.2;
     text-align: center;
     cursor: pointer;
     transition: background-color 0.25s ease, color 0.25s ease;
@@ -3032,22 +3053,22 @@
   }
 
   .somna-sticky-atc__note {
-    margin: 0 0 12px;
+    margin: 0 0 10px;
     font-size: 0.6875rem;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
     opacity: 0.85;
   }
 
   .somna-sticky-atc__colors {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin: 0 0 14px;
+    gap: 8px;
+    margin: 0 0 10px;
   }
 
   .somna-sticky-atc__swatch {
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
     padding: 0;
     border: 2px solid var(--sa-mint);
     border-radius: 50%;
@@ -3063,21 +3084,21 @@
   .somna-sticky-atc__packs {
     display: flex;
     flex-direction: column;
-    gap: 22px;
-    padding-top: 8px;
+    gap: 16px;
+    padding: 8px 6px 4px 0;
   }
 
   .somna-sticky-atc__pack {
     position: relative;
     display: flex;
-    gap: 14px;
+    gap: 12px;
     align-items: center;
-    min-height: 86px;
-    padding: 12px 16px;
+    min-height: var(--sa-row-h);
+    padding: 8px 14px;
     border: 2px solid var(--sa-mint);
     border-radius: 8px;
     background: #000;
-    box-shadow: 3px 4px 0 var(--sa-mint);
+    box-shadow: 2.5px 3px 0 var(--sa-mint);
     color: var(--sa-mint);
     text-align: left;
     cursor: pointer;
@@ -3100,15 +3121,15 @@
 
   .somna-sticky-atc__radio {
     flex: none;
-    width: 30px;
-    height: 30px;
+    width: var(--sa-radio);
+    height: var(--sa-radio);
     border: 2px solid currentColor;
     border-radius: 50%;
     background: var(--sa-mint);
   }
 
   .somna-sticky-atc__pack[aria-checked='true'] .somna-sticky-atc__radio {
-    border: 3px solid var(--sa-mint);
+    border: 2.5px solid var(--sa-mint);
     background: #000;
     box-shadow: 0 0 0 2px #000;
   }
@@ -3117,38 +3138,38 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    gap: 2px;
+    gap: 1px;
     min-width: 0;
   }
 
   .somna-sticky-atc__pack-name {
-    font-size: 1.375rem;
+    font-size: var(--sa-name);
     font-weight: 500;
     line-height: 1.2;
   }
 
   .somna-sticky-atc__pack-meta {
-    font-size: 0.875rem;
-    letter-spacing: 0.04em;
+    font-size: var(--sa-row-meta);
+    letter-spacing: 0.03em;
   }
 
   .somna-sticky-atc__pack-price {
     flex: none;
-    font-size: 1.375rem;
+    font-size: var(--sa-price);
     font-weight: 600;
   }
 
   .somna-sticky-atc__badge {
     position: absolute;
-    top: -14px;
-    right: -8px;
-    padding: 3px 8px;
-    border: 2px solid #000;
-    border-radius: 7px;
+    top: -11px;
+    right: -6px;
+    padding: 2px 6px;
+    border: 1.5px solid #000;
+    border-radius: 6px;
     background: var(--sa-mint);
     color: #000;
     font-family: var(--font-accent--family);
-    font-size: 0.875rem;
+    font-size: var(--sa-badge);
     font-weight: var(--font-accent--weight);
     line-height: 1.1;
     text-transform: uppercase;
@@ -3159,16 +3180,48 @@
     outline-offset: 3px;
   }
 
-  /* tablet + desktop (750px+): a compact floating card centred at the bottom; the sheet opens above it */
+  /* big phones / small tablets */
+  @media screen and (min-width: 480px) {
+    .somna-sticky-atc {
+      --sa-thumb: 56px;
+      --sa-title: 1.1875rem;
+      --sa-meta: 0.8125rem;
+      --sa-add-w: 96px;
+      --sa-add-font: 0.9375rem;
+      --sa-banner: 0.75rem;
+      --sa-heading: 1.875rem;
+      --sa-mode: 0.875rem;
+      --sa-row-h: 68px;
+      --sa-name: 1.125rem;
+      --sa-row-meta: 0.8125rem;
+      --sa-price: 1.125rem;
+    }
+  }
+
+  /* tablet and desktop: a compact floating card centred at the bottom; the sheet opens just above it */
   @media screen and (min-width: 750px) {
     .somna-sticky-atc {
+      --sa-pad: 8px;
+      --sa-thumb: 44px;
+      --sa-title: 1.125rem;
+      --sa-meta: 0.75rem;
+      --sa-add-font: 1rem;
+      --sa-banner: 0.75rem;
+      --sa-heading: 1.625rem;
+      --sa-mode: 0.8125rem;
+      --sa-row-h: 58px;
+      --sa-radio: 20px;
+      --sa-name: 1rem;
+      --sa-row-meta: 0.75rem;
+      --sa-price: 1rem;
+      --sa-badge: 0.6875rem;
       inset: auto 0 14px;
       display: flex;
       justify-content: center;
     }
 
     .somna-sticky-atc__bar {
-      width: min(600px, calc(100% - 32px));
+      width: min(560px, calc(100% - 40px));
       overflow: hidden;
       border: 2px solid #000;
       border-radius: 12px;
@@ -3177,58 +3230,32 @@
     }
 
     .somna-sticky-atc__banner {
-      padding: 5px 12px;
-      border-bottom-width: 1.5px;
-      font-size: 0.75rem;
+      padding: 4px 10px;
     }
 
     .somna-sticky-atc__main {
-      gap: 10px;
+      gap: 8px;
       padding: 8px 10px 10px;
     }
 
     .somna-sticky-atc__card {
-      gap: 10px;
       padding: 4px 10px 4px 4px;
-      border-width: 1.5px;
-      border-radius: 8px;
-      box-shadow: 2px 3px 0 #000;
-    }
-
-    .somna-sticky-atc__thumb {
-      width: 44px;
-      height: 44px;
-      border-radius: 5px;
-    }
-
-    .somna-sticky-atc__title {
-      font-size: 1.125rem;
-    }
-
-    .somna-sticky-atc__meta {
-      font-size: 0.75rem;
     }
 
     .somna-sticky-atc__add {
       width: auto;
-      min-width: 150px;
+      min-width: 132px;
       padding: 0 16px;
-      border-width: 1.5px;
-      border-radius: 8px;
-      box-shadow: 2px 3px 0 var(--sa-lav);
-      outline-width: 1.5px;
-      outline-offset: -4px;
-      font-size: 1rem;
-      line-height: 1;
+      white-space: nowrap;
     }
 
     .somna-sticky-atc__sheet {
       right: auto;
       left: 50%;
       bottom: calc(100% + 10px);
-      width: min(500px, calc(100% - 32px));
-      max-height: min(560px, calc(100dvh - var(--somna-sticky-h, 120px) - 90px));
-      padding: 18px 20px 20px;
+      width: min(440px, calc(100% - 40px));
+      max-height: min(560px, calc(100dvh - var(--somna-sticky-h, 100px) - 90px));
+      padding: 16px 18px 18px;
       border: 2px solid #000;
       border-radius: 14px;
       translate: -50% 0;
@@ -3241,107 +3268,8 @@
       opacity: 1;
     }
 
-    .somna-sticky-atc__sheet-head {
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .somna-sticky-atc__heading {
-      font-size: 1.625rem;
-    }
-
-    .somna-sticky-atc__close {
-      width: 32px;
-      height: 32px;
-    }
-
-    .somna-sticky-atc__close svg {
-      width: 20px;
-      height: 20px;
-    }
-
-    .somna-sticky-atc__modes {
-      margin-bottom: 8px;
-      padding: 3px;
-      border-width: 1.5px;
-      box-shadow: 2px 3px 0 var(--sa-mint);
-    }
-
-    .somna-sticky-atc__mode {
-      min-height: 38px;
-      font-size: 0.8125rem;
-    }
-
-    .somna-sticky-atc__note {
-      margin-bottom: 8px;
-      font-size: 0.6875rem;
-    }
-
-    .somna-sticky-atc__colors {
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .somna-sticky-atc__swatch {
-      width: 24px;
-      height: 24px;
-    }
-
-    .somna-sticky-atc__packs {
-      gap: 16px;
-      padding-top: 8px;
-    }
-
-    .somna-sticky-atc__pack {
-      gap: 12px;
-      min-height: 60px;
-      padding: 8px 14px;
-      border-width: 1.5px;
-      box-shadow: 2px 3px 0 var(--sa-mint);
-    }
-
-    .somna-sticky-atc__radio {
-      width: 22px;
-      height: 22px;
-    }
-
-    .somna-sticky-atc__pack[aria-checked='true'] .somna-sticky-atc__radio {
-      border-width: 2.5px;
-    }
-
-    .somna-sticky-atc__pack-name {
-      font-size: 1rem;
-    }
-
-    .somna-sticky-atc__pack-meta {
-      font-size: 0.75rem;
-    }
-
-    .somna-sticky-atc__pack-price {
-      font-size: 1.0625rem;
-    }
-
-    .somna-sticky-atc__badge {
-      top: -11px;
-      right: -6px;
-      padding: 2px 6px;
-      border-width: 1.5px;
-      border-radius: 5px;
-      font-size: 0.6875rem;
-    }
-
     html.somna-sticky-on body {
-      padding-bottom: calc(var(--somna-sticky-h, 0px) + 20px);
-    }
-  }
-
-  @media screen and (min-width: 1200px) {
-    .somna-sticky-atc__bar {
-      width: 640px;
-    }
-
-    .somna-sticky-atc__sheet {
-      width: 520px;
+      padding-bottom: calc(var(--somna-sticky-h, 0px) + 24px);
     }
   }
 
