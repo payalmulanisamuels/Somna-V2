@@ -36,7 +36,7 @@
       "settings": {
         "display_style": "scroll",
         "speed": 5,
-        "scroll_speed": 30,
+        "scroll_speed": 20,
         "scroll_gap": 64,
         "section_width": "full-width",
         "background_color": "#afbdf8",
