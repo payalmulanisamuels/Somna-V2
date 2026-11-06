@@ -52,9 +52,9 @@
       {%- if s.sticker != blank -%}
         <div class="somna-collection__pointer" aria-hidden="true">
           <span class="somna-collection__sticker somna-shake--pop">{{ s.sticker | escape }}</span>
-          <svg class="somna-collection__arrow" viewBox="0 0 150 140" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-            <path class="somna-point-line" pathLength="420" d="M14 4c-6 40 2 86 40 104 22 10 42-4 36-20-6-15-28-9-26 9 3 22 36 26 72 20"/>
-            <path class="somna-point-head" d="M126 104l12 13-16 7"/>
+          <svg class="somna-collection__arrow" viewBox="30 45 190 152" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <path class="somna-point-line" pathLength="420" d="M40 55C40 110 60 165 105 180C125 186 150 175 155 152C160 130 140 120 125 130C110 140 112 168 130 177C148 185 168 181 188 179"/>
+            <path class="somna-point-head" d="M185 167L212 177L187 191Z" fill="currentColor" stroke-width="1.5"/>
           </svg>
         </div>
       {%- endif -%}
@@ -474,11 +474,13 @@
     white-space: nowrap;
   }
 
+  /* Figma 4852:1245: hand-drawn arrow that dips, loops once and ends in a filled head */
   .somna-collection__arrow {
     display: block;
-    width: 150px;
-    margin: 14px 0 0 64px;
+    width: 190px;
+    margin: 8px 0 0 44px;
     color: #000;
+    overflow: visible;
   }
 
   .somna-collection__picks {
