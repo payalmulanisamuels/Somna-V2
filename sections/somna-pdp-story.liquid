@@ -1892,6 +1892,12 @@
     will-change: transform, opacity;
   }
 
+  /* the flying layers and the travelling picture must never widen the page (no sideways scroll on phones) */
+  main[data-template^='product'],
+  .somna-pdp-story {
+    overflow-x: clip;
+  }
+
   .somna-pdp-layers-traveller {
     position: absolute;
     top: 0;
