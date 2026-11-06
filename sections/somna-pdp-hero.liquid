@@ -2754,11 +2754,11 @@
     --sa-mint: #f3feee;
     --sa-lav: #afbdf8;
     --sa-pad: 10px;
-    --sa-thumb: 46px;
-    --sa-title: clamp(0.875rem, 3.8vw, 1rem);
+    --sa-thumb: 44px;
+    --sa-title: clamp(0.8125rem, 3.6vw, 0.9375rem);
     --sa-meta: 0.6875rem;
-    --sa-add-w: 70px;
-    --sa-add-font: 0.75rem;
+    --sa-add-w: 72px;
+    --sa-add-font: 0.6875rem;
     --sa-banner: clamp(0.625rem, 2.9vw, 0.75rem);
     --sa-heading: clamp(1.125rem, calc((100vw - 80px) / 13.2), 1.75rem); /* "Choose your pack" stays on one line */
     --sa-mode: 0.8125rem;
@@ -2822,6 +2822,12 @@
     gap: 8px;
     align-items: stretch;
     padding: var(--sa-pad) var(--sa-pad) calc(var(--sa-pad) + env(safe-area-inset-bottom));
+  }
+
+  .somna-sticky-atc__card,
+  .somna-sticky-atc__pack,
+  .somna-sticky-atc__mode {
+    font-family: var(--font-body--family);
   }
 
   .somna-sticky-atc__card {
@@ -3208,11 +3214,11 @@
   /* big phones / small tablets */
   @media screen and (min-width: 480px) {
     .somna-sticky-atc {
-      --sa-thumb: 48px;
-      --sa-title: 1rem;
-      --sa-meta: 0.75rem;
-      --sa-add-w: 84px;
-      --sa-add-font: 0.8125rem;
+      --sa-thumb: 46px;
+      --sa-title: 0.9375rem;
+      --sa-meta: 0.6875rem;
+      --sa-add-w: 80px;
+      --sa-add-font: 0.6875rem;
       --sa-banner: 0.75rem;
       --sa-mode: 0.8125rem;
       --sa-row-h: 62px;
