@@ -588,8 +588,26 @@
     }
 
     .somna-collection__heading {
-      font-size: clamp(1.75rem, 10vw, 2.5rem);
+      font-size: clamp(1.625rem, 8.9vw, 2.375rem);
       line-height: 1.12;
+    }
+
+    /* chooser: the "Your best start" sticker sits on the card's top edge (no arrow on phones) */
+    .somna-collection--chooser .somna-collection__pointer {
+      position: relative;
+      z-index: 2;
+      display: block;
+      margin-bottom: -38px;
+      text-align: center;
+    }
+
+    .somna-collection--chooser .somna-collection__arrow {
+      display: none;
+    }
+
+    .somna-collection--chooser .somna-collection__sticker {
+      padding: 6px 12px;
+      font-size: 0.875rem;
     }
 
     .somna-collection__text {
@@ -757,7 +775,7 @@
       width: 100%;
       max-width: 352px;
       margin-inline: auto;
-      padding-top: 18px;
+      padding-top: 0;
     }
 
     .somna-ccard--pick {
