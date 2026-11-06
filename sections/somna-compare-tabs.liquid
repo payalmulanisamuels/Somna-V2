@@ -92,6 +92,7 @@
         {%- assign row_count = 0 -%}
         {%- for row in row_blocks -%}{%- if row.settings.tab == tab_index -%}{%- assign row_count = row_count | plus: 1 -%}{%- endif -%}{%- endfor -%}
         {%- if row_count > 0 -%}
+          {%- if tab.settings.sticker != blank -%}<p class="somna-compare__sticker" aria-hidden="true">{{ tab.settings.sticker }}</p>{%- endif -%}
           <div
             class="somna-compare__panel{% if s.drip_edges %} somna-edge-drip-bottom{% endif %}"
             role="tabpanel"
@@ -129,7 +130,7 @@
                   {%- for row in row_blocks -%}
                     {%- unless row.settings.tab == tab_index -%}{%- continue -%}{%- endunless -%}
                     {%- assign r = row.settings -%}
-                    <tr {{ row.shopify_attributes }}>
+                    <tr{% if r.total %} class="is-total"{% endif %} {{ row.shopify_attributes }}>
                       <th scope="row">{{ r.label }}</th>
                       <td class="is-somna">{% if r.column_1_text != blank %}<span class="somna-compare__value">{{ r.column_1_text }}</span>{% else %}{% render 'somna-mark', value: r.column_1 %}{% endif %}</td>
                       {%- for n in (2..4) -%}
@@ -145,6 +146,7 @@
               </table>
             </div>
           </div>
+          {%- if tab.settings.note != blank -%}<p class="somna-compare__note">{{ tab.settings.note }}</p>{%- endif -%}
           {%- assign first_panel = false -%}
         {%- endif -%}
       {%- endfor -%}
@@ -521,6 +523,52 @@
       font-size: clamp(1rem, 1.28vw, 1.15rem);
     }
   }
+
+  /* per-tab sticker on the panel's top edge and a small note under it (Season Bundle "Do the maths");
+     both follow their panel when tabs switch */
+  .somna-compare__sticker {
+    position: relative;
+    z-index: 2;
+    justify-self: end;
+    margin: 0 18px -34px 0;
+    padding: 8px 14px;
+    border: 2px solid #000;
+    border-radius: 10px;
+    background: #0b0f1d;
+    box-shadow: 2px 3px 0 #afbdf8;
+    color: #f3feee;
+    font-family: var(--font-accent--family);
+    font-size: clamp(0.875rem, 1.2vw, 1.0625rem);
+    line-height: 1.2;
+    rotate: 2deg;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .somna-compare__sticker:has(+ .somna-compare__panel[hidden]),
+  .somna-compare__panel[hidden] + .somna-compare__note {
+    display: none;
+  }
+
+  .somna-compare__note {
+    justify-self: start;
+    max-width: 100%;
+    margin: -6px 0 0;
+    font-size: 0.8125rem;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+    opacity: 0.7;
+  }
+
+  /* total row: bold, lightly shaded */
+  .somna-compare__table tr.is-total > * {
+    background: #f2f4fe;
+    font-weight: 800;
+  }
+
+  .somna-compare__table tr.is-total > .is-somna {
+    background: var(--somna-highlight);
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -529,24 +577,179 @@
   "tag": "section",
   "class": "section-somna-compare",
   "settings": [
-    { "type": "checkbox", "id": "drip_edges", "label": "Drippy card edges", "info": "Drip shapes on the card edges, as in the Figma design.", "default": true },
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Made for your nights" },
-    { "type": "text", "id": "heading", "label": "Heading", "info": "Wrap words in <em></em> for the accent colour.", "default": "Built for Bedtime. Not the First-Aid Kit." },
-    { "type": "textarea", "id": "text", "label": "Text under the heading" },
-    { "type": "checkbox", "id": "match_product", "label": "On product pages, show only the tab named like the product", "info": "E.g. the \"Nasal Strips\" tab on the Nasal Strips page.", "default": false },
-    { "type": "text", "id": "tabs_label", "label": "Tabs label (screen readers)", "default": "Compare products" },
-    { "type": "text", "id": "caption", "label": "Table caption (screen readers)", "default": "how Somna compares" },
-    { "type": "checkbox", "id": "show_column_names", "label": "Show comparison column names", "default": true },
-    { "type": "header", "content": "Colours" },
-    { "type": "color", "id": "background_color", "label": "Background", "default": "#afbdf8" },
-    { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },
-    { "type": "color", "id": "panel_color", "label": "Table and tabs background", "default": "#f3feee" },
-    { "type": "color", "id": "highlight_color", "label": "Somna column highlight", "default": "#cdd6ea" },
-    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
-    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
-    { "type": "header", "content": "Bottom wave" },
-    { "type": "color", "id": "wave_color", "label": "Colour below the wave", "info": "Draws a wave into the next section. Leave empty for a straight edge." },
-    { "type": "select", "id": "wave_shape", "label": "Wave shape", "info": "Drip and Soft shapes are traced from the Figma design.", "options": [{ "value": "drip-1", "label": "Drip 1" }, { "value": "drip-2", "label": "Drip 2" }, { "value": "drip-3", "label": "Drip 3" }, { "value": "drip-4", "label": "Drip 4" }, { "value": "drip-5", "label": "Drip 5" }, { "value": "drip-6", "label": "Drip 6" }, { "value": "drip-7", "label": "Drip 7" }, { "value": "drip-8", "label": "Drip 8" }, { "value": "drip-9", "label": "Drip 9" }, { "value": "drip-10", "label": "Drip 10" }, { "value": "drip-11", "label": "Drip 11" }, { "value": "soft-1", "label": "Soft 1" }, { "value": "soft-2", "label": "Soft 2" }, { "value": "sine", "label": "Rolling wave (animated)" }], "default": "drip-1" }
+    {
+      "type": "checkbox",
+      "id": "drip_edges",
+      "label": "Drippy card edges",
+      "info": "Drip shapes on the card edges, as in the Figma design.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Made for your nights"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Wrap words in <em></em> for the accent colour.",
+      "default": "Built for Bedtime. Not the First-Aid Kit."
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text under the heading"
+    },
+    {
+      "type": "checkbox",
+      "id": "match_product",
+      "label": "On product pages, show only the tab named like the product",
+      "info": "E.g. the \"Nasal Strips\" tab on the Nasal Strips page.",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "tabs_label",
+      "label": "Tabs label (screen readers)",
+      "default": "Compare products"
+    },
+    {
+      "type": "text",
+      "id": "caption",
+      "label": "Table caption (screen readers)",
+      "default": "how Somna compares"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_column_names",
+      "label": "Show comparison column names",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colours"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#afbdf8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "panel_color",
+      "label": "Table and tabs background",
+      "default": "#f3feee"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Somna column highlight",
+      "default": "#cdd6ea"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Bottom wave"
+    },
+    {
+      "type": "color",
+      "id": "wave_color",
+      "label": "Colour below the wave",
+      "info": "Draws a wave into the next section. Leave empty for a straight edge."
+    },
+    {
+      "type": "select",
+      "id": "wave_shape",
+      "label": "Wave shape",
+      "info": "Drip and Soft shapes are traced from the Figma design.",
+      "options": [
+        {
+          "value": "drip-1",
+          "label": "Drip 1"
+        },
+        {
+          "value": "drip-2",
+          "label": "Drip 2"
+        },
+        {
+          "value": "drip-3",
+          "label": "Drip 3"
+        },
+        {
+          "value": "drip-4",
+          "label": "Drip 4"
+        },
+        {
+          "value": "drip-5",
+          "label": "Drip 5"
+        },
+        {
+          "value": "drip-6",
+          "label": "Drip 6"
+        },
+        {
+          "value": "drip-7",
+          "label": "Drip 7"
+        },
+        {
+          "value": "drip-8",
+          "label": "Drip 8"
+        },
+        {
+          "value": "drip-9",
+          "label": "Drip 9"
+        },
+        {
+          "value": "drip-10",
+          "label": "Drip 10"
+        },
+        {
+          "value": "drip-11",
+          "label": "Drip 11"
+        },
+        {
+          "value": "soft-1",
+          "label": "Soft 1"
+        },
+        {
+          "value": "soft-2",
+          "label": "Soft 2"
+        },
+        {
+          "value": "sine",
+          "label": "Rolling wave (animated)"
+        }
+      ],
+      "default": "drip-1"
+    }
   ],
   "blocks": [
     {
@@ -554,22 +757,107 @@
       "name": "Tab",
       "limit": 5,
       "settings": [
-        { "type": "text", "id": "name", "label": "Tab name", "default": "Mouth Tape" },
-        { "type": "image_picker", "id": "image", "label": "Somna column image" },
-        { "type": "text", "id": "label", "label": "Somna column label", "default": "somna." },
-        { "type": "image_picker", "id": "column_2_image", "label": "Column 2 image" },
-        { "type": "text", "id": "column_2_label", "label": "Column 2 name", "default": "Surgical tape" },
-        { "type": "image_picker", "id": "column_3_image", "label": "Column 3 image" },
-        { "type": "text", "id": "column_3_label", "label": "Column 3 name", "default": "Chin straps" },
-        { "type": "image_picker", "id": "column_4_image", "label": "Column 4 image" },
-        { "type": "text", "id": "column_4_label", "label": "Column 4 name", "default": "Mouthguards" },
-        { "type": "checkbox", "id": "highlight", "label": "Highlight the first column", "default": true },
-        { "type": "checkbox", "id": "show_names", "label": "Show column names under the pictures", "default": false },
-        { "type": "checkbox", "id": "only_on_match", "label": "Only on the product with this name", "info": "Hides this tab everywhere else (e.g. a tab for one bundle).", "default": false },
-        { "type": "header", "content": "Heading for this tab", "info": "Optional. Used when this is the only tab shown (product pages); empty uses the section heading." },
-        { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
-        { "type": "text", "id": "heading", "label": "Heading", "info": "Wrap words in <em></em> for the accent colour." },
-        { "type": "text", "id": "text", "label": "Text under the heading" }
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Tab name",
+          "default": "Mouth Tape"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Somna column image"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Somna column label",
+          "default": "somna."
+        },
+        {
+          "type": "image_picker",
+          "id": "column_2_image",
+          "label": "Column 2 image"
+        },
+        {
+          "type": "text",
+          "id": "column_2_label",
+          "label": "Column 2 name",
+          "default": "Surgical tape"
+        },
+        {
+          "type": "image_picker",
+          "id": "column_3_image",
+          "label": "Column 3 image"
+        },
+        {
+          "type": "text",
+          "id": "column_3_label",
+          "label": "Column 3 name",
+          "default": "Chin straps"
+        },
+        {
+          "type": "image_picker",
+          "id": "column_4_image",
+          "label": "Column 4 image"
+        },
+        {
+          "type": "text",
+          "id": "column_4_label",
+          "label": "Column 4 name",
+          "default": "Mouthguards"
+        },
+        {
+          "type": "checkbox",
+          "id": "highlight",
+          "label": "Highlight the first column",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_names",
+          "label": "Show column names under the pictures",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "only_on_match",
+          "label": "Only on the product with this name",
+          "info": "Hides this tab everywhere else (e.g. a tab for one bundle).",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Heading for this tab",
+          "info": "Optional. Used when this is the only tab shown (product pages); empty uses the section heading."
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "info": "Wrap words in <em></em> for the accent colour."
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text under the heading"
+        },
+        {
+          "type": "text",
+          "id": "sticker",
+          "label": "Sticker on the table",
+          "info": "e.g. Save up to $21.65"
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "Note under the table"
+        }
       ]
     },
     {
@@ -581,31 +869,103 @@
           "id": "tab",
           "label": "Tab",
           "options": [
-            { "value": "1", "label": "First tab" },
-            { "value": "2", "label": "Second tab" },
-            { "value": "3", "label": "Third tab" },
-            { "value": "4", "label": "Fourth tab" },
-            { "value": "5", "label": "Fifth tab" }
+            {
+              "value": "1",
+              "label": "First tab"
+            },
+            {
+              "value": "2",
+              "label": "Second tab"
+            },
+            {
+              "value": "3",
+              "label": "Third tab"
+            },
+            {
+              "value": "4",
+              "label": "Fourth tab"
+            },
+            {
+              "value": "5",
+              "label": "Fifth tab"
+            }
           ],
           "default": "1"
         },
-        { "type": "text", "id": "label", "label": "Feature", "default": "Drug-free" },
-        { "type": "checkbox", "id": "column_1", "label": "Somna", "default": true },
-        { "type": "checkbox", "id": "column_2", "label": "Column 2", "default": true },
-        { "type": "checkbox", "id": "column_3", "label": "Column 3", "default": true },
-        { "type": "checkbox", "id": "column_4", "label": "Column 4", "default": true },
-        { "type": "header", "content": "Text instead of a tick or cross" },
-        { "type": "text", "id": "column_1_text", "label": "Somna" },
-        { "type": "text", "id": "column_2_text", "label": "Column 2" },
-        { "type": "text", "id": "column_3_text", "label": "Column 3" },
-        { "type": "text", "id": "column_4_text", "label": "Column 4" }
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Feature",
+          "default": "Drug-free"
+        },
+        {
+          "type": "checkbox",
+          "id": "total",
+          "label": "Total row (bold, shaded)",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "column_1",
+          "label": "Somna",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "column_2",
+          "label": "Column 2",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "column_3",
+          "label": "Column 3",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "column_4",
+          "label": "Column 4",
+          "default": true
+        },
+        {
+          "type": "header",
+          "content": "Text instead of a tick or cross"
+        },
+        {
+          "type": "text",
+          "id": "column_1_text",
+          "label": "Somna"
+        },
+        {
+          "type": "text",
+          "id": "column_2_text",
+          "label": "Column 2"
+        },
+        {
+          "type": "text",
+          "id": "column_3_text",
+          "label": "Column 3"
+        },
+        {
+          "type": "text",
+          "id": "column_4_text",
+          "label": "Column 4"
+        }
       ]
     }
   ],
   "presets": [
     {
       "name": "Somna compare tabs",
-      "blocks": [{ "type": "tab" }, { "type": "row" }]
+      "blocks": [
+        {
+          "type": "tab"
+        },
+        {
+          "type": "row"
+        }
+      ]
     }
   ]
 }
