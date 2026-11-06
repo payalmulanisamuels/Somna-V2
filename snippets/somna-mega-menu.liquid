@@ -233,8 +233,13 @@
 
   /* the header menu sets nowrap; product lines wrap to at most two lines inside the row */
   .somna-mega,
-  .somna-mega :is(.somna-mega__title, .somna-mega__line, .somna-mega__name, .somna-mega__feature-label) {
+  .somna-mega :is(.somna-mega__line, .somna-mega__name, .somna-mega__feature-label) {
     white-space: normal;
+  }
+
+  /* product names stay on one line, colour dots beside them */
+  .somna-mega .somna-mega__title {
+    white-space: nowrap;
   }
 
   .somna-mega__line {
