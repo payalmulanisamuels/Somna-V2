@@ -105,7 +105,7 @@
       // star rating per product (Judge.me, snippets/somna-rating), keyed by handle
       var ratings = {
         {%- for rp in collections.all.products -%}
-          {%- capture rp_rating -%}{%- render 'somna-rating', product: rp, format: '[rating]/5 · [count] reviews' -%}{%- endcapture -%}
+          {%- capture rp_rating -%}{%- render 'somna-rating', product: rp, format: '[rating]/5 ([count])' -%}{%- endcapture -%}
           {%- assign rp_rating = rp_rating | strip -%}
           {%- if rp_rating != blank -%}{{ rp.handle | json }}: {{ rp_rating | json }},{%- endif -%}
         {%- endfor -%}
@@ -285,6 +285,7 @@
   }
 
   .somna-rv__rating {
+    white-space: nowrap;
     margin: 0 9px 4px;
     color: #0b0f1d;
     font-size: 0.75rem;
