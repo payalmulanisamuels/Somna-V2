@@ -273,7 +273,7 @@
     font-family: var(--font-accent--family);
     font-size: clamp(1.75rem, 10.6cqw, 2.5rem);
     font-weight: var(--font-accent--weight);
-    line-height: 1.2;
+    line-height: 1.32;
     text-transform: uppercase;
   }
 
@@ -385,7 +385,7 @@
     font-size: clamp(0.875rem, 4.7cqw, 1.0625rem);
     font-weight: var(--font-accent--weight);
     letter-spacing: 0.02em;
-    line-height: 1.2;
+    line-height: 1.4;
     text-transform: uppercase;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -474,17 +474,17 @@
     color: #000;
     font-family: var(--font-accent--family);
     font-weight: var(--font-accent--weight);
-    line-height: 1.05;
+    line-height: 1.28;
     text-transform: uppercase;
   }
 
-  .sgp__burst-big { font-size: clamp(1.25rem, 9.5cqw, 2.25rem); }
+  .sgp__burst-big { font-size: clamp(1.125rem, 8.6cqw, 2rem); }
   .sgp__burst-small { margin-top: 2px; font-family: var(--font-body--family, Inter, sans-serif); font-size: clamp(0.625rem, 3cqw, 0.75rem); font-weight: 700; text-transform: none; }
 
   .is-entering .sgp__burst { animation: sgpBurst 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
   @keyframes sgpBurst { from { transform: scale(0.4) rotate(-12deg); opacity: 0; } }
 
-  .sgp__title--claim { margin-top: 2cqw; font-size: clamp(1.875rem, 13.5cqw, 3rem); line-height: 1.1; }
+  .sgp__title--claim { margin-top: 2cqw; font-size: clamp(1.75rem, 12.5cqw, 2.875rem); line-height: 1.32; }
   .sgp__title--claim > * { display: inline; }
   .sgp__title--claim em { color: var(--sgp-lav); }
   .sgp__title--claim span { color: var(--sgp-mint); }
@@ -537,7 +537,7 @@
   .sgp__btn:disabled { opacity: 0.6; cursor: progress; }
   .sgp__btn:focus-visible { outline: 2px solid var(--sgp-mint); outline-offset: 3px; }
 
-  .sgp__btn--accent { font-family: var(--font-accent--family); font-size: clamp(0.9375rem, 5.2cqw, 1.1875rem); font-weight: var(--font-accent--weight); }
+  .sgp__btn--accent { font-family: var(--font-accent--family); font-size: clamp(0.9375rem, 5.2cqw, 1.1875rem); font-weight: var(--font-accent--weight); line-height: 1.4; }
 
   .sgp__consent {
     margin: 4.5cqw 0 0;
@@ -567,7 +567,7 @@
   .sgp__gift-small { width: min(30cqw, 15dvh); margin-top: 5cqw; color: var(--sgp-lav); }
   .is-entering .sgp__gift-small { animation: sgpBurst 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 
-  .sgp__title--code { margin-top: 3cqw; font-size: clamp(1.75rem, 11.2cqw, 2.625rem); line-height: 1.1; }
+  .sgp__title--code { margin-top: 3cqw; font-size: clamp(1.625rem, 10.4cqw, 2.5rem); line-height: 1.32; }
 
   .sgp__code {
     display: grid;
@@ -584,7 +584,7 @@
     font-size: clamp(1.375rem, 9.4cqw, 2.25rem);
     font-weight: var(--font-accent--weight);
     letter-spacing: 0.02em;
-    line-height: 1.1;
+    line-height: 1.35;
     word-break: break-all;
   }
 
@@ -602,6 +602,7 @@
   }
 
   .sgp__copy:hover { color: var(--sgp-mint); }
+  .sgp__copy:focus-visible { outline: 2px solid var(--sgp-lav); outline-offset: 2px; border-radius: 6px; }
 
   .sgp__btn--shop { margin-top: 4cqw; min-height: 50px; font-size: clamp(0.875rem, 4.6cqw, 1rem); font-weight: 700; }
 
@@ -1036,7 +1037,7 @@
       function success() {
         storage.set('localStorage', KEYS.signedUp, '1');
         showScreen(3);
-        document.getElementById('somna-copy-btn')?.focus({ preventScroll: true });
+        card.focus({ preventScroll: true });
       }
 
       form?.addEventListener('submit', async (event) => {
