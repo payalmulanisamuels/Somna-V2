@@ -38,6 +38,13 @@
     assign eager_loading = true
   endif
 
+  # Somna V2: Figma menu drawer (snippets/somna-menu-drawer). On while Theme settings → Somna menu drawer → Look is
+  # "Somna", and always on the support demo page so it can be reviewed first.
+  assign somna_drawer = false
+  if settings.somna_drawer_style == 'somna' or template.suffix == 'support-demo'
+    assign somna_drawer = true
+  endif
+
   if block_settings.background_color != blank or block_settings.text_color != blank
     render 'contrast-override', background_color: block_settings.background_color, text_color: block_settings.text_color, section_id: block.id
   endif
@@ -50,7 +57,7 @@
 ></script>
 
 <header-drawer
-  class="header-drawer {{ class }}"
+  class="header-drawer {{ class }}{% if somna_drawer %} header-drawer--somna{% endif %}"
   style="--menu-image-border-radius: {{ image_border_radius }}px; --resource-card-corner-radius: {{ image_border_radius }}px;"
 >
   <details
@@ -77,12 +84,15 @@
     <div
       ref="menuDrawer"
       class="
-        menu-drawer
+        menu-drawer{% if somna_drawer %} menu-drawer--somna{% endif %}
         {% if block_settings.background_color != blank or block_settings.text_color != blank %}
           color-custom-{{ block.id }}
         {% endif %}
       "
     >
+      {%- if somna_drawer -%}
+        {%- render 'somna-menu-drawer' -%}
+      {%- else -%}
       <button
         class="button close-button menu-drawer__close-button focus-inset"
         type="button"
@@ -778,6 +788,7 @@
           </ul>
         </div>
       {% endif %}
+      {%- endif -%}
     </div>
     <div
       class="menu-drawer__backdrop"
@@ -1540,5 +1551,50 @@
 
   .drawer-localization .language-selector .svg-wrapper.icon-caret svg {
     transform: none;
+  }
+
+  /* ================================
+     Somna V2 — Figma menu drawer (4927:568): full-width mint sheet on phones, 440px panel from 750px.
+     Same open/close logic as above (assets/header-drawer.js waits for this transition before it closes
+     the <details>), just a slower, softer slide and a deeper overlay. */
+  .header-drawer--somna {
+    --drawer-animation-speed: 0.45s;
+  }
+
+  .header-drawer--somna .menu-drawer--somna {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    border: 0;
+    background: #f3feee;
+    overscroll-behavior: contain;
+    transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+
+    @media screen and (min-width: 750px) {
+      width: 440px;
+      box-shadow: 8px 0 40px rgb(0 0 0 / 0.18);
+    }
+  }
+
+  .header-drawer--somna .menu-drawer__backdrop {
+    background: rgb(11 15 29 / 0.45);
+    backdrop-filter: none;
+  }
+
+  /* contents fade in just behind the slide, top to bottom (Horizon's keyframes, faster stagger) */
+  .header-drawer--somna .menu-drawer-container[open] .menu-drawer__animated-element {
+    animation-duration: 0.5s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-delay: calc(0.12s + (var(--menu-drawer-animation-index) - 1) * 0.06s);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .header-drawer--somna {
+      --drawer-animation-speed: 0.01s;
+    }
+
+    .header-drawer--somna .menu-drawer-container[open] .menu-drawer__animated-element {
+      animation: none;
+    }
   }
 {% endstylesheet %}

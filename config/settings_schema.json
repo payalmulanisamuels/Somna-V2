@@ -2502,5 +2502,246 @@
         "label": "Recommended Upgrade Product (Bundle)"
       }
     ]
+  },
+  {
+    "name": "Somna menu drawer",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Phone menu from Figma 4927:568. While Look is Classic, the support demo page (?view=support-demo) still shows it for review."
+      },
+      {
+        "type": "select",
+        "id": "somna_drawer_style",
+        "label": "Look",
+        "options": [
+          {
+            "value": "classic",
+            "label": "Classic (link list)"
+          },
+          {
+            "value": "somna",
+            "label": "Somna (Figma)"
+          }
+        ],
+        "default": "classic"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_logo",
+        "label": "Logo text",
+        "default": "somna."
+      },
+      {
+        "type": "header",
+        "content": "Quiz card"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_quiz_heading",
+        "label": "Heading",
+        "default": "Not sure where to start?"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_quiz_text",
+        "label": "Text",
+        "default": "Take the sleep quiz and get your match, plus your discount."
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_quiz_button",
+        "label": "Button",
+        "default": "Take the quiz →"
+      },
+      {
+        "type": "url",
+        "id": "somna_drawer_quiz_link",
+        "label": "Link"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_quiz_sticker",
+        "label": "Sticker",
+        "default": "60 seconds"
+      },
+      {
+        "type": "header",
+        "content": "Products"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_bestsellers_heading",
+        "label": "Bestsellers heading",
+        "default": "Bestsellers"
+      },
+      {
+        "type": "product_list",
+        "id": "somna_drawer_bestsellers",
+        "label": "Bestsellers",
+        "limit": 4
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_bundles_heading",
+        "label": "Bundles heading",
+        "default": "Find your bundle."
+      },
+      {
+        "type": "product_list",
+        "id": "somna_drawer_bundles",
+        "label": "Bundles",
+        "limit": 6,
+        "info": "A product with a Color option shows one tile per colour. With an odd number of tiles the last one spans the full width."
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_color_names",
+        "label": "Colour names",
+        "default": "Blue:Breathe|Red:Bold|Black:Night",
+        "info": "Variant colour : name shown, separated by |"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_color_title",
+        "label": "Colour tile title",
+        "default": "The [color] Bundle",
+        "info": "[color] = colour name, [product] = product title"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_rating_format",
+        "label": "Rating",
+        "default": "[rating]/5 · [count] reviews"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_price_format",
+        "label": "Bestseller price",
+        "default": "From [price] · Subscribe & Save",
+        "info": "[price], [compare], [night], [nights]"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_night_format",
+        "label": "Bestseller per night",
+        "default": "[night]/night"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_bundle_price_format",
+        "label": "Bundle tile price",
+        "default": "[price] [compare] · Subscribe & Save"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_wide_format",
+        "label": "Wide tile line",
+        "default": "[nights] nights · [night]/night"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_card_button",
+        "label": "Card button",
+        "default": "Shop now"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_all_label",
+        "label": "Shop all button",
+        "default": "Shop all products →"
+      },
+      {
+        "type": "url",
+        "id": "somna_drawer_all_link",
+        "label": "Shop all link"
+      },
+      {
+        "type": "header",
+        "content": "Help links"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_link_1",
+        "label": "Link 1",
+        "default": "How to use"
+      },
+      {
+        "type": "url",
+        "id": "somna_drawer_link_1_url",
+        "label": "Link 1 URL"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_link_2",
+        "label": "Link 2",
+        "default": "Contact & FAQs"
+      },
+      {
+        "type": "url",
+        "id": "somna_drawer_link_2_url",
+        "label": "Link 2 URL"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_link_3",
+        "label": "Link 3",
+        "default": "Track your order"
+      },
+      {
+        "type": "url",
+        "id": "somna_drawer_link_3_url",
+        "label": "Link 3 URL"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_link_4",
+        "label": "Link 4",
+        "default": "Manage subscription"
+      },
+      {
+        "type": "url",
+        "id": "somna_drawer_link_4_url",
+        "label": "Link 4 URL"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_link_5",
+        "label": "Link 5"
+      },
+      {
+        "type": "url",
+        "id": "somna_drawer_link_5_url",
+        "label": "Link 5 URL"
+      },
+      {
+        "type": "header",
+        "content": "Account"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_register_label",
+        "label": "Create account button",
+        "default": "Create an account →"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_member_text",
+        "label": "Member line",
+        "default": "Already a member?"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_login_label",
+        "label": "Sign in button",
+        "default": "Sign in"
+      },
+      {
+        "type": "text",
+        "id": "somna_drawer_account_label",
+        "label": "Signed-in button",
+        "default": "My account →"
+      }
+    ]
   }
 ]

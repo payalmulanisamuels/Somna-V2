@@ -169,6 +169,67 @@
       flex: none;
     }
   }
+
+  /* "Big call" (Figma 4927:1425 Support): Boldonse 64px heading, 21px line, 613×63 black pill button */
+  .somna-policy-band--cta .somna-policy-band__inner {
+    padding-block: 40px 56px;
+  }
+
+  .somna-policy-band--cta .somna-policy-band__heading {
+    font-size: clamp(2.25rem, 4.45vw, 4rem);
+    line-height: 1.35;
+  }
+
+  .somna-policy-band--cta .somna-policy-band__text {
+    margin: 4px auto 40px;
+    font-size: clamp(1rem, 1.48vw, 1.3284rem);
+    line-height: 1.18;
+    opacity: 1;
+  }
+
+  .somna-policy-band--cta .somna-policy-band__button {
+    width: min(100%, 613px);
+    min-height: 63px;
+    border: 3.2px solid #000;
+    border-radius: 46px;
+    box-shadow: 4.26px 5.33px 0 #000;
+    color: #f3feee;
+    font-size: clamp(1.125rem, 1.94vw, 1.7436rem);
+    font-weight: 700;
+    letter-spacing: 0;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .somna-policy-band--cta .somna-policy-band__button:hover {
+    background: #f3feee;
+    color: #000;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 7px 0 #000;
+  }
+
+  .somna-policy-band--cta .somna-policy-band__button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 #000;
+  }
+
+  .somna-policy-band--cta .somna-policy-band__button:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 4px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .somna-policy-band--cta .somna-policy-band__inner {
+      padding-block: 24px 40px;
+    }
+
+    .somna-policy-band--cta .somna-policy-band__text {
+      margin-bottom: 24px;
+    }
+
+    .somna-policy-band--cta .somna-policy-band__button {
+      min-height: 54px;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -177,7 +238,7 @@
   "tag": "section",
   "class": "section-somna-policy-band",
   "settings": [
-    { "type": "select", "id": "size", "label": "Style", "options": [{ "value": "title", "label": "Page title (top)" }, { "value": "band", "label": "Band (e.g. contact)" }], "default": "title" },
+    { "type": "select", "id": "size", "label": "Style", "options": [{ "value": "title", "label": "Page title (top)" }, { "value": "band", "label": "Band (e.g. contact)" }, { "value": "cta", "label": "Big call (Support: Still stuck?)" }], "default": "title" },
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Somna policies" },
     { "type": "text", "id": "heading", "label": "Heading", "info": "Leave empty to show the page title." },
     { "type": "richtext", "id": "text", "label": "Text" },

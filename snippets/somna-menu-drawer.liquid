@@ -1,0 +1,437 @@
+{%- doc -%}
+  Somna V2 — contents of the mobile menu drawer (Figma 4927:568). Rendered inside the existing Horizon
+  drawer (snippets/header-drawer.liquid), which keeps doing the work: open/close, overlay, Escape,
+  focus trap and scroll lock (assets/header-drawer.js). Everything here comes from
+  Theme settings → Somna menu drawer and from the products picked there.
+
+  Order: top row (close · logo · bag) → quiz card → Bestsellers → wave → Find your bundle
+  (one tile per colour of a colour product, a wide last tile when the count is odd) → Shop all →
+  wave → help links → account.
+{%- enddoc -%}
+{%- liquid
+  assign st = settings
+  assign idx = 1
+-%}
+<div class="somna-md">
+  <div class="somna-md__top">
+    <button
+      class="somna-md__close"
+      type="button"
+      aria-label="{{ 'actions.close' | t }}"
+      on:click="/close"
+    >
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
+    </button>
+    <a class="somna-md__logo" href="{{ routes.root_url }}">{{ st.somna_drawer_logo | default: shop.name | escape }}</a>
+    <a class="somna-md__bag" href="{{ routes.cart_url }}" data-somna-md-cart aria-label="{{ 'accessibility.cart' | t | default: 'Cart' }}">
+      <svg viewBox="0 0 22 22" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5h15l-1.2 12.2H4.7L3.5 7.5Z"/><path d="M7.5 7.5V6a3.5 3.5 0 0 1 7 0v1.5" stroke-linecap="round"/></svg>
+    </a>
+  </div>
+
+  <div class="somna-md__body">
+    {%- if st.somna_drawer_quiz_heading != blank -%}
+      <a class="somna-md__quiz menu-drawer__animated-element" href="{{ st.somna_drawer_quiz_link | default: '/pages/quiz' }}" style="--menu-drawer-animation-index: {{ idx }};">
+        {%- assign idx = idx | plus: 1 -%}
+        <span class="somna-md__quiz-title">{{ st.somna_drawer_quiz_heading | escape }}</span>
+        {%- if st.somna_drawer_quiz_text != blank -%}<span class="somna-md__quiz-text">{{ st.somna_drawer_quiz_text | escape }}</span>{%- endif -%}
+        {%- if st.somna_drawer_quiz_button != blank -%}<span class="somna-md__btn somna-md__btn--dark">{{ st.somna_drawer_quiz_button | escape }}</span>{%- endif -%}
+        {%- if st.somna_drawer_quiz_sticker != blank -%}<span class="somna-md__sticker" aria-hidden="true"><span>{{ st.somna_drawer_quiz_sticker | escape }}</span></span>{%- endif -%}
+      </a>
+    {%- endif -%}
+
+    {%- if st.somna_drawer_bestsellers != blank -%}
+      <section class="somna-md__block menu-drawer__animated-element" style="--menu-drawer-animation-index: {{ idx }};">
+        {%- assign idx = idx | plus: 1 -%}
+        {%- if st.somna_drawer_bestsellers_heading != blank -%}<h2 class="somna-md__heading">{{ st.somna_drawer_bestsellers_heading | escape }}</h2>{%- endif -%}
+        <ul class="somna-md__grid somna-md__grid--best" role="list">
+          {%- for p in st.somna_drawer_bestsellers limit: 4 -%}
+            <li>{%- render 'somna-menu-drawer-card', product: p, style: 'best' -%}</li>
+          {%- endfor -%}
+        </ul>
+      </section>
+    {%- endif -%}
+  </div>
+
+  {%- if st.somna_drawer_bundles != blank -%}
+    {%- liquid
+      # one tile per colour of a product with a Color option (Sleep Bundle → Breathe, Bold, Night), else one per product
+      assign tiles = ''
+      for p in st.somna_drawer_bundles limit: 6
+        assign color_opt = nil
+        for o in p.options_with_values
+          assign oname = o.name | downcase
+          if oname == 'color' or oname == 'colour'
+            assign color_opt = o
+          endif
+        endfor
+        if color_opt and color_opt.values.size > 1
+          for val in color_opt.values
+            assign tiles = tiles | append: p.handle | append: '::' | append: val | append: '||'
+          endfor
+        else
+          assign tiles = tiles | append: p.handle | append: '::||'
+        endif
+      endfor
+      assign tile_list = tiles | split: '||'
+      assign tile_count = tile_list.size
+      assign odd = tile_count | modulo: 2
+    -%}
+    <div class="somna-md__wave" aria-hidden="true">{%- render 'somna-wave', top: '#f3feee', bottom: '#afbdf8', shape: 'drip-8', drops: true, animate: false -%}</div>
+    <section class="somna-md__band menu-drawer__animated-element" style="--menu-drawer-animation-index: {{ idx }};">
+      {%- assign idx = idx | plus: 1 -%}
+      {%- if st.somna_drawer_bundles_heading != blank -%}<h2 class="somna-md__heading">{{ st.somna_drawer_bundles_heading | escape }}</h2>{%- endif -%}
+      <ul class="somna-md__grid somna-md__grid--bundles" role="list">
+        {%- for t in tile_list -%}
+          {%- assign t_handle = t | split: '::' | first -%}
+          {%- assign t_color = t | split: '::' | last -%}
+          {%- if t_color == t_handle -%}{%- assign t_color = '' -%}{%- endif -%}
+          {%- assign t_style = 'bundle' -%}
+          {%- if forloop.last and odd == 1 -%}{%- assign t_style = 'wide' -%}{%- endif -%}
+          <li{% if t_style == 'wide' %} class="somna-md__wide-item"{% endif %}>{%- render 'somna-menu-drawer-card', product: all_products[t_handle], color: t_color, style: t_style -%}</li>
+        {%- endfor -%}
+      </ul>
+      {%- if st.somna_drawer_all_label != blank -%}
+        <a class="somna-md__btn somna-md__btn--dark somna-md__btn--block" href="{{ st.somna_drawer_all_link | default: routes.all_products_collection_url }}">{{ st.somna_drawer_all_label | escape }}</a>
+      {%- endif -%}
+    </section>
+    <div class="somna-md__wave" aria-hidden="true">{%- render 'somna-wave', top: '#afbdf8', bottom: '#f3feee', shape: 'drip-8', flip: true, drops: true, animate: false -%}</div>
+  {%- endif -%}
+
+  <div class="somna-md__foot menu-drawer__animated-element" style="--menu-drawer-animation-index: {{ idx }};">
+    <ul class="somna-md__links" role="list">
+      {%- for i in (1..5) -%}
+        {%- assign l_key = 'somna_drawer_link_' | append: i -%}
+        {%- assign l_url_key = l_key | append: '_url' -%}
+        {%- assign l_label = st[l_key] -%}
+        {%- assign l_url = st[l_url_key] -%}
+        {%- if l_label != blank and l_url != blank -%}
+          <li>
+            <a class="somna-md__link" href="{{ l_url }}"{% if l_url == request.path %} aria-current="page"{% endif %}>
+              <span>{{ l_label | escape }}</span><span class="somna-md__link-arrow" aria-hidden="true">→</span>
+            </a>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+
+    {%- if shop.customer_accounts_enabled -%}
+      <div class="somna-md__account">
+        {%- if customer -%}
+          <a class="somna-md__btn somna-md__btn--dark somna-md__btn--block" href="{{ routes.account_url }}">{{ st.somna_drawer_account_label | default: 'My account →' | escape }}</a>
+        {%- else -%}
+          <a class="somna-md__btn somna-md__btn--dark somna-md__btn--block" href="{{ routes.account_register_url }}">{{ st.somna_drawer_register_label | escape }}</a>
+          {%- if st.somna_drawer_member_text != blank -%}<p class="somna-md__member">{{ st.somna_drawer_member_text | escape }}</p>{%- endif -%}
+          <a class="somna-md__btn somna-md__btn--outline somna-md__btn--block" href="{{ routes.account_login_url }}">{{ st.somna_drawer_login_label | escape }}</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+<script type="module">
+  // The drawer's bag icon: close the menu (its own slide-out), then open the cart drawer from the header.
+  // One delegated listener; guarded so Theme editor section reloads don't add a second one.
+  if (!window.__somnaMdCart) {
+    window.__somnaMdCart = true;
+    document.addEventListener('click', (event) => {
+      const link = event.target instanceof Element ? event.target.closest('[data-somna-md-cart]') : null;
+      if (!link) return;
+      const trigger = document.querySelector('[data-testid="cart-drawer-trigger"]');
+      const drawer = link.closest('header-drawer');
+      if (!trigger || !drawer || typeof drawer.close !== 'function') return;
+      event.preventDefault();
+      drawer.close();
+      setTimeout(() => trigger.click(), 380);
+    });
+  }
+</script>
+
+{% stylesheet %}
+  /* Figma 4927:568 — the drawer itself (width, colour, slide) is styled in snippets/header-drawer.liquid (.menu-drawer--somna) */
+  .somna-md {
+    --smd-mint: #f3feee;
+    --smd-lav: #afbdf8;
+    --smd-navy: #0b0f1d;
+    --smd-pad: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background: var(--smd-mint);
+    color: #000;
+    font-family: var(--font-body--family);
+  }
+
+  .somna-md__top {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 44px 1fr 44px;
+    align-items: center;
+    min-height: 64px;
+    padding: 0 calc(var(--smd-pad) - 12px);
+    background: var(--smd-mint);
+  }
+
+  .somna-md__close,
+  .somna-md__bag {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--smd-navy);
+    cursor: pointer;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s ease;
+  }
+
+  .somna-md__close:hover {
+    transform: rotate(90deg);
+  }
+
+  .somna-md__bag:hover {
+    transform: translateY(-2px);
+  }
+
+  .somna-md__logo {
+    justify-self: center;
+    color: var(--smd-navy);
+    font-family: var(--font-body--family);
+    font-size: 24.87px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+
+  .somna-md__body {
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+    padding: 30px var(--smd-pad) 8px;
+  }
+
+  /* quiz card: mint, 1.44px black border, hard shadow, navy "60 seconds" sticker on the corner */
+  .somna-md__quiz {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 17px 17px 22px;
+    border: 1.44px solid #000;
+    border-radius: 8px;
+    background: var(--smd-mint);
+    box-shadow: 1.93px 2.41px 0 #000;
+    color: #000;
+    text-decoration: none;
+  }
+
+  .somna-md__quiz-title {
+    max-width: 253px;
+    font-family: var(--font-accent--family);
+    font-size: 22.92px;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .somna-md__quiz-text {
+    max-width: 321px;
+    margin-bottom: 1px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+  }
+
+  .somna-md__sticker {
+    position: absolute;
+    top: -25px;
+    right: -26px;
+    display: grid;
+    place-items: center;
+    width: 83.4px;
+    height: 78.2px;
+    border-radius: 50%;
+    background: var(--smd-navy);
+    color: var(--smd-mint);
+    rotate: -10.69deg;
+    transition: rotate 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-md__sticker span {
+    width: 76px;
+    font-family: var(--font-accent--family);
+    font-size: 14.2px;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .somna-md__quiz:hover .somna-md__sticker {
+    rotate: -3deg;
+  }
+
+  .somna-md__heading {
+    margin: 0 0 12px;
+    font-family: var(--font-accent--family);
+    font-size: 22.92px;
+    font-weight: var(--font-accent--weight);
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  /* buttons: black (quiz, shop all, create account) and outline (sign in) */
+  .somna-md__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 8.93px;
+    font-family: var(--font-body--family);
+    font-size: 14.22px;
+    font-weight: 800;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .somna-md__btn--dark {
+    background: #000;
+    color: #f2fdee;
+    filter: drop-shadow(0 2.85px 4.27px rgb(0 0 0 / 0.25));
+  }
+
+  .somna-md__btn--block {
+    display: flex;
+    width: 100%;
+  }
+
+  .somna-md__btn--outline {
+    min-height: 34px;
+    border: 1.44px solid #000;
+    border-radius: 8px;
+    background: var(--smd-mint);
+    box-shadow: 1.93px 2.41px 0 #000;
+    color: #000;
+  }
+
+  a.somna-md__btn--dark:hover,
+  .somna-md__quiz:hover .somna-md__btn--dark {
+    background: var(--smd-lav);
+    color: #000;
+  }
+
+  .somna-md__btn--outline:hover {
+    background: #000;
+    color: var(--smd-mint);
+  }
+
+  .somna-md__btn:active {
+    transform: translateY(1px);
+  }
+
+  .somna-md__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 11px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-md__grid > li {
+    display: flex;
+    min-width: 0;
+  }
+
+  .somna-md__wave {
+    margin-top: 12px;
+    line-height: 0;
+  }
+
+  .somna-md__wave + .somna-md__band {
+    margin-top: -1px;
+  }
+
+  .somna-md__band {
+    padding: 8px 16px 18px;
+    background: var(--smd-lav);
+  }
+
+  .somna-md__band .somna-md__heading {
+    padding-inline: 11px;
+  }
+
+  .somna-md__grid--bundles {
+    gap: 11px 8.84px;
+    margin-bottom: 22px;
+  }
+
+  .somna-md__grid--bundles > .somna-md__wide-item {
+    grid-column: 1 / -1;
+  }
+
+  .somna-md__band .somna-md__btn--block {
+    width: calc(100% - 10px);
+    margin-inline: auto;
+  }
+
+  .somna-md__band + .somna-md__wave {
+    margin-top: -1px;
+  }
+
+  .somna-md__foot {
+    padding: 4px calc(var(--smd-pad) + 3px) 28px;
+  }
+
+  .somna-md__links {
+    margin: 0 0 36px;
+    padding: 0 4px 0 10px;
+    list-style: none;
+  }
+
+  .somna-md__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 46px;
+    border-bottom: 0.96px solid #000;
+    color: #000;
+    font-size: 12.58px;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+
+  .somna-md__link-arrow {
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-md__link:hover .somna-md__link-arrow {
+    transform: translateX(4px);
+  }
+
+  .somna-md__link:hover > span:first-child {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .somna-md__link[aria-current='page'] {
+    font-weight: 700;
+  }
+
+  .somna-md__member {
+    margin: 6px 0 8px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .somna-md :is(a, button):focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
+{% endstylesheet %}
