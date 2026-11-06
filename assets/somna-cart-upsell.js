@@ -55,6 +55,15 @@ document.addEventListener('submit', async (e) => {
   );
 
   try {
+    // "Swap" (e.g. Sleep Bundle bag → Season Bundle): remove that cart line first, then add
+    if (form.dataset.swapKey) {
+      await fetch(`${Theme.routes.cart_change_url || '/cart/change'}.js`.replace('.js.js', '.js'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ id: form.dataset.swapKey, quantity: 0 }),
+      });
+    }
+
     const data = await fetch(Theme.routes.cart_add_url, {
       method: 'POST',
       body: formData,
