@@ -559,6 +559,8 @@
   {%- endif -%}
 
   <script type="application/ld+json">{{ product | structured_data }}</script>
+  {%- comment -%} one-pack products (The Color Set, Season Bundle): no 2+ packs to choose, so hide "Choose 2+ packs" style links {%- endcomment -%}
+  {%- if product.has_only_default_variant -%}<style>a[href*="#pack-"] { display: none !important; }</style>{%- endif -%}
 </somna-pdp-buy>
 {%- if section.settings.wave_color != blank -%}
   {%- render 'somna-wave', top: section.settings.background_color, bottom: section.settings.wave_color, shape: section.settings.wave_shape -%}
