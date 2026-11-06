@@ -709,7 +709,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>7–9 business days from when your order ships. Shipping is free on every order.</p>",
+                    "text": "<p>7–9 business days from when your order ships. Standard shipping is a flat $4.95 on every delivery.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -1262,7 +1262,7 @@
           "type": "question",
           "settings": {
             "question": "How long does delivery take?",
-            "answer": "<p>7–9 business days from when your order ships. Shipping is free on every order.</p>",
+            "answer": "<p>7–9 business days from when your order ships. Standard shipping is a flat $4.95 on every delivery.</p>",
             "open": false
           }
         },
