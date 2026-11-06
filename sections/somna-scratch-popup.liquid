@@ -1,0 +1,995 @@
+{%- comment -%}
+  SOMNA welcome popup — "What's in the box?" (Figma 4954:2911 → 2935 → 3012 → 2959).
+  Same rules as the live scratch popup (live theme sections/somna-scratch-popup.liquid); the scratch card is
+  now a gift box the visitor taps to unwrap.
+
+  - Shows on homepage, collections and product pages only; never for logged-in customers.
+  - Opens after N seconds (default 10); on desktop also on exit intent before that. Waits for the cookie banner.
+  - Closing hides it for the rest of the browser session (session cookie); the side tab then lets the
+    visitor reopen it on every page.
+  - Never shows again after a successful sign-up (localStorage).
+  - Suppressed for visitors arriving from a Klaviyo email link or already known to Klaviyo.
+  - Unwrap: tap / click the box or the button, or Enter / Space.
+  - Email goes to the Klaviyo list (client subscriptions API) — same list and company as live.
+  - Fixed discount code (default WELCOME10), auto-applied via /discount/CODE.
+  - Tracking events (dataLayer, Shopify customer events, Klaviyo): somna_popup_view,
+    somna_popup_scratch_complete (method: unwrap), somna_popup_email_submit, somna_popup_code_copied,
+    somna_popup_shop_now_click, somna_popup_close — the same names as live, so reports keep working.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign popup_page_allowed = false
+  if request.page_type == 'index' or request.page_type == 'collection' or request.page_type == 'product'
+    assign popup_page_allowed = true
+  endif
+  if request.design_mode
+    assign popup_page_allowed = true
+  endif
+
+  assign popup_code = s.discount_code | strip | default: 'WELCOME10'
+  assign popup_redirect = s.shop_redirect | strip | default: '/collections/all'
+  assign popup_shop_url = '/discount/' | append: popup_code | append: '?redirect=' | append: popup_redirect
+-%}
+
+{%- capture sgp_gift -%}
+  <svg class="sgp-gift" viewBox="0 0 180 170" aria-hidden="true" focusable="false">
+    <g class="sgp-gift__lid">
+      <path d="M90 50C79 27 58 14 44 20c-12 5-11 20 1 27 10 6 28 5 45 3z" fill="currentColor"/>
+      <path d="M90 50c11-23 32-36 46-30 12 5 11 20-1 27-10 6-28 5-45 3z" fill="currentColor"/>
+      <path d="M86 46C77 32 64 25 55 28c-6 3-5 10 2 13 7 3 17 4 29 5z" fill="#000" opacity=".9"/>
+      <path d="M94 46c9-14 22-21 31-18 6 3 5 10-2 13-7 3-17 4-29 5z" fill="#000" opacity=".9"/>
+      <circle cx="90" cy="47" r="12" fill="currentColor"/>
+      <rect x="10" y="56" width="160" height="38" rx="10" fill="currentColor"/>
+      <rect x="82" y="56" width="16" height="38" fill="#000"/>
+    </g>
+    <g class="sgp-gift__body">
+      <rect x="24" y="100" width="132" height="68" rx="10" fill="currentColor"/>
+      <rect x="82" y="100" width="16" height="68" fill="#000"/>
+    </g>
+  </svg>
+{%- endcapture -%}
+
+{%- capture sgp_wave -%}
+  <svg class="sgp-wave" viewBox="0 0 340 110" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <path d="M0 40C26 22 52 10 86 8c38-2 58 18 96 22 40 4 64-24 104-24 26 0 42 8 54 16v88H0z" fill="currentColor"/>
+    <ellipse cx="58" cy="52" rx="15" ry="9" transform="rotate(-36 58 52)" fill="currentColor"/>
+    <ellipse cx="48" cy="58" rx="10" ry="6" transform="rotate(36 48 58)" fill="currentColor"/>
+    <ellipse cx="290" cy="40" rx="15" ry="10" transform="rotate(-36 290 40)" fill="currentColor"/>
+    <ellipse cx="264" cy="52" rx="11" ry="7" transform="rotate(28 264 52)" fill="currentColor"/>
+  </svg>
+{%- endcapture -%}
+
+{%- if s.enabled and popup_page_allowed and customer == blank -%}
+<div
+  id="somna-overlay"
+  class="sgp somna-hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="somna-screen-1-title"
+  aria-hidden="true"
+>
+  <div class="sgp__card" tabindex="-1">
+    <div class="sgp__top">
+      <span class="sgp__logo">{{ s.logo_text | default: 'somna.' }}</span>
+      <button type="button" class="sgp__close somna-close-btn" aria-label="Close popup">
+        <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true" focusable="false"><path d="M2 2l18 18M20 2L2 20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <!-- SCREEN 1: the box (Figma 4954:2911, unwrapping 4954:2935) -->
+    <div id="somna-screen-1" class="sgp__screen sgp__screen--box">
+      {%- if s.pill != blank -%}<p class="sgp__pill">{{ s.pill }}</p>{%- endif -%}
+      <h2 class="sgp__title" id="somna-screen-1-title"><span>{{ s.title_1 }}</span> <em>{{ s.title_2 }}</em></h2>
+      <p class="sgp__text">{{ s.box_text }}</p>
+      <button type="button" class="sgp__box" data-unwrap aria-label="{{ s.button | escape }}">
+        {{ sgp_gift }}
+        <span class="sgp__sparks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      </button>
+      <div class="sgp__box-foot">
+        <button type="button" class="sgp__unwrap" data-unwrap>{{ s.button }}</button>
+        <p class="sgp__unwrapping" role="status" aria-live="polite"></p>
+      </div>
+      {%- if s.footnote != blank -%}<p class="sgp__fine">{{ s.footnote }}</p>{%- endif -%}
+    </div>
+
+    <!-- SCREEN 2: claim (Figma 4954:3012) -->
+    <div id="somna-screen-2" class="sgp__screen sgp__screen--claim somna-hidden">
+      <div class="sgp__burst">
+        <svg viewBox="0 0 300 200" aria-hidden="true" focusable="false"><path d="M150 13 L171 33 L201 16 L213 38 L252 36 L242 59 L275 64 L256 82 L295 95 L261 107 L277 129 L243 133 L253 153 L212 151 L204 172 L171 157 L150 186 L128 158 L94 176 L87 152 L50 155 L58 131 L25 127 L39 107 L16 95 L43 82 L20 63 L55 59 L51 36 L88 41 L97 13 L129 30Z" fill="#fff" stroke="#000" stroke-width="5" stroke-linejoin="round"/></svg>
+        <span class="sgp__burst-text"><span class="sgp__burst-big">{{ s.burst_1 }}</span><span class="sgp__burst-big">{{ s.burst_2 }}</span><span class="sgp__burst-small">{{ s.burst_3 }}</span></span>
+      </div>
+      <h2 class="sgp__title sgp__title--claim" id="somna-screen-2-title"><em>{{ s.claim_1 }}</em> <span>{{ s.claim_2 }}</span></h2>
+      <p class="sgp__text">{{ s.claim_text }}</p>
+
+      <p id="somna-already-subscribed" class="sgp__notice somna-hidden" role="status">{{ s.already_text }}</p>
+
+      <form id="somna-signup-form" class="sgp__form" novalidate>
+        <label for="somna-email-input" class="sgp__label">{{ s.email_label }}</label>
+        <input type="email" id="somna-email-input" class="sgp__input" name="email" placeholder="{{ s.email_placeholder | escape }}" required autocomplete="email" aria-describedby="somna-error-container">
+        <div class="sgp__error" id="somna-error-container" role="alert" aria-live="assertive"></div>
+        <button type="submit" class="sgp__btn sgp__btn--accent" id="somna-submit-btn">{{ s.submit_label }}</button>
+      </form>
+
+      <p class="sgp__consent">{{ s.consent }} <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}" target="_blank" rel="noopener">Privacy Policy</a></p>
+      <button type="button" class="sgp__decline somna-close-trigger">{{ s.decline }}</button>
+    </div>
+
+    <!-- SCREEN 3: code (Figma 4954:2959) -->
+    <div id="somna-screen-3" class="sgp__screen sgp__screen--code somna-hidden">
+      <div class="sgp__gift-small">{{ sgp_gift }}</div>
+      <h2 class="sgp__title sgp__title--code" id="somna-screen-3-title">{{ s.code_title }}</h2>
+      <div class="sgp__code"><span id="somna-discount-code-text">{{ popup_code | escape }}</span></div>
+      <button type="button" id="somna-copy-btn" class="sgp__copy">
+        <svg width="18" height="18" viewBox="0 0 22 22" fill="none" aria-hidden="true" focusable="false"><rect x="1" y="7" width="14" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 4V3a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2h-1" stroke="currentColor" stroke-width="2"/></svg>
+        <span class="sgp__copy-label">{{ s.copy_label }}</span>
+      </button>
+      <a href="{{ popup_shop_url }}" class="sgp__btn sgp__btn--shop" id="somna-shop-btn">{{ s.shop_label }} <span aria-hidden="true">→</span></a>
+      <p class="sgp__fine sgp__fine--code">{{ s.small_print }}</p>
+    </div>
+
+    <div class="sgp__wave-wrap" aria-hidden="true">{{ sgp_wave }}</div>
+  </div>
+</div>
+
+<!-- Minimised side tab -->
+<button type="button" id="somna-teaser-tab" class="sgp-tab somna-hidden">
+  <svg viewBox="0 0 180 170" width="18" height="17" aria-hidden="true" focusable="false"><path d="M90 50C79 27 58 14 44 20c-12 5-11 20 1 27 10 6 28 5 45 3zM90 50c11-23 32-36 46-30 12 5 11 20-1 27-10 6-28 5-45 3z" fill="currentColor"/><rect x="10" y="56" width="160" height="38" rx="10" fill="currentColor"/><rect x="24" y="100" width="132" height="68" rx="10" fill="currentColor"/></svg>
+  <span>{{ s.teaser_label }}</span>
+</button>
+
+<style>
+  .somna-hidden { display: none !important; }
+
+  html.somna-popup-open { overflow: hidden; }
+  html.somna-popup-open body { padding-right: var(--somna-scrollbar-width, 0px); }
+
+  .sgp {
+    --sgp-mint: #f3feee;
+    --sgp-lav: #afbdf8;
+    position: fixed;
+    inset: 0;
+    z-index: 2147483000;
+    display: grid;
+    place-items: center;
+    padding: 12px;
+    background: rgb(5 7 20 / 0.62);
+    opacity: 0;
+    transition: opacity 0.24s ease;
+  }
+
+  .sgp.somna-visible { opacity: 1; }
+
+  /* the card: Figma 340 × 709. Everything inside is sized against the card width (cqw), so phones
+     from 320px up and the desktop card keep the same proportions; heights also shrink on short screens */
+  .sgp__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(380px, 100%);
+    max-height: calc(100dvh - 24px);
+    overflow: hidden auto;
+    overscroll-behavior: contain;
+    border: 1.7px solid var(--sgp-lav);
+    border-radius: 25px;
+    background: #000;
+    color: var(--sgp-mint);
+    font-family: var(--font-body--family, Inter, sans-serif);
+    text-align: center;
+    container-type: inline-size;
+    scrollbar-width: none;
+    transform: translateY(24px) scale(0.96);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .sgp__card::-webkit-scrollbar { display: none; }
+  .sgp.somna-visible .sgp__card { transform: none; }
+  .sgp__card:focus { outline: none; }
+
+  .sgp__top {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6.5cqw 5.4cqw 0 4.7cqw;
+  }
+
+  .sgp__logo {
+    font-size: clamp(1.25rem, 7.3cqw, 1.625rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .sgp__close {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin: -8px -8px -8px 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--sgp-mint);
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.2s ease;
+  }
+
+  .sgp__close:hover { background: rgb(243 254 238 / 0.12); transform: rotate(90deg); }
+
+  .sgp__screen {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 4.7cqw calc(20cqw + 8px);
+  }
+
+  .sgp__screen-enter { animation: sgpIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .sgp__screen-leave { animation: sgpOut 0.3s ease both; }
+
+  @keyframes sgpIn { from { opacity: 0; transform: translateY(14px); } }
+  @keyframes sgpOut { to { opacity: 0; transform: translateY(-10px); } }
+
+  .sgp__pill {
+    margin: 4.4cqw 0 0;
+    padding: 0.55em 1.6em;
+    border: 2px solid var(--sgp-mint);
+    border-radius: 7.5px;
+    background: var(--sgp-lav);
+    color: #000;
+    font-size: clamp(0.625rem, 3.25cqw, 0.75rem);
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .sgp__title {
+    margin: 2.4cqw 0 0;
+    color: var(--sgp-mint);
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.75rem, 10.6cqw, 2.5rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .sgp__title > * { display: block; }
+  .sgp__title em { color: var(--sgp-lav); font-style: normal; }
+
+  .sgp__text {
+    margin: 3cqw 0 0;
+    font-size: clamp(0.8125rem, 3.9cqw, 0.9375rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.45;
+    text-wrap: balance;
+  }
+
+  /* gift */
+  .sgp__box {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: min(54cqw, 26dvh);
+    margin: 5cqw 0 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--sgp-lav);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .sgp__box:focus-visible { outline: 2px solid var(--sgp-mint); outline-offset: 6px; border-radius: 12px; }
+
+  .sgp-gift { display: block; width: 100%; height: auto; overflow: visible; }
+  .sgp-gift__lid { transform-box: fill-box; transform-origin: 50% 100%; }
+
+  /* idle: a small hop every few seconds says "tap me" */
+  .sgp__screen--box:not(.is-unwrapping) .sgp-gift { animation: sgpIdle 3s 1s ease-in-out infinite; }
+  .sgp__box:hover .sgp-gift { animation-duration: 1.2s; }
+
+  @keyframes sgpIdle {
+    0%, 70%, 100% { transform: none; }
+    76% { transform: translateY(-6px) rotate(-3deg); }
+    84% { transform: translateY(0) rotate(2deg); }
+    90% { transform: rotate(-1deg); }
+  }
+
+  /* unwrapping (Figma 4954:2935): shake, then the lid pops off and sparks fly */
+  .is-unwrapping .sgp-gift { animation: sgpShake 0.9s ease-in-out both; }
+  .is-opened .sgp-gift__lid { animation: sgpLid 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) both; }
+
+  @keyframes sgpShake {
+    0%, 100% { transform: none; }
+    15% { transform: rotate(-7deg) scale(1.02); }
+    30% { transform: rotate(6deg) scale(1.03); }
+    45% { transform: rotate(-5deg) scale(1.03); }
+    60% { transform: rotate(4deg) scale(1.02); }
+    75% { transform: rotate(-2deg); }
+  }
+
+  @keyframes sgpLid {
+    to { transform: translate(18px, -46px) rotate(18deg); opacity: 0; }
+  }
+
+  .sgp__sparks { position: absolute; inset: 0; pointer-events: none; }
+  .sgp__sparks i {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--sgp-mint);
+    opacity: 0;
+  }
+  .sgp__sparks i:nth-child(even) { background: var(--sgp-lav); width: 6px; height: 12px; }
+  .is-opened .sgp__sparks i { animation: sgpSpark 0.9s ease-out both; }
+  .sgp__sparks i:nth-child(1) { --x: -90px; --y: -80px; }
+  .sgp__sparks i:nth-child(2) { --x: 90px; --y: -86px; }
+  .sgp__sparks i:nth-child(3) { --x: -120px; --y: -10px; }
+  .sgp__sparks i:nth-child(4) { --x: 118px; --y: -16px; }
+  .sgp__sparks i:nth-child(5) { --x: -40px; --y: -120px; }
+  .sgp__sparks i:nth-child(6) { --x: 48px; --y: -116px; }
+  .sgp__sparks i:nth-child(7) { --x: -100px; --y: 40px; }
+  .sgp__sparks i:nth-child(8) { --x: 104px; --y: 36px; }
+
+  @keyframes sgpSpark {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.4); }
+    100% { opacity: 0; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) rotate(220deg) scale(1); }
+  }
+
+  .sgp__box-foot {
+    display: grid;
+    place-items: center;
+    min-height: 48px;
+    margin-top: 6cqw;
+  }
+
+  /* Figma 4954:2927: 208 × 39 mint button, lavender border + glow, Boldonse 16 */
+  .sgp__unwrap {
+    min-width: 61cqw;
+    min-height: 44px;
+    padding: 0.5em 1.4em;
+    border: 2px solid var(--sgp-lav);
+    border-radius: 9px;
+    background: var(--sgp-mint);
+    box-shadow: 0 1.5px 5px 1px var(--sgp-lav);
+    color: #000;
+    font-family: var(--font-accent--family);
+    font-size: clamp(0.875rem, 4.7cqw, 1.0625rem);
+    font-weight: var(--font-accent--weight);
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .sgp__unwrap:hover { transform: translateY(-2px); box-shadow: 0 4px 14px 2px var(--sgp-lav); }
+  .sgp__unwrap:active { transform: translateY(1px); }
+  .sgp__unwrap:focus-visible { outline: 2px solid var(--sgp-mint); outline-offset: 3px; }
+
+  .sgp__unwrapping {
+    display: none;
+    margin: 0;
+    font-size: clamp(0.875rem, 4.4cqw, 1rem);
+    font-weight: 500;
+  }
+
+  .is-unwrapping .sgp__unwrap { display: none; }
+  .is-unwrapping .sgp__unwrapping { display: block; }
+  .is-unwrapping .sgp__fine { visibility: hidden; }
+
+  .sgp__fine {
+    margin: 3.5cqw 0 0;
+    color: var(--sgp-mint);
+    font-size: clamp(0.625rem, 2.95cqw, 0.6875rem);
+    font-weight: 300;
+    line-height: 1.5;
+    opacity: 0.85;
+  }
+
+  /* claim */
+  .sgp__burst {
+    position: relative;
+    width: min(84cqw, 30dvh * 1.5);
+    margin-top: 2cqw;
+  }
+
+  .sgp__burst svg { display: block; width: 100%; height: auto; }
+
+  .sgp__burst-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 2%;
+    color: #000;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.05;
+    text-transform: uppercase;
+  }
+
+  .sgp__burst-big { font-size: clamp(1.25rem, 9.5cqw, 2.25rem); }
+  .sgp__burst-small { margin-top: 2px; font-family: var(--font-body--family, Inter, sans-serif); font-size: clamp(0.625rem, 3cqw, 0.75rem); font-weight: 700; text-transform: none; }
+
+  .is-entering .sgp__burst { animation: sgpBurst 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+  @keyframes sgpBurst { from { transform: scale(0.4) rotate(-12deg); opacity: 0; } }
+
+  .sgp__title--claim { margin-top: 2cqw; font-size: clamp(1.875rem, 13.5cqw, 3rem); line-height: 1.1; }
+  .sgp__title--claim > * { display: inline; }
+  .sgp__title--claim em { color: var(--sgp-lav); }
+  .sgp__title--claim span { color: var(--sgp-mint); }
+
+  .sgp__screen--claim .sgp__text { margin-top: 1.5cqw; font-weight: 400; letter-spacing: 0.04em; }
+
+  .sgp__form { display: flex; flex-direction: column; width: 100%; margin-top: 4cqw; text-align: left; }
+
+  .sgp__label { margin: 0 0 6px; font-size: clamp(0.75rem, 3.5cqw, 0.8125rem); }
+
+  .sgp__input {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 14px;
+    border: 2px solid #fff;
+    border-radius: 4px;
+    background: #fff;
+    color: #000;
+    font-size: 16px; /* 16px stops iOS zooming in on focus */
+    font-family: inherit;
+  }
+
+  .sgp__input::placeholder { color: #8a8a8a; }
+  .sgp__input:focus { outline: none; border-color: var(--sgp-lav); box-shadow: 0 0 0 3px rgb(175 189 248 / 0.45); }
+  .sgp__input[aria-invalid='true'] { border-color: #ff8a8a; }
+
+  .sgp__error { min-height: 1em; margin: 4px 0 0; color: #ff9b9b; font-size: 0.75rem; }
+  .sgp__error:empty { min-height: 0; margin: 0; }
+
+  .sgp__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    min-height: 46px;
+    margin-top: 12px;
+    padding: 0.6em 1em;
+    border: 0;
+    border-radius: 10px;
+    background: var(--sgp-lav);
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+  }
+
+  .sgp__btn:hover { background: var(--sgp-mint); transform: translateY(-1px); }
+  .sgp__btn:active { transform: translateY(1px); }
+  .sgp__btn:disabled { opacity: 0.6; cursor: progress; }
+  .sgp__btn:focus-visible { outline: 2px solid var(--sgp-mint); outline-offset: 3px; }
+
+  .sgp__btn--accent { font-family: var(--font-accent--family); font-size: clamp(0.9375rem, 5.2cqw, 1.1875rem); font-weight: var(--font-accent--weight); }
+
+  .sgp__consent {
+    margin: 4.5cqw 0 0;
+    color: #a9a9a9;
+    font-size: clamp(0.6875rem, 3.5cqw, 0.75rem);
+    letter-spacing: 0.02em;
+    line-height: 1.45;
+  }
+
+  .sgp__consent a { color: inherit; }
+
+  .sgp__decline {
+    margin-top: 4px;
+    padding: 6px 10px;
+    border: 0;
+    background: none;
+    color: #a9a9a9;
+    font-size: clamp(0.6875rem, 3.5cqw, 0.75rem);
+    cursor: pointer;
+  }
+
+  .sgp__decline:hover { color: var(--sgp-mint); text-decoration: underline; }
+
+  .sgp__notice { margin: 4cqw 0 0; padding: 10px 12px; border: 1.5px solid var(--sgp-lav); border-radius: 8px; font-size: 0.875rem; }
+
+  /* code */
+  .sgp__gift-small { width: min(30cqw, 15dvh); margin-top: 5cqw; color: var(--sgp-lav); }
+  .is-entering .sgp__gift-small { animation: sgpBurst 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+  .sgp__title--code { margin-top: 3cqw; font-size: clamp(1.75rem, 11.2cqw, 2.625rem); line-height: 1.1; }
+
+  .sgp__code {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-height: 54px;
+    margin-top: 6cqw;
+    padding: 6px 10px;
+    border: 2px solid var(--sgp-lav);
+    border-radius: 4px;
+    background: #fff;
+    color: #000;
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.375rem, 9.4cqw, 2.25rem);
+    font-weight: var(--font-accent--weight);
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    word-break: break-all;
+  }
+
+  .sgp__copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    padding: 8px 10px;
+    border: 0;
+    background: none;
+    color: #bdbdbd;
+    font-size: clamp(0.75rem, 3.5cqw, 0.8125rem);
+    cursor: pointer;
+  }
+
+  .sgp__copy:hover { color: var(--sgp-mint); }
+
+  .sgp__btn--shop { margin-top: 4cqw; min-height: 50px; font-size: clamp(0.875rem, 4.6cqw, 1rem); font-weight: 700; }
+
+  .sgp__fine--code { margin-top: 5cqw; font-size: clamp(0.625rem, 3cqw, 0.6875rem); }
+
+  /* lavender wave along the bottom */
+  .sgp__wave-wrap {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 20cqw;
+    color: var(--sgp-lav);
+    pointer-events: none;
+  }
+
+  .sgp__wave-wrap .sgp-wave { display: block; width: 100%; height: 100%; }
+
+  /* side tab after closing */
+  .sgp-tab {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    z-index: 2147482000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 10px;
+    border: 2px solid #000;
+    border-left: 0;
+    border-radius: 0 10px 10px 0;
+    background: var(--sgp-lav, #afbdf8);
+    box-shadow: 3px 4px 0 #000;
+    color: #000;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    writing-mode: vertical-rl;
+    transform: translateY(-50%) rotate(180deg);
+    cursor: pointer;
+    transition: padding 0.2s ease;
+  }
+
+  .sgp-tab svg { transform: rotate(90deg); }
+  .sgp-tab:hover { padding-right: 14px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sgp, .sgp__card { transition: none; }
+    .sgp *, .sgp-gift { animation: none !important; }
+  }
+</style>
+
+<script>
+  (() => {
+    const config = {
+      delayMs: {{ s.delay_seconds | times: 1000 | json }},
+      code: {{ popup_code | json }},
+      klaviyoCompanyId: {{ s.klaviyo_company_id | strip | json }},
+      klaviyoListId: {{ s.klaviyo_list_id | strip | json }},
+      excludedPaths: {{ s.excluded_paths | newline_to_br | split: '<br />' | json }},
+      unwrapping: {{ s.unwrapping | json }},
+      copied: 'Copied',
+      copyLabel: {{ s.copy_label | json }},
+      invalid: 'Enter a valid email address.',
+    };
+
+    const KEYS = {
+      dismissedAt: 'somna_popup_dismissed_at', // legacy 14-day cooldown key, cleared on load
+      signedUp: 'somna_popup_signed_up',       // localStorage: signed up, never show again
+      suppressed: 'somna_popup_suppressed',    // localStorage: arrived from Klaviyo / known profile
+      scratched: 'somna_popup_scratched',      // legacy localStorage key, cleared on load
+      closed: 'somna_popup_closed',            // session cookie: closed this browser session
+    };
+    const storage = {
+      get(store, key) { try { return window[store].getItem(key); } catch (e) { return null; } },
+      set(store, key, value) { try { window[store].setItem(key, value); } catch (e) {} },
+      remove(store, key) { try { window[store].removeItem(key); } catch (e) {} }
+    };
+
+    // "Closed" lives in a session cookie (no expiry): every page and tab shares it, and the
+    // browser clears it when it is closed, so the popup comes back on the next visit.
+    const closedForSession = {
+      get() { try { return document.cookie.split('; ').includes(KEYS.closed + '=1'); } catch (e) { return false; } },
+      set() { try { document.cookie = KEYS.closed + '=1; path=/; SameSite=Lax'; } catch (e) {} },
+    };
+
+    function track(name, data = {}) {
+      const eventName = 'somna_popup_' + name;
+      const payload = { ...data, source: 'Scratch Popup' };
+      try { (window.dataLayer = window.dataLayer || []).push({ event: eventName, ...payload }); } catch (e) {}
+      try { window.Shopify?.analytics?.publish?.(eventName, payload); } catch (e) {}
+      try { window.klaviyo?.push?.(['track', 'Scratch Popup ' + name.replace(/_/g, ' '), payload]); } catch (e) {}
+    }
+
+    function isSuppressed() {
+      const path = window.location.pathname;
+      const excluded = config.excludedPaths.map((p) => p.trim()).filter(Boolean);
+      if (excluded.some((p) => path.includes(p))) return true;
+      if (storage.get('localStorage', KEYS.signedUp) || storage.get('localStorage', KEYS.suppressed)) return true;
+      const params = new URLSearchParams(window.location.search);
+      const fromKlaviyo =
+        params.has('_kx') ||
+        /klaviyo/i.test(params.get('utm_source') || '') ||
+        (params.get('utm_medium') || '').toLowerCase() === 'email';
+      let knownToKlaviyo = false;
+      try {
+        const cookie = document.cookie.split('; ').find((c) => c.startsWith('__kla_id='));
+        if (cookie) {
+          const data = JSON.parse(atob(decodeURIComponent(cookie.split('=')[1])));
+          knownToKlaviyo = Boolean(data.$exchange_id || data.$email);
+        }
+      } catch (e) {}
+      if (fromKlaviyo || knownToKlaviyo) {
+        storage.set('localStorage', KEYS.suppressed, '1');
+        return true;
+      }
+      return false;
+    }
+
+    function init() {
+      const overlay = document.getElementById('somna-overlay');
+      const teaserTab = document.getElementById('somna-teaser-tab');
+      if (!overlay || overlay.dataset.somnaReady) return;
+      overlay.dataset.somnaReady = 'true';
+
+      const card = overlay.querySelector('.sgp__card');
+      const screens = [1, 2, 3].map((n) => document.getElementById('somna-screen-' + n));
+      const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let isOpen = false;
+      let lastFocus = null;
+      let openTimer = null;
+      let closeTimer = null;
+      const CLOSE_MS = 240;
+
+      // theme editor: open straight away so the popup can be styled
+      const inEditor = {{ request.design_mode | json }};
+
+      function lockScroll() {
+        const root = document.documentElement;
+        const scrollbar = window.innerWidth - root.clientWidth;
+        root.style.setProperty('--somna-scrollbar-width', scrollbar > 0 ? scrollbar + 'px' : '0px');
+        root.classList.add('somna-popup-open');
+      }
+
+      function unlockScroll() {
+        const root = document.documentElement;
+        root.classList.remove('somna-popup-open');
+        root.style.removeProperty('--somna-scrollbar-width');
+      }
+
+      storage.remove('localStorage', KEYS.scratched);
+      storage.remove('localStorage', KEYS.dismissedAt);
+
+      if (!inEditor && isSuppressed()) return;
+
+      const closedThisSession = closedForSession.get();
+      if (closedThisSession && !inEditor) teaserTab?.classList.remove('somna-hidden');
+
+      function showScreen(index) {
+        screens.forEach((screen, i) => screen?.classList.toggle('somna-hidden', i !== index));
+        const screen = screens[index];
+        screen?.classList.remove('sgp__screen-enter', 'is-entering');
+        void screen?.offsetWidth;
+        screen?.classList.add('sgp__screen-enter', 'is-entering');
+        card.scrollTop = 0;
+        overlay.setAttribute('aria-labelledby', 'somna-screen-' + (index + 1) + '-title');
+      }
+
+      function focusables() {
+        return [...overlay.querySelectorAll('button, [href], input, [tabindex="0"]')].filter(
+          (el) => !el.disabled && el.offsetParent !== null
+        );
+      }
+
+      function onKeydown(event) {
+        if (!isOpen) return;
+        if (event.key === 'Escape') { event.preventDefault(); closePopup(); return; }
+        if (event.key === 'Tab') {
+          const items = focusables();
+          if (!items.length) return;
+          const first = items[0];
+          const last = items[items.length - 1];
+          if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+          else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        }
+      }
+
+      function openPopup(trigger) {
+        if (isOpen) return;
+        // Automatic triggers (timer, exit intent) never reopen it after a close or a sign-up;
+        // only the visitor's own click on the side tab can.
+        if (trigger !== 'teaser' && trigger !== 'editor' && (closedForSession.get() || storage.get('localStorage', KEYS.signedUp))) return;
+        isOpen = true;
+        clearTimeout(openTimer);
+        clearTimeout(closeTimer);
+        lastFocus = document.activeElement;
+        teaserTab?.classList.add('somna-hidden');
+        overlay.classList.remove('somna-hidden');
+        overlay.setAttribute('aria-hidden', 'false');
+        lockScroll();
+        void overlay.offsetWidth;
+        overlay.classList.add('somna-visible');
+        document.addEventListener('keydown', onKeydown);
+        setTimeout(() => {
+          const unwrapBtn = screens[0].querySelector('.sgp__unwrap');
+          if (!screens[0].classList.contains('somna-hidden') && unwrapBtn && unwrapBtn.offsetParent) unwrapBtn.focus({ preventScroll: true });
+          else card.focus({ preventScroll: true });
+        }, 60);
+        track('view', { trigger });
+      }
+
+      function closePopup() {
+        if (!isOpen) return;
+        isOpen = false;
+        overlay.classList.remove('somna-visible');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.removeEventListener('keydown', onKeydown);
+        const signedUp = storage.get('localStorage', KEYS.signedUp);
+        if (!signedUp && !inEditor) closedForSession.set();
+        clearTimeout(openTimer);
+        closeTimer = setTimeout(() => {
+          overlay.classList.add('somna-hidden');
+          unlockScroll();
+          if (!signedUp) teaserTab?.classList.remove('somna-hidden');
+          if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus({ preventScroll: true });
+        }, CLOSE_MS);
+        track('close');
+      }
+
+      overlay.querySelectorAll('.somna-close-btn, .somna-close-trigger').forEach((el) => el.addEventListener('click', closePopup));
+      overlay.addEventListener('click', (event) => { if (event.target === overlay) closePopup(); });
+      teaserTab?.addEventListener('click', () => openPopup('teaser'));
+
+      // ---------- Unwrap the box (replaces the scratch card) ----------
+      let unwrapped = false;
+      function unwrap() {
+        if (unwrapped) return;
+        unwrapped = true;
+        const screen = screens[0];
+        const status = screen.querySelector('.sgp__unwrapping');
+        screen.classList.add('is-unwrapping');
+        if (status) status.textContent = config.unwrapping;
+        screen.querySelector('.sgp__box')?.setAttribute('aria-disabled', 'true');
+        track('scratch_complete', { method: 'unwrap' });
+        const fast = reduceMotion();
+        setTimeout(() => screen.classList.add('is-opened'), fast ? 0 : 900);
+        setTimeout(() => {
+          screen.classList.add('sgp__screen-leave');
+          setTimeout(() => {
+            screen.classList.remove('sgp__screen-leave');
+            showClaimScreen();
+          }, fast ? 0 : 300);
+        }, fast ? 500 : 1700);
+      }
+      screens[0].querySelectorAll('[data-unwrap]').forEach((el) => el.addEventListener('click', unwrap));
+
+      // ---------- Email capture (Klaviyo) ----------
+      const form = document.getElementById('somna-signup-form');
+      const emailInput = document.getElementById('somna-email-input');
+      const errorBox = document.getElementById('somna-error-container');
+      const submitBtn = document.getElementById('somna-submit-btn');
+      const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+      function showError(message) {
+        errorBox.textContent = message;
+        emailInput.setAttribute('aria-invalid', message ? 'true' : 'false');
+        if (message) emailInput.focus();
+      }
+
+      function showAlreadySubscribed() {
+        form?.classList.add('somna-hidden');
+        overlay.querySelector('#somna-screen-2 .sgp__consent')?.classList.add('somna-hidden');
+        const message = document.getElementById('somna-already-subscribed');
+        message?.classList.remove('somna-hidden');
+        message?.setAttribute('tabindex', '-1');
+        message?.focus();
+      }
+
+      function showClaimScreen() {
+        showScreen(1);
+        if (storage.get('localStorage', KEYS.signedUp)) showAlreadySubscribed();
+        else setTimeout(() => emailInput?.focus({ preventScroll: true }), 350);
+      }
+
+      function success() {
+        storage.set('localStorage', KEYS.signedUp, '1');
+        showScreen(2);
+        document.getElementById('somna-copy-btn')?.focus({ preventScroll: true });
+      }
+
+      form?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const email = emailInput.value.trim();
+        showError('');
+        if (!EMAIL_RE.test(email)) { showError(config.invalid); return; }
+        if (storage.get('localStorage', KEYS.signedUp)) { showAlreadySubscribed(); return; }
+
+        submitBtn.disabled = true;
+        track('email_submit');
+        const payload = {
+          data: {
+            type: 'subscription',
+            attributes: {
+              custom_source: 'Scratch Popup',
+              profile: {
+                data: {
+                  type: 'profile',
+                  attributes: { email, subscriptions: { email: { marketing: { consent: 'SUBSCRIBED' } } } },
+                },
+              },
+            },
+            relationships: { list: { data: { type: 'list', id: config.klaviyoListId } } },
+          },
+        };
+
+        try {
+          const response = await fetch(
+            `https://a.klaviyo.com/client/subscriptions/?company_id=${encodeURIComponent(config.klaviyoCompanyId)}`,
+            {
+              method: 'POST',
+              headers: { Accept: 'application/vnd.api+json', 'Content-Type': 'application/vnd.api+json', Revision: '2026-01-15' },
+              body: JSON.stringify(payload),
+            }
+          );
+          if (response.ok) success();
+          else if (response.status === 400) showError(config.invalid);
+          else success();
+        } catch (error) {
+          success();
+        } finally {
+          submitBtn.disabled = false;
+        }
+      });
+
+      // ---------- Code screen ----------
+      const copyBtn = document.getElementById('somna-copy-btn');
+      copyBtn?.addEventListener('click', async () => {
+        const codeEl = document.getElementById('somna-discount-code-text');
+        const code = codeEl?.textContent.trim() || config.code;
+        try {
+          await navigator.clipboard.writeText(code);
+        } catch (e) {
+          const range = document.createRange();
+          range.selectNodeContents(codeEl);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          try { document.execCommand('copy'); } catch (err) {}
+          selection.removeAllRanges();
+        }
+        const label = copyBtn.querySelector('.sgp__copy-label') || copyBtn;
+        label.textContent = config.copied;
+        track('code_copied');
+        setTimeout(() => { label.textContent = config.copyLabel; }, 2000);
+      });
+
+      document.getElementById('somna-shop-btn')?.addEventListener('click', () => {
+        track('shop_now_click');
+        storage.set('localStorage', KEYS.signedUp, '1');
+      });
+
+      function consentBannerOpen() {
+        const banner = document.getElementById('shopify-pc__banner');
+        if (!banner) return false;
+        const style = getComputedStyle(banner);
+        return style.display !== 'none' && style.visibility !== 'hidden' && banner.getBoundingClientRect().height > 0;
+      }
+
+      function openWhenClear(trigger) {
+        if (!consentBannerOpen()) { openPopup(trigger); return; }
+        const check = () => {
+          if (consentBannerOpen()) return;
+          clearInterval(poll);
+          document.removeEventListener('visitorConsentCollected', check);
+          setTimeout(() => openPopup(trigger), 1000);
+        };
+        const poll = setInterval(check, 1000);
+        document.addEventListener('visitorConsentCollected', check);
+      }
+
+      if (inEditor) {
+        if ({{ s.editor_preview | json }}) openPopup('editor');
+        return;
+      }
+      if (closedThisSession) return;
+      openTimer = setTimeout(() => openWhenClear('timer'), config.delayMs);
+
+      if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        const onExitIntent = (event) => {
+          if (!event.relatedTarget && event.clientY <= 0) {
+            document.removeEventListener('mouseout', onExitIntent);
+            openWhenClear('exit_intent');
+          }
+        };
+        document.addEventListener('mouseout', onExitIntent);
+      }
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Welcome popup",
+  "class": "somna-scratch-popup-section",
+  "settings": [
+    { "type": "checkbox", "id": "enabled", "label": "Enable popup", "default": true },
+    { "type": "checkbox", "id": "editor_preview", "label": "Open it in the theme editor", "default": true, "info": "Only in the editor, so you can see your changes." },
+    { "type": "range", "id": "delay_seconds", "label": "Open after", "min": 3, "max": 60, "step": 1, "unit": "s", "default": 10 },
+    { "type": "text", "id": "discount_code", "label": "Discount code", "default": "WELCOME10", "info": "Shown on the last screen and applied by its button. Must exist under Discounts." },
+    { "type": "text", "id": "shop_redirect", "label": "\"Shop now\" goes to", "default": "/collections/all" },
+    { "type": "header", "content": "Screen 1 — the box" },
+    { "type": "text", "id": "logo_text", "label": "Logo text", "default": "somna." },
+    { "type": "text", "id": "pill", "label": "Label", "default": "Pre Black Friday drop" },
+    { "type": "text", "id": "title_1", "label": "Heading line 1", "default": "What's in" },
+    { "type": "text", "id": "title_2", "label": "Heading line 2 (lavender)", "default": "the box?" },
+    { "type": "text", "id": "box_text", "label": "Text", "default": "Tap the box to unwrap your Pre Black Friday extra." },
+    { "type": "text", "id": "button", "label": "Button", "default": "Tap to unwrap" },
+    { "type": "text", "id": "unwrapping", "label": "While opening", "default": "Unwrapping…" },
+    { "type": "text", "id": "footnote", "label": "Small print", "default": "One treat per customer · first order only" },
+    { "type": "header", "content": "Screen 2 — email" },
+    { "type": "text", "id": "burst_1", "label": "Burst line 1", "default": "Extra" },
+    { "type": "text", "id": "burst_2", "label": "Burst line 2", "default": "10% off" },
+    { "type": "text", "id": "burst_3", "label": "Burst small line", "default": "your first order" },
+    { "type": "text", "id": "claim_1", "label": "Heading (lavender part)", "default": "It's" },
+    { "type": "text", "id": "claim_2", "label": "Heading (mint part)", "default": "yours." },
+    { "type": "text", "id": "claim_text", "label": "Text", "default": "Enter your email to claim it." },
+    { "type": "text", "id": "email_label", "label": "Email label", "default": "Email address" },
+    { "type": "text", "id": "email_placeholder", "label": "Email placeholder", "default": "you@example.com" },
+    { "type": "text", "id": "submit_label", "label": "Button", "default": "Unlock my 10% off" },
+    { "type": "text", "id": "consent", "label": "Consent text", "default": "By signing up you agree to receive marketing emails from somna. unsubscribe anytime." },
+    { "type": "text", "id": "decline", "label": "Decline link", "default": "No thanks" },
+    { "type": "text", "id": "already_text", "label": "Already signed up", "default": "You're already on the list — check your inbox for your code." },
+    { "type": "header", "content": "Screen 3 — code" },
+    { "type": "text", "id": "code_title", "label": "Heading", "default": "Your code is ready" },
+    { "type": "text", "id": "copy_label", "label": "Copy link", "default": "Copy code" },
+    { "type": "text", "id": "shop_label", "label": "Button", "default": "Shop now, 10% applied" },
+    { "type": "text", "id": "small_print", "label": "Small print", "default": "We've also sent it to your inbox. Valid on your first order for 7 days." },
+    { "type": "text", "id": "teaser_label", "label": "Side tab (after closing)", "default": "Unwrap 10% off" },
+    { "type": "header", "content": "Klaviyo" },
+    { "type": "text", "id": "klaviyo_company_id", "label": "Public API key (company ID)", "default": "Tr7JSM" },
+    { "type": "text", "id": "klaviyo_list_id", "label": "Newsletter list ID", "default": "XyWydk" },
+    { "type": "textarea", "id": "excluded_paths", "label": "Don't show on these paths", "info": "One per line. Cart, checkout and account pages are already excluded.", "default": "/pages/nasal-strips\n/pages/mouth-tape\n/policies" }
+  ]
+}
+{% endschema %}
