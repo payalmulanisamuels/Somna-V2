@@ -61,6 +61,8 @@
     assign total_bags = total_bags | plus: line_bags
     if line_bags == 1
       assign one_bag_item = item
+      # 1-based line number, the same as the quantity input's data-cart-line
+      assign one_bag_line = forloop.index
     endif
   endfor
 
@@ -80,9 +82,9 @@
   {%- comment -%} "+1 bag" box: one bag in the cart; the button presses that line's own + (same cart update as the theme) {%- endcomment -%}
   {%- if total_bags == 1 and has_guides == false and one_bag_item != nil -%}
     {%- assign per_night = one_bag_item.final_price | divided_by: 30 -%}
-    <div class="somna-nudge" data-line="{{ one_bag_item.index }}">
+    <div class="somna-nudge">
       <p class="somna-nudge__text"><b>Add 1 more bag, unlock 3 free gifts.</b> Same {{ per_night | money }} a night. 60 nights covered.</p>
-      <button type="button" class="somna-nudge__button" data-somna-plus="{{ one_bag_item.index }}">+1 bag</button>
+      <button type="button" class="somna-nudge__button" data-somna-plus="{{ one_bag_line }}">+1 bag</button>
     </div>
   {%- endif -%}
 {%- else -%}
