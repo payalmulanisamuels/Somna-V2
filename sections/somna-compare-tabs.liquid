@@ -605,7 +605,13 @@
   }
 
   .somna-compare__panel--named .somna-compare__table tbody th {
-    width: 30%;
+    width: 28%;
+  }
+
+  /* long values ("90 (3 deliveries)") wrap inside their column instead of pushing the table sideways */
+  .somna-compare__panel--named .somna-compare__value {
+    white-space: normal;
+    text-wrap: balance;
   }
 
   @media screen and (max-width: 749px) {
