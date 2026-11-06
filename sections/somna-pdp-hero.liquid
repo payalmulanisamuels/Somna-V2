@@ -2791,6 +2791,18 @@
     padding-bottom: var(--somna-sticky-h, 0px);
   }
 
+  /* hide while the menu drawer (or any other drawer / search) is open, so it never sits on top of it */
+  html:has(header-drawer details[open], header-drawer details.menu-open, .search-modal[open], dialog[open]) .somna-sticky-atc {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, visibility 0s 0.2s;
+  }
+
+  .somna-sticky-atc {
+    transition: opacity 0.3s ease;
+  }
+
   .somna-sticky-atc__banner {
     margin: 0;
     padding: 6px 10px;
