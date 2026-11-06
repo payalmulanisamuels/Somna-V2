@@ -119,7 +119,7 @@
     "payment_image_mastercard": "shopify://shop_images/mastercard.png",
     "show_payment_shop_pay": false,
     "payment_image_visa": "shopify://shop_images/visa-icon.png",
-    "upsell_mode": "fixed_two",
+    "upsell_mode": "cart_rules",
     "fixed_heading": "*Stuffy nose* at night?",
     "fixed_product_1": "sleep-bundle",
     "fixed_variant_1": "52629425979623",
@@ -202,7 +202,23 @@
       "foreground": "#000000",
       "color1": "#333333",
       "color2": "#DFDFDF"
-    }
+    },
+    "ur_strips": "nasal-strips",
+    "ur_tape": "mouth-tape",
+    "ur_sleep": "sleep-bundle",
+    "ur_season": "season-bundle",
+    "ur_color": "the-colour-set",
+    "ur1_a_product": "mouth-tape",
+    "ur1_b_product": "the-colour-set",
+    "ur2_a_product": "nasal-strips",
+    "ur2_b_product": "season-bundle",
+    "ur3_a_product": "season-bundle",
+    "ur3_b_product": "the-colour-set",
+    "ur4_a_product": "sleep-bundle",
+    "ur4_b_product": "season-bundle",
+    "ur5_a_product": "the-colour-set",
+    "ur6_a_product": "mouth-tape",
+    "ur6_b_product": "season-bundle"
   },
   "presets": {
     "Horizon": {
