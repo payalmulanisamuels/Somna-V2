@@ -1,0 +1,315 @@
+{%- doc -%}
+  Somna V2 — "Shop" mega menu (desktop). Rendered by blocks/_header-menu.liquid inside the theme's own
+  submenu for the top link named in Theme settings → Somna Shop menu, so opening, closing, hover delay,
+  keyboard and the reveal animation all stay the theme's (assets/header-menu.js).
+
+  Columns: "Start with one" products, "Bundles" products (picked in theme settings), then a feature
+  picture card. Each row: the product's card picture, title, colour dots and a short line
+  (Collection – card details field, else "From [price]").
+{%- enddoc -%}
+{%- liquid
+  assign st = settings
+  assign feature = st.somna_mega_feature_product
+  assign feature_img = st.somna_mega_feature_image | default: feature.metafields.custom.card_image.value | default: feature.featured_image
+-%}
+<div class="somna-mega">
+  {%- for col in (1..2) -%}
+    {%- liquid
+      assign h_key = 'somna_mega_col' | append: col | append: '_heading'
+      assign p_key = 'somna_mega_col' | append: col | append: '_products'
+      assign col_heading = st[h_key]
+      assign col_products = st[p_key]
+    -%}
+    {%- if col_products != blank -%}
+      <div class="somna-mega__col">
+        {%- if col_heading != blank -%}<p class="somna-mega__heading">{{ col_heading | escape }}</p>{%- endif -%}
+        <ul class="somna-mega__list" role="list">
+          {%- for p in col_products -%}
+            {%- liquid
+              assign mf = p.metafields.custom
+              assign pic = mf.card_image.value | default: p.featured_image
+              # lowest Subscribe & Save price, else the lowest price
+              assign best = nil
+              for v in p.variants
+                for a in v.selling_plan_allocations
+                  if best == nil or a.price < best
+                    assign best = a.price
+                  endif
+                endfor
+              endfor
+              if best == nil
+                assign best = p.price_min
+              endif
+              assign best_money = best | money
+              assign line = mf.card_details.value
+              if line == blank
+                assign line = st.somna_mega_price_format | default: 'From [price]' | replace: '[price]', best_money
+              endif
+              assign dots = ''
+              for o in p.options_with_values
+                assign oname = o.name | downcase
+                if oname == 'color' or oname == 'colour'
+                  assign dots = o.values | join: '|'
+                endif
+              endfor
+              if dots == blank and mf.pdp_box_colors.value != blank
+                assign dots = mf.pdp_box_colors.value | join: '|'
+              endif
+            -%}
+            <li>
+              <a class="somna-mega__item" href="{{ p.url }}"{% if p.url == request.path %} aria-current="page"{% endif %}>
+                <span class="somna-mega__thumb">
+                  {%- if pic != blank -%}{{ pic | image_url: width: 160 | image_tag: loading: 'lazy', alt: '', width: 72, height: 72 }}{%- endif -%}
+                </span>
+                <span class="somna-mega__info">
+                  <span class="somna-mega__title">
+                    {{- p.title | escape -}}
+                    {%- if dots != blank -%}
+                      <span class="somna-mega__dots" aria-hidden="true">{%- assign dot_list = dots | split: '|' -%}{%- for c in dot_list -%}<i style="--d: {% render 'somna-swatch-color', name: c %};"></i>{%- endfor -%}</span>
+                    {%- endif -%}
+                  </span>
+                  <span class="somna-mega__line">{{ line | escape }}</span>
+                </span>
+                <span class="somna-mega__arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if feature_img != blank -%}
+    <a class="somna-mega__feature" href="{{ st.somna_mega_feature_link | default: feature.url | default: routes.all_products_collection_url }}">
+      <span class="somna-mega__feature-media">
+        {{ feature_img | image_url: width: 900 | image_tag: loading: 'lazy', alt: '', widths: '450, 700, 900', sizes: '420px' }}
+        {%- if st.somna_mega_feature_sticker != blank -%}<span class="somna-mega__sticker">{{ st.somna_mega_feature_sticker | escape }}</span>{%- endif -%}
+      </span>
+      {%- if st.somna_mega_feature_label != blank -%}<span class="somna-mega__feature-label">{{ st.somna_mega_feature_label | escape }} <span aria-hidden="true">→</span></span>{%- endif -%}
+    </a>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  /* Shop mega menu: mint panel, two product columns split by thin lines, feature picture on the right */
+  .somna-mega {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 420px);
+    gap: 0;
+    width: min(100%, 1232px);
+    margin-inline: auto;
+    padding: 28px 28px 30px;
+    border: 2px solid #000;
+    border-radius: 20px;
+    background: #f3feee;
+    box-shadow: 3.25px 4.06px 0 #000;
+    color: #000;
+    text-align: start;
+  }
+
+  .somna-mega__col {
+    padding-inline: 8px 28px;
+  }
+
+  .somna-mega__col + .somna-mega__col {
+    padding-inline-start: 28px;
+    border-inline-start: 1px solid rgb(0 0 0 / 0.15);
+  }
+
+  .somna-mega__heading {
+    margin: 0 0 14px;
+    color: #6f7fd8;
+    font-family: var(--font-body--family);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .somna-mega__list {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-mega__item {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 10px 8px 8px;
+    border-radius: 12px;
+    color: #000;
+    text-decoration: none;
+    transition: background-color 0.25s ease;
+  }
+
+  .somna-mega__item:hover,
+  .somna-mega__item:focus-visible {
+    background: #afbdf8;
+  }
+
+  .somna-mega__item:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
+
+  .somna-mega__thumb {
+    overflow: hidden;
+    width: 72px;
+    height: 72px;
+    border-radius: 10px;
+    background: #0b0f1d;
+  }
+
+  .somna-mega__thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-mega__item:hover .somna-mega__thumb img {
+    transform: scale(1.08);
+  }
+
+  .somna-mega__info {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .somna-mega__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-accent--family);
+    font-size: 1.0625rem;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .somna-mega__item[aria-current='page'] .somna-mega__title {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .somna-mega__dots {
+    display: inline-flex;
+  }
+
+  .somna-mega__dots i {
+    width: 12px;
+    height: 12px;
+    margin-left: -3px;
+    border-radius: 50%;
+    background: var(--d);
+  }
+
+  .somna-mega__dots i:first-child {
+    margin-left: 0;
+  }
+
+  .somna-mega__line {
+    overflow: hidden;
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    opacity: 0.75;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .somna-mega__arrow {
+    font-size: 1.25rem;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-mega__item:is(:hover, :focus-visible) .somna-mega__arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .somna-mega__feature {
+    display: grid;
+    gap: 10px;
+    padding-inline-start: 28px;
+    border-inline-start: 1px solid rgb(0 0 0 / 0.15);
+    color: #000;
+    text-decoration: none;
+  }
+
+  .somna-mega__feature-media {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 420 / 260;
+    border-radius: 14px;
+    background: #0b0f1d;
+  }
+
+  .somna-mega__feature-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-mega__feature:hover .somna-mega__feature-media img {
+    transform: scale(1.05);
+  }
+
+  .somna-mega__sticker {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 6px 12px;
+    border: 2px solid #000;
+    border-radius: 999px;
+    background: #f3feee;
+    box-shadow: 2px 3px 0 #000;
+    font-family: var(--font-accent--family);
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    rotate: -2deg;
+  }
+
+  .somna-mega__feature-label {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .somna-mega__feature-label span {
+    display: inline-block;
+    transition: transform 0.25s ease;
+  }
+
+  .somna-mega__feature:hover .somna-mega__feature-label span {
+    transform: translateX(4px);
+  }
+
+  .somna-mega__feature:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 4px;
+    border-radius: 14px;
+  }
+
+  @media screen and (max-width: 1199px) {
+    .somna-mega {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 300px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-mega :is(img, .somna-mega__arrow, .somna-mega__feature-label span) {
+      transition: none;
+    }
+  }
+{% endstylesheet %}

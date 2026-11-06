@@ -93,14 +93,30 @@
     %}
 
     {% capture children %}
+      {%- liquid
+        # Somna V2: the "Shop" link opens the Somna mega menu (snippets/somna-mega-menu) — Theme settings → Somna Shop menu.
+        # Also on the demo page (?view=mega-demo) so it can be reviewed first.
+        assign somna_mega_on = false
+        if settings.somna_mega_style == 'somna' or template.suffix == 'mega-demo'
+          assign somna_mega_on = true
+        endif
+        assign somna_mega_title = settings.somna_mega_parent | default: 'Shop' | downcase | strip
+      -%}
       {% for link in block_settings.menu.links %}
+        {%- liquid
+          assign somna_mega = false
+          assign link_key = link.title | downcase | strip
+          if somna_mega_on and link_key == somna_mega_title
+            assign somna_mega = true
+          endif
+        -%}
         <li
-          class="menu-list__list-item"
+          class="menu-list__list-item{% if somna_mega %} menu-list__list-item--somna-mega{% endif %}"
           on:blur="/deactivate"
           on:pointerenter="/activate"
           on:pointerleave="/deactivate"
         >
-          {%- if link.links != blank -%}
+          {%- if link.links != blank or somna_mega -%}
             <span class="menu-list__trigger">
           {%- endif -%}
           <a
@@ -114,7 +130,7 @@
           >
             <span class="menu-list__link-title">{{- link.title -}}</span>
           </a>
-          {%- if link.links != blank -%}
+          {%- if link.links != blank or somna_mega -%}
             <button
               type="button"
               class="menu-list__disclosure button-unstyled"
@@ -146,6 +162,11 @@
                 style="{% render 'submenu-font-styles', settings: block_settings %}"
               >
                 {% assign list_id = 'MegaMenuList-' | append: forloop.index %}
+                {%- if somna_mega -%}
+                <div class="mega-menu section section--full-width-margin section--{{ section.settings.section_width }}">
+                  {%- render 'somna-mega-menu' -%}
+                </div>
+                {%- else -%}
                 <div class="mega-menu section section--full-width-margin section--{{ section.settings.section_width }}">
                   <div
                     class="mega-menu__grid"
@@ -164,6 +185,7 @@
                     %}
                   </div>
                 </div>
+                {%- endif -%}
               </div>
             </div>
           {%- endif -%}

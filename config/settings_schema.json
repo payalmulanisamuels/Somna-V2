@@ -2750,5 +2750,99 @@
         "default": "My account →"
       }
     ]
+  },
+  {
+    "name": "Somna Shop menu",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Desktop mega menu for the Shop link. Demo: any page with ?view=mega-demo."
+      },
+      {
+        "type": "select",
+        "id": "somna_mega_style",
+        "label": "Look",
+        "options": [
+          {
+            "value": "classic",
+            "label": "Classic"
+          },
+          {
+            "value": "somna",
+            "label": "Somna mega menu"
+          }
+        ],
+        "default": "classic"
+      },
+      {
+        "type": "text",
+        "id": "somna_mega_parent",
+        "label": "Top link that opens it",
+        "default": "Shop"
+      },
+      {
+        "type": "text",
+        "id": "somna_mega_col1_heading",
+        "label": "Column 1 heading",
+        "default": "Start with one"
+      },
+      {
+        "type": "product_list",
+        "id": "somna_mega_col1_products",
+        "label": "Column 1 products",
+        "limit": 4
+      },
+      {
+        "type": "text",
+        "id": "somna_mega_col2_heading",
+        "label": "Column 2 heading",
+        "default": "Bundles"
+      },
+      {
+        "type": "product_list",
+        "id": "somna_mega_col2_products",
+        "label": "Column 2 products",
+        "limit": 4
+      },
+      {
+        "type": "text",
+        "id": "somna_mega_price_format",
+        "label": "Line under a product",
+        "default": "From [price] · Subscribe & Save",
+        "info": "Used when the product has no Collection – card details. [price] = lowest Subscribe & Save price."
+      },
+      {
+        "type": "header",
+        "content": "Feature picture"
+      },
+      {
+        "type": "product",
+        "id": "somna_mega_feature_product",
+        "label": "Product",
+        "info": "Its card picture is used when no picture is set."
+      },
+      {
+        "type": "image_picker",
+        "id": "somna_mega_feature_image",
+        "label": "Picture"
+      },
+      {
+        "type": "text",
+        "id": "somna_mega_feature_sticker",
+        "label": "Sticker",
+        "default": "Best value"
+      },
+      {
+        "type": "text",
+        "id": "somna_mega_feature_label",
+        "label": "Label",
+        "default": "Shop all products"
+      },
+      {
+        "type": "url",
+        "id": "somna_mega_feature_link",
+        "label": "Link"
+      }
+    ]
   }
 ]
