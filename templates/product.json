@@ -169,7 +169,8 @@
         "padding_top": 24,
         "padding_bottom": 40,
         "wave_color": "#f3feee",
-        "wave_shape": "drip-2"
+        "wave_shape": "drip-2",
+        "snore_direction": "tilt"
       }
     },
     "how": {
