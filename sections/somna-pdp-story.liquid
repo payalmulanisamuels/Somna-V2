@@ -98,7 +98,7 @@
     {%- capture snore_html -%}
       {%- if image and c.snore_spot != blank -%}
         {%- assign spot = c.snore_spot.value | remove: '%' | split: ',' -%}
-        <span class="somna-snore" style="left: {{ spot[0] | strip }}%; top: {{ spot[1] | strip }}%;" aria-hidden="true">
+        <span class="somna-snore somna-snore--{{ s.snore_direction | default: 'right' }}" style="left: {{ spot[0] | strip }}%; top: {{ spot[1] | strip }}%;" aria-hidden="true">
           <svg class="somna-snore__waves" viewBox="0 0 46 46" focusable="false"><path d="M8 30a8 8 0 0 0 6-10"/><path d="M14 36a16 16 0 0 0 10-20"/><path d="M20 42a24 24 0 0 0 14-30"/></svg>
           <span class="somna-snore__z">z</span><span class="somna-snore__z">z</span><span class="somna-snore__z">Z</span>
         </span>
@@ -765,6 +765,17 @@
     max-width: none;
     height: auto;
     overflow: visible;
+  }
+
+  /* direction setting: the sound waves turned around the mouth (their left middle) */
+  .somna-snore--up .somna-snore__waves {
+    transform-origin: 0 50%;
+    rotate: -90deg;
+  }
+
+  .somna-snore--tilt .somna-snore__waves {
+    transform-origin: 0 50%;
+    rotate: -45deg;
   }
 
   .somna-snore__waves path {
@@ -1990,6 +2001,7 @@
     { "type": "product", "id": "preview_product", "label": "Product for the theme editor", "info": "Only used where there is no product." },
     { "type": "video", "id": "video", "label": "Three steps: fallback video", "info": "The \"Watch how it works\" popup plays the product's steps metaobject \"video\" field, or the product metafield custom.how_it_works_video. This video is used only when neither is set." },
     { "type": "text", "id": "video_button_label", "label": "Three steps: button label", "default": "Watch how it works", "info": "Used when the steps metaobject has no button label." },
+    { "type": "select", "id": "snore_direction", "label": "Problem: snore waves direction", "options": [{ "value": "right", "label": "Right" }, { "value": "tilt", "label": "Up and forward (45°)" }, { "value": "up", "label": "Up" }], "default": "right" },
     { "type": "checkbox", "id": "layers_animation", "label": "Animate \"What it's made of\"", "info": "When every layer has its own image: the How it works product travels in and peels into the layers as you scroll (phones: the layers peel apart without the travel). Off for reduced motion.", "default": true },
     { "type": "select", "id": "pills_motion", "label": "Pill badges animation", "info": "A short shake every few seconds, one pill after another. Off for reduced motion.", "options": [{ "value": "none", "label": "None" }, { "value": "wiggle", "label": "Wiggle" }, { "value": "swing", "label": "Tilt-swing" }, { "value": "pop", "label": "Pop-jiggle" }], "default": "swing" },
     { "type": "checkbox", "id": "how_animation", "label": "Animate \"How it works\"", "info": "Hop-flip of the product and icons 1 → 4 when the section comes on screen. Off for visitors who prefer reduced motion.", "default": true },
