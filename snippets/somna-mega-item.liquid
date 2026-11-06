@@ -1,0 +1,77 @@
+{%- doc -%}
+  Somna V2 — one product in the Shop mega menu (snippets/somna-mega-menu).
+  Line: the product's Collection – card details field, else "From [price]" (lowest Subscribe & Save price).
+
+  @param {product} product
+  @param {string} style - row | card | name | stage
+  @param {string} [key] - pairs a name with its stage card (preview look)
+  @param {boolean} [active] - stage card shown first
+{%- enddoc -%}
+{%- liquid
+  assign p = product
+  assign st = settings
+  assign mf = p.metafields.custom
+  assign pic = mf.card_image.value | default: p.featured_image
+  assign best = nil
+  for v in p.variants
+    for a in v.selling_plan_allocations
+      if best == nil or a.price < best
+        assign best = a.price
+      endif
+    endfor
+  endfor
+  if best == nil
+    assign best = p.price_min
+  endif
+  assign best_money = best | money
+  assign price_line = st.somna_mega_price_format | default: 'From [price]' | replace: '[price]', best_money
+  assign line = mf.card_details.value | default: price_line
+  assign dots = ''
+  for o in p.options_with_values
+    assign oname = o.name | downcase
+    if oname == 'color' or oname == 'colour'
+      assign dots = o.values | join: '|'
+    endif
+  endfor
+  if dots == blank and mf.pdp_box_colors.value != blank
+    assign dots = mf.pdp_box_colors.value | join: '|'
+  endif
+-%}
+{%- capture dots_html -%}
+  {%- if dots != blank -%}
+    <span class="somna-mega__dots" aria-hidden="true">{%- assign dot_list = dots | split: '|' -%}{%- for c in dot_list -%}<i style="--d: {% render 'somna-swatch-color', name: c %};"></i>{%- endfor -%}</span>
+  {%- endif -%}
+{%- endcapture -%}
+{%- case style -%}
+  {%- when 'card' -%}
+    <a class="somna-mega__card" href="{{ p.url }}"{% if p.url == request.path %} aria-current="page"{% endif %}>
+      <span class="somna-mega__card-media">{%- if pic != blank -%}{{ pic | image_url: width: 600 | image_tag: loading: 'lazy', alt: '', widths: '300, 450, 600', sizes: '260px' }}{%- endif -%}</span>
+      <span class="somna-mega__title">{{ p.title | escape }}{{ dots_html }}</span>
+      <span class="somna-mega__line">{{ line | escape }}</span>
+      {%- if mf.card_details.value != blank -%}<span class="somna-mega__line somna-mega__line--price">{{ price_line | escape }}</span>{%- endif -%}
+    </a>
+  {%- when 'name' -%}
+    <a class="somna-mega__name{% if active %} is-active{% endif %}" href="{{ p.url }}" data-mega-key="{{ key }}"{% if p.url == request.path %} aria-current="page"{% endif %}>
+      <span>{{ p.title | escape }}</span>{{ dots_html }}<span class="somna-mega__arrow" aria-hidden="true">→</span>
+    </a>
+  {%- when 'stage' -%}
+    <a class="somna-mega__stage-card{% if active %} is-active{% endif %}" href="{{ p.url }}" data-mega-key="{{ key }}" tabindex="-1" aria-hidden="true">
+      <span class="somna-mega__stage-media">{%- if pic != blank -%}{{ pic | image_url: width: 1000 | image_tag: loading: 'lazy', alt: '', widths: '500, 750, 1000', sizes: '560px' }}{%- endif -%}</span>
+      <span class="somna-mega__stage-info">
+        <span class="somna-mega__title">{{ p.title | escape }}{{ dots_html }}</span>
+        <span class="somna-mega__line">{{ line | escape }}{% if mf.card_details.value != blank %} · {{ price_line | escape }}{% endif %}</span>
+      </span>
+      <span class="somna-mega__stage-btn">{{ st.somna_mega_button | default: 'Shop now' | escape }}</span>
+    </a>
+  {%- else -%}
+    <a class="somna-mega__item" href="{{ p.url }}"{% if p.url == request.path %} aria-current="page"{% endif %}>
+      <span class="somna-mega__thumb">
+        {%- if pic != blank -%}{{ pic | image_url: width: 160 | image_tag: loading: 'lazy', alt: '', width: 72, height: 72 }}{%- endif -%}
+      </span>
+      <span class="somna-mega__info">
+        <span class="somna-mega__title">{{ p.title | escape }}{{ dots_html }}</span>
+        <span class="somna-mega__line">{{ line | escape }}</span>
+      </span>
+      <span class="somna-mega__arrow" aria-hidden="true">→</span>
+    </a>
+{%- endcase -%}

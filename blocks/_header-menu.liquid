@@ -95,9 +95,9 @@
     {% capture children %}
       {%- liquid
         # Somna V2: the "Shop" link opens the Somna mega menu (snippets/somna-mega-menu) — Theme settings → Somna Shop menu.
-        # Also on the demo page (?view=mega-demo) so it can be reviewed first.
+        # Also on the demo pages (?view=mega-demo, -b, -c) so it can be reviewed first.
         assign somna_mega_on = false
-        if settings.somna_mega_style == 'somna' or template.suffix == 'mega-demo'
+        if settings.somna_mega_style == 'somna' or template.suffix contains 'mega-demo'
           assign somna_mega_on = true
         endif
         assign somna_mega_title = settings.somna_mega_parent | default: 'Shop' | downcase | strip
