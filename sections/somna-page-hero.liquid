@@ -9,12 +9,19 @@
   assign s = section.settings
   assign heading = s.heading | default: page.title
   assign crumb = s.breadcrumb_label | default: page.title
+  # Collection (Figma 4823:999): "open" style without a photo — the tagline and the buttons (filter chips) sit in a
+  # column on the right instead
+  assign aside = false
+  if s.style == 'aside'
+    assign aside = true
+  endif
 -%}
 <div
-  class="somna-page-hero somna-page-hero--image-{{ s.image_side }} somna-page-hero--{{ s.style | default: 'panel' }}"
+  class="somna-page-hero somna-page-hero--image-{{ s.image_side }} somna-page-hero--{{ s.style | default: 'panel' }}{% if aside %} somna-page-hero--open{% endif %}"
   style="--sph-bg: {{ s.background_color }}; --sph-panel: {{ s.panel_color }}; --sph-media: {{ s.media_color | default: s.panel_color }}; --sph-fit: {{ s.image_fit }}; --sph-accent: {{ s.accent_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
 >
   <div class="somna-container somna-page-hero__grid">
+    {%- unless aside -%}
     <div class="somna-page-hero__media{% if s.style == 'open' and s.drip_edge %} somna-edge-drip-bottom{% endif %}">
       {%- if s.image != blank -%}
         {{
@@ -32,8 +39,9 @@
         {{ 'image' | placeholder_svg_tag: 'somna-page-hero__image somna-page-hero__image--placeholder' }}
       {%- endif -%}
     </div>
+    {%- endunless -%}
 
-    <div class="somna-page-hero__panel{% if s.drip_edge and s.style != 'open' %} somna-edge-drip-bottom{% endif %}">
+    <div class="somna-page-hero__panel{% if s.drip_edge and s.style == 'panel' %} somna-edge-drip-bottom{% endif %}">
       {%- if s.show_breadcrumb -%}
         <nav class="somna-page-hero__crumbs" aria-label="{{ 'accessibility.breadcrumbs' | t | default: 'Breadcrumb' }}">
           <a href="{{ routes.root_url }}">{{ s.home_label | escape }}</a>
@@ -43,6 +51,10 @@
       {%- endif -%}
       {%- if s.eyebrow != blank -%}<p class="somna-page-hero__eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
       <h1 class="somna-page-hero__title somna-accent">{{ heading }}</h1>
+      {%- if aside -%}
+        </div>
+        <div class="somna-page-hero__aside">
+      {%- endif -%}
       {%- if s.tagline != blank -%}<p class="somna-page-hero__tagline">{{ s.tagline | escape }}</p>{%- endif -%}
       {%- if s.text != blank -%}<div class="somna-page-hero__text">{{ s.text }}</div>{%- endif -%}
       {%- if section.blocks.size > 0 -%}
@@ -50,7 +62,8 @@
           {%- for block in section.blocks -%}
             {%- assign b = block.settings -%}
             <a
-              class="somna-page-hero__button somna-page-hero__button--{{ b.style }}"
+              class="somna-page-hero__button somna-page-hero__button--{{ b.style }}{% if b.active %} is-active{% endif %}"
+              {%- if b.active %} aria-current="page"{% endif %}
               href="{{ b.link | default: '#' }}"
               {{ block.shopify_attributes }}
             >
@@ -241,7 +254,8 @@
 
     /* Entrance: photo and panel fade up once on load (the global reveal skips the first section). */
     .somna-page-hero__media,
-    .somna-page-hero__panel > * {
+    .somna-page-hero__panel > *,
+    .somna-page-hero__aside > * {
       animation: somna-page-hero-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
@@ -250,6 +264,7 @@
     .somna-page-hero__panel > :nth-child(4) { animation-delay: 0.18s; }
     .somna-page-hero__panel > :nth-child(5) { animation-delay: 0.24s; }
     .somna-page-hero__panel > :nth-child(n + 6) { animation-delay: 0.3s; }
+    .somna-page-hero__aside > * { animation-delay: 0.18s; }
 
     .somna-page-hero__media img {
       transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
@@ -375,6 +390,85 @@
     }
   }
 
+  /* "Aside" style (Figma 4823:999 Collection): heading on the left, tagline + filter chips centred in a right column */
+  .somna-page-hero__aside {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .somna-page-hero--aside .somna-page-hero__tagline {
+    color: #000;
+    font-size: clamp(1rem, 1.37vw, 1.2315rem);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+  }
+
+  .somna-page-hero--aside .somna-page-hero__actions {
+    justify-content: center;
+    gap: 9px;
+    margin-top: 0;
+  }
+
+  /* Figma 4823:1034–1045: 56px chips, mint with a 1px black border, Inter Bold 19.7px; current one black */
+  .somna-page-hero__button--chip {
+    min-height: 56px;
+    padding: 0 12px;
+    border: 1px solid #000;
+    border-radius: 34px;
+    background: #f3feee;
+    color: #000;
+    font-size: clamp(1rem, 1.37vw, 1.2315rem);
+    letter-spacing: 0.08em;
+    text-transform: none;
+  }
+
+  .somna-page-hero__button--chip.is-active {
+    min-width: 98px;
+    background: #000;
+    color: #f3feee;
+    text-transform: uppercase;
+  }
+
+  .somna-page-hero__button--chip:hover {
+    border-color: #000;
+    background: #000;
+    color: #f3feee;
+  }
+
+  @media screen and (min-width: 750px) {
+    .somna-page-hero--aside .somna-page-hero__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 618px);
+      align-items: start;
+      gap: 32px;
+    }
+
+    .somna-page-hero--aside .somna-page-hero__aside {
+      padding-top: clamp(40px, 5.8vw, 82px);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .somna-page-hero--aside .somna-page-hero__aside {
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .somna-page-hero--aside .somna-page-hero__actions {
+      justify-content: flex-start;
+      gap: 8px;
+    }
+
+    .somna-page-hero__button--chip {
+      min-height: 42px;
+      padding: 0 14px;
+      font-size: 0.875rem;
+      letter-spacing: 0.04em;
+    }
+  }
+
   @keyframes somna-page-hero-in {
     from {
       opacity: 0;
@@ -384,7 +478,8 @@
 
   @media (prefers-reduced-motion: reduce) {
     .somna-page-hero__media,
-    .somna-page-hero__panel > * {
+    .somna-page-hero__panel > *,
+    .somna-page-hero__aside > * {
       animation: none;
     }
 
@@ -412,7 +507,7 @@
     { "type": "text", "id": "image_position", "label": "Image focal point", "default": "object-position: center", "info": "CSS, e.g. object-position: 60% 40%" },
     { "type": "select", "id": "image_fit", "label": "Image fit", "options": [{ "value": "cover", "label": "Fill" }, { "value": "contain", "label": "Fit (cut-outs)" }], "default": "cover" },
     { "type": "color", "id": "media_color", "label": "Image background", "info": "Shows around cut-out images. Empty uses the panel colour." },
-    { "type": "select", "id": "style", "label": "Style", "options": [{ "value": "panel", "label": "Navy panel beside the photo" }, { "value": "open", "label": "Open: text on the background, photo on the right" }], "default": "panel", "info": "Open: italic words in the heading start a new line in the accent colour; the drip hangs under the photo." },
+    { "type": "select", "id": "style", "label": "Style", "options": [{ "value": "panel", "label": "Navy panel beside the photo" }, { "value": "open", "label": "Open: text on the background, photo on the right" }, { "value": "aside", "label": "Open, no photo: tagline and buttons in a right column" }], "default": "panel", "info": "Open: italic words in the heading start a new line in the accent colour; the drip hangs under the photo." },
     { "type": "select", "id": "image_side", "label": "Image side", "options": [{ "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }], "default": "left" },
     { "type": "checkbox", "id": "drip_edge", "label": "Drip edge on panel", "default": true },
     { "type": "header", "content": "Colours" },
@@ -426,15 +521,16 @@
     {
       "type": "button",
       "name": "Button",
-      "limit": 4,
+      "limit": 6,
       "settings": [
         { "type": "text", "id": "label", "label": "Label", "default": "Shop now" },
         { "type": "url", "id": "link", "label": "Link" },
-        { "type": "select", "id": "style", "label": "Style", "options": [{ "value": "primary", "label": "Filled" }, { "value": "secondary", "label": "Outline" }, { "value": "pill", "label": "Small pill with ↓ (jump link)" }], "default": "primary" }
+        { "type": "select", "id": "style", "label": "Style", "options": [{ "value": "primary", "label": "Filled" }, { "value": "secondary", "label": "Outline" }, { "value": "pill", "label": "Small pill with ↓ (jump link)" }, { "value": "chip", "label": "Chip (filter links)" }], "default": "primary" },
+        { "type": "checkbox", "id": "active", "label": "Current (black chip)", "default": false }
       ]
     }
   ],
-  "max_blocks": 4,
+  "max_blocks": 6,
   "presets": [{ "name": "Somna page hero" }]
 }
 {% endschema %}

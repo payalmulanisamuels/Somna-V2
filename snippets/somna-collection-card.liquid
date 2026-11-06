@@ -1,0 +1,90 @@
+{%- doc -%}
+  Somna V2 — product card for the Collection page (sections/somna-collection). Everything comes from the product:
+  picture (custom.card_image, else featured image), rating (custom.custom_review_rating_review_count),
+  details line (titles of custom.pdp_hero_features), lowest Subscribe & Save price + that variant's compare-at price.
+
+  @param {product} product
+  @param {string} style - singles | bundles | pick
+  @param {image} [image] - picture override
+  @param {string} [title] - title override
+  @param {string} [details] - details line override
+  @param {string} price_format - "[price]" and "[compare]" placeholders
+  @param {string} rating_format - "[rating]" and "[count]" placeholders
+  @param {string} button - button label
+{%- enddoc -%}
+{%- liquid
+  assign p = product
+  assign mf = p.metafields.custom
+  assign pic = image | default: mf.card_image.value | default: p.featured_image
+  assign name = title | default: p.title
+
+  # lowest Subscribe & Save price (falls back to the lowest one-time price)
+  assign best = nil
+  assign best_variant = nil
+  for v in p.variants
+    for a in v.selling_plan_allocations
+      if best == nil or a.price < best
+        assign best = a.price
+        assign best_variant = v
+      endif
+    endfor
+  endfor
+  if best == nil
+    assign best = p.price_min
+    assign best_variant = p.variants | sort: 'price' | first
+  endif
+  assign compare = best_variant.compare_at_price | default: 0
+  if compare <= best
+    assign compare = best_variant.price
+  endif
+  assign compare_html = ''
+  if compare > best
+    assign compare_html = compare | money | prepend: '<s>' | append: '</s>'
+  endif
+  assign price_line = price_format | escape
+  assign best_money = best | money
+  assign price_line = price_line | replace: '[price]', best_money | replace: '[compare]', compare_html | replace: '  ', ' '
+
+  # rating: same field and parsing as the product page hero
+  assign rating_line = ''
+  assign rating_raw = mf.custom_review_rating_review_count.value | strip_html | strip
+  if rating_raw != blank and rating_format != blank
+    assign rating = rating_raw | split: ' ' | first
+    assign rating_count = ''
+    if rating_raw contains '('
+      assign rating_count = rating_raw | split: '(' | last | split: ')' | first | strip
+    endif
+    assign rating_line = rating_format | replace: '[rating]', rating | replace: '[count]', rating_count
+  endif
+
+  # details: override, else the product's hero feature titles ("Nose + lips · 90 nights · One delivery")
+  assign detail_line = details
+  if detail_line == blank and style != 'singles'
+    assign feature_titles = ''
+    for f in mf.pdp_hero_features.value
+      if f.title != blank
+        if feature_titles != ''
+          assign feature_titles = feature_titles | append: ' · '
+        endif
+        assign feature_titles = feature_titles | append: f.title
+      endif
+    endfor
+    assign detail_line = feature_titles
+  endif
+-%}
+<article class="somna-ccard somna-ccard--{{ style }}">
+  <a class="somna-ccard__media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
+    {%- if pic != blank -%}
+      {{ pic | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: '(min-width: 990px) 410px, (min-width: 750px) 45vw, 92vw', loading: 'lazy', alt: '' }}
+    {%- else -%}
+      {{ 'product-1' | placeholder_svg_tag }}
+    {%- endif -%}
+  </a>
+  {%- if style == 'singles' and rating_line != blank -%}
+    <p class="somna-ccard__rating"><span class="somna-ccard__stars" aria-hidden="true">★★★★★</span> {{ rating_line | escape }}</p>
+  {%- endif -%}
+  <h3 class="somna-ccard__title"><a href="{{ p.url }}">{{ name | escape }}</a></h3>
+  {%- if detail_line != blank -%}<p class="somna-ccard__details">{{ detail_line | escape }}</p>{%- endif -%}
+  <p class="somna-ccard__price">{{ price_line }}</p>
+  <a class="somna-ccard__button" href="{{ p.url }}" aria-label="{{ button | escape }}: {{ name | escape }}">{{ button | escape }}</a>
+</article>
