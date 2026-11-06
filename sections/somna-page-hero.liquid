@@ -513,7 +513,11 @@
       line-height: 1.15;
     }
 
-    .somna-page-hero--open .somna-page-hero__actions {
+    .somna-page-hero--open .somna-page-hero__panel {
+      min-width: 0;
+    }
+
+    .somna-page-hero--open:not(.somna-page-hero--card) .somna-page-hero__actions {
       flex-wrap: nowrap;
       gap: 6px;
       overflow-x: auto;
