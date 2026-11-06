@@ -350,6 +350,10 @@
 
   /* trust stickers on phones (Figma): two per row, text centred, sized to the screen */
   @media screen and (max-width: 749px) {
+    .somna-cards:has(> * > .somna-cards__stickers, .somna-cards__stickers) {
+      padding-block: 10px 14px !important;
+    }
+
     .somna-cards__stickers.somna-stickers {
       display: grid;
       grid-template-columns: repeat(2, max-content);
