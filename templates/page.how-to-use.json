@@ -17,7 +17,8 @@
           "settings": {
             "label": "Nasal Strips",
             "link": "#nasal-strips",
-            "style": "pill"
+            "style": "pill",
+            "active": false
           }
         },
         "b2": {
@@ -25,7 +26,8 @@
           "settings": {
             "label": "Mouth Tape",
             "link": "#mouth-tape",
-            "style": "pill"
+            "style": "pill",
+            "active": false
           }
         },
         "b3": {
@@ -33,7 +35,8 @@
           "settings": {
             "label": "Together",
             "link": "#together",
-            "style": "pill"
+            "style": "pill",
+            "active": false
           }
         }
       },
@@ -48,19 +51,31 @@
         "breadcrumb_label": "",
         "eyebrow": "How to use",
         "heading": "Getting the most <em>from your first night.</em>",
+        "tagline": "",
         "text": "<p>Two small essentials, one simple routine. Here's how to use each one properly.</p>",
         "image": "shopify://shop_images/somna-v2-sleep-bundle.png",
         "image_position": "object-position: center",
         "image_fit": "cover",
         "media_color": "#0b0f1d",
+        "style": "open",
+        "search_placeholder": "",
+        "card_eyebrow": "",
+        "card_heading": "",
+        "card_text": "",
+        "search_count": "[n] matching questions",
+        "search_empty": "No answers for “[q]”. Try another word, or contact us below.",
+        "card_image_key": true,
+        "pin_motion": true,
+        "card_icon": "pin",
+        "card_button": "",
+        "card_link": "",
         "image_side": "right",
         "drip_edge": true,
         "background_color": "#afbdf8",
         "panel_color": "#0b0f1d",
         "accent_color": "#f3feee",
         "padding_top": 104,
-        "padding_bottom": 24,
-        "style": "open"
+        "padding_bottom": 24
       }
     },
     "wave_hero_strips": {
@@ -71,8 +86,10 @@
         "shape": "drip-8",
         "overlap": false,
         "flip": false,
+        "mobile_full": false,
         "drops": true,
         "animate": true,
+        "roll": 8,
         "height": 140,
         "height_mobile": 48
       }
@@ -115,6 +132,9 @@
       ],
       "settings": {
         "anchor": "nasal-strips",
+        "cutout_motion": "hop",
+        "layout": "split",
+        "image_align": "left",
         "image": "shopify://shop_images/somna-v2-season-how-strip.png",
         "image_position": "object-position: 72% 50%",
         "media_side": "left",
@@ -126,6 +146,11 @@
         "button_link": "/products/nasal-strips",
         "steps_heading": "How to apply",
         "note": "<p>Remove gently in the morning. Most people adjust within a few nights. If you have a cold, congestion, or any breathing condition, check with a doctor before use.</p>",
+        "card_product": "",
+        "card_rating": "[rating]/5 · [count] reviews",
+        "card_title": "",
+        "card_text": "Both, from [price]",
+        "card_button": "Shop now",
         "note_icon": "moon",
         "background_color": "#f3feee",
         "text_color": "#000000",
@@ -135,10 +160,7 @@
         "note_color": "#afbdf8",
         "note_text_color": "#000000",
         "padding_top": 72,
-        "padding_bottom": 40,
-        "layout": "split",
-        "image_align": "left",
-        "cutout_motion": "hop"
+        "padding_bottom": 40
       }
     },
     "wave_strips_tape": {
@@ -149,8 +171,10 @@
         "shape": "soft-1",
         "overlap": false,
         "flip": false,
+        "mobile_full": false,
         "drops": true,
         "animate": true,
+        "roll": 8,
         "height": 140,
         "height_mobile": 48
       }
@@ -193,6 +217,9 @@
       ],
       "settings": {
         "anchor": "mouth-tape",
+        "cutout_motion": "hop",
+        "layout": "split",
+        "image_align": "left",
         "image": "shopify://shop_images/somna-v2-season-how-tape.png",
         "image_position": "object-position: 26% 50%",
         "media_side": "right",
@@ -204,6 +231,11 @@
         "button_link": "/products/mouth-tape",
         "steps_heading": "How to apply",
         "note": "<p>Remove gently in the morning. Most people adjust within a few nights. If you have a cold, congestion, or any breathing condition, check with a doctor before use.</p>",
+        "card_product": "",
+        "card_rating": "[rating]/5 · [count] reviews",
+        "card_title": "",
+        "card_text": "Both, from [price]",
+        "card_button": "Shop now",
         "note_icon": "shield",
         "background_color": "#afbdf8",
         "text_color": "#000000",
@@ -213,10 +245,7 @@
         "note_color": "#afbdf8",
         "note_text_color": "#000000",
         "padding_top": 72,
-        "padding_bottom": 40,
-        "layout": "split",
-        "image_align": "left",
-        "cutout_motion": "hop"
+        "padding_bottom": 40
       }
     },
     "wave_tape_together": {
@@ -227,8 +256,10 @@
         "shape": "drip-6",
         "overlap": false,
         "flip": false,
+        "mobile_full": false,
         "drops": true,
         "animate": true,
+        "roll": 8,
         "height": 140,
         "height_mobile": 48
       }
@@ -237,6 +268,10 @@
       "type": "somna-guide",
       "settings": {
         "anchor": "together",
+        "cutout_motion": "hop",
+        "layout": "split",
+        "image_2": "shopify://shop_images/somna-v2-season-how-strip.png",
+        "image_align": "left",
         "image": "shopify://shop_images/somna-v2-season-how-tape.png",
         "image_position": "object-position: 50% 60%",
         "media_side": "left",
@@ -248,6 +283,12 @@
         "button_link": "/collections/all",
         "steps_heading": "",
         "note": "",
+        "card_product": "sleep-bundle",
+        "card_image": "shopify://shop_images/somna-v2-sleep-bundle.png",
+        "card_rating": "[rating]/5 · [count] reviews",
+        "card_title": "The Sleep Bundle",
+        "card_text": "Both, from [price]",
+        "card_button": "Shop now",
         "note_icon": "moon",
         "background_color": "#f3feee",
         "text_color": "#000000",
@@ -257,17 +298,23 @@
         "note_color": "#afbdf8",
         "note_text_color": "#000000",
         "padding_top": 48,
-        "padding_bottom": 56,
-        "layout": "split",
-        "image_2": "shopify://shop_images/somna-v2-season-how-strip.png",
-        "image_align": "left",
-        "card_product": "sleep-bundle",
-        "card_image": "shopify://shop_images/somna-v2-sleep-bundle.png",
-        "card_rating": "[rating]/5 · [count] reviews",
-        "card_title": "The Sleep Bundle",
-        "card_text": "Both, from [price]",
-        "card_button": "Shop now",
-        "cutout_motion": "hop"
+        "padding_bottom": 56
+      }
+    },
+    "wave_settling_guarantee": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#f3feee",
+        "bottom_color": "#000000",
+        "shape": "drip-10",
+        "overlap": false,
+        "flip": false,
+        "mobile_full": false,
+        "drops": true,
+        "animate": true,
+        "roll": 8,
+        "height": 140,
+        "height_mobile": 48
       }
     },
     "settling": {
@@ -288,7 +335,14 @@
             "case": "uppercase",
             "wrap": "balance",
             "text_color": "#f4fef3",
-            "accent_color": "#98a3de"
+            "accent_color": "#98a3de",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {}
         },
@@ -306,7 +360,15 @@
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
-            "text_color": "#f4fef3"
+            "text_color": "#f4fef3",
+            "accent_color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {}
         },
@@ -314,15 +376,17 @@
           "type": "button",
           "settings": {
             "label": "30-Night Money-Back Guarantee.",
-            "link": "/policies/refund-policy",
+            "link": "shopify://pages/return-refund-policy",
+            "open_in_new_tab": false,
             "style_class": "button-custom",
             "custom_button_background": "#afbdf8",
             "custom_button_text": "#000000",
             "custom_button_border": "#000000",
+            "link_text_color": "",
             "width": "custom",
             "custom_width": 32,
-            "custom_width_mobile": 100,
-            "width_mobile": "custom"
+            "width_mobile": "custom",
+            "custom_width_mobile": 100
           },
           "blocks": {}
         }
@@ -332,32 +396,37 @@
         "text",
         "button"
       ],
-      "settings": {
-        "content_direction": "column",
-        "horizontal_alignment_flex_direction_column": "center",
-        "gap": 24,
-        "section_width": "page-width",
-        "background_color": "#000000",
-        "padding-block-start": 72,
-        "padding-block-end": 72
-      },
       "custom_css": [
         ".button-custom {border-radius: 35px; border-width: 2.437px; box-shadow: 3.249px 4.061px 0 #000; min-height: 48px; font-weight: 700; font-size: 1.3284rem; text-transform: none;}",
         "h2 {letter-spacing: 0; font-size: clamp(2.5rem, 4.45vw, 4rem);}"
-      ]
-    },
-    "wave_settling_guarantee": {
-      "type": "somna-wave",
+      ],
       "settings": {
-        "top_color": "#f3feee",
-        "bottom_color": "#000000",
-        "shape": "drip-10",
-        "overlap": false,
-        "flip": false,
-        "drops": true,
-        "animate": true,
-        "height": 140,
-        "height_mobile": 48
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 24,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "#000000",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 72,
+        "padding-block-end": 72
       }
     },
     "guarantee": {
@@ -367,9 +436,13 @@
           "type": "somna-icon",
           "settings": {
             "icon": "shield",
+            "drawing": "none",
+            "draw_animation": true,
             "size": 104,
             "color": "#000000",
             "backdrop": "none",
+            "backdrop_color": "#ffffff",
+            "backdrop_size": 56,
             "icon_offset": 0
           },
           "blocks": {}
@@ -388,7 +461,15 @@
             "letter_spacing": "loose",
             "case": "uppercase",
             "wrap": "pretty",
-            "text_color": "#000000"
+            "text_color": "#000000",
+            "accent_color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {}
         },
@@ -407,7 +488,14 @@
             "case": "uppercase",
             "wrap": "balance",
             "text_color": "#000000",
-            "accent_color": "#98a3de"
+            "accent_color": "#98a3de",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {}
         },
@@ -425,7 +513,15 @@
             "letter_spacing": "loose",
             "case": "none",
             "wrap": "pretty",
-            "text_color": "#000000"
+            "text_color": "#000000",
+            "accent_color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {}
         },
@@ -434,10 +530,12 @@
           "settings": {
             "label": "TRY SOMNA RISK-FREE",
             "link": "shopify://collections/all",
+            "open_in_new_tab": false,
             "style_class": "button-custom",
             "custom_button_background": "#ffffff",
             "custom_button_text": "#000000",
             "custom_button_border": "#ffffff",
+            "link_text_color": "",
             "width": "custom",
             "custom_width": 36,
             "width_mobile": "custom",
@@ -453,16 +551,35 @@
         "text",
         "button"
       ],
+      "disabled": true,
       "settings": {
         "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
         "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
         "gap": 16,
         "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
         "background_color": "#afbdf8",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
         "padding-block-start": 16,
         "padding-block-end": 32
-      },
-      "disabled": true
+      }
     },
     "wave_guarantee_faq": {
       "type": "somna-wave",
@@ -472,8 +589,10 @@
         "shape": "drip-11",
         "overlap": false,
         "flip": false,
+        "mobile_full": false,
         "drops": true,
         "animate": true,
+        "roll": 8,
         "height": 140,
         "height_mobile": 48
       }
@@ -486,14 +605,36 @@
           "settings": {
             "content_direction": "column",
             "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
             "horizontal_alignment_flex_direction_column": "flex-start",
             "vertical_alignment_flex_direction_column": "flex-start",
             "gap": 16,
             "width": "custom",
             "custom_width": 38,
             "width_mobile": "fill",
+            "custom_width_mobile": 100,
             "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
             "border_radius": 0,
+            "somna_edge": "none",
+            "somna_edge_mobile": "same",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
@@ -515,7 +656,14 @@
                 "case": "none",
                 "wrap": "balance",
                 "text_color": "#000000",
-                "accent_color": "#98a3de"
+                "accent_color": "#98a3de",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {}
             },
@@ -533,7 +681,15 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
-                "text_color": "#000000"
+                "text_color": "#000000",
+                "accent_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {}
             }
@@ -550,14 +706,26 @@
             "dividers": true,
             "divider_color": "#000000",
             "type_preset": "paragraph",
-            "text_color": "#000000"
+            "background_color": "",
+            "text_color": "#000000",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {
             "row_1": {
               "type": "_accordion-row",
               "settings": {
                 "heading": "What is the return policy?",
-                "open_by_default": false
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
               },
               "blocks": {
                 "answer": {
@@ -574,7 +742,15 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
-                    "text_color": "#000000"
+                    "text_color": "#000000",
+                    "accent_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
                   },
                   "blocks": {}
                 }
@@ -587,7 +763,9 @@
               "type": "_accordion-row",
               "settings": {
                 "heading": "Are any purchases final sale?",
-                "open_by_default": false
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
               },
               "blocks": {
                 "answer": {
@@ -604,7 +782,15 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
-                    "text_color": "#000000"
+                    "text_color": "#000000",
+                    "accent_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
                   },
                   "blocks": {}
                 }
@@ -617,7 +803,9 @@
               "type": "_accordion-row",
               "settings": {
                 "heading": "When will I get my order?",
-                "open_by_default": false
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
               },
               "blocks": {
                 "answer": {
@@ -634,7 +822,15 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
-                    "text_color": "#000000"
+                    "text_color": "#000000",
+                    "accent_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
                   },
                   "blocks": {}
                 }
@@ -647,7 +843,9 @@
               "type": "_accordion-row",
               "settings": {
                 "heading": "Where are your products manufactured?",
-                "open_by_default": false
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
               },
               "blocks": {
                 "answer": {
@@ -664,7 +862,15 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
-                    "text_color": "#000000"
+                    "text_color": "#000000",
+                    "accent_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
                   },
                   "blocks": {}
                 }
@@ -677,7 +883,9 @@
               "type": "_accordion-row",
               "settings": {
                 "heading": "How much does shipping cost?",
-                "open_by_default": false
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
               },
               "blocks": {
                 "answer": {
@@ -694,7 +902,15 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
-                    "text_color": "#000000"
+                    "text_color": "#000000",
+                    "accent_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
                   },
                   "blocks": {}
                 }
@@ -719,11 +935,29 @@
       ],
       "settings": {
         "content_direction": "row",
+        "vertical_on_mobile": true,
         "horizontal_alignment": "space-between",
         "vertical_alignment": "flex-start",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
         "gap": 56,
         "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
         "background_color": "#afbdf8",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
         "padding-block-start": 24,
         "padding-block-end": 24
       }
@@ -736,8 +970,10 @@
         "shape": "drip-11",
         "overlap": false,
         "flip": false,
+        "mobile_full": false,
         "drops": true,
         "animate": true,
+        "roll": 8,
         "height": 140,
         "height_mobile": 48
       }
@@ -760,17 +996,36 @@
             "case": "uppercase",
             "wrap": "balance",
             "text_color": "#ffffff",
-            "accent_color": "#98a3de"
+            "accent_color": "#98a3de",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {}
         },
         "signup": {
           "type": "somna-klaviyo-signup",
           "settings": {
+            "company_id": "Tr7JSM",
+            "list_id": "XyWydk",
+            "source": "Footer Signup - 10% Off",
             "placeholder": "Your email",
             "button_label": "Subscribe →",
+            "success": "You’re on the list! New here? Your code is on its way.",
+            "error": "We couldn’t sign you up. Please try again.",
+            "invalid": "Enter a valid email address.",
+            "consent": "",
             "width": 60,
-            "row_max_width": 1160
+            "row_max_width": 1160,
+            "input_background": "#ffffff",
+            "input_text": "#000000",
+            "button_background": "#afbdf8",
+            "button_text": "#000000",
+            "note_color": "#f3feee"
           },
           "blocks": {}
         }
@@ -781,11 +1036,29 @@
       ],
       "settings": {
         "content_direction": "row",
+        "vertical_on_mobile": true,
         "horizontal_alignment": "space-between",
         "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
         "gap": 40,
         "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
         "background_color": "#000000",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
         "padding-block-start": 24,
         "padding-block-end": 32
       }
@@ -796,9 +1069,12 @@
         "top_color": "#000000",
         "bottom_color": "#f3feee",
         "shape": "drip-11",
+        "overlap": false,
         "flip": false,
+        "mobile_full": false,
         "drops": true,
         "animate": true,
+        "roll": 8,
         "height": 140,
         "height_mobile": 48
       }
