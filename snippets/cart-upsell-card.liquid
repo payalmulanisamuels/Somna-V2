@@ -81,7 +81,10 @@
     assign upsell_title = title | strip | default: product.title
     assign upsell_image = upsell_variant.featured_image | default: product.featured_image
 
-    assign upsell_rating = product.metafields.custom.custom_review_rating_review_count.value
+    capture upsell_rating
+      render 'somna-rating', product: product, format: '★★★★★ [rating]/5 ([count])'
+    endcapture
+    assign upsell_rating = upsell_rating | strip
     
   endif
 -%}  

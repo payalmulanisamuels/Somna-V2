@@ -19,7 +19,9 @@
     {
       "tab": {{ block.settings.tab_label | default: p.title | json }},
       "title": {{ block.settings.title | default: p.title | json }},
-      "rating": {{ block.settings.rating_text | json }},
+      {%- capture b_rating -%}{%- render 'somna-rating', product: p, format: block.settings.rating_text -%}{%- endcapture -%}
+      {%- unless block.settings.rating_text contains '[rating]' -%}{%- assign b_rating = block.settings.rating_text -%}{%- endunless -%}
+      "rating": {{ b_rating | strip | json }},
       "description": {{ block.settings.description | json }},
       "points": {{ block.settings.points | newline_to_br | split: '<br />' | json }},
       "popular": {{ block.settings.popular_label | json }},
@@ -844,7 +846,7 @@
         { "type": "product", "id": "product", "label": "Product" },
         { "type": "text", "id": "tab_label", "label": "Tab label" },
         { "type": "text", "id": "title", "label": "Title", "info": "Defaults to the product name." },
-        { "type": "text", "id": "rating_text", "label": "Rating text" },
+        { "type": "text", "id": "rating_text", "label": "Rating text", "info": "[rating] and [count] come from Judge.me, e.g. ★★★★★ [rating]/5 ([count] reviews)" },
         { "type": "textarea", "id": "description", "label": "Description" },
         { "type": "textarea", "id": "points", "label": "Points", "info": "One per line." },
         { "type": "range", "id": "popular_position", "label": "Highlighted pack (position)", "min": 1, "max": 6, "step": 1, "default": 2 },

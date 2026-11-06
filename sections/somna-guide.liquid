@@ -76,7 +76,8 @@
                 {%- if card_img != blank -%}{{ card_img | image_url: width: 300 | image_tag: loading: 'lazy', alt: '' }}{%- endif -%}
               </a>
               <div class="somna-guide__card-body">
-                {%- if s.card_rating != blank -%}<p class="somna-guide__card-rating"><span aria-hidden="true">★★★★★</span> {{ s.card_rating | escape }}</p>{%- endif -%}
+                {%- capture card_rating -%}{%- if s.card_rating contains '[rating]' -%}{%- render 'somna-rating', product: s.card_product, format: s.card_rating -%}{%- else -%}{{ s.card_rating }}{%- endif -%}{%- endcapture -%}{%- assign card_rating = card_rating | strip -%}
+                {%- if card_rating != blank -%}<p class="somna-guide__card-rating"><span aria-hidden="true">★★★★★</span> {{ card_rating | escape }}</p>{%- endif -%}
                 <p class="somna-guide__card-title"><a href="{{ cp.url }}">{{ s.card_title | default: cp.title | escape }}</a></p>
                 {%- if s.card_text != blank -%}<p class="somna-guide__card-text">{%- capture low_money -%}{{ low | money }}{%- endcapture -%}{{ s.card_text | replace: '[price]', low_money | escape }}</p>{%- endif -%}
               </div>
@@ -764,7 +765,7 @@
     { "type": "header", "content": "Product card (split, without steps)" },
     { "type": "product", "id": "card_product", "label": "Product" },
     { "type": "image_picker", "id": "card_image", "label": "Card image", "info": "Defaults to the product image." },
-    { "type": "text", "id": "card_rating", "label": "Rating text", "default": "4.6/5 · 3,600+ reviews" },
+    { "type": "text", "id": "card_rating", "label": "Rating text", "default": "[rating]/5 · [count] reviews", "info": "[rating] and [count] come from Judge.me for the card product." },
     { "type": "text", "id": "card_title", "label": "Title", "info": "Defaults to the product name." },
     { "type": "text", "id": "card_text", "label": "Price line", "default": "Both, from [price]", "info": "[price] is the lowest price (Subscribe & Save or the one-time sale price)." },
     { "type": "text", "id": "card_button", "label": "Button", "default": "Shop now" },

@@ -1,0 +1,29 @@
+{%- doc -%}
+  Somna V2 — a product's star rating and review count from the Judge.me app (the same numbers as the Reviews
+  section), written into a text format. Falls back to the product's rating field
+  (custom.custom_review_rating_review_count) only when Judge.me has no reviews for the product.
+  Outputs nothing when there is no rating.
+
+  @param {product} product
+  @param {string} format - "[rating]" and "[count]" are replaced, e.g. "[rating]/5 · [count] reviews"
+{%- enddoc -%}
+{%- liquid
+  assign r_rating = ''
+  assign r_count = ''
+  assign jm = product.metafields.judgeme.review_widget_data.value
+  if jm and jm.number_of_reviews > 0
+    assign r_rating = jm.average_rating | times: 1.0 | round: 1
+    assign r_count = jm.number_of_reviews
+  else
+    assign r_raw = product.metafields.custom.custom_review_rating_review_count.value | strip_html | strip
+    if r_raw != blank
+      assign r_rating = r_raw | split: ' ' | first
+      if r_raw contains '('
+        assign r_count = r_raw | split: '(' | last | split: ')' | first | strip
+      endif
+    endif
+  endif
+-%}
+{%- if r_rating != blank and format != blank -%}
+  {{- format | replace: '[rating]', r_rating | replace: '[count]', r_count -}}
+{%- endif -%}
