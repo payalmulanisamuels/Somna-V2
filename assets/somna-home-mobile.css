@@ -609,3 +609,14 @@
     padding-block: 20px !important;
   }
 }
+
+/* How to use, phones: flatter waves between the sections (less empty band) */
+@media screen and (max-width: 749px) {
+  main[data-template='page.how-to-use'] .somna-wave--shape svg {
+    --somna-wave-u: calc(100cqi / 800);
+  }
+
+  main[data-template='page.how-to-use'] [id$='__settling'] .section-content-wrapper.layout-panel-flex {
+    padding-block: 12px !important;
+  }
+}
