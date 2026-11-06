@@ -500,6 +500,64 @@
     </ul>
   {%- endif -%}
 
+  {%- if s.sticky_enable -%}
+    {%- comment -%}
+      Sticky add to cart (Figma 4927:555 bar, 4927:1736 "Choose your pack" sheet). Shows once the buy box's form has
+      scrolled off the top. It has no form of its own: it reads and sets the buy box above (pack, colour,
+      subscribe / one-time), so both always agree, and its button adds through the same cart code.
+    {%- endcomment -%}
+    {%- liquid
+      assign sticky_img = current.featured_image | default: product.featured_image
+      assign sticky_heading_parts = s.sticky_heading | split: '*'
+    -%}
+    <somna-pdp-sticky class="somna-sticky-atc" data-sub-word="{{ s.sticky_sub_word | escape }}" data-once-word="{{ s.sticky_once_word | escape }}" data-note="{{ s.sticky_note | escape }}" hidden>
+      <div class="somna-sticky-atc__backdrop" data-sticky-close></div>
+      <div class="somna-sticky-atc__sheet" id="StickyPacks-{{ section.id }}" role="dialog" aria-modal="false" aria-labelledby="StickyPacksTitle-{{ section.id }}" data-sticky-sheet inert>
+        <div class="somna-sticky-atc__sheet-head">
+          <h2 class="somna-sticky-atc__heading" id="StickyPacksTitle-{{ section.id }}">
+            {%- for part in sticky_heading_parts -%}{%- assign odd = forloop.index0 | modulo: 2 -%}{%- if odd == 1 -%}<em>{{ part }}</em>{%- else -%}{{ part }}{%- endif -%}{%- endfor -%}
+          </h2>
+          <button type="button" class="somna-sticky-atc__close" data-sticky-close aria-label="{{ 'accessibility.close' | t | default: 'Close' }}">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
+          </button>
+        </div>
+        {%- if has_plans -%}
+          <div class="somna-sticky-atc__modes" role="group" aria-label="{{ s.mode_label | escape }}">
+            <button type="button" class="somna-sticky-atc__mode" data-sticky-mode="sub" aria-pressed="false"><span>{{ s.sticky_sub_toggle }}</span> <span data-sticky-pct="sub"></span></button>
+            <button type="button" class="somna-sticky-atc__mode" data-sticky-mode="once" aria-pressed="false"><span>{{ s.sticky_once_toggle }}</span> <span data-sticky-pct="once"></span></button>
+          </div>
+          <p class="somna-sticky-atc__note" data-sticky-note></p>
+        {%- endif -%}
+        {%- if color_option -%}
+          <div class="somna-sticky-atc__colors" role="group" aria-label="{{ color_option.name | escape }}">
+            {%- for val in color_option.values -%}
+              {%- capture sw -%}{%- if val.swatch.color -%}{{ val.swatch.color }}{%- else -%}{% render 'somna-swatch-color', name: val.name %}{%- endif -%}{%- endcapture -%}
+              <button type="button" class="somna-sticky-atc__swatch" style="--somna-dot: {{ sw | strip }};" data-sticky-color="{{ val.name | escape }}" aria-pressed="false"><span class="visually-hidden">{{ val.name }}</span></button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+        <div class="somna-sticky-atc__packs" role="radiogroup" aria-label="{{ s.packs_label | escape }}" data-sticky-packs></div>
+      </div>
+      <div class="somna-sticky-atc__bar">
+        {%- if s.sticky_banner != blank -%}<p class="somna-sticky-atc__banner">{{ s.sticky_banner }}</p>{%- endif -%}
+        <div class="somna-sticky-atc__main">
+          <button type="button" class="somna-sticky-atc__card" data-sticky-open aria-expanded="false" aria-controls="StickyPacks-{{ section.id }}">
+            <span class="somna-sticky-atc__thumb">
+              {%- if sticky_img -%}{{ sticky_img | image_url: width: 180, height: 180, crop: 'center' | image_tag: alt: '', loading: 'lazy', width: 66, height: 66, data-sticky-img: '' }}{%- endif -%}
+            </span>
+            <span class="somna-sticky-atc__info">
+              <span class="somna-sticky-atc__title" data-sticky-title>{{ product.title }}</span>
+              <span class="somna-sticky-atc__meta" data-sticky-meta></span>
+            </span>
+            <svg class="somna-sticky-atc__caret" viewBox="0 0 12 8" width="12" height="8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 6.5L6 1.5l5 5"/></svg>
+            <span class="visually-hidden">{{ s.sticky_open_label }}</span>
+          </button>
+          <button type="button" class="somna-sticky-atc__add" data-sticky-add><span data-sticky-add-label>{{ s.sticky_add_label }}</span></button>
+        </div>
+      </div>
+    </somna-pdp-sticky>
+  {%- endif -%}
+
   <script type="application/ld+json">{{ product | structured_data }}</script>
 </somna-pdp-buy>
 {%- if section.settings.wave_color != blank -%}
@@ -661,6 +719,146 @@
           btn.disabled = !v.available;
         }
       };
+    });
+  }
+
+
+  /* Sticky add to cart (sections/somna-pdp-hero, markup above </somna-pdp-buy>) */
+  if (!customElements.get('somna-pdp-sticky')) {
+    customElements.define('somna-pdp-sticky', class extends HTMLElement {
+      connectedCallback() {
+        this.buy = this.closest('somna-pdp-buy');
+        if (!this.buy) return;
+        // wait until the buy box has read its variants
+        requestAnimationFrame(() => this.init());
+      }
+      init() {
+        const buy = this.buy;
+        if (!buy.variants || !buy.variants.length || !buy.form) return;
+        this.sheet = this.querySelector('[data-sticky-sheet]');
+        this.open = this.querySelector('[data-sticky-open]');
+        this.addBtn = this.querySelector('[data-sticky-add]');
+        this.hidden = false;
+        this.onBuyChange = () => requestAnimationFrame(() => this.render());
+        buy.addEventListener('change', this.onBuyChange);
+        this.addEventListener('click', this.onClick);
+        this.onKey = (e) => { if (e.key === 'Escape' && this.classList.contains('is-open')) { this.toggle(false); this.open.focus(); } };
+        document.addEventListener('keydown', this.onKey);
+        // show once the buy box's form has gone off the top of the screen
+        this.io = new IntersectionObserver(([e]) => this.show(!e.isIntersecting && e.boundingClientRect.top < 0));
+        this.io.observe(buy.form);
+        this.ro = new ResizeObserver(() => document.documentElement.style.setProperty('--somna-sticky-h', this.querySelector('.somna-sticky-atc__bar').offsetHeight + 'px'));
+        this.ro.observe(this.querySelector('.somna-sticky-atc__bar'));
+        this.render();
+      }
+      disconnectedCallback() {
+        this.buy?.removeEventListener('change', this.onBuyChange);
+        document.removeEventListener('keydown', this.onKey);
+        this.io?.disconnect();
+        this.ro?.disconnect();
+        document.documentElement.classList.remove('somna-sticky-on');
+      }
+      show(on) {
+        if (!on && this.classList.contains('is-open')) return;
+        this.classList.toggle('is-visible', on);
+        this.querySelector('.somna-sticky-atc__bar').inert = !on;
+        document.documentElement.classList.toggle('somna-sticky-on', on);
+      }
+      toggle(on) {
+        this.classList.toggle('is-open', on);
+        this.sheet.inert = !on;
+        this.open.setAttribute('aria-expanded', String(on));
+        if (on) this.sheet.querySelector('[aria-checked="true"], button')?.focus({ preventScroll: true });
+      }
+      // set a control in the buy box and let it update itself (it fires our render through its change event)
+      pick(input) {
+        if (!input || input.disabled) return;
+        input.checked = true;
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      onClick = async (e) => {
+        const buy = this.buy;
+        if (e.target.closest('[data-sticky-close]')) { this.toggle(false); this.open.focus(); return; }
+        if (e.target.closest('[data-sticky-open]')) { this.toggle(!this.classList.contains('is-open')); return; }
+        const mode = e.target.closest('[data-sticky-mode]');
+        if (mode) { this.pick(buy.querySelector(`[data-mode-input][value="${mode.dataset.stickyMode}"]`)); return; }
+        const color = e.target.closest('[data-sticky-color]');
+        if (color) { this.pick([...buy.querySelectorAll('[data-color]')].find((i) => i.value === color.dataset.stickyColor)); return; }
+        const pack = e.target.closest('[data-sticky-pack]');
+        if (pack) { this.pick(buy.querySelectorAll('[data-pack]')[Number(pack.dataset.stickyPack)]); return; }
+        if (e.target.closest('[data-sticky-add]')) {
+          if (this.addBtn.disabled || buy.busy) return;
+          this.addBtn.setAttribute('aria-busy', 'true');
+          this.addBtn.disabled = true;
+          try { await buy.onSubmit({ preventDefault() {} }); } finally {
+            this.addBtn.removeAttribute('aria-busy');
+            this.render();
+            this.toggle(false);
+          }
+        }
+      };
+      render() {
+        const buy = this.buy;
+        const v = buy.variants[buy.v];
+        if (!v) return;
+        const sub = buy.mode === 'sub' && v.plans.length;
+        const price = buy.priceOf(v);
+        const single = buy.querySelector('.somna-pdp-hero__packs')?.hidden;
+        const nightsOf = (x) => (single ? Number(buy.dataset.priceNights) || buy.nights : buy.bags(x) * buy.nights);
+        const packInput = buy.querySelector('[data-pack]:checked');
+        const packName = single ? buy.querySelector('.somna-pdp-hero__title')?.textContent.trim() : packInput?.closest('label').querySelector('.somna-buy__pack-name')?.textContent.trim();
+        const word = sub ? this.dataset.subWord : this.dataset.onceWord;
+        this.querySelector('[data-sticky-title]').textContent = word ? `${packName}. ${word}` : packName;
+        const n = nightsOf(v);
+        this.querySelector('[data-sticky-meta]').textContent = this.money(price) + (n ? ` . ${buy.money(Math.round(price / n))}${buy.labels.night}` : '');
+        const img = this.querySelector('[data-sticky-img]');
+        if (img && v.image && img.dataset.variant !== String(v.id)) {
+          img.dataset.variant = v.id;
+          img.removeAttribute('srcset');
+          img.src = v.image.replace(/width=\d+/, 'width=180');
+        }
+        this.addBtn.disabled = !v.available;
+        this.querySelector('[data-sticky-add-label]').textContent = v.available ? this.addLabel() : buy.labels.soldOut;
+        // purchase toggle
+        this.querySelectorAll('[data-sticky-mode]').forEach((b) => {
+          const m = b.dataset.stickyMode;
+          b.setAttribute('aria-pressed', String(m === buy.mode));
+          b.disabled = m === 'sub' && !v.plans.length;
+          const pct = m === 'sub' ? (v.plans.length ? buy.pct(buy.priceOf(v, 'sub'), v) : 0) : buy.pct(v.price, v);
+          b.querySelector('[data-sticky-pct]').textContent = pct ? `${pct}% off` : '';
+        });
+        const note = this.querySelector('[data-sticky-note]');
+        if (note) {
+          const interval = (buy.querySelector('[data-sub-interval]')?.textContent || buy.dataset.interval || '').trim();
+          note.textContent = sub ? this.dataset.note.replace('[interval]', interval) : '';
+          note.hidden = !sub || !this.dataset.note;
+        }
+        const colorName = buy.querySelector('[data-color]:checked')?.value;
+        this.querySelectorAll('[data-sticky-color]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.stickyColor === colorName)));
+        // pack rows (one per buy-box pack; one row for single products)
+        const inputs = single ? [] : [...buy.querySelectorAll('[data-pack]')];
+        const rows = (inputs.length ? inputs : [null]).map((input, i) => {
+          const x = input ? buy.variants[Number(input.value)] : v;
+          const label = input?.closest('label');
+          const name = input ? label.querySelector('.somna-buy__pack-name')?.textContent.trim() : packName;
+          const pr = buy.priceOf(x);
+          const nights = nightsOf(x);
+          const gift = label?.querySelector('.somna-pdp-hero__gift')?.textContent.trim();
+          const badge = gift || label?.querySelector('.somna-buy__pack-badge')?.textContent.trim() || '';
+          const on = input ? input.checked : true;
+          const off = input ? input.disabled : !x.available;
+          return `<button type="button" class="somna-sticky-atc__pack" role="radio" aria-checked="${on}" ${off ? 'disabled' : ''} data-sticky-pack="${i}">
+            ${badge ? `<span class="somna-sticky-atc__badge${gift ? ' is-gift' : ''}">${this.esc(badge)}</span>` : ''}
+            <span class="somna-sticky-atc__radio" aria-hidden="true"></span>
+            <span class="somna-sticky-atc__pack-text"><span class="somna-sticky-atc__pack-name">${this.esc(name || '')}</span>${nights ? `<span class="somna-sticky-atc__pack-meta">${nights} nights. ${buy.money(Math.round(pr / nights))}${this.esc(buy.labels.night)}</span>` : ''}</span>
+            <span class="somna-sticky-atc__pack-price">${this.money(pr)}</span>
+          </button>`;
+        });
+        this.querySelector('[data-sticky-packs]').innerHTML = rows.join('');
+      }
+      money(c) { return this.buy.money(c); }
+      addLabel() { return this.querySelector('[data-sticky-add-label]').dataset.label || (this.querySelector('[data-sticky-add-label]').dataset.label = this.querySelector('[data-sticky-add-label]').textContent); }
+      esc(t) { return String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]); }
     });
   }
 
@@ -2536,6 +2734,490 @@
       text-align: center;
     }
   }
+
+  /* ---------- Sticky add to cart (Figma 4927:555 / 4927:1736) ---------- */
+  .somna-sticky-atc {
+    --sa-mint: #f3feee;
+    --sa-lav: #afbdf8;
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 30;
+    pointer-events: none;
+    color: #000;
+  }
+
+  .somna-sticky-atc__bar {
+    position: relative;
+    z-index: 2;
+    background: var(--sa-mint);
+    border-top: 1.5px solid #000;
+    transform: translateY(110%);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: auto;
+  }
+
+  .somna-sticky-atc.is-visible .somna-sticky-atc__bar {
+    transform: none;
+  }
+
+  html.somna-sticky-on body {
+    padding-bottom: var(--somna-sticky-h, 0px);
+  }
+
+  .somna-sticky-atc__banner {
+    margin: 0;
+    padding: 8px 12px;
+    border-bottom: 1.5px solid #000;
+    background: var(--sa-lav);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .somna-sticky-atc__main {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+    padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+  }
+
+  .somna-sticky-atc__card {
+    display: flex;
+    flex: 1;
+    gap: 12px;
+    align-items: center;
+    min-width: 0;
+    padding: 6px 12px 6px 6px;
+    border: 2px solid #000;
+    border-radius: 10px;
+    background: var(--sa-mint);
+    box-shadow: 3px 4px 0 #000;
+    color: #000;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  }
+
+  .somna-sticky-atc__card:hover {
+    background: #fff;
+  }
+
+  .somna-sticky-atc__card:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 2px 0 #000;
+  }
+
+  .somna-sticky-atc__thumb {
+    flex: none;
+    width: 66px;
+    height: 66px;
+    overflow: hidden;
+    border-radius: 6px;
+    background: #0b1d6b;
+  }
+
+  .somna-sticky-atc__thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .somna-sticky-atc__info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .somna-sticky-atc__title {
+    overflow: hidden;
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.25rem, 5.6vw, 1.5rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .somna-sticky-atc__meta {
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .somna-sticky-atc__caret {
+    flex: none;
+    transition: transform 0.3s ease;
+  }
+
+  .somna-sticky-atc.is-open .somna-sticky-atc__caret {
+    transform: rotate(180deg);
+  }
+
+  .somna-sticky-atc__add {
+    flex: none;
+    width: 80px;
+    padding: 6px;
+    border: 2px solid #000;
+    border-radius: 10px;
+    background: #000;
+    box-shadow: 3px 4px 0 var(--sa-lav);
+    outline: 2px solid var(--sa-lav);
+    outline-offset: -4px;
+    color: var(--sa-mint);
+    font-family: var(--font-accent--family);
+    font-size: 1.125rem;
+    font-weight: var(--font-accent--weight);
+    line-height: 1.05;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .somna-sticky-atc__add:hover {
+    background: var(--sa-lav);
+    color: #000;
+  }
+
+  .somna-sticky-atc__add:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 var(--sa-lav);
+  }
+
+  .somna-sticky-atc__add:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .somna-sticky-atc__add[aria-busy='true'] {
+    opacity: 1;
+    cursor: progress;
+    animation: somnaStickyBusy 0.9s ease-in-out infinite;
+  }
+
+  @keyframes somnaStickyBusy {
+    50% { opacity: 0.6; }
+  }
+
+  /* sheet: slides up from behind the bar */
+  .somna-sticky-atc__backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgb(11 15 29 / 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+
+  .somna-sticky-atc.is-open .somna-sticky-atc__backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .somna-sticky-atc__sheet {
+    position: absolute;
+    right: 0;
+    bottom: 100%;
+    left: 0;
+    z-index: 1;
+    max-height: calc(100dvh - var(--somna-sticky-h, 140px) - 40px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 22px 20px 24px;
+    border-radius: 18px 18px 0 0;
+    background: #000;
+    color: var(--sa-mint);
+    transform: translateY(calc(100% + var(--somna-sticky-h, 140px)));
+    transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+    pointer-events: auto;
+  }
+
+  .somna-sticky-atc:not(.is-visible) .somna-sticky-atc__sheet {
+    visibility: hidden;
+  }
+
+  .somna-sticky-atc.is-open .somna-sticky-atc__sheet {
+    transform: none;
+  }
+
+  .somna-sticky-atc__sheet-head {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .somna-sticky-atc__heading {
+    margin: 0;
+    color: var(--sa-lav);
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.75rem, 8vw, 2.25rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .somna-sticky-atc__heading em {
+    color: var(--sa-mint);
+    font-style: normal;
+  }
+
+  .somna-sticky-atc__close {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--sa-mint);
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.2s ease;
+  }
+
+  .somna-sticky-atc__close:hover {
+    background: rgb(243 254 238 / 0.12);
+    transform: rotate(90deg);
+  }
+
+  .somna-sticky-atc__modes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin: 0 0 14px;
+    padding: 4px;
+    border: 2px solid var(--sa-mint);
+    border-radius: 40px;
+    box-shadow: 3px 4px 0 var(--sa-mint);
+  }
+
+  .somna-sticky-atc__mode {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 4px;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 4px 10px;
+    border: 0;
+    border-radius: 32px;
+    background: transparent;
+    color: var(--sa-mint);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.25;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  .somna-sticky-atc__mode[aria-pressed='true'] {
+    background: var(--sa-lav);
+    color: #000;
+    font-weight: 600;
+  }
+
+  .somna-sticky-atc__mode:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .somna-sticky-atc__note {
+    margin: 0 0 12px;
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    opacity: 0.85;
+  }
+
+  .somna-sticky-atc__colors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 14px;
+  }
+
+  .somna-sticky-atc__swatch {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 2px solid var(--sa-mint);
+    border-radius: 50%;
+    background: var(--somna-dot);
+    cursor: pointer;
+  }
+
+  .somna-sticky-atc__swatch[aria-pressed='true'] {
+    outline: 2px solid var(--sa-lav);
+    outline-offset: 2px;
+  }
+
+  .somna-sticky-atc__packs {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding-top: 8px;
+  }
+
+  .somna-sticky-atc__pack {
+    position: relative;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    min-height: 86px;
+    padding: 12px 16px;
+    border: 2px solid var(--sa-mint);
+    border-radius: 8px;
+    background: #000;
+    box-shadow: 3px 4px 0 var(--sa-mint);
+    color: var(--sa-mint);
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.2s ease;
+  }
+
+  .somna-sticky-atc__pack:hover {
+    transform: translate(-1px, -1px);
+  }
+
+  .somna-sticky-atc__pack[aria-checked='true'] {
+    background: var(--sa-lav);
+    color: #000;
+  }
+
+  .somna-sticky-atc__pack:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .somna-sticky-atc__radio {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+    background: var(--sa-mint);
+  }
+
+  .somna-sticky-atc__pack[aria-checked='true'] .somna-sticky-atc__radio {
+    border: 3px solid var(--sa-mint);
+    background: #000;
+    box-shadow: 0 0 0 2px #000;
+  }
+
+  .somna-sticky-atc__pack-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .somna-sticky-atc__pack-name {
+    font-size: 1.375rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .somna-sticky-atc__pack-meta {
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+  }
+
+  .somna-sticky-atc__pack-price {
+    flex: none;
+    font-size: 1.375rem;
+    font-weight: 600;
+  }
+
+  .somna-sticky-atc__badge {
+    position: absolute;
+    top: -14px;
+    right: -8px;
+    padding: 3px 8px;
+    border: 2px solid #000;
+    border-radius: 7px;
+    background: var(--sa-mint);
+    color: #000;
+    font-family: var(--font-accent--family);
+    font-size: 0.875rem;
+    font-weight: var(--font-accent--weight);
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .somna-sticky-atc :is(button):focus-visible {
+    outline: 2px solid var(--sa-lav);
+    outline-offset: 3px;
+  }
+
+  /* desktop: a floating card centred at the bottom; the sheet opens above it */
+  @media screen and (min-width: 990px) {
+    .somna-sticky-atc {
+      inset: auto 0 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .somna-sticky-atc__bar,
+    .somna-sticky-atc__sheet {
+      width: min(760px, calc(100% - 48px));
+    }
+
+    .somna-sticky-atc__bar {
+      overflow: hidden;
+      border: 2px solid #000;
+      border-radius: 14px;
+      box-shadow: 4px 5px 0 #000;
+      transform: translateY(calc(100% + 24px));
+    }
+
+    .somna-sticky-atc__main {
+      padding: 12px 14px 14px;
+    }
+
+    .somna-sticky-atc__add {
+      width: auto;
+      min-width: 180px;
+      font-size: 1.25rem;
+    }
+
+    .somna-sticky-atc__sheet {
+      right: auto;
+      left: 50%;
+      bottom: calc(100% + 12px);
+      max-height: calc(100dvh - var(--somna-sticky-h, 140px) - 80px);
+      padding: 24px 28px 28px;
+      border: 2px solid #000;
+      border-radius: 18px;
+      translate: -50% 0;
+      transform: translateY(24px);
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+    }
+
+    .somna-sticky-atc.is-open .somna-sticky-atc__sheet {
+      opacity: 1;
+    }
+
+    html.somna-sticky-on body {
+      padding-bottom: calc(var(--somna-sticky-h, 0px) + 24px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-sticky-atc__bar,
+    .somna-sticky-atc__sheet,
+    .somna-sticky-atc__backdrop {
+      transition: none;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -2567,6 +3249,17 @@
     { "type": "text", "id": "brand", "label": "Brand before the title", "default": "somna." },
     { "type": "text", "id": "box_heading", "label": "What's in the box: heading", "info": "Shown when the product has PDP – What's in the box products.", "default": "What's in the Box?" },
     { "type": "text", "id": "box_colors_label", "label": "What's in the box: colours text", "info": "Before the colour dots (PDP – What's in the box colours).", "default": "Strip colors in this set:" },
+    { "type": "header", "content": "Sticky add to cart" },
+    { "type": "checkbox", "id": "sticky_enable", "label": "Show the sticky add to cart bar", "default": true, "info": "Appears once the buy box scrolls off the screen. Tapping the product opens “Choose your pack”." },
+    { "type": "inline_richtext", "id": "sticky_banner", "label": "Bar: banner", "default": "+ 3 FREE GIFTS on 2+ packs . $4.95 standard shipping" },
+    { "type": "text", "id": "sticky_sub_word", "label": "Bar: subscribe word", "default": "subscribe", "info": "Title reads “1 Bag. subscribe”" },
+    { "type": "text", "id": "sticky_once_word", "label": "Bar: one-time word", "default": "one time" },
+    { "type": "text", "id": "sticky_add_label", "label": "Bar: button", "default": "Add to cart" },
+    { "type": "text", "id": "sticky_open_label", "label": "Bar: open packs (screen readers)", "default": "Change pack" },
+    { "type": "text", "id": "sticky_heading", "label": "Sheet: heading", "default": "Choose your *pack*", "info": "*word* shows in white" },
+    { "type": "text", "id": "sticky_sub_toggle", "label": "Sheet: subscribe button", "default": "Subscribe & Save" },
+    { "type": "text", "id": "sticky_once_toggle", "label": "Sheet: one-time button", "default": "One time" },
+    { "type": "text", "id": "sticky_note", "label": "Sheet: subscription note", "default": "Delivery every [interval] . skip, pause or cancel anytime", "info": "[interval] = the chosen delivery interval" },
     { "type": "text", "id": "upsell_button", "label": "Upgrade card: button", "info": "Used when the product's PDP – Upgrade card: button is empty.", "default": "Upgrade" },
     { "type": "text", "id": "save_label", "label": "Save badge", "info": "[percent] is worked out from the compare-at price.", "default": "Save [percent]%" },
     { "type": "text", "id": "percent_suffix", "label": "Discount after the plan names", "default": " · [percent]% off" },
