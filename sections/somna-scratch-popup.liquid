@@ -615,8 +615,8 @@
   @media screen and (min-width: 990px) {
     .sgp__card--split {
       --sgp-u: 0.38cqw;
-      width: min(840px, 100%);
-      min-height: min(540px, calc(100dvh - 24px));
+      width: min(760px, 100%);
+      min-height: min(520px, calc(100dvh - 24px));
     }
 
     .sgp__card--split::before {
@@ -625,8 +625,8 @@
       top: 0;
       bottom: 0;
       left: 0;
-      width: 50%;
-      background: radial-gradient(60% 55% at 50% 48%, rgb(175 189 248 / 0.28), transparent 70%);
+      width: 48%;
+      background: radial-gradient(55% 50% at 60% 48%, rgb(175 189 248 / 0.28), transparent 70%);
       pointer-events: none;
     }
 
@@ -634,12 +634,13 @@
 
     .sgp__card--split .sgp__screen {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 300px) minmax(0, 340px);
       grid-auto-rows: min-content;
       align-content: center;
+      justify-content: center;
       justify-items: center;
-      column-gap: 40px;
-      padding: 8px 40px 120px 30px;
+      column-gap: 36px;
+      padding: 8px 32px 110px;
     }
 
     .sgp__card--split .sgp__screen > * { grid-column: 2; }
