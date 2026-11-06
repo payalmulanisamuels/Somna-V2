@@ -58,7 +58,7 @@
 {%- capture price_money -%}{{ price | money }}{%- endcapture -%}
 {%- capture night_money -%}{{ night | money }}{%- endcapture -%}
 
-<somna-pdp-cta class="somna-pdp-cta" data-flip="{{ s.product_flip }}" data-id="{{ v.id }}" data-plan="{{ plan_id }}" style="--somna-cta-bg: {{ s.background_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;">
+<somna-pdp-cta class="somna-pdp-cta" data-flip="{{ s.product_flip }}" data-id="{{ v.id }}" data-plan="{{ plan_id }}" style="--somna-cta-bg: {{ s.background_color }}; --somna-cta-pair: {{ s.pair_width | default: 400 }}px; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;">
   <div class="somna-pdp-cta__inner somna-container">
     <div class="somna-pdp-cta__copy">
       <h2 class="somna-pdp-cta__heading">
@@ -79,8 +79,8 @@
     <div class="somna-pdp-cta__media">
       {%- if image and image_2 -%}
         <div class="somna-pdp-cta__product somna-pdp-cta__product--pair">
-          {{ image | image_url: width: 500 | image_tag: loading: 'lazy', widths: '250, 375, 500', sizes: '(min-width: 750px) 240px, 50vw', alt: '' }}
-          {{ image_2 | image_url: width: 500 | image_tag: loading: 'lazy', widths: '250, 375, 500', sizes: '(min-width: 750px) 190px, 40vw', alt: '' }}
+          {{ image | image_url: width: 500 | image_tag: loading: 'lazy', widths: '250, 375, 500', sizes: '(min-width: 750px) 340px, 50vw', alt: '' }}
+          {{ image_2 | image_url: width: 500 | image_tag: loading: 'lazy', widths: '250, 375, 500', sizes: '(min-width: 750px) 260px, 40vw', alt: '' }}
         </div>
       {%- elsif image -%}<div class="somna-pdp-cta__product">{{ image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300, 450, 600', sizes: '(min-width: 750px) 290px, 60vw' }}</div>{%- endif -%}
       {%- if cta_sticker != blank and night > 0 -%}<p class="somna-pdp-cta__sticker{% if s.sticker_motion != 'none' %} somna-shake--{{ s.sticker_motion }}{% endif %}">{{ cta_sticker | replace: '[night]', night_money }}</p>{%- endif -%}
@@ -291,7 +291,7 @@
   }
 
   .somna-pdp-cta__media:has(.somna-pdp-cta__product--pair) {
-    width: min(100%, 400px);
+    width: min(100%, var(--somna-cta-pair, 400px));
   }
 
   .somna-pdp-cta__product--pair img {
@@ -440,6 +440,7 @@
     { "type": "checkbox", "id": "product_flip", "label": "Flip the product when the section comes into view", "default": true },
     { "type": "select", "id": "sticker_motion", "label": "Sticker shake", "options": [{ "value": "none", "label": "None" }, { "value": "wiggle", "label": "Wiggle" }, { "value": "swing", "label": "Swing" }, { "value": "pop", "label": "Pop" }], "default": "pop" },
     { "type": "color", "id": "background_color", "label": "Background", "default": "#afbdf8" },
+    { "type": "range", "id": "pair_width", "label": "Tape + strip picture width (desktop)", "min": 300, "max": 640, "step": 10, "unit": "px", "default": 400 },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 40 },
     { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 40 },
     { "type": "header", "content": "Bottom wave" },
