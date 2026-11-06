@@ -15,13 +15,18 @@
   if s.style == 'aside'
     assign aside = true
   endif
+  # Support (Figma 4927:1231): open text column with a search field and jump pills, black help card on the right
+  assign card = false
+  if s.style == 'card'
+    assign card = true
+  endif
 -%}
 <div
-  class="somna-page-hero somna-page-hero--image-{{ s.image_side }} somna-page-hero--{{ s.style | default: 'panel' }}{% if aside %} somna-page-hero--open{% endif %}"
+  class="somna-page-hero somna-page-hero--image-{{ s.image_side }} somna-page-hero--{{ s.style | default: 'panel' }}{% if aside or card %} somna-page-hero--open{% endif %}"
   style="--sph-bg: {{ s.background_color }}; --sph-panel: {{ s.panel_color }}; --sph-media: {{ s.media_color | default: s.panel_color }}; --sph-fit: {{ s.image_fit }}; --sph-accent: {{ s.accent_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
 >
   <div class="somna-container somna-page-hero__grid">
-    {%- unless aside -%}
+    {%- unless aside or card -%}
     <div class="somna-page-hero__media{% if s.style == 'open' and s.drip_edge %} somna-edge-drip-bottom{% endif %}">
       {%- if s.image != blank -%}
         {{
@@ -54,6 +59,14 @@
       {%- capture hero_rest -%}
       {%- if s.tagline != blank -%}<p class="somna-page-hero__tagline">{{ s.tagline | escape }}</p>{%- endif -%}
       {%- if s.text != blank -%}<div class="somna-page-hero__text">{{ s.text }}</div>{%- endif -%}
+      {%- if card and s.search_placeholder != blank -%}
+        <form class="somna-page-hero__search" action="{{ routes.search_url }}" method="get" role="search">
+          <svg class="somna-page-hero__search-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><path d="M15.8 15.8L21 21"/></svg>
+          <label class="visually-hidden" for="SupportSearch-{{ section.id }}">{{ s.search_placeholder | escape }}</label>
+          <input id="SupportSearch-{{ section.id }}" type="search" name="q" placeholder="{{ s.search_placeholder | escape }}" autocomplete="off">
+          <input type="hidden" name="options[prefix]" value="last">
+        </form>
+      {%- endif -%}
       {%- if section.blocks.size > 0 -%}
         <div class="somna-page-hero__actions">
           {%- for block in section.blocks -%}
@@ -74,6 +87,15 @@
       {%- unless aside -%}{{ hero_rest }}{%- endunless -%}
     </div>
     {%- if aside -%}<div class="somna-page-hero__aside">{{ hero_rest }}</div>{%- endif -%}
+    {%- if card and s.card_heading != blank -%}
+      <div class="somna-page-hero__card somna-edge-drip-bottom">
+        {%- if s.card_icon != 'none' -%}{%- render 'somna-line-icon', name: s.card_icon, class: 'somna-page-hero__card-icon', stroke: 1.1 -%}{%- endif -%}
+        {%- if s.card_eyebrow != blank -%}<p class="somna-page-hero__card-eyebrow">{{ s.card_eyebrow | escape }}</p>{%- endif -%}
+        <h2 class="somna-page-hero__card-title">{{ s.card_heading | escape }}</h2>
+        {%- if s.card_text != blank -%}<p class="somna-page-hero__card-text">{{ s.card_text | escape }}</p>{%- endif -%}
+        {%- if s.card_button != blank -%}<a class="somna-page-hero__card-button" href="{{ s.card_link | default: '#' }}">{{ s.card_button | escape }}</a>{%- endif -%}
+      </div>
+    {%- endif -%}
   </div>
 </div>
 
@@ -469,6 +491,232 @@
     }
   }
 
+  /* "Card" style (Figma 4927:1231 Support): open text column + search + jump pills, black help card with a drip on the right */
+  .somna-page-hero__search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    max-width: 649px;
+    min-height: 69px;
+    margin-top: 24px;
+    border: 2.44px solid #000;
+    border-radius: 68px;
+    background: #fff;
+    box-shadow: 3.25px 4.06px 0 #000;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .somna-page-hero__search:hover,
+  .somna-page-hero__search:focus-within {
+    box-shadow: 5px 6px 0 #000;
+    transform: translate(-1px, -1px);
+  }
+
+  .somna-page-hero__search-icon {
+    position: absolute;
+    left: 48px;
+    color: #000;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .somna-page-hero__search input[type='search'] {
+    width: 100%;
+    min-height: 64px;
+    padding: 0 28px 0 116px;
+    border: 0;
+    border-radius: 68px;
+    background: none;
+    color: #000;
+    font-family: var(--font-body--family);
+    font-size: clamp(1rem, 1.52vw, 1.367rem);
+    font-weight: 500;
+    outline: none;
+    box-shadow: none;
+  }
+
+  .somna-page-hero__search input::placeholder {
+    color: #808080;
+    opacity: 1;
+  }
+
+  .somna-page-hero--card .somna-page-hero__actions {
+    gap: 15px;
+    margin-top: 50px;
+  }
+
+  /* Figma 4927:1305: white pill, 2.44px border, hard shadow, Inter Medium 21.9px */
+  .somna-page-hero--card .somna-page-hero__button--pill {
+    gap: 4px;
+    min-height: 48px;
+    padding: 0 14px;
+    border: 2.44px solid #000;
+    border-radius: 68px;
+    background: #fff;
+    box-shadow: 3.25px 4.06px 0 #000;
+    font-size: clamp(1rem, 1.52vw, 1.367rem);
+    font-weight: 500;
+    letter-spacing: 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .somna-page-hero--card .somna-page-hero__button--pill:hover {
+    border-color: #000;
+    background: #000;
+    color: #fff;
+    transform: translate(-1px, -1px);
+    box-shadow: 4.5px 5.5px 0 #000;
+  }
+
+  .somna-page-hero--card .somna-page-hero__button--pill:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 #000;
+  }
+
+  .somna-page-hero--card .somna-page-hero__pill-arrow {
+    transition: transform 0.25s ease;
+  }
+
+  .somna-page-hero--card .somna-page-hero__button--pill:hover .somna-page-hero__pill-arrow {
+    transform: translateY(3px);
+  }
+
+  .somna-page-hero__card {
+    --somna-drip-h: clamp(36px, 3.4vw, 48px);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 20px 26px;
+    background: #000;
+    color: #f3feee;
+  }
+
+  .somna-page-hero__card-icon {
+    position: absolute;
+    top: 20px;
+    right: 18px;
+    width: clamp(72px, 8.65vw, 124.5px);
+    height: auto;
+    color: #f3feee;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-page-hero__card:hover .somna-page-hero__card-icon {
+    transform: translateY(-6px) rotate(-4deg);
+  }
+
+  .somna-page-hero__card-eyebrow {
+    margin: 0;
+    font-size: clamp(0.9375rem, 1.3vw, 1.1658rem);
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .somna-page-hero__card-title {
+    margin: 4px 0 0;
+    padding-right: 120px;
+    color: inherit;
+    font-family: var(--font-accent--family);
+    font-size: clamp(2rem, 3.24vw, 2.9143rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .somna-page-hero__card-text {
+    margin: 0 0 14px;
+    font-size: 0.8743rem;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+  }
+
+  /* Figma 4927:1319: lavender, 2.84px border, hard shadow, Inter Bold 18.65 / 0.18em */
+  .somna-page-hero__card-button {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    min-height: 58px;
+    border: 2.84px solid #000;
+    border-radius: 9.33px;
+    background: #afbdf8;
+    box-shadow: 3.79px 4.73px 0 #000;
+    color: #000;
+    font-size: clamp(1rem, 1.3vw, 1.1658rem);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .somna-page-hero__card-button:hover {
+    background: #f3feee;
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 6px 0 #000;
+  }
+
+  .somna-page-hero__card-button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 #000;
+  }
+
+  .somna-page-hero__card-button:focus-visible,
+  .somna-page-hero__search:has(input:focus-visible) {
+    outline: 2px solid #f3feee;
+    outline-offset: 3px;
+  }
+
+  .somna-page-hero__search:has(input:focus-visible) {
+    outline-color: #000;
+  }
+
+  @media screen and (min-width: 750px) {
+    .somna-page-hero--card .somna-page-hero__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 549px);
+      align-items: start;
+      gap: 48px;
+    }
+
+    .somna-page-hero--card .somna-page-hero__card {
+      margin-top: 50px;
+      animation: somna-page-hero-in 0.7s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .somna-page-hero__search {
+      min-height: 56px;
+      margin-top: 18px;
+    }
+
+    .somna-page-hero__search-icon {
+      left: 20px;
+      width: 22px;
+    }
+
+    .somna-page-hero__search input[type='search'] {
+      min-height: 52px;
+      padding-left: 54px;
+    }
+
+    .somna-page-hero--card .somna-page-hero__actions {
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .somna-page-hero--card .somna-page-hero__button--pill {
+      min-height: 42px;
+      font-size: 0.9375rem;
+    }
+
+    .somna-page-hero__card-title {
+      padding-right: 84px;
+    }
+  }
+
   @keyframes somna-page-hero-in {
     from {
       opacity: 0;
@@ -507,7 +755,15 @@
     { "type": "text", "id": "image_position", "label": "Image focal point", "default": "object-position: center", "info": "CSS, e.g. object-position: 60% 40%" },
     { "type": "select", "id": "image_fit", "label": "Image fit", "options": [{ "value": "cover", "label": "Fill" }, { "value": "contain", "label": "Fit (cut-outs)" }], "default": "cover" },
     { "type": "color", "id": "media_color", "label": "Image background", "info": "Shows around cut-out images. Empty uses the panel colour." },
-    { "type": "select", "id": "style", "label": "Style", "options": [{ "value": "panel", "label": "Navy panel beside the photo" }, { "value": "open", "label": "Open: text on the background, photo on the right" }, { "value": "aside", "label": "Aside: no photo, buttons in a right column" }], "default": "panel", "info": "Open: italic words in the heading start a new line in the accent colour; the drip hangs under the photo." },
+    { "type": "select", "id": "style", "label": "Style", "options": [{ "value": "panel", "label": "Navy panel beside the photo" }, { "value": "open", "label": "Open: text on the background, photo on the right" }, { "value": "aside", "label": "Aside: no photo, buttons in a right column" }, { "value": "card", "label": "Card: search, help card on the right" }], "default": "panel", "info": "Open: italic words in the heading start a new line in the accent colour; the drip hangs under the photo." },
+    { "type": "header", "content": "Card style (Support)" },
+    { "type": "text", "id": "search_placeholder", "label": "Search placeholder", "info": "Empty hides the search field." },
+    { "type": "text", "id": "card_eyebrow", "label": "Card eyebrow" },
+    { "type": "text", "id": "card_heading", "label": "Card heading" },
+    { "type": "text", "id": "card_text", "label": "Card text" },
+    { "type": "select", "id": "card_icon", "label": "Card icon", "options": [{ "value": "none", "label": "None" }, { "value": "pin", "label": "Location pin" }, { "value": "truck", "label": "Truck" }, { "value": "box", "label": "Box" }, { "value": "chat", "label": "Chat" }], "default": "pin" },
+    { "type": "text", "id": "card_button", "label": "Card button" },
+    { "type": "url", "id": "card_link", "label": "Card button link" },
     { "type": "select", "id": "image_side", "label": "Image side", "options": [{ "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }], "default": "left" },
     { "type": "checkbox", "id": "drip_edge", "label": "Drip edge on panel", "default": true },
     { "type": "header", "content": "Colours" },

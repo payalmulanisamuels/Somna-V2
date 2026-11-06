@@ -1,0 +1,330 @@
+{%- doc -%}
+  Somna V2 — product card in the menu drawer (Figma 4927:568). The whole card is one link.
+  Picture: the colour's variant picture, else custom.card_image, else the featured image.
+  Price: lowest Subscribe & Save price (for that colour), its compare-at price, and a per-night price
+  (price ÷ bags ÷ custom.nights, 30 nights a bag when empty). Rating: Judge.me (snippets/somna-rating).
+
+  @param {product} product
+  @param {string} style - best (navy, Bestsellers) | bundle (mint tile) | wide (mint, full width)
+  @param {string} [color] - one value of the product's Color option: makes a "The [color] Bundle" tile
+{%- enddoc -%}
+{%- liquid
+  assign p = product
+  if p == blank
+    break
+  endif
+  assign st = settings
+  assign mf = p.metafields.custom
+
+  # colour tile: name from "Blue:Breathe|Red:Bold|Black:Night"
+  assign name = p.title
+  assign color_name = color
+  if color != blank
+    for pair in st.somna_drawer_color_names | split: '|'
+      assign k = pair | split: ':' | first | strip | downcase
+      if k == color | downcase
+        assign color_name = pair | split: ':' | last | strip
+      endif
+    endfor
+    assign name = st.somna_drawer_color_title | default: '[color] [product]' | replace: '[color]', color_name | replace: '[product]', p.title
+  endif
+
+  # lowest Subscribe & Save price for the tile's variants (falls back to the lowest one-time price)
+  assign best = nil
+  assign best_variant = nil
+  assign first_variant = nil
+  for v in p.variants
+    if color != blank
+      unless v.options contains color
+        continue
+      endunless
+    endif
+    if first_variant == nil
+      assign first_variant = v
+    endif
+    for a in v.selling_plan_allocations
+      if best == nil or a.price < best
+        assign best = a.price
+        assign best_variant = v
+      endif
+    endfor
+  endfor
+  if best == nil
+    assign best_variant = first_variant | default: p.selected_or_first_available_variant
+    assign best = best_variant.price
+  endif
+  assign compare = best_variant.compare_at_price | default: 0
+  if compare <= best
+    assign compare = best_variant.price
+  endif
+  assign compare_html = ''
+  if compare > best
+    assign compare_html = compare | money | prepend: '<s>' | append: '</s>'
+  endif
+
+  # per night: price ÷ bags (from the "1 Bag" option) ÷ nights per bag
+  assign bags = 1
+  for o in best_variant.options
+    if o contains 'Bag'
+      assign bags = o | split: ' ' | first | plus: 0
+    endif
+  endfor
+  if bags < 1
+    assign bags = 1
+  endif
+  assign nights = mf.nights.value | default: 30
+  assign night = best | times: 1.0 | divided_by: bags | divided_by: nights | round
+  assign night_money = night | money
+  assign best_money = best | money
+
+  assign url = p.url
+  if color != blank and first_variant
+    assign url = first_variant.url
+  endif
+
+  assign pic = nil
+  if color != blank and first_variant.featured_media
+    assign pic = first_variant.featured_media.preview_image
+  endif
+  assign pic = pic | default: mf.card_image.value | default: p.featured_image
+
+  if style == 'best'
+    assign price_line = st.somna_drawer_price_format | escape
+    assign side_line = st.somna_drawer_night_format | escape
+  elsif style == 'wide'
+    assign price_line = st.somna_drawer_wide_format | escape
+    assign side_line = ''
+  else
+    assign price_line = st.somna_drawer_bundle_price_format | escape
+    assign side_line = ''
+  endif
+  assign price_line = price_line | replace: '[price]', best_money | replace: '[compare]', compare_html | replace: '[night]', night_money | replace: '[nights]', nights | replace: '  ', ' '
+  assign side_line = side_line | replace: '[price]', best_money | replace: '[night]', night_money | replace: '[nights]', nights
+
+  # dots: the tile's colour, or the product's "PDP – box colours" (Color Set)
+  assign dots = ''
+  if color != blank
+    assign dots = color
+  elsif mf.pdp_box_colors.value != blank
+    assign dots = mf.pdp_box_colors.value | join: '|'
+  endif
+-%}
+<a class="somna-md-card somna-md-card--{{ style }}" href="{{ url }}">
+  <span class="somna-md-card__media">
+    {%- if pic != blank -%}
+      {{ pic | image_url: width: 480 | image_tag: widths: '240, 360, 480', sizes: '(min-width: 750px) 200px, 45vw', loading: 'lazy', alt: '' }}
+    {%- else -%}
+      {{ 'product-1' | placeholder_svg_tag }}
+    {%- endif -%}
+  </span>
+  <span class="somna-md-card__info">
+    {%- if style != 'bundle' -%}
+      {%- render 'somna-rating', product: p, format: st.somna_drawer_rating_format, tag: 'span', class: 'somna-md-card__rating' -%}
+    {%- endif -%}
+    <span class="somna-md-card__title-row">
+      <span class="somna-md-card__title">{{ name | escape }}</span>
+      {%- if dots != blank -%}
+        <span class="somna-md-card__dots" aria-hidden="true">
+          {%- for c in dots | split: '|' -%}<i style="--d: {% render 'somna-swatch-color', name: c %};"></i>{%- endfor -%}
+        </span>
+      {%- endif -%}
+    </span>
+    <span class="somna-md-card__price">
+      <span>{{ price_line }}</span>
+      {%- if side_line != blank -%}<span>{{ side_line }}</span>{%- endif -%}
+    </span>
+  </span>
+  {%- if st.somna_drawer_card_button != blank -%}<span class="somna-md-card__btn">{{ st.somna_drawer_card_button | escape }}</span>{%- endif -%}
+</a>
+
+{% stylesheet %}
+  /* Figma 4927:596 (Bestsellers), 4927:624 (bundle tile), 4927:657 (wide). Figma's 5–9px card text is
+     raised to 10–11px so it stays readable on a phone. */
+  .somna-md-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    color: #000;
+    text-decoration: none;
+  }
+
+  .somna-md-card__media {
+    display: block;
+    overflow: hidden;
+    border-radius: 10.9px;
+    background: #0b0f1d;
+  }
+
+  .somna-md-card__media img,
+  .somna-md-card__media svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-md-card:hover .somna-md-card__media img {
+    transform: scale(1.05);
+  }
+
+  .somna-md-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+  }
+
+  .somna-md-card__rating {
+    font-size: 10px;
+    line-height: 1;
+  }
+
+  .somna-md-card__title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .somna-md-card__title {
+    min-width: 0;
+    font-family: var(--font-accent--family);
+    font-size: 11px;
+    line-height: 1.25;
+    text-transform: uppercase;
+  }
+
+  .somna-md-card__dots {
+    display: flex;
+    flex: none;
+  }
+
+  .somna-md-card__dots i {
+    width: 15px;
+    height: 15px;
+    margin-left: -4px;
+    border-radius: 50%;
+    background: var(--d);
+  }
+
+  .somna-md-card__dots i:first-child {
+    margin-left: 0;
+  }
+
+  .somna-md-card__price {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 300;
+    line-height: 1.18;
+    opacity: 0.75;
+  }
+
+  .somna-md-card__price s {
+    opacity: 0.7;
+  }
+
+  .somna-md-card__btn {
+    display: grid;
+    place-items: center;
+    min-height: 28px;
+    margin-top: 8px;
+    border-radius: 5.36px;
+    background: #afbdf8;
+    color: #000;
+    filter: drop-shadow(0 2.22px 3.33px rgb(0 0 0 / 0.25));
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  .somna-md-card:hover .somna-md-card__btn {
+    background: #000;
+    color: #f3feee;
+  }
+
+  /* Bestsellers: navy card, mint text */
+  .somna-md-card--best {
+    gap: 6px;
+    padding: 7px 7px 7px;
+    border: 0.59px solid rgb(0 0 0 / 0.1);
+    border-radius: 9.65px;
+    background: #0b0f1d;
+    color: #f4fef3;
+  }
+
+  .somna-md-card--best .somna-md-card__media {
+    aspect-ratio: 150.55 / 146.19;
+  }
+
+  .somna-md-card--best .somna-md-card__rating .somna-stars-line__text {
+    color: #b9b9b9;
+    opacity: 1;
+  }
+
+  .somna-md-card--best .somna-md-card__title {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .somna-md-card--best .somna-md-card__price {
+    font-size: 9px;
+  }
+
+  /* bundle tile: mint, 0.52px border */
+  .somna-md-card--bundle {
+    gap: 8px;
+    padding: 7px 9px 9px;
+    border: 0.52px solid rgb(0 0 0 / 0.1);
+    border-radius: 8.55px;
+    background: #f3feee;
+  }
+
+  .somna-md-card--bundle .somna-md-card__media {
+    aspect-ratio: 160.69 / 93.74;
+    border-radius: 8px;
+  }
+
+  /* wide: picture · rating, title, nights · big Shop now */
+  .somna-md-card--wide {
+    flex-direction: row;
+    align-items: center;
+    gap: 9px;
+    min-height: 73px;
+    padding: 8px 11px 8px 5px;
+    border: 0.84px solid rgb(0 0 0 / 0.1);
+    border-radius: 13.76px;
+    background: #f3feee;
+  }
+
+  .somna-md-card--wide .somna-md-card__media {
+    flex: none;
+    width: 91px;
+    height: 56px;
+    border-radius: 5px;
+  }
+
+  .somna-md-card--wide .somna-md-card__info {
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .somna-md-card--wide .somna-md-card__title {
+    font-size: 12.44px;
+    line-height: 1.35;
+  }
+
+  .somna-md-card--wide .somna-md-card__btn {
+    flex: none;
+    width: 91px;
+    min-height: 55px;
+    margin: 0;
+    border-radius: 8.11px;
+    font-size: 13.79px;
+    line-height: 1.05;
+    text-align: center;
+  }
+{% endstylesheet %}
