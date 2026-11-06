@@ -2719,6 +2719,13 @@
         "content": "Account"
       },
       {
+        "type": "checkbox",
+        "id": "somna_drawer_show_account",
+        "label": "Show account buttons",
+        "default": false,
+        "info": "Needs customer accounts turned on in Shopify settings."
+      },
+      {
         "type": "text",
         "id": "somna_drawer_register_label",
         "label": "Create account button",
