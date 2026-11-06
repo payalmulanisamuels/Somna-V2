@@ -270,6 +270,7 @@
     <span class="button-text">
       <svg class="somna-lock" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>
       {{ 'content.checkout' | t }}
+      {%- if section_id == 'cart-drawer-section' -%}<span class="somna-checkout-total">&nbsp;·&nbsp;{{ cart.total_price | money }}</span>{%- endif -%}
     </span>
   </button>
 
