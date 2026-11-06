@@ -1,6 +1,6 @@
 {%- doc -%}
   Somna V2 — product card for the Collection page (sections/somna-collection). Everything comes from the product:
-  picture (custom.card_image, else featured image), rating (custom.custom_review_rating_review_count),
+  picture (custom.card_image, else featured image), rating (Judge.me, snippets/somna-rating),
   details line (titles of custom.pdp_hero_features), lowest Subscribe & Save price + that variant's compare-at price.
 
   @param {product} product
@@ -45,17 +45,11 @@
   assign best_money = best | money
   assign price_line = price_line | replace: '[price]', best_money | replace: '[compare]', compare_html | replace: '  ', ' '
 
-  # rating: same field and parsing as the product page hero
-  assign rating_line = ''
-  assign rating_raw = mf.custom_review_rating_review_count.value | strip_html | strip
-  if rating_raw != blank and rating_format != blank
-    assign rating = rating_raw | split: ' ' | first
-    assign rating_count = ''
-    if rating_raw contains '('
-      assign rating_count = rating_raw | split: '(' | last | split: ')' | first | strip
-    endif
-    assign rating_line = rating_format | replace: '[rating]', rating | replace: '[count]', rating_count
-  endif
+  # rating: Judge.me (snippets/somna-rating)
+  capture rating_line
+    render 'somna-rating', product: p, format: rating_format
+  endcapture
+  assign rating_line = rating_line | strip
 
   # details: override, else the product's hero feature titles ("Nose + lips · 90 nights · One delivery")
   assign detail_line = details
