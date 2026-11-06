@@ -564,6 +564,21 @@
     text-decoration: none;
   }
 
+  /* product card: photo zooms a touch and the title underlines on hover (same as the Collection cards) */
+  .somna-guide__card-media img {
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-guide__card:hover .somna-guide__card-media img {
+    transform: scale(1.04);
+  }
+
+  .somna-guide__card-title a:hover,
+  .somna-guide__card-title a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
   .somna-guide__card-text {
     margin: 0;
     color: rgb(244 254 243 / 0.75);
