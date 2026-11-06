@@ -668,6 +668,36 @@
     .sgp__card--split .sgp__code { font-size: 2.25rem; }
     .sgp__card--split .sgp__wave-wrap { height: 90px; }
     .sgp__card--split :is(.sgp__form, .sgp__btn, .sgp__code) { width: 100%; max-width: 330px; }
+
+    /* approved look "C · Lavender half": solid lavender left part with the gift in black, no wave, fixed size */
+    .sgp__card--split {
+      width: min(660px, 100%);
+      min-height: min(420px, calc(100dvh - 24px));
+    }
+
+    .sgp__card--split::before {
+      width: 42%;
+      background: var(--sgp-lav);
+    }
+
+    .sgp__card--split .sgp__top { padding: 20px 22px 0 26px; }
+    .sgp__card--split .sgp__logo { color: #000; }
+
+    .sgp__card--split .sgp__screen {
+      grid-template-columns: 240px minmax(0, 320px);
+      column-gap: 44px;
+      padding: 0 26px 30px 18px;
+    }
+
+    .sgp__card--split :is(.sgp__box, .sgp__gift-small) { width: 220px; color: #000; }
+    .sgp__card--split .sgp-gift [fill="#000"],
+    .sgp__card--split .sgp__reveal-box [fill="#000"] { fill: var(--sgp-lav); }
+    .sgp__card--split .sgp__box:focus-visible { outline-color: #000; }
+    .sgp__card--split :is(.sgp__screen--claim .sgp__burst, .sgp__reveal, .sgp__burst--reveal) { width: 240px; }
+    .sgp__card--split .sgp__reveal-box { width: 150px; margin-top: 112px; color: #000; }
+    .sgp__card--split .sgp__sparks i { background: #000; }
+    .sgp__card--split .sgp__sparks i:nth-child(even) { background: var(--sgp-mint); }
+    .sgp__card--split .sgp__wave-wrap { display: none; }
   }
 
   /* lavender wave along the bottom */
