@@ -195,7 +195,8 @@
     ],
     "somna_mega_feature_product": "season-bundle",
     "somna_mega_feature_link": "/collections/all",
-    "somna_mega_style": "classic"
+    "somna_mega_style": "somna",
+    "somna_mega_layout": "columns"
   },
   "presets": {
     "Horizon": {
