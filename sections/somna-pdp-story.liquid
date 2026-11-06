@@ -458,9 +458,9 @@
         // Started by an IntersectionObserver, not ScrollTrigger: the page scrolls smoothly (scroll-behavior: smooth),
         // and ScrollTrigger's re-measuring while lazy images load mid-scroll (phones) left it with wrong start
         // positions, so the strip could leave "How it works" before the layers were even on screen.
-        // Desktop: plays when the section top passes 66% of the screen; phones (sections stack): when it passes 60%,
+        // Desktop: plays when the section top passes 66% of the screen; phones (sections stack): when it passes 75%,
         // so the How-it-works strip is still on screen above and the layers picture is coming in below.
-        const line = this.phone ? 40 : 34;
+        const line = this.phone ? 25 : 34;
         this.io = new IntersectionObserver(([e]) => {
           if (e.isIntersecting) {
             if (tl.progress() === 0) tl.invalidate(); // re-measure the strip's spot and the landing spot
