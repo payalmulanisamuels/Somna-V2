@@ -337,11 +337,7 @@
         "background_color": "#000000",
         "padding-block-start": 72,
         "padding-block-end": 72
-      },
-      "custom_css": [
-        ".button-custom {border-radius: 35px; border-width: 2.437px; box-shadow: 3.249px 4.061px 0 #000; min-height: 48px; font-weight: 700; font-size: 1.3284rem; text-transform: none;}",
-        "h2 {letter-spacing: 0; font-size: clamp(2.5rem, 4.45vw, 4rem);}"
-      ]
+      }
     },
     "wave_settling_guarantee": {
       "type": "somna-wave",
