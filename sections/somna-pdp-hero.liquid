@@ -795,6 +795,18 @@
     margin-bottom: calc(6px - var(--somna-drip-h));
   }
 
+  /* fit = photo starts under the drip and is drawn a little narrower, so the whole photo shows and the box keeps
+     about the same height (navy shows at the sides); none = no drip on the main photo, rounded corners instead */
+  .somna-pdp-hero__main--fit {
+    padding: calc(var(--somna-drip-h) - 6px) 4.5% 0;
+  }
+
+  .somna-pdp-hero__main--none.somna-edge-drip-top {
+    border-radius: 16px !important;
+    -webkit-mask: none;
+    mask: none;
+  }
+
   .somna-pdp-hero__badge {
     position: absolute;
     top: -6px;
@@ -2528,7 +2540,7 @@
     { "type": "checkbox", "id": "quote_from_judgeme", "label": "Quote card: use a Judge.me review when the product has no Hero quote", "info": "Picks a short, named 5★ review of this product.", "default": true },
     { "type": "text", "id": "quote_skip_words", "label": "Quote card: skip Judge.me reviews containing", "info": "Comma-separated, no spaces after commas (spaces count, so \" but \" matches the word only). Skips mixed reviews such as \"worked fine at first, but…\".", "default": " but ,loose,okay,fell off" },
     { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified Buyer" },
-    { "type": "select", "id": "main_drip", "label": "Main photo and drip edge", "options": [{ "value": "over", "label": "Drip over the photo's top" }, { "value": "below", "label": "Photo below the drip (whole photo)" }, { "value": "below-crop", "label": "Photo below the drip, bottom trimmed" }], "default": "over" },
+    { "type": "select", "id": "main_drip", "label": "Main photo and drip edge", "options": [{ "value": "over", "label": "Drip over the photo's top" }, { "value": "below", "label": "Photo below the drip (whole photo)" }, { "value": "below-crop", "label": "Photo below the drip, bottom trimmed" }, { "value": "fit", "label": "Photo below the drip, a bit smaller" }, { "value": "none", "label": "No drip on the photo" }], "default": "over" },
     { "type": "select", "id": "video_shape", "label": "Video cards", "options": [{ "value": "natural", "label": "Each video's own shape" }, { "value": "equal", "label": "Same width (narrowest shape)" }], "default": "natural" },
     { "type": "text", "id": "videos_heading", "label": "Videos heading", "default": "Real Nights, On Camera" },
     { "type": "text", "id": "play_label", "label": "Play label (screen readers)", "default": "Play video" },
