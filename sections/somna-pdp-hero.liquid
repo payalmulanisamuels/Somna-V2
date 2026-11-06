@@ -2748,7 +2748,7 @@
     --sa-add-w: 76px;
     --sa-add-font: 0.875rem;
     --sa-banner: clamp(0.625rem, 2.9vw, 0.75rem);
-    --sa-heading: clamp(1.375rem, 6.6vw, 1.75rem);
+    --sa-heading: clamp(1.125rem, calc((100vw - 80px) / 13.2), 1.75rem); /* "Choose your pack" stays on one line */
     --sa-mode: 0.8125rem;
     --sa-row-h: 64px;
     --sa-radio: 22px;
@@ -2972,6 +2972,7 @@
 
   .somna-sticky-atc__heading {
     margin: 0;
+    white-space: nowrap;
     color: var(--sa-lav);
     font-family: var(--font-accent--family);
     font-size: var(--sa-heading);
@@ -3189,7 +3190,6 @@
       --sa-add-w: 96px;
       --sa-add-font: 0.9375rem;
       --sa-banner: 0.75rem;
-      --sa-heading: 1.875rem;
       --sa-mode: 0.875rem;
       --sa-row-h: 68px;
       --sa-name: 1.125rem;
