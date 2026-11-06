@@ -183,7 +183,18 @@
     "somna_drawer_link_3_url": "/pages/track-order",
     "somna_drawer_link_4_url": "/pages/manage-subscriptions",
     "somna_drawer_style": "somna",
-    "somna_drawer_show_account": false
+    "somna_drawer_show_account": false,
+    "somna_mega_col1_products": [
+      "nasal-strips",
+      "mouth-tape"
+    ],
+    "somna_mega_col2_products": [
+      "season-bundle",
+      "sleep-bundle",
+      "the-colour-set"
+    ],
+    "somna_mega_feature_product": "season-bundle",
+    "somna_mega_feature_link": "/collections/all"
   },
   "presets": {
     "Horizon": {
