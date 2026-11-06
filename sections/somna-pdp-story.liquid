@@ -314,8 +314,8 @@
      Plays by itself (~3.2s, soft ease-in-out; approved demo E) when the section is a third of the way up the screen: the "How it works" product leaves its spot,
      flips and travels down-right into this section, turns into the stacked layers, the layers peel
      apart one after another (first up-left, last down-right), then the descriptions appear 1 -> n.
-     Rewinds when scrolled back above it. Phones (under 750px): no travelling picture (the sections stack), the
-     layers simply appear stacked and peel apart the same way. Off for reduced motion.
+     Rewinds when scrolled back above it. Phones (under 750px): same flip-and-travel; the sections stack, so it
+     starts when the layers picture peeks in under the How-it-works strip. Off for reduced motion.
      Layer offsets are measured from the layer images themselves, so it works for 3 or 4 layers. */
   if (!customElements.get('somna-pdp-layers')) {
     customElements.define('somna-pdp-layers', class extends HTMLElement {
@@ -365,8 +365,9 @@
         gsap.registerPlugin(ScrollTrigger);
         const mid = { x: centres.reduce((a, c) => a + c.x, 0) / centres.length, y: centres.reduce((a, c) => a + c.y, 0) / centres.length };
         const box = () => this.getBoundingClientRect();
+        this.phone = innerWidth < 750;
         // the "How it works" picture that travels into this section (optional)
-        this.source = innerWidth < 750 ? null : document.querySelector('.somna-pdp-story--how .somna-pdp-story__product img');
+        this.source = document.querySelector('.somna-pdp-story--how .somna-pdp-story__product img');
         // only when "How it works" sits right before this section (Nasal Strips / Mouth Tape). If another story
         // section is in between (Color Set: steps come first), the layers simply appear stacked and peel apart.
         const howSection = this.source?.closest('.shopify-section');
@@ -461,7 +462,9 @@
         tl.timeScale(tl.duration() / 3.2);
         const speed = tl.timeScale();
         this.st = ScrollTrigger.create({
-          trigger: section, scroller: this.scroller, start: 'top 66%',
+          // phones: the sections stack, so start once the layers picture itself peeks in at the bottom —
+          // the How-it-works strip is still on screen above it and visibly flips down into it
+          trigger: this.phone ? this : section, scroller: this.scroller, start: this.phone ? 'top 82%' : 'top 66%',
           onEnter: () => { if (tl.progress() === 0) tl.invalidate(); tl.timeScale(speed).play(); },
           onLeaveBack: () => tl.timeScale(speed * 2).reverse(),
           onRefresh: () => this.handoff?.(),
