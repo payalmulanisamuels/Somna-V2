@@ -120,7 +120,7 @@
                       {%- assign cols = cols | append: n | append: ',' -%}
                       <th scope="col">
                         {%- if tab.settings[img_key] != blank -%}{{ tab.settings[img_key] | image_url: width: 180 | image_tag: loading: 'lazy', alt: '', width: 80, height: 80 }}{%- endif -%}
-                        <span class="somna-compare__col-name{% unless s.show_column_names or text_only %} visually-hidden{% endunless %}">{{ tab.settings[label_key] }}</span>
+                        <span class="somna-compare__col-name{% unless s.show_column_names or text_only or tab.settings.show_names %} visually-hidden{% endunless %}">{{ tab.settings[label_key] }}</span>
                       </th>
                     {%- endfor -%}
                   </tr>
@@ -564,6 +564,7 @@
         { "type": "image_picker", "id": "column_4_image", "label": "Column 4 image" },
         { "type": "text", "id": "column_4_label", "label": "Column 4 name", "default": "Mouthguards" },
         { "type": "checkbox", "id": "highlight", "label": "Highlight the first column", "default": true },
+        { "type": "checkbox", "id": "show_names", "label": "Show column names under the pictures", "default": false },
         { "type": "checkbox", "id": "only_on_match", "label": "Only on the product with this name", "info": "Hides this tab everywhere else (e.g. a tab for one bundle).", "default": false },
         { "type": "header", "content": "Heading for this tab", "info": "Optional. Used when this is the only tab shown (product pages); empty uses the section heading." },
         { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
