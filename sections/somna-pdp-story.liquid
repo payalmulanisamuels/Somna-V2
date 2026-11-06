@@ -308,7 +308,6 @@
 
 {%- if layout_class == 'layers' and s.layers_animation and c != blank -%}
 <script src="{{ 'gsap.min.js' | asset_url }}" defer></script>
-<script src="{{ 'gsap-scroll-trigger.min.js' | asset_url }}" defer></script>
 <script type="module">
   /* "How it works" -> "What it's made of" (approved demo N · Peel apart, Slow).
      Plays by itself (~3.2s, soft ease-in-out; approved demo E) when the section is a third of the way up the screen: the "How it works" product leaves its spot,
@@ -331,8 +330,7 @@
         this.build(section, centres);
       }
       disconnectedCallback() {
-        this.ro?.disconnect();
-        this.st?.kill();
+        this.io?.disconnect();
         this.tl?.kill();
         this.traveller?.remove();
         if (this.source) this.source.style.opacity = '';
@@ -340,7 +338,7 @@
       ready() {
         return new Promise((resolve) => {
           let n = 0;
-          const check = () => (window.gsap && window.ScrollTrigger ? resolve(true) : ++n > 100 ? resolve(false) : setTimeout(check, 50));
+          const check = () => (window.gsap ? resolve(true) : ++n > 100 ? resolve(false) : setTimeout(check, 50));
           check();
         });
       }
@@ -361,8 +359,7 @@
         return n ? { x: (sx / n / c.width) * 100, y: (sy / n / c.height) * 100 } : { x: 50, y: 50 };
       }
       build(section, centres) {
-        const { gsap, ScrollTrigger } = window;
-        gsap.registerPlugin(ScrollTrigger);
+        const { gsap } = window;
         const mid = { x: centres.reduce((a, c) => a + c.x, 0) / centres.length, y: centres.reduce((a, c) => a + c.y, 0) / centres.length };
         const box = () => this.getBoundingClientRect();
         this.phone = innerWidth < 750;
@@ -377,9 +374,6 @@
             if (el.querySelector('.somna-pdp-story')) { this.source = null; break; }
           }
         }
-        // the page may scroll inside .page-wrapper instead of the window
-        const pw = document.querySelector('.page-wrapper');
-        this.scroller = pw && /(auto|scroll)/.test(getComputedStyle(pw).overflowY) && pw.scrollHeight > pw.clientHeight ? pw : window;
         // the traveller lives in <main> (or the body), positioned relative to it, so it scrolls with the page
         const host = section.closest('main') || document.body;
         if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
@@ -461,25 +455,24 @@
         tl.pause(0);
         tl.timeScale(tl.duration() / 3.2);
         const speed = tl.timeScale();
-        this.st = ScrollTrigger.create({
-          // phones: the sections stack, so start once the layers picture itself peeks in at the bottom —
-          // the How-it-works strip is still on screen above it and visibly flips down into it
-          trigger: this.phone ? this : section, scroller: this.scroller, start: this.phone ? 'top 76%' : 'top 66%',
-          onEnter: () => { if (tl.progress() === 0) tl.invalidate(); tl.timeScale(speed).play(); },
-          onLeaveBack: () => tl.timeScale(speed * 2).reverse(),
-          onRefresh: () => this.handoff?.(),
-        });
+        // Started by an IntersectionObserver, not ScrollTrigger: the page scrolls smoothly (scroll-behavior: smooth),
+        // and ScrollTrigger's re-measuring while lazy images load mid-scroll (phones) left it with wrong start
+        // positions, so the strip could leave "How it works" before the layers were even on screen.
+        // Desktop: plays when the section top passes 66% of the screen; phones (sections stack): when the
+        // layers picture itself passes 76%, with the How-it-works strip still on screen above it.
+        const line = this.phone ? 24 : 34;
+        this.io = new IntersectionObserver(([e]) => {
+          if (e.isIntersecting) {
+            if (tl.progress() === 0) tl.invalidate(); // re-measure the strip's spot and the landing spot
+            tl.timeScale(speed).play();
+          } else if (e.boundingClientRect.top > 0 && tl.progress() > 0) {
+            tl.timeScale(speed * 2).reverse(); // scrolled back up above it
+          } else if (e.boundingClientRect.top <= 0 && tl.progress() === 0) {
+            tl.progress(1); // page opened (or jumped) further down: show the finished state
+          }
+        }, { rootMargin: `0px 0px -${line}% 0px` });
+        this.io.observe(this.phone ? this : section);
         this.handoff?.();
-        // keep trigger positions right when content above changes height (lazy images, reviews app)
-        let timer;
-        this.ro = new ResizeObserver(() => { clearTimeout(timer); timer = setTimeout(() => ScrollTrigger.refresh(), 200); });
-        this.ro.observe(host);
-        // and when the How-it-works picture itself changes size (layout settles, fonts, breakpoints)
-        if (this.source) this.ro.observe(this.source);
-        // the How-it-works picture is lazy-loaded: measure again once it has its real size
-        if (this.source && !(this.source.complete && this.source.naturalWidth)) {
-          this.source.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
-        }
       }
     });
   }
