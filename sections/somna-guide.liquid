@@ -20,7 +20,15 @@
       text under it; numbered step rows (photo + number + text) and the note on the right. Without steps the heading,
       text and an optional product card sit on the right (Using them together); a second image adds "+" between the two.
     {%- endcomment -%}
+    {%- liquid
+      assign hop = false
+      if s.cutout_motion == 'hop'
+        assign hop = true
+      endif
+    -%}
+    {%- if hop -%}<somna-guide-hop class="somna-container somna-guide__split{% if steps.size == 0 %} somna-guide__split--copy{% endif %}">{%- else -%}
     <div class="somna-container somna-guide__split{% if steps.size == 0 %} somna-guide__split--copy{% endif %}">
+    {%- endif -%}
       <div class="somna-guide__left">
         <div class="somna-guide__figure somna-guide__figure--{{ s.image_align | default: 'right' }}">
           {%- if s.image != blank -%}{{ s.image | image_url: width: 900 | image_tag: widths: '400, 600, 900', sizes: '(min-width: 990px) 340px, 60vw', loading: 'lazy', class: 'somna-guide__cutout', alt: s.image.alt | default: '' }}{%- endif -%}
@@ -86,7 +94,7 @@
           {%- endif -%}
         {%- endif -%}
       </div>
-    </div>
+    {%- if hop -%}</somna-guide-hop>{%- else -%}</div>{%- endif -%}
   {%- else -%}
   <div class="somna-container">
     <div class="somna-guide__intro">
@@ -147,6 +155,68 @@
   </div>
   {%- endif -%}
 </div>
+
+
+{%- if section.settings.cutout_motion == 'hop' -%}
+<script type="module">
+  /* How to use: the product cut-out hop-flips in (like the product page "Small strip. Simple routine." section),
+     lands with a small squash and then floats; the step rows follow one by one. Plays when the section is a third
+     up the screen, resets once it is completely below the screen. */
+  if (!customElements.get('somna-guide-hop')) {
+    customElements.define('somna-guide-hop', class extends HTMLElement {
+      connectedCallback() {
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        this.cutouts = [...this.querySelectorAll('.somna-guide__cutout')];
+        if (!this.cutouts.length) return;
+        this.anims = [];
+        this.classList.add('is-pending');
+        this.io = new IntersectionObserver(([e]) => e.isIntersecting && this.play(), { rootMargin: '0px 0px -30% 0px' });
+        this.out = new IntersectionObserver(([e]) => !e.isIntersecting && e.boundingClientRect.top > 0 && this.reset());
+        this.io.observe(this);
+        this.out.observe(this);
+      }
+      disconnectedCallback() {
+        this.io?.disconnect();
+        this.out?.disconnect();
+        this.anims?.forEach((a) => a.cancel());
+      }
+      reset() {
+        if (!this.played) return;
+        this.anims.forEach((a) => a.cancel());
+        this.anims = [];
+        this.played = false;
+        this.classList.remove('is-done');
+        this.classList.add('is-pending');
+      }
+      play() {
+        if (this.played) return;
+        this.played = true;
+        const add = (el, kf, opt) => { const a = el.animate(kf, { fill: 'both', ...opt }); this.anims.push(a); return a; };
+        this.classList.remove('is-pending');
+        const two = this.cutouts.length > 1;
+        this.cutouts.forEach((im, i) => {
+          const dx = i === 0 ? -180 : 180;
+          const delay = i * 200;
+          add(im, [
+            { transform: `translate3d(${dx}px, 0, 0) rotateY(0deg)`, opacity: 0, offset: 0 },
+            { opacity: 1, offset: 0.12 },
+            { transform: `translate3d(${dx * 0.45}px, ${two ? -90 : -110}px, 0) rotateY(180deg)`, offset: 0.5 },
+            { transform: 'translate3d(0, 0, 0) rotateY(360deg)', opacity: 1, offset: 1 },
+          ], { duration: two ? 1100 : 1300, delay, easing: 'cubic-bezier(0.45, 0, 0.55, 1)' });
+          const squash = add(im, [{ scale: '1 1' }, { scale: '1.05 0.94' }, { scale: '0.99 1.02' }, { scale: '1 1' }], { duration: 400, delay: delay + (two ? 1060 : 1250), easing: 'ease-out', fill: 'none' });
+          if (i === this.cutouts.length - 1) squash.finished.then(() => this.played && this.classList.add('is-done')).catch(() => {});
+        });
+        const plus = this.querySelector('.somna-guide__plus');
+        if (plus) add(plus, [{ opacity: 0, transform: 'scale(0.3) rotate(-90deg)' }, { opacity: 1, transform: 'scale(1.15) rotate(0deg)', offset: 0.7 }, { opacity: 1, transform: 'scale(1)' }], { duration: 450, delay: 900, easing: 'ease-out' });
+        const start = two ? 1450 : 1550;
+        [...this.querySelectorAll('.somna-guide__row')].forEach((row, i) => {
+          add(row, [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 420, delay: start + i * 260, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+        });
+      }
+    });
+  }
+</script>
+{%- endif -%}
 
 {% stylesheet %}
   .somna-guide {
@@ -739,6 +809,34 @@
       transform: none !important;
     }
   }
+
+  /* cut-out motion (setting "Product picture motion"): 3D flip, then a gentle float */
+  somna-guide-hop .somna-guide__figure {
+    perspective: 1100px;
+  }
+
+  somna-guide-hop.is-pending :is(.somna-guide__cutout, .somna-guide__plus, .somna-guide__row) {
+    opacity: 0;
+  }
+
+  somna-guide-hop.is-done .somna-guide__cutout {
+    animation: somnaGuideFloat 4s ease-in-out infinite;
+  }
+
+  somna-guide-hop.is-done .somna-guide__cutout--2 {
+    animation-delay: -2s;
+  }
+
+  @keyframes somnaGuideFloat {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -10px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    somna-guide-hop.is-done .somna-guide__cutout {
+      animation: none;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -748,6 +846,7 @@
   "class": "somna-guide-section",
   "settings": [
     { "type": "text", "id": "anchor", "label": "Anchor", "info": "Link to this section with #anchor, e.g. nasal-strips." },
+    { "type": "select", "id": "cutout_motion", "label": "Product picture motion (split)", "options": [{ "value": "none", "label": "Still" }, { "value": "hop", "label": "Hop-flip in, then float" }], "default": "none" },
     { "type": "select", "id": "layout", "label": "Layout", "options": [{ "value": "stacked", "label": "Photo + text, step cards below" }, { "value": "split", "label": "Split: product cut-out left, numbered steps right" }], "default": "stacked" },
     { "type": "image_picker", "id": "image_2", "label": "Second image (split)", "info": "Split layout without steps: shown after a \"+\" (Using them together)." },
     { "type": "select", "id": "image_align", "label": "Cut-out position (split)", "options": [{ "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }], "default": "right" },
