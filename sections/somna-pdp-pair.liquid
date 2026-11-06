@@ -29,6 +29,8 @@
   assign card_style = 'compact'
   if card_image != blank
     assign card_style = 'wide'
+    # the wide card layout (Season Bundle / Color Set → Sleep Bundle) is heading + arrow + card only
+    assign trend = nil
   endif
 -%}
 {%- if pair != blank or trend != blank -%}
