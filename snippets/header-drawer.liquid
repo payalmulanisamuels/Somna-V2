@@ -1568,12 +1568,18 @@
     border: 0;
     background: #f3feee;
     overscroll-behavior: contain;
-    transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+    /* closing: gentle ease-in-out back to the edge */
+    transition-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
 
     @media screen and (min-width: 750px) {
       width: 440px;
       box-shadow: 8px 0 40px rgb(0 0 0 / 0.18);
     }
+  }
+
+  /* opening: quick start, long soft landing */
+  .header-drawer--somna .menu-open > .menu-drawer--somna {
+    transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
   }
 
   .header-drawer--somna .menu-drawer__backdrop {
