@@ -102,6 +102,14 @@
       if (window.ResizeObserver) new ResizeObserver(update).observe(ul);
       var labels = { from: {{ s.price_prefix | json }}, sub: {{ s.subscribe_label | json }}, cta: {{ s.button_label | json }} };
       var onceOff = {{ settings.somna_once_discount | default: 0 }};
+      // star rating per product (Judge.me, snippets/somna-rating), keyed by handle
+      var ratings = {
+        {%- for rp in collections.all.products -%}
+          {%- capture rp_rating -%}{%- render 'somna-rating', product: rp, format: '[rating]/5 · [count] reviews' -%}{%- endcapture -%}
+          {%- assign rp_rating = rp_rating | strip -%}
+          {%- if rp_rating != blank -%}{{ rp.handle | json }}: {{ rp_rating | json }},{%- endif -%}
+        {%- endfor -%}
+      };
       // Reserve the space before the request finishes so nothing below jumps.
       ul.innerHTML = list.map(function () { return '<li class="somna-rv__card is-loading" aria-hidden="true"><span class="somna-rv__media"></span></li>'; }).join('');
       root.hidden = false;
@@ -139,6 +147,7 @@
             '<a class="somna-rv__media" href="' + esc(p.url) + '" tabindex="-1" aria-hidden="true">' +
               (src ? '<img src="' + esc(src) + '" alt="" width="600" height="468" loading="lazy" decoding="async">' : '') +
             '</a>' +
+            (ratings[p.handle] ? '<p class="somna-stars-line somna-rv__rating"><span class="somna-stars-line__stars" aria-hidden="true">★★★★★</span><span class="somna-stars-line__text">' + esc(ratings[p.handle]) + '</span></p>' : '') +
             '<h3 class="somna-rv__title"><a href="' + esc(p.url) + '">' + esc(p.title) + '</a></h3>' +
             '<p class="somna-rv__price">' + esc(labels.from) + ' ' + money(low.price) + (low.compare > low.price ? ' <s>' + money(low.compare) + '</s>' : '') + sub + '</p>' +
             '<a class="somna-rv__button" href="' + esc(p.url) + '">' + esc(labels.cta) + '<span class="visually-hidden">: ' + esc(p.title) + '</span></a>' +
@@ -275,6 +284,12 @@
     object-fit: cover;
   }
 
+  .somna-rv__rating {
+    margin: 0 9px 4px;
+    color: #0b0f1d;
+    font-size: 0.75rem;
+  }
+
   .somna-rv__title {
     margin: 0 9px;
     font-family: var(--font-body--family);
@@ -342,14 +357,14 @@
   .somna-rv--compact .somna-rv__card {
     display: grid;
     grid-template-columns: 118px minmax(0, 1fr);
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto auto auto 1fr;
     column-gap: 14px;
     padding: 10px;
     border-radius: 16px;
   }
 
   .somna-rv--compact .somna-rv__media {
-    grid-row: 1 / 4;
+    grid-row: 1 / 5;
     align-self: stretch;
     min-height: 118px;
     margin: 0;
@@ -357,8 +372,12 @@
     border-radius: 12px;
   }
 
+  .somna-rv--compact .somna-rv__rating {
+    margin: 2px 0 2px;
+  }
+
   .somna-rv--compact .somna-rv__title {
-    margin: 2px 0 0;
+    margin: 0;
     font-size: 1.0625rem;
   }
 

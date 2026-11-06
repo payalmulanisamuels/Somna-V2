@@ -52,6 +52,7 @@
           <a class="somna-pdp-pair__trend-card" href="{{ trend.url }}">
             {%- if trend.featured_image -%}{{ trend.featured_image | image_url: width: 300 | image_tag: loading: 'lazy', alt: '', width: 117, height: 89 }}{%- endif -%}
             <span>
+              {%- render 'somna-rating', product: trend, format: '[rating]/5 · [count] reviews', tag: 'span', class: 'somna-pdp-pair__rating' -%}
               <span class="somna-pdp-pair__trend-title">{{ trend.title }}</span>
               {%- liquid
                 # lowest price: Subscribe & Save plan, else the one-time sale price; regular price struck
@@ -94,6 +95,7 @@
         {%- assign card_image = card_image | default: pair.featured_image -%}
         {%- if card_style == 'wide' -%}{%- assign sizes_attr = '(min-width: 750px) 488px, 90vw' -%}{%- else -%}{%- assign sizes_attr = '(min-width: 750px) 185px, 60vw' -%}{%- endif -%}
         {%- if card_image -%}{{ card_image | image_url: width: 1000 | image_tag: loading: 'lazy', alt: card_image.alt | default: pair.title, widths: '300, 450, 600, 800, 1000', sizes: sizes_attr }}{%- endif -%}
+        {%- render 'somna-rating', product: pair, format: '[rating]/5 · [count] reviews', tag: 'span', class: 'somna-pdp-pair__rating' -%}
         <span class="somna-pdp-pair__name">{{ pair.title }}</span>
         {%- if mf.pdp_pair_note != blank -%}<span class="somna-pdp-pair__note">{{ mf.pdp_pair_note.value }}</span>{%- endif -%}
         {%- capture from_money -%}{{ from_price | money }}{%- endcapture -%}
@@ -261,6 +263,21 @@
     margin-bottom: 14px;
     border-radius: 12px;
     object-fit: cover;
+  }
+
+  .somna-pdp-pair__rating {
+    display: block;
+    padding-inline: 6px;
+  }
+
+  .somna-pdp-pair--wide .somna-pdp-pair__rating {
+    padding-inline: 0;
+    font-size: 0.9375rem;
+  }
+
+  .somna-pdp-pair__trend .somna-pdp-pair__rating {
+    padding-inline: 0;
+    margin-bottom: 2px;
   }
 
   .somna-pdp-pair__name {

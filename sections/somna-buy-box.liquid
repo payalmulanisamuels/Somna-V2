@@ -70,8 +70,8 @@
 
       <div class="somna-buy__side">
         <div class="somna-buy__panel{% if s.drip_edges %} somna-edge-drip-top{% endif %}" role="tabpanel" data-panel>
-          <h2 class="somna-buy__title"><span class="somna-buy__brand">{{ s.brand }}</span> <span data-title></span></h2>
           <p class="somna-buy__rating" data-rating></p>
+          <h2 class="somna-buy__title"><span class="somna-buy__brand">{{ s.brand }}</span> <span data-title></span></h2>
           <p class="somna-buy__desc" data-desc></p>
           <ul class="somna-buy__points" role="list" data-points></ul>
 
@@ -335,7 +335,7 @@
   }
 
   .somna-buy__rating {
-    margin: 10px 0 0;
+    margin: 0 0 6px;
     font-size: 0.875rem;
     opacity: 0.85;
   }
