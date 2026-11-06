@@ -589,12 +589,18 @@
     height: 40px;
   }
 
+  /* all three link icons drawn the same size (the refresh PNG has no padding, so it looked bigger) */
   .somna-contact__mask {
-    width: 40px;
-    height: 36px;
+    width: 30px;
+    height: 28px;
     background: currentColor;
     -webkit-mask: var(--scf-mask) center / contain no-repeat;
     mask: var(--scf-mask) center / contain no-repeat;
+  }
+
+  .somna-contact__link-icon .somna-contact__svg {
+    width: 30px;
+    height: 30px;
   }
 
   .somna-contact__link-label {
@@ -629,26 +635,27 @@
     line-height: 1.3;
   }
 
+  /* the envelope sits in the same column as the link icons, the text lines up with the link labels */
   .somna-contact--card .somna-contact__direct {
-    gap: 12px;
+    gap: 14px;
     align-items: center;
     margin-top: 22px;
-    padding: 0;
+    padding: 0 0 0 10.4px;
     border-radius: 0;
     background: none;
   }
 
   .somna-contact--card .somna-contact__direct-icon {
-    width: 64px;
-    height: 48px;
+    width: 50px;
+    height: 44px;
     border-radius: 0;
     background: none;
     color: #000;
   }
 
   .somna-contact--card .somna-contact__direct-icon .somna-contact__svg {
-    width: 52px;
-    height: 44px;
+    width: 40px;
+    height: 36px;
   }
 
   .somna-contact--card .somna-contact__direct-body {
