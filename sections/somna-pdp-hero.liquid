@@ -149,7 +149,7 @@
         </ul>
       {%- endif -%}
 
-      <div class="somna-pdp-hero__main{% if s.drip_edges %} somna-edge-drip-top{% endif %}">
+      <div class="somna-pdp-hero__main{% if s.drip_edges %} somna-edge-drip-top somna-pdp-hero__main--{{ s.main_drip | default: 'over' }}{% endif %}">
         {%- if first_image -%}
           {{ first_image | image_url: width: 1100 | image_tag: data-main: '', loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 1300px) 570px, (min-width: 990px) 445px, (min-width: 750px) 45vw, 100vw', widths: '600, 900, 1100', alt: first_image.alt | default: product.title }}
         {%- endif -%}
@@ -216,7 +216,30 @@
       {%- if product_videos.size > 0 or video_blocks.size > 0 -%}
         <div class="somna-pdp-hero__videos">
           {%- if s.videos_heading != blank -%}<h2 class="somna-pdp-hero__videos-title">{{ s.videos_heading }}</h2>{%- endif -%}
-          <ul class="somna-pdp-hero__video-list" role="list">
+          {%- liquid
+            # "Same width" video cards: every card takes the narrowest video's shape (the others crop a little at the sides)
+            assign video_list_style = ''
+            if s.video_shape == 'equal'
+              assign min_ar = 10
+              if product_videos.size > 0
+                for vid in product_videos limit: 3
+                  if vid.aspect_ratio and vid.aspect_ratio < min_ar
+                    assign min_ar = vid.aspect_ratio
+                  endif
+                endfor
+              else
+                for block in video_blocks
+                  if block.settings.video.aspect_ratio and block.settings.video.aspect_ratio < min_ar
+                    assign min_ar = block.settings.video.aspect_ratio
+                  endif
+                endfor
+              endif
+              if min_ar < 10
+                assign video_list_style = ' style="--somna-video-ar: ' | append: min_ar | append: ';"'
+              endif
+            endif
+          -%}
+          <ul class="somna-pdp-hero__video-list{% if video_list_style != '' %} somna-pdp-hero__video-list--equal{% endif %}" role="list"{{ video_list_style }}>
             {%- if product_videos.size > 0 -%}
               {%- for vid in product_videos limit: 3 -%}
                 {%- liquid
@@ -229,7 +252,7 @@
                     endif
                   endfor
                 -%}
-                <li class="somna-pdp-hero__video" style="--somna-video-ar: {{ vid.aspect_ratio | default: 0.8 }};">
+                <li class="somna-pdp-hero__video"{% if video_list_style == '' %} style="--somna-video-ar: {{ vid.aspect_ratio | default: 0.8 }};"{% endif %}>
                   {%- if src != blank -%}
                     <button type="button" class="somna-pdp-hero__play" data-video="{{ src }}" aria-label="{{ s.play_label | escape }}{% if vid.alt != blank %}: {{ vid.alt | escape }}{% endif %}">
                       {%- if vid.preview_image -%}{{ vid.preview_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: '', width: 181, height: 299 }}{%- endif -%}
@@ -254,7 +277,7 @@
                   endfor
                 endif
               -%}
-              <li class="somna-pdp-hero__video"{% if b.video != blank %} style="--somna-video-ar: {{ b.video.aspect_ratio }};"{% endif %} {{ block.shopify_attributes }}>
+              <li class="somna-pdp-hero__video"{% if b.video != blank and video_list_style == '' %} style="--somna-video-ar: {{ b.video.aspect_ratio }};"{% endif %} {{ block.shopify_attributes }}>
                 {%- if src != blank -%}
                   <button type="button" class="somna-pdp-hero__play" data-video="{{ src }}" aria-label="{{ s.play_label | escape }}{% if b.caption != blank %}: {{ b.caption | escape }}{% endif %}">
                     {%- if poster -%}{{ poster | image_url: width: 400 | image_tag: loading: 'lazy', alt: '', width: 181, height: 299 }}{%- endif -%}
@@ -759,6 +782,17 @@
 
   .somna-pdp-hero__main.somna-edge-drip-top {
     --somna-drip-h: 56px;
+  }
+
+  /* "Main photo and drip" setting: below = the photo starts under the drip (whole photo, box a little taller);
+     below-crop = same, but the box keeps its height and the photo's bottom is trimmed instead */
+  .somna-pdp-hero__main--below,
+  .somna-pdp-hero__main--below-crop {
+    padding-top: calc(var(--somna-drip-h) - 6px);
+  }
+
+  .somna-pdp-hero__main--below-crop img {
+    margin-bottom: calc(6px - var(--somna-drip-h));
   }
 
   .somna-pdp-hero__badge {
@@ -2494,6 +2528,8 @@
     { "type": "checkbox", "id": "quote_from_judgeme", "label": "Quote card: use a Judge.me review when the product has no Hero quote", "info": "Picks a short, named 5★ review of this product.", "default": true },
     { "type": "text", "id": "quote_skip_words", "label": "Quote card: skip Judge.me reviews containing", "info": "Comma-separated, no spaces after commas (spaces count, so \" but \" matches the word only). Skips mixed reviews such as \"worked fine at first, but…\".", "default": " but ,loose,okay,fell off" },
     { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified Buyer" },
+    { "type": "select", "id": "main_drip", "label": "Main photo and drip edge", "options": [{ "value": "over", "label": "Drip over the photo's top" }, { "value": "below", "label": "Photo below the drip (whole photo)" }, { "value": "below-crop", "label": "Photo below the drip, bottom trimmed" }], "default": "over" },
+    { "type": "select", "id": "video_shape", "label": "Video cards", "options": [{ "value": "natural", "label": "Each video's own shape" }, { "value": "equal", "label": "Same width (narrowest shape)" }], "default": "natural" },
     { "type": "text", "id": "videos_heading", "label": "Videos heading", "default": "Real Nights, On Camera" },
     { "type": "text", "id": "play_label", "label": "Play label (screen readers)", "default": "Play video" },
     { "type": "select", "id": "gallery_layout", "label": "Gallery layout", "options": [{ "value": "side", "label": "Thumbnails beside a portrait photo" }, { "value": "below", "label": "Thumbnails below a landscape photo" }, { "value": "auto", "label": "Automatic (by first photo)" }], "default": "side" },
