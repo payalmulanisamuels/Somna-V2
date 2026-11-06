@@ -208,6 +208,7 @@
         {%- comment -%} every product's Judge.me photo reviews (store-wide), e.g. for the homepage {%- endcomment -%}
         {%- assign jm_sources = collections.all.products -%}
       {%- endif -%}
+      {%- assign skip_words = s.gallery_skip | split: ',' -%}
       {%- assign photo_count = 0 -%}
       {%- comment -%} with the "+N more" tile, keep collecting (up to 40) so the popup can show them all {%- endcomment -%}
       {%- assign photo_cap = s.gallery_limit -%}
@@ -223,6 +224,13 @@
             {%- assign pic_file = pic_src | split: '?' | first | split: '/' | last -%}
             {%- assign pic_head = pic_file | split: '-' | first -%}
             {%- assign pic_key = pic_file | remove_first: pic_head -%}
+            {%- comment -%} "Leave out photos": skip any photo whose file name contains one of the listed words {%- endcomment -%}
+            {%- assign pic_skip = false -%}
+            {%- for skip_word in skip_words -%}
+              {%- assign skip_word_clean = skip_word | strip -%}
+              {%- if skip_word_clean != blank and pic_file contains skip_word_clean -%}{%- assign pic_skip = true -%}{%- endif -%}
+            {%- endfor -%}
+            {%- if pic_skip -%}{%- continue -%}{%- endif -%}
             {%- unless jm_keys contains pic_key -%}
               {%- assign rv_first = photo_rv.reviewer_name | split: ' ' | first | replace: '|', '' | replace: '^', '' -%}
               {%- assign jm_photos = jm_photos | append: pic_src | append: '|' | append: rv_first | append: '^' -%}
@@ -1654,6 +1662,7 @@
     { "type": "color", "id": "bar_color", "label": "Bar colour", "default": "#98a3de" },
     { "type": "color", "id": "track_color", "label": "Bar track colour", "default": "#d8ddd4" },
     { "type": "checkbox", "id": "show_gallery", "label": "Show customer photos", "info": "Add photos as “Summary photo” blocks; drag them to change the order.", "default": true },
+    { "type": "text", "id": "gallery_skip", "label": "Leave out Judge.me photos", "info": "Words from the photo file names to skip, separated by commas (e.g. casualbathroomnasalstrip)." },
     { "type": "checkbox", "id": "gallery_more", "label": "Show a \"+N\" tile when there are more photos", "info": "The last photo shows how many more there are; tapping opens the popup with all of them. Needs the popup on.", "default": true },
     { "type": "checkbox", "id": "photo_popup", "label": "Open photos in a popup", "info": "Tap a photo to see it large, with previous / next arrows.", "default": true },
     { "type": "range", "id": "gallery_limit", "label": "Photos to show", "min": 1, "max": 12, "step": 1, "default": 6 },
