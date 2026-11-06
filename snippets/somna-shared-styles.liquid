@@ -436,6 +436,35 @@
     rotate: var(--somna-tilt, 0deg);
   }
 
+  /* Pointer: a hand-drawn arrow draws itself to a card, the head lands, then the card shakes for about a second.
+     Same 3.6s cycle on the arrow and the card so they stay in step (collection chooser, product page "Pair it with"). */
+  @keyframes somnaPointLine {
+    0% { stroke-dashoffset: 420; opacity: 1; }
+    32%, 88% { stroke-dashoffset: 0; opacity: 1; }
+    96%, 100% { stroke-dashoffset: 0; opacity: 0; }
+  }
+
+  @keyframes somnaPointHead {
+    0%, 30% { opacity: 0; transform: translate(-6px, -3px); }
+    35%, 88% { opacity: 1; transform: translate(0, 0); }
+    96%, 100% { opacity: 0; transform: translate(0, 0); }
+  }
+
+  @keyframes somnaPointShake {
+    0%, 34%, 62%, 100% { transform: translate(0, 0) rotate(0deg); }
+    37% { transform: translate(-6px, 0) rotate(-1.6deg); }
+    41% { transform: translate(6px, 0) rotate(1.6deg); }
+    45% { transform: translate(-5px, 0) rotate(-1.2deg); }
+    49% { transform: translate(4px, 0) rotate(1deg); }
+    53% { transform: translate(-2px, 0) rotate(-0.5deg); }
+    57% { transform: translate(1px, 0) rotate(0.2deg); }
+  }
+
+  /* the shaking card holds still while someone points at it */
+  .somna-pointing .somna-point-target:is(:hover, :focus-within) {
+    animation-play-state: paused;
+  }
+
   .somna-shake--wiggle { animation: somnaShakeWiggle 3.2s ease-in-out var(--somna-shake-delay, 0s) infinite; }
   .somna-shake--swing { animation: somnaShakeSwing 3.6s ease-in-out var(--somna-shake-delay, 0s) infinite; transform-origin: 50% 0; }
   .somna-shake--pop { animation: somnaShakePop 3.4s cubic-bezier(0.3, 0.7, 0.4, 1) var(--somna-shake-delay, 0s) infinite; }
@@ -533,6 +562,12 @@
   @media (prefers-reduced-motion: reduce) {
     :is(.somna-shake--wiggle, .somna-shake--swing, .somna-shake--pop) {
       animation: none;
+    }
+
+    .somna-pointing :is(.somna-point-line, .somna-point-head, .somna-point-target) {
+      animation: none !important;
+      stroke-dashoffset: 0 !important;
+      opacity: 1 !important;
     }
   }
 {% endstylesheet %}

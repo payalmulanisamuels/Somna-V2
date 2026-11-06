@@ -32,7 +32,7 @@
   endif
 -%}
 {%- if pair != blank or trend != blank -%}
-<div class="somna-pdp-pair somna-pdp-pair--{{ card_style }}" style="--somna-pair-bg: {{ s.background_color }}; --somna-pair-accent: {{ s.accent_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;">
+<div class="somna-pdp-pair somna-pdp-pair--{{ card_style }}{% if s.pointer_motion == 'draw_shake' %} somna-pointing{% endif %}" style="--somna-pair-bg: {{ s.background_color }}; --somna-pair-accent: {{ s.accent_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;">
   <div class="somna-pdp-pair__inner somna-container">
     <div class="somna-pdp-pair__copy">
       {%- if pair != blank -%}
@@ -91,7 +91,7 @@
           assign from_price = pair_alloc.price
         endif
       -%}
-      <a class="somna-pdp-pair__card" href="{{ pair.url }}">
+      <a class="somna-pdp-pair__card somna-point-target" href="{{ pair.url }}">
         {%- assign card_image = card_image | default: pair.featured_image -%}
         {%- if card_style == 'wide' -%}{%- assign sizes_attr = '(min-width: 750px) 488px, 90vw' -%}{%- else -%}{%- assign sizes_attr = '(min-width: 750px) 185px, 60vw' -%}{%- endif -%}
         {%- if card_image -%}{{ card_image | image_url: width: 1000 | image_tag: loading: 'lazy', alt: card_image.alt | default: pair.title, widths: '300, 450, 600, 800, 1000', sizes: sizes_attr }}{%- endif -%}
@@ -170,6 +170,22 @@
 
   .somna-pdp-pair__inner:hover :is(.somna-pdp-pair__arrow-line, .somna-pdp-pair__arrow-head) {
     animation-duration: 1.6s;
+  }
+
+  /* "Arrow draws, card shakes": a slower 3.6s cycle shared with the card (keyframes in snippets/somna-shared-styles) */
+  .somna-pointing .somna-pdp-pair__arrow-line,
+  .somna-pointing .somna-pdp-pair__inner:hover .somna-pdp-pair__arrow-line {
+    animation: somnaPointLine 3.6s ease-in-out infinite;
+  }
+
+  .somna-pointing .somna-pdp-pair__arrow-head,
+  .somna-pointing .somna-pdp-pair__inner:hover .somna-pdp-pair__arrow-head {
+    animation: somnaPointHead 3.6s ease-in-out infinite;
+  }
+
+  .somna-pointing .somna-pdp-pair__card {
+    transform-origin: 50% 60%;
+    animation: somnaPointShake 3.6s ease-in-out infinite;
   }
 
   @keyframes somnaPairDraw {
@@ -559,6 +575,7 @@
     { "type": "text", "id": "from_label", "label": "Price line", "info": "[price] is the lowest price, subscription included.", "default": "From [price]" },
     { "type": "text", "id": "sub_note", "label": "Subscription note", "default": "Subscribe & Save" },
     { "type": "text", "id": "button_label", "label": "Button", "default": "Shop now" },
+    { "type": "select", "id": "pointer_motion", "label": "Arrow motion", "options": [{ "value": "draw", "label": "Arrow draws (loop)" }, { "value": "draw_shake", "label": "Arrow draws, card shakes" }], "default": "draw" },
     { "type": "header", "content": "Also trending" },
     { "type": "product", "id": "trending_product", "label": "Product" },
     { "type": "text", "id": "trending_label", "label": "Label", "default": "Also Trending" },

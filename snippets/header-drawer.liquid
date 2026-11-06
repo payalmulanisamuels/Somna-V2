@@ -38,10 +38,9 @@
     assign eager_loading = true
   endif
 
-  # Somna V2: Figma menu drawer (snippets/somna-menu-drawer). On while Theme settings → Somna menu drawer → Look is
-  # "Somna", and always on the support demo page so it can be reviewed first.
+  # Somna V2: Figma menu drawer (snippets/somna-menu-drawer), on while Theme settings → Somna menu drawer → Look is "Somna"
   assign somna_drawer = false
-  if settings.somna_drawer_style == 'somna' or template.suffix == 'support-demo'
+  if settings.somna_drawer_style == 'somna'
     assign somna_drawer = true
   endif
 

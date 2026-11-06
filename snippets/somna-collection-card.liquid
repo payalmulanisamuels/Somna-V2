@@ -11,6 +11,7 @@
   @param {string} price_format - "[price]" and "[compare]" placeholders
   @param {string} rating_format - "[rating]" and "[count]" placeholders
   @param {string} button - button label
+  @param {boolean} [card_fields] - use the product's Card details (custom.card_details) and Card note (custom.card_note, for [note])
 {%- enddoc -%}
 {%- liquid
   assign p = product
@@ -43,7 +44,25 @@
   endif
   assign price_line = price_format | escape
   assign best_money = best | money
-  assign price_line = price_line | replace: '[price]', best_money | replace: '[compare]', compare_html | replace: '  ', ' '
+  # per night: price ÷ bags ("1 Bag" option) ÷ nights per bag (custom.nights, 30 when empty)
+  assign bags = 1
+  for o in best_variant.options
+    if o contains 'Bag'
+      assign bags = o | split: ' ' | first | plus: 0
+    endif
+  endfor
+  if bags < 1
+    assign bags = 1
+  endif
+  assign nights = mf.nights.value | default: 30
+  assign night = best | times: 1.0 | divided_by: bags | divided_by: nights | round
+  assign night_money = night | money
+  assign note = ''
+  if card_fields
+    assign note = mf.card_note.value | default: '' | escape | replace: '[night]', night_money
+  endif
+  assign price_line = price_line | replace: '[price]', best_money | replace: '[compare]', compare_html | replace: '[night]', night_money | replace: '[note]', note | replace: '  ', ' '
+  assign price_parts = price_line | split: '|'
 
   # rating: Judge.me (snippets/somna-rating)
   capture rating_line
@@ -53,6 +72,9 @@
 
   # details: override, else the product's hero feature titles ("Nose + lips · 90 nights · One delivery")
   assign detail_line = details
+  if detail_line == blank and card_fields
+    assign detail_line = mf.card_details.value
+  endif
   if detail_line == blank and style != 'singles'
     assign feature_titles = ''
     for f in mf.pdp_hero_features.value
@@ -77,8 +99,32 @@
   {%- if rating_line != blank -%}
     <p class="somna-ccard__rating"><span class="somna-ccard__stars" aria-hidden="true">★★★★★</span> {{ rating_line | escape }}</p>
   {%- endif -%}
-  <h3 class="somna-ccard__title"><a href="{{ p.url }}">{{ name | escape }}</a></h3>
+  {%- liquid
+    # colour dots beside the title (bundles): the product's colours, or its "PDP – box colours" (Color Set)
+    assign dots = ''
+    if card_fields and style != 'singles'
+      for o in p.options_with_values
+        assign oname = o.name | downcase
+        if oname == 'color' or oname == 'colour'
+          assign dots = o.values | join: '|'
+        endif
+      endfor
+      if dots == blank and mf.pdp_box_colors.value != blank
+        assign dots = mf.pdp_box_colors.value | join: '|'
+      endif
+    endif
+  -%}
+  {%- if dots != blank -%}
+    <div class="somna-ccard__title-row">
+      <h3 class="somna-ccard__title"><a href="{{ p.url }}">{{ name | escape }}</a></h3>
+      <span class="somna-ccard__dots" aria-hidden="true">{%- assign dot_list = dots | split: '|' -%}{%- for c in dot_list -%}<i style="--d: {% render 'somna-swatch-color', name: c %};"></i>{%- endfor -%}</span>
+    </div>
+  {%- else -%}
+    <h3 class="somna-ccard__title"><a href="{{ p.url }}">{{ name | escape }}</a></h3>
+  {%- endif -%}
   {%- if detail_line != blank -%}<p class="somna-ccard__details">{{ detail_line | escape }}</p>{%- endif -%}
-  <p class="somna-ccard__price">{{ price_line }}</p>
+  <p class="somna-ccard__price{% if price_parts.size > 1 %} somna-ccard__price--split{% endif %}">
+    {%- if price_parts.size > 1 -%}<span>{{ price_parts[0] | strip }}</span><span>{{ price_parts[1] | strip }}</span>{%- else -%}{{ price_line }}{%- endif -%}
+  </p>
   <a class="somna-ccard__button" href="{{ p.url }}" aria-label="{{ button | escape }}: {{ name | escape }}">{{ button | escape }}</a>
 </article>
