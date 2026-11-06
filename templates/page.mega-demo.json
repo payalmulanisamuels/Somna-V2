@@ -1,0 +1,1353 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "somna-page-hero",
+      "blocks": {
+        "p1": {
+          "type": "button",
+          "settings": {
+            "label": "Products",
+            "link": "#products",
+            "style": "pill",
+            "active": false
+          }
+        },
+        "p2": {
+          "type": "button",
+          "settings": {
+            "label": "Subscriptions",
+            "link": "#orders",
+            "style": "pill",
+            "active": false
+          }
+        },
+        "p3": {
+          "type": "button",
+          "settings": {
+            "label": "Shipping",
+            "link": "#shipping",
+            "style": "pill",
+            "active": false
+          }
+        },
+        "p4": {
+          "type": "button",
+          "settings": {
+            "label": "Returns",
+            "link": "#returns",
+            "style": "pill",
+            "active": false
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ],
+      "settings": {
+        "show_breadcrumb": false,
+        "home_label": "Home",
+        "breadcrumb_label": "",
+        "eyebrow": "Support hub",
+        "heading": "How can <em>we help?</em>",
+        "tagline": "",
+        "text": "<p>Find answers in seconds. Browse by category below, or contact us directly if you'd rather talk to a person.</p>",
+        "image": "shopify://shop_images/tap-new_31b1f5fe-c102-4be9-acb8-2622708d46b1.png",
+        "image_position": "object-position: 30% 50%",
+        "image_side": "left",
+        "drip_edge": false,
+        "background_color": "#afbdf8",
+        "panel_color": "#0b0f1d",
+        "accent_color": "#f3feee",
+        "padding_top": 96,
+        "padding_bottom": 40,
+        "style": "card",
+        "search_placeholder": "delivery, cancel, sizing…",
+        "card_eyebrow": "Support hub",
+        "card_heading": "On its way?",
+        "card_text": "Got an order on the way? Check its status here.",
+        "card_icon": "pin",
+        "card_button": "Track order →",
+        "card_link": "/pages/track-order"
+      }
+    },
+    "wave_hero_track": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#afbdf8",
+        "bottom_color": "#f3feee",
+        "shape": "drip-8",
+        "overlap": false,
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "track": {
+      "type": "somna-cards",
+      "blocks": {
+        "track": {
+          "type": "card",
+          "settings": {
+            "icon": "truck",
+            "title": "Track your order",
+            "text": "Got an order on the way? Check its status here.",
+            "link": "/pages/track-order",
+            "link_label": "Track order"
+          }
+        }
+      },
+      "block_order": [
+        "track"
+      ],
+      "settings": {
+        "layout": "cards",
+        "eyebrow": "",
+        "heading": "",
+        "text": "",
+        "background_color": "#f3feee",
+        "text_color": "#000000",
+        "card_color": "#0b0f1d",
+        "card_text_color": "#f3feee",
+        "accent_color": "#afbdf8",
+        "padding_top": 8,
+        "padding_bottom": 24
+      },
+      "disabled": true
+    },
+    "products_faq": {
+      "type": "section",
+      "blocks": {
+        "intro": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 16,
+            "width": "custom",
+            "custom_width": 38,
+            "width_mobile": "fill",
+            "height": "fit",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "heading": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Products</h2>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-accent--family)",
+                "font_size": "3rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "balance",
+                "text_color": "#000000",
+                "accent_color": "#98a3de"
+              },
+              "blocks": {}
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Strips, Tape and the bundles.</p>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#000000"
+              },
+              "blocks": {}
+            },
+            "icon": {
+              "type": "somna-icon",
+              "settings": {
+                "icon": "moon",
+                "size": 30,
+                "color": "#000000",
+                "backdrop": "circle",
+                "backdrop_color": "#afbdf8",
+                "backdrop_size": 64,
+                "icon_offset": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "icon",
+            "heading",
+            "text"
+          ]
+        },
+        "accordion": {
+          "type": "accordion",
+          "settings": {
+            "icon": "plus",
+            "dividers": true,
+            "divider_color": "#afbdf8",
+            "type_preset": "paragraph",
+            "text_color": "#000000"
+          },
+          "blocks": {
+            "row_1": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "What's the difference between Nasal Strips and Mouth Tape?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Strips are designed to gently open the nasal passages. Tape is designed to encourage nasal breathing instead of mouth breathing while you sleep. Many people use both together.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            },
+            "row_2": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "What's the difference between the bundles?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Sleep Bundle comes in three colors — Breathe (Blue), Bold (Red), and Night (Black) — same two products, Strips and Tape, same price either way. The Colour Set includes all three colors of Strips, without Tape. The Season Bundle is a 3-month supply of Black Strips and Black Tape.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            },
+            "row_3": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Can I buy Strips or Tape on their own?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Yes — both are available individually if you'd rather start with one.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            },
+            "row_4": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Is Mouth Tape safe to use?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Most people adjust within a few nights. If you have a cold, congestion, or any breathing condition, check with a doctor before use.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            }
+          },
+          "block_order": [
+            "row_1",
+            "row_2",
+            "row_3",
+            "row_4"
+          ]
+        }
+      },
+      "block_order": [
+        "intro",
+        "accordion"
+      ],
+      "settings": {
+        "content_direction": "row",
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "flex-start",
+        "gap": 56,
+        "section_width": "page-width",
+        "background_color": "#f3feee",
+        "padding-block-start": 24,
+        "padding-block-end": 24
+      },
+      "disabled": true
+    },
+    "orders_faq": {
+      "type": "section",
+      "blocks": {
+        "intro": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 16,
+            "width": "custom",
+            "custom_width": 38,
+            "width_mobile": "fill",
+            "height": "fit",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "heading": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Orders &amp; subscriptions</h2>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-accent--family)",
+                "font_size": "3rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "balance",
+                "text_color": "#000000",
+                "accent_color": "#98a3de"
+              },
+              "blocks": {}
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Subscribe &amp; Save, changes and cancelling.</p>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#000000"
+              },
+              "blocks": {}
+            },
+            "icon": {
+              "type": "somna-icon",
+              "settings": {
+                "icon": "refresh",
+                "size": 30,
+                "color": "#000000",
+                "backdrop": "circle",
+                "backdrop_color": "#afbdf8",
+                "backdrop_size": 64,
+                "icon_offset": 0
+              },
+              "blocks": {}
+            },
+            "button": {
+              "type": "button",
+              "settings": {
+                "label": "Manage my subscription",
+                "link": "/pages/manage-subscriptions",
+                "style_class": "button-custom",
+                "custom_button_background": "#0b0f1d",
+                "custom_button_text": "#f3feee",
+                "custom_button_border": "#0b0f1d",
+                "width": "fit-content",
+                "width_mobile": "fit-content"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "icon",
+            "heading",
+            "text",
+            "button"
+          ]
+        },
+        "accordion": {
+          "type": "accordion",
+          "settings": {
+            "icon": "plus",
+            "dividers": true,
+            "divider_color": "#afbdf8",
+            "type_preset": "paragraph",
+            "text_color": "#000000"
+          },
+          "blocks": {
+            "row_1": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "How does Subscribe & Save work?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>It's up to 50% off every order, delivered automatically on a schedule based on the size you choose. Skip, pause, swap, or cancel anytime from your account.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            },
+            "row_2": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Can I cancel anytime?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Yes — pausing and cancelling are both available anytime from your account, with no fees.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            },
+            "row_3": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "How do I change my order before it ships?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Visit <a href=\"/pages/manage-subscriptions\">Manage my subscription →</a> from your account, or contact us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> if your order hasn't shipped yet.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            }
+          },
+          "block_order": [
+            "row_1",
+            "row_2",
+            "row_3"
+          ]
+        }
+      },
+      "block_order": [
+        "intro",
+        "accordion"
+      ],
+      "settings": {
+        "content_direction": "row",
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "flex-start",
+        "gap": 56,
+        "section_width": "page-width",
+        "background_color": "#f3feee",
+        "padding-block-start": 24,
+        "padding-block-end": 24
+      },
+      "disabled": true
+    },
+    "shipping_faq": {
+      "type": "section",
+      "blocks": {
+        "intro": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 16,
+            "width": "custom",
+            "custom_width": 38,
+            "width_mobile": "fill",
+            "height": "fit",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "heading": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Shipping &amp; delivery</h2>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-accent--family)",
+                "font_size": "3rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "balance",
+                "text_color": "#000000",
+                "accent_color": "#98a3de"
+              },
+              "blocks": {}
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Where we ship and how long it takes.</p>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#000000"
+              },
+              "blocks": {}
+            },
+            "icon": {
+              "type": "somna-icon",
+              "settings": {
+                "icon": "truck",
+                "size": 30,
+                "color": "#000000",
+                "backdrop": "circle",
+                "backdrop_color": "#afbdf8",
+                "backdrop_size": 64,
+                "icon_offset": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "icon",
+            "heading",
+            "text"
+          ]
+        },
+        "accordion": {
+          "type": "accordion",
+          "settings": {
+            "icon": "plus",
+            "dividers": true,
+            "divider_color": "#afbdf8",
+            "type_preset": "paragraph",
+            "text_color": "#000000"
+          },
+          "blocks": {
+            "row_1": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Do you ship outside the US?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>We currently ship within the United States only.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            },
+            "row_2": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "How long does delivery take?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>7–9 business days from when your order ships. Shipping is free on every order.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            },
+            "row_3": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "How do I track my order?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>You'll get a tracking link by email once your order ships. You can also <a href=\"/pages/track-order\">track your order here</a>.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            }
+          },
+          "block_order": [
+            "row_1",
+            "row_2",
+            "row_3"
+          ]
+        }
+      },
+      "block_order": [
+        "intro",
+        "accordion"
+      ],
+      "settings": {
+        "content_direction": "row",
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "flex-start",
+        "gap": 56,
+        "section_width": "page-width",
+        "background_color": "#f3feee",
+        "padding-block-start": 24,
+        "padding-block-end": 24
+      },
+      "disabled": true
+    },
+    "returns_faq": {
+      "type": "section",
+      "blocks": {
+        "intro": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 16,
+            "width": "custom",
+            "custom_width": 38,
+            "width_mobile": "fill",
+            "height": "fit",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "heading": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Returns &amp; guarantee</h2>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-accent--family)",
+                "font_size": "3rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "balance",
+                "text_color": "#000000",
+                "accent_color": "#98a3de"
+              },
+              "blocks": {}
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Our 30-night promise and damaged deliveries.</p>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#000000"
+              },
+              "blocks": {}
+            },
+            "icon": {
+              "type": "somna-icon",
+              "settings": {
+                "icon": "shield",
+                "size": 30,
+                "color": "#000000",
+                "backdrop": "circle",
+                "backdrop_color": "#afbdf8",
+                "backdrop_size": 64,
+                "icon_offset": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "icon",
+            "heading",
+            "text"
+          ]
+        },
+        "accordion": {
+          "type": "accordion",
+          "settings": {
+            "icon": "plus",
+            "dividers": true,
+            "divider_color": "#afbdf8",
+            "type_preset": "paragraph",
+            "text_color": "#000000"
+          },
+          "blocks": {
+            "row_1": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "What's your return policy?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Every product is covered by our 30-Night Money-Back Guarantee, counted from delivery.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            },
+            "row_2": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "What if my item arrives damaged?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Contact the shipping carrier to file a claim, and reach out to us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> — please keep all packaging and damaged goods until the claim is resolved.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            }
+          },
+          "block_order": [
+            "row_1",
+            "row_2"
+          ]
+        }
+      },
+      "block_order": [
+        "intro",
+        "accordion"
+      ],
+      "settings": {
+        "content_direction": "row",
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "flex-start",
+        "gap": 56,
+        "section_width": "page-width",
+        "background_color": "#f3feee",
+        "padding-block-start": 24,
+        "padding-block-end": 24
+      },
+      "disabled": true
+    },
+    "wave_returns_guarantee": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#f3feee",
+        "bottom_color": "#afbdf8",
+        "shape": "soft-2",
+        "overlap": false,
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "guarantee": {
+      "type": "section",
+      "blocks": {
+        "icon": {
+          "type": "somna-icon",
+          "settings": {
+            "icon": "shield",
+            "size": 104,
+            "color": "#000000",
+            "backdrop": "none",
+            "icon_offset": 0
+          },
+          "blocks": {}
+        },
+        "eyebrow": {
+          "type": "text",
+          "settings": {
+            "text": "<p>30-Night Money-Back Guarantee</p>",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "1.5rem",
+            "line_height": "normal",
+            "letter_spacing": "loose",
+            "case": "uppercase",
+            "wrap": "pretty",
+            "text_color": "#000000"
+          },
+          "blocks": {}
+        },
+        "heading": {
+          "type": "text",
+          "settings": {
+            "text": "<h2>Try for 30 nights</h2>",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-accent--family)",
+            "font_size": "3.5rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "uppercase",
+            "wrap": "balance",
+            "text_color": "#000000",
+            "accent_color": "#98a3de"
+          },
+          "blocks": {}
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Not for you? We’ll refund you. Simple as that.</p>",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "2rem",
+            "line_height": "normal",
+            "letter_spacing": "loose",
+            "case": "none",
+            "wrap": "pretty",
+            "text_color": "#000000"
+          },
+          "blocks": {}
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "label": "Read the return policy",
+            "link": "/pages/return-refund-policy",
+            "style_class": "button-custom",
+            "custom_button_background": "#ffffff",
+            "custom_button_text": "#000000",
+            "custom_button_border": "#ffffff",
+            "width": "custom",
+            "custom_width": 36,
+            "width_mobile": "custom",
+            "custom_width_mobile": 100
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "icon",
+        "eyebrow",
+        "heading",
+        "text",
+        "button"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "horizontal_alignment_flex_direction_column": "center",
+        "gap": 16,
+        "section_width": "page-width",
+        "background_color": "#afbdf8",
+        "padding-block-start": 16,
+        "padding-block-end": 32
+      },
+      "disabled": true
+    },
+    "wave_guarantee_help": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#afbdf8",
+        "bottom_color": "#f3feee",
+        "shape": "soft-1",
+        "overlap": false,
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      },
+      "disabled": true
+    },
+    "help": {
+      "type": "somna-policy-band",
+      "settings": {
+        "size": "cta",
+        "eyebrow": "",
+        "heading": "Still stuck?",
+        "text": "<p>We reply within 1 business day.</p>",
+        "button_label": "Contact us →",
+        "button_link": "/pages/contact",
+        "pills_label": "",
+        "background": "#afbdf8",
+        "text_color": "#000000",
+        "accent": "#000000"
+      }
+    },
+    "wave_help_newsletter": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#afbdf8",
+        "bottom_color": "#000000",
+        "shape": "drip-11",
+        "overlap": false,
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "newsletter": {
+      "type": "section",
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "settings": {
+            "text": "<h2>Get <em>10% off</em><br>your first order</h2>",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-accent--family)",
+            "font_size": "2.5rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "uppercase",
+            "wrap": "balance",
+            "text_color": "#ffffff",
+            "accent_color": "#98a3de"
+          },
+          "blocks": {}
+        },
+        "signup": {
+          "type": "somna-klaviyo-signup",
+          "settings": {
+            "placeholder": "Your email",
+            "button_label": "Subscribe →",
+            "width": 60,
+            "row_max_width": 1160
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "heading",
+        "signup"
+      ],
+      "settings": {
+        "content_direction": "row",
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "center",
+        "gap": 40,
+        "section_width": "page-width",
+        "background_color": "#000000",
+        "padding-block-start": 24,
+        "padding-block-end": 32
+      }
+    },
+    "wave_newsletter_footer": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#000000",
+        "bottom_color": "#f3feee",
+        "shape": "drip-11",
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "faq_cards": {
+      "type": "somna-faq-cards",
+      "blocks": {
+        "t_products": {
+          "type": "topic",
+          "settings": {
+            "title": "Products",
+            "anchor": "products"
+          }
+        },
+        "q_products_1": {
+          "type": "question",
+          "settings": {
+            "question": "What's the difference between Nasal Strips and Mouth Tape?",
+            "answer": "<p>Strips are designed to gently open the nasal passages. Tape is designed to encourage nasal breathing instead of mouth breathing while you sleep. Many people use both together.</p>",
+            "open": false
+          }
+        },
+        "q_products_2": {
+          "type": "question",
+          "settings": {
+            "question": "What's the difference between the bundles?",
+            "answer": "<p>Sleep Bundle comes in three colors — Breathe (Blue), Bold (Red), and Night (Black) — same two products, Strips and Tape, same price either way. The Colour Set includes all three colors of Strips, without Tape. The Season Bundle is a 3-month supply of Black Strips and Black Tape.</p>",
+            "open": false
+          }
+        },
+        "q_products_3": {
+          "type": "question",
+          "settings": {
+            "question": "Can I buy Strips or Tape on their own?",
+            "answer": "<p>Yes — both are available individually if you'd rather start with one.</p>",
+            "open": false
+          }
+        },
+        "q_products_4": {
+          "type": "question",
+          "settings": {
+            "question": "Is Mouth Tape suitable for me?",
+            "answer": "<p>Most people adjust within a few nights. If you have a cold, congestion, or any breathing condition, check with a doctor before use.</p>",
+            "open": false
+          }
+        },
+        "t_orders": {
+          "type": "topic",
+          "settings": {
+            "title": "Ordering & Subscriptions",
+            "anchor": "orders"
+          }
+        },
+        "q_orders_1": {
+          "type": "question",
+          "settings": {
+            "question": "How does Subscribe & Save work?",
+            "answer": "<p>It's up to 50% off every order, delivered automatically on a schedule based on the size you choose. Skip, pause, swap, or cancel anytime from your account.</p>",
+            "open": false
+          }
+        },
+        "q_orders_2": {
+          "type": "question",
+          "settings": {
+            "question": "Can I cancel anytime?",
+            "answer": "<p>Yes — pausing and cancelling are both available anytime from your account, with no fees.</p>",
+            "open": false
+          }
+        },
+        "q_orders_3": {
+          "type": "question",
+          "settings": {
+            "question": "How do I change my order before it ships?",
+            "answer": "<p>Visit <a href=\"/pages/manage-subscriptions\">Manage my subscription →</a> from your account, or contact us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> if your order hasn't shipped yet.</p>",
+            "open": false
+          }
+        },
+        "t_shipping": {
+          "type": "topic",
+          "settings": {
+            "title": "Shipping & Delivery",
+            "anchor": "shipping"
+          }
+        },
+        "q_shipping_1": {
+          "type": "question",
+          "settings": {
+            "question": "How long does delivery take?",
+            "answer": "<p>7–9 business days from when your order ships. Shipping is free on every order.</p>",
+            "open": false
+          }
+        },
+        "q_shipping_2": {
+          "type": "question",
+          "settings": {
+            "question": "How do I track my order?",
+            "answer": "<p>You'll get a tracking link by email once your order ships. You can also <a href=\"/pages/track-order\">track your order here</a>.</p>",
+            "open": false
+          }
+        },
+        "q_shipping_3": {
+          "type": "question",
+          "settings": {
+            "question": "Do you ship outside the US?",
+            "answer": "<p>We currently ship within the United States only.</p>",
+            "open": false
+          }
+        },
+        "t_returns": {
+          "type": "topic",
+          "settings": {
+            "title": "Returns & Guarantee",
+            "anchor": "returns"
+          }
+        },
+        "q_returns_1": {
+          "type": "question",
+          "settings": {
+            "question": "What's your return policy?",
+            "answer": "<p>Every product is covered by our 30-Night Money-Back Guarantee, counted from delivery.</p>",
+            "open": false
+          }
+        },
+        "q_returns_2": {
+          "type": "question",
+          "settings": {
+            "question": "What if my item arrives damaged?",
+            "answer": "<p>Contact the shipping carrier to file a claim, and reach out to us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> — please keep all packaging and damaged goods until the claim is resolved.</p>",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "t_products",
+        "q_products_1",
+        "q_products_2",
+        "q_products_3",
+        "q_products_4",
+        "t_orders",
+        "q_orders_1",
+        "q_orders_2",
+        "q_orders_3",
+        "t_shipping",
+        "q_shipping_1",
+        "q_shipping_2",
+        "q_shipping_3",
+        "t_returns",
+        "q_returns_1",
+        "q_returns_2"
+      ],
+      "settings": {
+        "background_color": "#f3feee",
+        "card_color": "#f3feee",
+        "accent_color": "#afbdf8",
+        "padding_top": 32,
+        "padding_bottom": 40
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "wave_hero_track",
+    "track",
+    "faq_cards",
+    "products_faq",
+    "orders_faq",
+    "shipping_faq",
+    "returns_faq",
+    "wave_returns_guarantee",
+    "guarantee",
+    "wave_guarantee_help",
+    "help",
+    "wave_help_newsletter",
+    "newsletter",
+    "wave_newsletter_footer"
+  ]
+}
