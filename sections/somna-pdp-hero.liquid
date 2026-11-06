@@ -2757,7 +2757,7 @@
     --sa-thumb: 44px;
     --sa-title: clamp(0.8125rem, 3.6vw, 0.9375rem);
     --sa-meta: 0.6875rem;
-    --sa-add-w: 72px;
+    --sa-add-w: 84px;
     --sa-add-font: 0.6875rem;
     --sa-banner: clamp(0.625rem, 2.9vw, 0.75rem);
     --sa-heading: clamp(1.125rem, calc((100vw - 80px) / 15), 1.375rem); /* "Choose your pack" stays on one line (phones) */
@@ -2767,7 +2767,7 @@
     --sa-name: 0.875rem;
     --sa-row-meta: 0.625rem;
     --sa-price: 0.875rem;
-    --sa-badge: 0.625rem;
+    --sa-badge: 0.5rem;
     position: fixed;
     inset: auto 0 0;
     z-index: 30;
@@ -2920,7 +2920,7 @@
     font-family: var(--font-accent--family);
     font-size: var(--sa-add-font);
     font-weight: var(--font-accent--weight);
-    line-height: 1.1;
+    line-height: 1.3;
     text-transform: uppercase;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
@@ -3192,9 +3192,9 @@
 
   .somna-sticky-atc__badge {
     position: absolute;
-    top: -11px;
-    right: -6px;
-    padding: 2px 6px;
+    top: -10px;
+    right: 8px;
+    padding: 3px 6px 2px;
     border: 1.5px solid #000;
     border-radius: 6px;
     background: var(--sa-mint);
@@ -3202,7 +3202,8 @@
     font-family: var(--font-accent--family);
     font-size: var(--sa-badge);
     font-weight: var(--font-accent--weight);
-    line-height: 1.1;
+    letter-spacing: 0.02em;
+    line-height: 1.3;
     text-transform: uppercase;
   }
 
@@ -3217,7 +3218,7 @@
       --sa-thumb: 46px;
       --sa-title: 0.9375rem;
       --sa-meta: 0.6875rem;
-      --sa-add-w: 80px;
+      --sa-add-w: 92px;
       --sa-add-font: 0.6875rem;
       --sa-banner: 0.75rem;
       --sa-mode: 0.75rem;
