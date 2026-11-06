@@ -347,6 +347,29 @@
       transform: none !important;
     }
   }
+
+  /* trust stickers on phones (Figma): two per row, text centred, sized to the screen */
+  @media screen and (max-width: 749px) {
+    .somna-cards__stickers.somna-stickers {
+      display: grid;
+      grid-template-columns: repeat(2, max-content);
+      justify-content: center;
+      align-items: center;
+      gap: 10px 5px;
+    }
+
+    .somna-cards__stickers.somna-stickers > li {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px 9px;
+      border-width: 1.5px;
+      box-shadow: 2px 3px 0 #000;
+      font-size: clamp(0.5625rem, 2.8vw, 0.875rem);
+      line-height: 1.5;
+      text-align: center;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
