@@ -637,6 +637,7 @@
       grid-template-columns: 1fr 1fr;
       grid-auto-rows: min-content;
       align-content: center;
+      justify-items: center;
       column-gap: 40px;
       padding: 8px 40px 120px 30px;
     }
@@ -665,9 +666,7 @@
     .sgp__card--split .sgp__unwrap { min-width: 240px; font-size: 1.0625rem; }
     .sgp__card--split .sgp__code { font-size: 2.25rem; }
     .sgp__card--split .sgp__wave-wrap { height: 90px; }
-    .sgp__card--split .sgp__form,
-    .sgp__card--split .sgp__btn,
-    .sgp__card--split .sgp__code { max-width: 340px; }
+    .sgp__card--split :is(.sgp__form, .sgp__btn, .sgp__code) { width: 100%; max-width: 340px; }
   }
 
   /* lavender wave along the bottom */
