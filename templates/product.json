@@ -1366,7 +1366,8 @@
         "padding_top": 40,
         "padding_bottom": 40,
         "wave_color": "#000000",
-        "wave_shape": "drip-4"
+        "wave_shape": "drip-4",
+        "pair_width": 560
       }
     },
     "newsletter": {
