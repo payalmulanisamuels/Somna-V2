@@ -10,7 +10,7 @@
 {%- liquid
   assign st = settings
   assign feature = st.somna_mega_feature_product
-  assign feature_img = st.somna_mega_feature_image | default: feature.metafields.custom.card_image.value | default: feature.featured_image
+  assign feature_img = st.somna_mega_feature_image | default: feature.featured_image
   # look: Theme settings → Somna Shop menu → Layout; the demo pages ?view=mega-demo-b / -c show the other looks
   assign layout = st.somna_mega_layout | default: 'columns'
   if template.suffix == 'mega-demo-b'
@@ -79,7 +79,7 @@
     {%- elsif feature_img != blank -%}
       <a class="somna-mega__feature" href="{{ feature_href }}">
         <span class="somna-mega__feature-media">
-          {{ feature_img | image_url: width: 900 | image_tag: loading: 'lazy', alt: '', widths: '450, 700, 900', sizes: '420px' }}
+          {{ feature_img | image_url: width: 1100 | image_tag: loading: 'lazy', alt: '', widths: '500, 800, 1100', sizes: '(min-width: 1200px) 380px, 280px' }}
           {%- if st.somna_mega_feature_sticker != blank -%}<span class="somna-mega__sticker">{{ st.somna_mega_feature_sticker | escape }}</span>{%- endif -%}
         </span>
         {%- if st.somna_mega_feature_label != blank -%}<span class="somna-mega__feature-label">{{ st.somna_mega_feature_label | escape }} <span aria-hidden="true">→</span></span>{%- endif -%}
@@ -262,7 +262,8 @@
   .somna-mega__feature-media {
     position: relative;
     overflow: hidden;
-    aspect-ratio: 420 / 260;
+    width: min(100%, 280px);
+    aspect-ratio: 1;
     border-radius: 14px;
     background: #0b0f1d;
   }
