@@ -93,6 +93,21 @@
       {%- if s.footnote != blank -%}<p class="sgp__fine">{{ s.footnote }}</p>{%- endif -%}
     </div>
 
+    <!-- SCREEN 1b: reveal (Figma 4954:2986) — the burst pops out of the open box -->
+    <div id="somna-screen-reveal" class="sgp__screen sgp__screen--reveal somna-hidden">
+      {%- if s.pill != blank -%}<p class="sgp__pill">{{ s.pill }}</p>{%- endif -%}
+      <h2 class="sgp__title sgp__title--reveal" id="somna-screen-reveal-title"><span>{{ s.reveal_1 }}</span> <em>{{ s.reveal_2 }}</em></h2>
+      <div class="sgp__reveal">
+        <svg class="sgp__reveal-box" viewBox="0 0 180 80" aria-hidden="true" focusable="false"><rect x="24" y="0" width="132" height="80" rx="10" fill="currentColor"/><rect x="82" y="0" width="16" height="80" fill="#000"/></svg>
+        <div class="sgp__burst sgp__burst--reveal">
+          <svg viewBox="0 0 300 200" aria-hidden="true" focusable="false"><path d="M150 13 L171 33 L201 16 L213 38 L252 36 L242 59 L275 64 L256 82 L295 95 L261 107 L277 129 L243 133 L253 153 L212 151 L204 172 L171 157 L150 186 L128 158 L94 176 L87 152 L50 155 L58 131 L25 127 L39 107 L16 95 L43 82 L20 63 L55 59 L51 36 L88 41 L97 13 L129 30Z" fill="#fff" stroke="#000" stroke-width="5" stroke-linejoin="round"/></svg>
+          <span class="sgp__burst-text"><span class="sgp__burst-big">{{ s.burst_1 }}</span><span class="sgp__burst-big">{{ s.burst_2 }}</span><span class="sgp__burst-small">{{ s.burst_3 }}</span></span>
+        </div>
+      </div>
+      <p class="sgp__text sgp__text--reveal">{{ s.reveal_text }}</p>
+      <button type="button" class="sgp__unwrap sgp__unwrap--claim" data-claim>{{ s.reveal_button }}</button>
+    </div>
+
     <!-- SCREEN 2: claim (Figma 4954:3012) -->
     <div id="somna-screen-2" class="sgp__screen sgp__screen--claim somna-hidden">
       <div class="sgp__burst">
@@ -399,6 +414,45 @@
     line-height: 1.5;
     opacity: 0.85;
   }
+
+  /* reveal (Figma 4954:2986) */
+  .sgp__title--reveal { margin-top: 3cqw; }
+
+  .sgp__reveal {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    width: 100%;
+    margin-top: 2cqw;
+  }
+
+  .sgp__reveal-box {
+    grid-area: 1 / 1;
+    align-self: end;
+    width: min(54cqw, 26dvh);
+    height: auto;
+    margin-top: 32cqw;
+    color: var(--sgp-lav);
+  }
+
+  .sgp__burst--reveal {
+    grid-area: 1 / 1;
+    align-self: start;
+    width: min(92cqw, 48dvh);
+    margin-top: 0;
+  }
+
+  .is-entering .sgp__burst--reveal { animation: sgpPopOut 0.75s 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+  .is-entering .sgp__reveal-box { animation: sgpIn 0.4s ease both; }
+
+  @keyframes sgpPopOut {
+    0% { opacity: 0; transform: translateY(40%) scale(0.2) rotate(-14deg); }
+    100% { opacity: 1; transform: none; }
+  }
+
+  .sgp__text--reveal { margin-top: 4cqw; font-size: clamp(0.875rem, 4.7cqw, 1.0625rem); font-weight: 600; }
+
+  .sgp__unwrap--claim { margin-top: 3cqw; text-transform: none; }
 
   /* claim */
   .sgp__burst {
@@ -815,7 +869,7 @@
       overlay.dataset.somnaReady = 'true';
 
       const card = overlay.querySelector('.sgp__card');
-      const screens = [1, 2, 3].map((n) => document.getElementById('somna-screen-' + n));
+      const screens = ['1', 'reveal', '2', '3'].map((n) => document.getElementById('somna-screen-' + n));
       const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       let isOpen = false;
       let lastFocus = null;
@@ -854,7 +908,7 @@
         void screen?.offsetWidth;
         screen?.classList.add('sgp__screen-enter', 'is-entering');
         card.scrollTop = 0;
-        overlay.setAttribute('aria-labelledby', 'somna-screen-' + (index + 1) + '-title');
+        overlay.setAttribute('aria-labelledby', screen?.querySelector('h2')?.id || 'somna-screen-1-title');
       }
 
       function focusables() {
@@ -942,7 +996,8 @@
           screen.classList.add('sgp__screen-leave');
           setTimeout(() => {
             screen.classList.remove('sgp__screen-leave');
-            showClaimScreen();
+            showScreen(1);
+            setTimeout(() => screens[1].querySelector('[data-claim]')?.focus({ preventScroll: true }), 350);
           }, fast ? 0 : 300);
         }, fast ? 500 : 1700);
       }
@@ -970,15 +1025,17 @@
         message?.focus();
       }
 
+      screens[1]?.querySelector('[data-claim]')?.addEventListener('click', () => showClaimScreen());
+
       function showClaimScreen() {
-        showScreen(1);
+        showScreen(2);
         if (storage.get('localStorage', KEYS.signedUp)) showAlreadySubscribed();
         else setTimeout(() => emailInput?.focus({ preventScroll: true }), 350);
       }
 
       function success() {
         storage.set('localStorage', KEYS.signedUp, '1');
-        showScreen(2);
+        showScreen(3);
         document.getElementById('somna-copy-btn')?.focus({ preventScroll: true });
       }
 
@@ -1115,7 +1172,12 @@
     { "type": "text", "id": "button", "label": "Button", "default": "Tap to unwrap" },
     { "type": "text", "id": "unwrapping", "label": "While opening", "default": "Unwrapping…" },
     { "type": "text", "id": "footnote", "label": "Small print", "default": "One treat per customer · first order only" },
-    { "type": "header", "content": "Screen 2 — email" },
+    { "type": "header", "content": "Screen 2 — you got an extra" },
+    { "type": "text", "id": "reveal_1", "label": "Heading line 1", "default": "You got" },
+    { "type": "text", "id": "reveal_2", "label": "Heading line 2 (lavender)", "default": "an extra!" },
+    { "type": "text", "id": "reveal_text", "label": "Text", "default": "On top of up to 60% off the sale." },
+    { "type": "text", "id": "reveal_button", "label": "Button", "default": "Claim my extra" },
+    { "type": "header", "content": "Screen 3 — email" },
     { "type": "text", "id": "burst_1", "label": "Burst line 1", "default": "Extra" },
     { "type": "text", "id": "burst_2", "label": "Burst line 2", "default": "10% off" },
     { "type": "text", "id": "burst_3", "label": "Burst small line", "default": "your first order" },
@@ -1128,7 +1190,7 @@
     { "type": "text", "id": "consent", "label": "Consent text", "default": "By signing up you agree to receive marketing emails from somna. unsubscribe anytime." },
     { "type": "text", "id": "decline", "label": "Decline link", "default": "No thanks" },
     { "type": "text", "id": "already_text", "label": "Already signed up", "default": "You're already on the list — check your inbox for your code." },
-    { "type": "header", "content": "Screen 3 — code" },
+    { "type": "header", "content": "Screen 4 — code" },
     { "type": "text", "id": "code_title", "label": "Heading", "default": "Your code is ready" },
     { "type": "text", "id": "copy_label", "label": "Copy link", "default": "Copy code" },
     { "type": "text", "id": "shop_label", "label": "Button", "default": "Shop now, 10% applied" },
