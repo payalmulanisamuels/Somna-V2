@@ -109,7 +109,7 @@
                   <tr>
                     <td></td>
                     <th scope="col" class="is-somna">
-                      {%- if tab.settings.image != blank -%}{{ tab.settings.image | image_url: width: 480 | image_tag: loading: 'lazy', alt: '', width: 80, height: 80, widths: '160, 240, 320, 480', sizes: '(min-width: 750px) 100px, 60px' }}{%- endif -%}
+                      {%- if tab.settings.image != blank -%}{{ tab.settings.image | image_url: width: 400 | image_tag: loading: 'lazy', alt: '', width: 80, height: 80 }}{%- endif -%}
                       <span{% if tab.settings.image == blank %} class="somna-compare__col-name"{% endif %}>{{ tab.settings.label }}</span>
                     </th>
                     {%- comment -%} a column with neither a name nor an image is left out (e.g. a three-column table) {%- endcomment -%}
@@ -120,7 +120,7 @@
                       {%- if tab.settings[img_key] == blank and tab.settings[label_key] == blank -%}{%- continue -%}{%- endif -%}
                       {%- assign cols = cols | append: n | append: ',' -%}
                       <th scope="col">
-                        {%- if tab.settings[img_key] != blank -%}{{ tab.settings[img_key] | image_url: width: 480 | image_tag: loading: 'lazy', alt: '', width: 80, height: 80, widths: '160, 240, 320, 480', sizes: '(min-width: 750px) 100px, 60px' }}{%- endif -%}
+                        {%- if tab.settings[img_key] != blank -%}{{ tab.settings[img_key] | image_url: width: 400 | image_tag: loading: 'lazy', alt: '', width: 80, height: 80 }}{%- endif -%}
                         <span class="somna-compare__col-name{% unless s.show_column_names or text_only or tab.settings.show_names %} visually-hidden{% endunless %}">{{ tab.settings[label_key] }}</span>
                       </th>
                     {%- endfor -%}
