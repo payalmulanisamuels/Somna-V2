@@ -561,3 +561,27 @@
     line-height: 1.5 !important;
   }
 }
+
+/* Content pages on phones (Figma 4958:9260 How to use / 4958:10160 Support): FAQ heading on the left in
+   mixed case ("Questions? We've Got You."), compact question rows */
+@media screen and (max-width: 749px) {
+  main[data-template^='page'] [id$='__faq'] .text-block:not(.details-content *) {
+    --text-align: left !important;
+    text-align: left;
+  }
+
+  main[data-template^='page'] [id$='__faq'] [class*='__heading'] :is(h2, p) {
+    font-size: clamp(1.875rem, 9.5vw, 2.5rem) !important;
+    line-height: 1.45 !important;
+    text-transform: none !important;
+  }
+
+  main[data-template^='page'] [id$='__faq'] .details__header {
+    font-size: clamp(0.75rem, 3.3vw, 0.875rem) !important;
+    padding-block: 11px !important;
+  }
+
+  main[data-template^='page'] [id$='__faq'] .details-content p {
+    font-size: 0.8125rem !important;
+  }
+}

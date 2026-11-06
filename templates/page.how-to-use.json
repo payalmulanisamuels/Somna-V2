@@ -722,7 +722,7 @@
             "row_1": {
               "type": "_accordion-row",
               "settings": {
-                "heading": "What is the return policy?",
+                "heading": "Can I wear Strips every night?",
                 "open_by_default": false,
                 "icon": "none",
                 "width": 20
@@ -731,7 +731,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Every product is covered by our 30-Night Money-Back Guarantee, counted from the confirmed delivery date. For hygiene reasons, Nasal Strips and Mouth Tape must be unused and in their original, sealed packaging. <a href=\"/pages/return-refund-policy\">Read the full policy</a>.</p>",
+                    "text": "<p>Yes, Strips are designed for nightly use as part of a regular routine.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -762,7 +762,7 @@
             "row_2": {
               "type": "_accordion-row",
               "settings": {
-                "heading": "Are any purchases final sale?",
+                "heading": "Will Strips irritate my skin?",
                 "open_by_default": false,
                 "icon": "none",
                 "width": 20
@@ -771,7 +771,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Yes — items marked “Final Sale” or “Clearance”, and promotional free gifts, are not eligible for returns or refunds.</p>",
+                    "text": "<p>The adhesive is designed to be gentle and hypoallergenic. If you have sensitive skin, patch test first.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -802,7 +802,7 @@
             "row_3": {
               "type": "_accordion-row",
               "settings": {
-                "heading": "When will I get my order?",
+                "heading": "Will Tape feel tight or restrictive?",
                 "open_by_default": false,
                 "icon": "none",
                 "width": 20
@@ -811,7 +811,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Orders are processed within 1–2 business days. Delivery typically takes 7–9 business days from the day your order ships, and you’ll get an email with tracking once it’s on its way.</p>",
+                    "text": "<p>Designed to feel snug, never tight. Reposition rather than push through discomfort.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -842,7 +842,7 @@
             "row_4": {
               "type": "_accordion-row",
               "settings": {
-                "heading": "Where are your products manufactured?",
+                "heading": "Can I reuse a Strip or a piece of Tape?",
                 "open_by_default": false,
                 "icon": "none",
                 "width": 20
@@ -851,7 +851,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Our products are manufactured both locally and globally. We carefully select our manufacturing partners to ensure our products are high quality and a fair value.</p>",
+                    "text": "<p>No, both are single-use. A fresh one each night holds better than reusing one.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -882,7 +882,7 @@
             "row_5": {
               "type": "_accordion-row",
               "settings": {
-                "heading": "How much does shipping cost?",
+                "heading": "What if it's still not right for me after a few nights?",
                 "open_by_default": false,
                 "icon": "none",
                 "width": 20
@@ -891,7 +891,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Standard shipping is a flat $4.95 on every delivery, with no minimum purchase. We currently ship within the United States only.</p>",
+                    "text": "<p>You're covered by our 30-Night Money-Back Guarantee, counted from delivery.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
