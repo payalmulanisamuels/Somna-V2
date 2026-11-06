@@ -768,7 +768,7 @@
         this.classList.toggle('is-open', on);
         this.sheet.inert = !on;
         this.open.setAttribute('aria-expanded', String(on));
-        if (on) this.sheet.querySelector('[aria-checked="true"], button')?.focus({ preventScroll: true });
+        if (on) (this.sheet.querySelector('[aria-checked="true"]') || this.sheet.querySelector('[aria-pressed="true"]') || this.sheet.querySelector('button'))?.focus({ preventScroll: true });
       }
       // set a control in the buy box and let it update itself (it fires our render through its change event)
       pick(input) {
@@ -2769,9 +2769,9 @@
     padding: 8px 12px;
     border-bottom: 1.5px solid #000;
     background: var(--sa-lav);
-    font-size: 0.8125rem;
+    font-size: clamp(0.6875rem, 3.25vw, 0.8125rem);
     font-weight: 500;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
     line-height: 1.3;
     text-align: center;
   }
@@ -2786,10 +2786,10 @@
   .somna-sticky-atc__card {
     display: flex;
     flex: 1;
-    gap: 12px;
+    gap: 10px;
     align-items: center;
     min-width: 0;
-    padding: 6px 12px 6px 6px;
+    padding: 6px 10px 6px 6px;
     border: 2px solid #000;
     border-radius: 10px;
     background: var(--sa-mint);
@@ -2836,7 +2836,7 @@
   .somna-sticky-atc__title {
     overflow: hidden;
     font-family: var(--font-accent--family);
-    font-size: clamp(1.25rem, 5.6vw, 1.5rem);
+    font-size: clamp(1.0625rem, 5vw, 1.5rem);
     font-weight: var(--font-accent--weight);
     line-height: 1.1;
     text-overflow: ellipsis;
@@ -2851,6 +2851,8 @@
 
   .somna-sticky-atc__caret {
     flex: none;
+    width: 10px;
+    margin-left: -4px;
     transition: transform 0.3s ease;
   }
 
@@ -2860,8 +2862,8 @@
 
   .somna-sticky-atc__add {
     flex: none;
-    width: 80px;
-    padding: 6px;
+    width: 84px;
+    padding: 6px 4px;
     border: 2px solid #000;
     border-radius: 10px;
     background: #000;
@@ -2870,7 +2872,7 @@
     outline-offset: -4px;
     color: var(--sa-mint);
     font-family: var(--font-accent--family);
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: var(--font-accent--weight);
     line-height: 1.05;
     text-transform: uppercase;
@@ -2956,7 +2958,7 @@
     margin: 0;
     color: var(--sa-lav);
     font-family: var(--font-accent--family);
-    font-size: clamp(1.75rem, 8vw, 2.25rem);
+    font-size: clamp(1.5rem, 7.4vw, 2.25rem);
     font-weight: var(--font-accent--weight);
     line-height: 1.1;
     text-transform: uppercase;
@@ -3259,7 +3261,7 @@
     { "type": "text", "id": "sticky_heading", "label": "Sheet: heading", "default": "Choose your *pack*", "info": "*word* shows in white" },
     { "type": "text", "id": "sticky_sub_toggle", "label": "Sheet: subscribe button", "default": "Subscribe & Save" },
     { "type": "text", "id": "sticky_once_toggle", "label": "Sheet: one-time button", "default": "One time" },
-    { "type": "text", "id": "sticky_note", "label": "Sheet: subscription note", "default": "Delivery every [interval] . skip, pause or cancel anytime", "info": "[interval] = the chosen delivery interval" },
+    { "type": "text", "id": "sticky_note", "label": "Sheet: subscription note", "default": "Delivery [interval] . skip, pause or cancel anytime", "info": "[interval] = the chosen delivery interval, e.g. every month" },
     { "type": "text", "id": "upsell_button", "label": "Upgrade card: button", "info": "Used when the product's PDP – Upgrade card: button is empty.", "default": "Upgrade" },
     { "type": "text", "id": "save_label", "label": "Save badge", "info": "[percent] is worked out from the compare-at price.", "default": "Save [percent]%" },
     { "type": "text", "id": "percent_suffix", "label": "Discount after the plan names", "default": " · [percent]% off" },
