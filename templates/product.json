@@ -1117,6 +1117,7 @@
         "bar_color": "#98a3de",
         "track_color": "#d8ddd4",
         "show_gallery": true,
+        "photo_popup": true,
         "gallery_limit": 6,
         "sheet_url": "https://docs.google.com/spreadsheets/d/1pOrOzI06fWZ82O1l47xT8u4N2zk5FmM9/edit?gid=405744366#gid=405744366",
         "initial_count": 4,
