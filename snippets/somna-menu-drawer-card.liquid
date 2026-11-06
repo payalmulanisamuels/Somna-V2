@@ -17,9 +17,11 @@
   assign name = p.title
   assign color_name = color
   if color != blank
-    for pair in st.somna_drawer_color_names | split: '|'
+    assign color_key = color | downcase
+    assign color_pairs = st.somna_drawer_color_names | split: '|'
+    for pair in color_pairs
       assign k = pair | split: ':' | first | strip | downcase
-      if k == color | downcase
+      if k == color_key
         assign color_name = pair | split: ':' | last | strip
       endif
     endfor
@@ -123,7 +125,7 @@
       <span class="somna-md-card__title">{{ name | escape }}</span>
       {%- if dots != blank -%}
         <span class="somna-md-card__dots" aria-hidden="true">
-          {%- for c in dots | split: '|' -%}<i style="--d: {% render 'somna-swatch-color', name: c %};"></i>{%- endfor -%}
+          {%- assign dot_list = dots | split: '|' -%}{%- for c in dot_list -%}<i style="--d: {% render 'somna-swatch-color', name: c %};"></i>{%- endfor -%}
         </span>
       {%- endif -%}
     </span>
