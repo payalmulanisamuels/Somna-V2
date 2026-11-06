@@ -1197,9 +1197,25 @@
         setTimeout(() => { label.textContent = config.copyLabel; }, 2000);
       });
 
-      document.getElementById('somna-shop-btn')?.addEventListener('click', () => {
+      // "Shop now": applies the code in the background (Shopify's /discount/CODE link sets it on the
+      // visitor's cart) and simply closes the popup, so the visitor stays on the page they were on.
+      // The link's own href still works as a fallback if the request fails.
+      document.getElementById('somna-shop-btn')?.addEventListener('click', (event) => {
         track('shop_now_click');
         storage.set('localStorage', KEYS.signedUp, '1');
+        if (inEditor) { event.preventDefault(); closePopup(); return; }
+        event.preventDefault();
+        const btn = event.currentTarget;
+        const code = (document.getElementById('somna-discount-code-text')?.textContent || '').trim();
+        if (!code) { window.location.href = btn.href; return; }
+        btn.setAttribute('aria-busy', 'true');
+        fetch('/discount/' + encodeURIComponent(code) + '?redirect=%2Fcart.js', { credentials: 'same-origin', cache: 'no-store' })
+          .then((res) => {
+            if (!res.ok) throw new Error('discount ' + res.status);
+            btn.removeAttribute('aria-busy');
+            closePopup();
+          })
+          .catch(() => { window.location.href = btn.href; });
       });
 
       function consentBannerOpen() {
