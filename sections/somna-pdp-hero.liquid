@@ -510,7 +510,7 @@
       assign sticky_img = current.featured_image | default: product.featured_image
       assign sticky_heading_parts = s.sticky_heading | split: '*'
     -%}
-    <somna-pdp-sticky class="somna-sticky-atc" data-sub-word="{{ s.sticky_sub_word | escape }}" data-once-word="{{ s.sticky_once_word | escape }}" data-note="{{ s.sticky_note | escape }}" hidden>
+    <somna-pdp-sticky class="somna-sticky-atc" data-product-title="{{ product.title | escape }}" data-sub-word="{{ s.sticky_sub_word | escape }}" data-once-word="{{ s.sticky_once_word | escape }}" data-note="{{ s.sticky_note | escape }}" hidden>
       <div class="somna-sticky-atc__backdrop" data-sticky-close></div>
       <div class="somna-sticky-atc__sheet" id="StickyPacks-{{ section.id }}" role="dialog" aria-modal="false" aria-labelledby="StickyPacksTitle-{{ section.id }}" data-sticky-sheet inert>
         <div class="somna-sticky-atc__sheet-head">
@@ -806,7 +806,7 @@
         const single = buy.querySelector('.somna-pdp-hero__packs')?.hidden;
         const nightsOf = (x) => (single ? Number(buy.dataset.priceNights) || buy.nights : buy.bags(x) * buy.nights);
         const packInput = buy.querySelector('[data-pack]:checked');
-        const packName = single ? buy.querySelector('.somna-pdp-hero__title')?.textContent.trim() : packInput?.closest('label').querySelector('.somna-buy__pack-name')?.textContent.trim();
+        const packName = single ? this.dataset.productTitle : packInput?.closest('label').querySelector('.somna-buy__pack-name')?.textContent.trim();
         const word = sub ? this.dataset.subWord : this.dataset.onceWord;
         this.querySelector('[data-sticky-title]').textContent = word ? `${packName}. ${word}` : packName;
         const n = nightsOf(v);
@@ -2836,7 +2836,7 @@
   .somna-sticky-atc__title {
     overflow: hidden;
     font-family: var(--font-accent--family);
-    font-size: clamp(1.0625rem, 5vw, 1.5rem);
+    font-size: clamp(1rem, 4.6vw, 1.5rem);
     font-weight: var(--font-accent--weight);
     line-height: 1.1;
     text-overflow: ellipsis;
