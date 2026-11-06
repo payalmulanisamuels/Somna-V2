@@ -3719,6 +3719,7 @@
         "bar_color": "#98a3de",
         "track_color": "#d8ddd4",
         "show_gallery": true,
+        "photo_popup": true,
         "gallery_limit": 6,
         "gallery_source": "judgeme",
         "photo_alt": "Photo from [name]'s review",
