@@ -3656,13 +3656,6 @@
             "image": "shopify://shop_images/somna-v2-review-photo-5.png",
             "alt": ""
           }
-        },
-        "photo_6": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/somna-v2-review-photo-6-real.png",
-            "alt": ""
-          }
         }
       },
       "block_order": [
@@ -3670,8 +3663,7 @@
         "photo_2",
         "photo_3",
         "photo_4",
-        "photo_5",
-        "photo_6"
+        "photo_5"
       ],
       "settings": {
         "eyebrow": "Reviews",
