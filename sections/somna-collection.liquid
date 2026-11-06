@@ -139,6 +139,24 @@
 </script>
 {%- endif -%}
 
+{%- if s.layout == 'singles' and template.name == 'collection' -%}
+<style>
+  /* collection page, phones (Figma 4958:3634): hero type and trust stickers sized to the screen */
+  @media screen and (max-width: 749px) {
+    .somna-page-hero--aside.somna-page-hero--open { padding-block: 26px 6px !important; }
+    .somna-page-hero--aside .somna-page-hero__eyebrow { margin-bottom: 4px; font-size: clamp(0.5625rem, 2.65vw, 0.75rem); letter-spacing: 0.12em; }
+    .somna-page-hero--aside .somna-page-hero__title { font-size: clamp(1.875rem, 10.2vw, 2.625rem); line-height: 1.12; }
+    .somna-page-hero--aside .somna-page-hero__aside { gap: 0; }
+    .somna-page-hero--aside .somna-page-hero__text, .somna-page-hero--aside .somna-page-hero__tagline { margin-top: 10px; font-size: clamp(0.6875rem, 3.1vw, 0.8125rem); letter-spacing: 0.04em; }
+    .somna-page-hero--aside .somna-page-hero__actions { flex-wrap: nowrap; gap: 5px; margin-top: 16px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+    .somna-page-hero--aside .somna-page-hero__actions::-webkit-scrollbar { display: none; }
+    .somna-page-hero--aside .somna-page-hero__button--chip { flex: none; min-height: 32px; padding: 0 9px; font-size: clamp(0.6875rem, 3vw, 0.8125rem); letter-spacing: 0.02em; }
+    .somna-cards__stickers.somna-stickers { gap: 10px 4px; }
+    .somna-cards__stickers.somna-stickers > li { padding: 4px 10px; border-width: 1.5px; box-shadow: 2px 3px 0 #000; font-size: clamp(0.75rem, 3.5vw, 0.9375rem); }
+  }
+</style>
+{%- endif -%}
+
 {% stylesheet %}
   .somna-collection {
     --somna-content-width: 1232px;
@@ -558,51 +576,211 @@
     }
   }
 
-  /* phones */
+  /* phones — Figma 4958:3634 (398px): two cards side by side for singles and the first two bundles,
+     the last bundle full width, small type scaled to the screen */
   @media screen and (max-width: 749px) {
     .somna-collection {
-      padding-block: 24px 32px !important;
+      padding-block: 20px 28px !important;
+    }
+
+    .somna-collection__inner {
+      gap: 16px;
     }
 
     .somna-collection__heading {
-      font-size: 1.75rem;
+      font-size: clamp(1.75rem, 10vw, 2.5rem);
+      line-height: 1.12;
     }
 
     .somna-collection__text {
-      font-size: 0.9375rem;
-      letter-spacing: 0.06em;
+      max-width: 270px;
+      margin-top: 8px;
+      font-size: clamp(0.6875rem, 3.1vw, 0.8125rem);
+      letter-spacing: 0.04em;
+      line-height: 1.35;
     }
 
     .somna-collection--bundles .somna-collection__intro {
-      text-align: center;
+      text-align: left;
     }
 
     .somna-collection__list {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 16px;
-      max-width: 402px;
-      margin-inline: auto;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 11px;
       width: 100%;
     }
 
+    /* an odd last card (Season Bundle) takes the full row, larger */
+    .somna-collection__item:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+
+    /* singles card: Figma 178 × 232 */
+    .somna-ccard--singles {
+      padding: 7px 7px 7px;
+      border-radius: 12px;
+    }
+
+    .somna-ccard--singles .somna-ccard__media {
+      width: 100%;
+      aspect-ratio: 153 / 148;
+      border-radius: 8px;
+    }
+
+    .somna-ccard--singles .somna-ccard__rating {
+      margin: 7px 4px 0;
+      font-size: clamp(0.5rem, 2.3vw, 0.625rem);
+    }
+
+    .somna-ccard--singles .somna-ccard__title {
+      margin: 3px 4px 0;
+      font-size: clamp(0.8125rem, 3.9vw, 1rem);
+      line-height: 1.25;
+    }
+
+    .somna-ccard--singles .somna-ccard__price {
+      margin: 1px 4px 8px;
+      font-size: clamp(0.5625rem, 2.5vw, 0.6875rem);
+    }
+
+    .somna-ccard--singles .somna-ccard__button {
+      min-height: 30px;
+      border-radius: 6px;
+      font-size: clamp(0.5625rem, 2.5vw, 0.6875rem);
+    }
+
+    /* small bundle card: Figma 164 × 184 */
+    .somna-ccard--bundles {
+      padding: 7px 8px 8px;
+      border-radius: 10px;
+    }
+
+    .somna-ccard--bundles .somna-ccard__media {
+      aspect-ratio: 147 / 98;
+      border-radius: 6px;
+    }
+
+    .somna-ccard--bundles .somna-ccard__rating {
+      margin-top: 7px;
+      font-size: clamp(0.5rem, 2.2vw, 0.625rem);
+    }
+
+    .somna-ccard--bundles .somna-ccard__title {
+      margin-top: 3px;
+      font-size: clamp(0.6875rem, 3vw, 0.875rem);
+      line-height: 1.15;
+    }
+
+    .somna-ccard--bundles .somna-ccard__title-row {
+      gap: 4px;
+    }
+
+    .somna-ccard--bundles .somna-ccard__dots {
+      margin-top: 0;
+    }
+
+    .somna-ccard--bundles .somna-ccard__dots i {
+      width: 9px;
+      height: 9px;
+      margin-left: -2px;
+    }
+
+    .somna-ccard--bundles .somna-ccard__details {
+      margin-top: 3px;
+      font-size: clamp(0.5625rem, 2.3vw, 0.6875rem);
+    }
+
+    .somna-ccard--bundles .somna-ccard__price {
+      margin: 3px 0 8px;
+      font-size: clamp(0.5625rem, 2.3vw, 0.6875rem);
+    }
+
+    .somna-ccard--bundles .somna-ccard__button {
+      min-height: 30px;
+      border-radius: 6px;
+      font-size: clamp(0.5625rem, 2.6vw, 0.75rem);
+    }
+
+    /* full-width bundle card (Season Bundle): Figma 342 × 323 */
+    .somna-collection__item:last-child:nth-child(odd) .somna-ccard--bundles {
+      padding: 13px 17px 16px;
+      border-radius: 16px;
+    }
+
+    .somna-collection__item:last-child:nth-child(odd) .somna-ccard--bundles .somna-ccard__media {
+      aspect-ratio: 307 / 179;
+      border-radius: 8px;
+    }
+
+    .somna-collection__item:last-child:nth-child(odd) .somna-ccard--bundles .somna-ccard__rating {
+      margin-top: 12px;
+      font-size: 0.75rem;
+    }
+
+    .somna-collection__item:last-child:nth-child(odd) .somna-ccard--bundles .somna-ccard__title {
+      font-size: clamp(1rem, 5vw, 1.375rem);
+    }
+
+    .somna-collection__item:last-child:nth-child(odd) .somna-ccard--bundles .somna-ccard__dots i {
+      width: 14px;
+      height: 14px;
+    }
+
+    .somna-collection__item:last-child:nth-child(odd) .somna-ccard--bundles :is(.somna-ccard__details, .somna-ccard__price) {
+      font-size: 0.75rem;
+    }
+
+    .somna-collection__item:last-child:nth-child(odd) .somna-ccard--bundles .somna-ccard__price {
+      margin-bottom: 12px;
+    }
+
+    .somna-collection__item:last-child:nth-child(odd) .somna-ccard--bundles .somna-ccard__button {
+      min-height: 50px;
+      border-radius: 9px;
+      font-size: 1.0625rem;
+    }
+
+    /* chooser: Figma chips 37px, Inter Bold 13.6 */
     .somna-collection__choices {
-      gap: 10px 8px;
-      margin-top: 22px;
+      gap: 9px 7px;
+      margin-top: 4px;
     }
 
     .somna-collection__choice {
-      min-height: 44px;
-      font-size: 0.9375rem;
+      min-height: 36px;
+      padding: 0 10px;
+      font-size: clamp(0.75rem, 3.4vw, 0.875rem);
       letter-spacing: 0.04em;
     }
 
     .somna-collection__picks {
       width: 100%;
+      max-width: 352px;
       margin-inline: auto;
+      padding-top: 18px;
     }
 
-    .somna-ccard--singles .somna-ccard__title {
-      font-size: 1.25rem;
+    .somna-ccard--pick {
+      padding: 13px 13px 12px;
+      border-radius: 16px;
+    }
+
+    .somna-ccard--pick .somna-ccard__media {
+      aspect-ratio: 316 / 184;
+    }
+
+    .somna-ccard--pick .somna-ccard__title {
+      margin-top: 8px;
+      font-size: clamp(1rem, 5vw, 1.375rem);
+    }
+
+    .somna-ccard--pick :is(.somna-ccard__details, .somna-ccard__price) {
+      font-size: 0.75rem;
+    }
+
+    .somna-ccard--pick .somna-ccard__button {
+      min-height: 50px;
+      font-size: 1.0625rem;
     }
   }
 
