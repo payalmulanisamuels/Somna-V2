@@ -614,8 +614,14 @@
   }
 
   @media screen and (max-width: 749px) {
+    /* phones: cut-out on the left, the heading over its lower right like desktop */
     .somna-guide__figure {
-      justify-content: center;
+      justify-content: flex-start;
+      min-height: 0;
+    }
+
+    .somna-guide__cutout {
+      height: 300px;
     }
 
     .somna-guide__heading--over {
