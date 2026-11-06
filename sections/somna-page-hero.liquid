@@ -60,12 +60,16 @@
       {%- if s.tagline != blank -%}<p class="somna-page-hero__tagline">{{ s.tagline | escape }}</p>{%- endif -%}
       {%- if s.text != blank -%}<div class="somna-page-hero__text">{{ s.text }}</div>{%- endif -%}
       {%- if card and s.search_placeholder != blank -%}
+        <somna-faq-search class="somna-page-hero__search-wrap" data-empty="{{ s.search_empty | default: 'No answers for “[q]”. Try another word, or contact us below.' | escape }}" data-count="{{ s.search_count | default: '[n] matching questions' | escape }}">
         <form class="somna-page-hero__search" action="{{ routes.search_url }}" method="get" role="search">
           <svg class="somna-page-hero__search-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><path d="M15.8 15.8L21 21"/></svg>
           <label class="visually-hidden" for="SupportSearch-{{ section.id }}">{{ s.search_placeholder | escape }}</label>
           <input id="SupportSearch-{{ section.id }}" type="search" name="q" placeholder="{{ s.search_placeholder | escape }}" autocomplete="off">
           <input type="hidden" name="options[prefix]" value="last">
+          <button type="button" class="somna-page-hero__search-clear" hidden aria-label="Clear search">×</button>
         </form>
+        <p class="somna-page-hero__search-status" role="status" aria-live="polite"></p>
+        </somna-faq-search>
       {%- endif -%}
       {%- if section.blocks.size > 0 -%}
         <div class="somna-page-hero__actions">
@@ -89,7 +93,22 @@
     {%- if aside -%}<div class="somna-page-hero__aside">{{ hero_rest }}</div>{%- endif -%}
     {%- if card and s.card_heading != blank -%}
       <div class="somna-page-hero__card somna-edge-drip-bottom">
-        {%- if s.card_icon != 'none' -%}{%- render 'somna-line-icon', name: s.card_icon, class: 'somna-page-hero__card-icon', stroke: 1.1 -%}{%- endif -%}
+        {%- if s.card_image != blank -%}
+          {%- comment -%} Figma 4927:380: the pin picture. "Remove background" keeps only its light lines, so it sits on the black card {%- endcomment -%}
+          <span class="somna-page-hero__card-icon somna-page-hero__card-pin{% if s.pin_motion %} is-animated{% endif %}" aria-hidden="true">
+            <span class="somna-page-hero__pin-ping"></span>
+            <span class="somna-page-hero__pin-body">
+              {%- if s.card_image_key -%}
+                <svg viewBox="0 0 {{ s.card_image.width }} {{ s.card_image.height }}" focusable="false">
+                  <filter id="PinKey-{{ section.id }}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.953  0 0 0 0 0.996  0 0 0 0 0.933  0 4.25 0 0 -3.17"/></filter>
+                  <image href="{{ s.card_image | image_url: width: 400 }}" width="{{ s.card_image.width }}" height="{{ s.card_image.height }}" filter="url(#PinKey-{{ section.id }})"/>
+                </svg>
+              {%- else -%}
+                {{ s.card_image | image_url: width: 400 | image_tag: alt: '', loading: 'eager', width: 125, height: 125 }}
+              {%- endif -%}
+            </span>
+          </span>
+        {%- elsif s.card_icon != 'none' -%}{%- render 'somna-line-icon', name: s.card_icon, class: 'somna-page-hero__card-icon', stroke: 1.1 -%}{%- endif -%}
         {%- if s.card_eyebrow != blank -%}<p class="somna-page-hero__card-eyebrow">{{ s.card_eyebrow | escape }}</p>{%- endif -%}
         <h2 class="somna-page-hero__card-title">{{ s.card_heading | escape }}</h2>
         {%- if s.card_text != blank -%}<p class="somna-page-hero__card-text">{{ s.card_text | escape }}</p>{%- endif -%}
@@ -98,6 +117,89 @@
     {%- endif -%}
   </div>
 </div>
+
+
+{%- if card and s.search_placeholder != blank -%}
+<script type="module">
+  /* Support search (Figma 4927:290): typing filters the FAQ cards on this page — only questions whose question or
+     answer contain every typed word stay visible (the words are highlighted), cards with no match hide. Enter jumps
+     to the results; × or Escape clears. */
+  if (!customElements.get('somna-faq-search')) {
+    customElements.define('somna-faq-search', class extends HTMLElement {
+      connectedCallback() {
+        this.input = this.querySelector('input[type="search"]');
+        this.clear = this.querySelector('.somna-page-hero__search-clear');
+        this.status = this.querySelector('.somna-page-hero__search-status');
+        this.form = this.querySelector('form');
+        this.items = [...document.querySelectorAll('.somna-faq-cards__item')].map((d) => {
+          const q = d.querySelector('.somna-faq-cards__q > span');
+          return {
+            d,
+            host: d.closest('accordion-custom') || d,
+            q,
+            label: q.textContent,
+            text: (d.textContent || '').toLowerCase().replace(/\s+/g, ' '),
+          };
+        });
+        if (!this.items.length) return;
+        let t;
+        this.input.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => this.run(), 120); });
+        this.input.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.input.value) { e.preventDefault(); this.reset(); }
+        });
+        this.form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          this.run();
+          const first = this.items.find((i) => !i.host.classList.contains('is-search-hidden'));
+          first?.d.closest('.somna-faq-cards__card')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+        });
+        this.clear.addEventListener('click', () => { this.reset(); this.input.focus(); });
+      }
+      reset() {
+        this.input.value = '';
+        this.run();
+      }
+      esc(s) {
+        return s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+      }
+      run() {
+        const raw = this.input.value.trim();
+        const words = raw.toLowerCase().split(/\s+/).filter((w) => w.length > 0);
+        const on = words.length > 0;
+        this.clear.hidden = !on;
+        let n = 0;
+        const re = on ? new RegExp('(' + words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'gi') : null;
+        this.items.forEach((i) => {
+          const hit = !on || words.every((w) => i.text.includes(w));
+          i.host.classList.toggle('is-search-hidden', !hit);
+          if (hit && on) n++;
+          i.q.innerHTML = hit && on ? this.esc(i.label).replace(re, '<mark>$1</mark>') : this.esc(i.label);
+          if (!hit && i.d.open) i.d.open = false;
+        });
+        document.querySelectorAll('.somna-faq-cards').forEach((g) => g.classList.toggle('is-filtering', on));
+        document.querySelectorAll('.somna-faq-cards__card').forEach((c) => {
+          const any = c.querySelector('.somna-faq-cards__item') && [...c.querySelectorAll('.somna-faq-cards__item')].some((d) => !(d.closest('accordion-custom') || d).classList.contains('is-search-hidden'));
+          c.classList.toggle('is-search-hidden', !any);
+        });
+        document.querySelectorAll('.somna-faq-cards__noresult').forEach((e) => e.remove());
+        if (!on) { this.status.textContent = ''; return; }
+        if (n === 0) {
+          this.status.textContent = this.dataset.empty.replace('[q]', raw);
+          const grid = document.querySelector('.somna-faq-cards__grid');
+          if (grid) {
+            const p = document.createElement('p');
+            p.className = 'somna-faq-cards__noresult';
+            p.textContent = this.status.textContent;
+            grid.append(p);
+          }
+        } else {
+          this.status.textContent = this.dataset.count.replace('[n]', n).replace('questions', n === 1 ? 'question' : 'questions');
+        }
+      }
+    });
+  }
+</script>
+{%- endif -%}
 
 {% stylesheet %}
   .somna-page-hero {
@@ -758,6 +860,171 @@
       transition: none;
     }
   }
+
+  /* search filter: clear button, live count, highlighted words, hidden questions (sections/somna-faq-cards) */
+  .somna-page-hero__search-wrap {
+    display: block;
+    max-width: 649px;
+  }
+
+  .somna-page-hero__search-clear {
+    position: absolute;
+    right: 18px;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #000;
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .somna-page-hero__search-clear:hover {
+    background: #afbdf8;
+  }
+
+  .somna-page-hero__search-clear[hidden] {
+    display: none;
+  }
+
+  .somna-page-hero__search-status {
+    min-height: 1.3em;
+    margin: 10px 0 0 24px;
+    color: #000;
+    font-size: 0.9375rem;
+    letter-spacing: 0.04em;
+  }
+
+  .somna-page-hero__search-status:empty {
+    display: none;
+  }
+
+  .is-search-hidden {
+    display: none !important;
+  }
+
+  .somna-faq-cards.is-filtering .somna-faq-cards__card {
+    min-height: 0;
+    animation: somna-page-hero-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .somna-faq-cards__q mark {
+    padding: 0 2px;
+    border-radius: 3px;
+    background: #afbdf8;
+    color: inherit;
+    font-weight: 700;
+  }
+
+  .somna-faq-cards__noresult {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 32px 0;
+    text-align: center;
+    font-size: 1.125rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* map pin (setting "Animate the pin"): drops in, then hops every few seconds while a ping ring spreads under it */
+  .somna-page-hero__card-pin {
+    display: block;
+    aspect-ratio: 1;
+  }
+
+  .somna-page-hero__pin-body,
+  .somna-page-hero__pin-body :is(svg, img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .somna-page-hero__pin-body {
+    position: relative;
+    transform-origin: 45% 92%;
+  }
+
+  .somna-page-hero__pin-ping {
+    position: absolute;
+    left: 22%;
+    bottom: 2%;
+    width: 46%;
+    height: 14%;
+    border: 2px solid #f3feee;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .somna-page-hero__card-pin.is-animated .somna-page-hero__pin-body {
+    animation:
+      somnaPinDrop 0.9s 0.5s cubic-bezier(0.34, 1.4, 0.64, 1) both,
+      somnaPinHop 3.2s 1.6s ease-in-out infinite;
+  }
+
+  .somna-page-hero__card-pin.is-animated .somna-page-hero__pin-ping {
+    animation: somnaPinPing 3.2s 1.6s ease-out infinite;
+  }
+
+  .somna-page-hero__card:hover .somna-page-hero__card-pin {
+    transform: none;
+  }
+
+  .somna-page-hero__card:hover .somna-page-hero__card-pin .somna-page-hero__pin-body {
+    animation-duration: 0.9s, 1.2s;
+  }
+
+  .somna-page-hero__card:hover .somna-page-hero__card-pin .somna-page-hero__pin-ping {
+    animation-duration: 1.2s;
+  }
+
+  @keyframes somnaPinDrop {
+    0% { opacity: 0; transform: translateY(-60px) rotate(-8deg); }
+    60% { opacity: 1; }
+    100% { opacity: 1; transform: none; }
+  }
+
+  @keyframes somnaPinHop {
+    0%, 55%, 100% { transform: none; }
+    63% { transform: scale(1.06, 0.92); }
+    75% { transform: translateY(-16px) rotate(-5deg); }
+    86% { transform: translateY(0) scale(1.04, 0.95); }
+    93% { transform: scale(0.99, 1.02); }
+  }
+
+  @keyframes somnaPinPing {
+    0%, 84% { opacity: 0; transform: scale(0.4); }
+    87% { opacity: 0.9; transform: scale(0.5); }
+    100% { opacity: 0; transform: scale(1.6); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-page-hero__card-pin.is-animated :is(.somna-page-hero__pin-body, .somna-page-hero__pin-ping) {
+      animation: none;
+    }
+  }
+
+  /* desktop: text column 682px like Figma so the four jump pills sit in one row */
+  @media screen and (min-width: 990px) {
+    .somna-page-hero--card .somna-page-hero__grid {
+      grid-template-columns: minmax(0, 682px) minmax(0, 549px);
+      justify-content: space-between;
+    }
+
+    .somna-page-hero--card .somna-page-hero__actions {
+      flex-wrap: nowrap;
+      gap: 15px;
+    }
+
+    .somna-page-hero--card .somna-page-hero__button--pill {
+      flex: none;
+      white-space: nowrap;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -783,6 +1050,11 @@
     { "type": "text", "id": "card_eyebrow", "label": "Card eyebrow" },
     { "type": "text", "id": "card_heading", "label": "Card heading" },
     { "type": "text", "id": "card_text", "label": "Card text" },
+    { "type": "text", "id": "search_count", "label": "Search: results line", "default": "[n] matching questions", "info": "[n] = number of questions found. Typing in the search filters the FAQ cards on the page." },
+    { "type": "text", "id": "search_empty", "label": "Search: nothing found", "default": "No answers for “[q]”. Try another word, or contact us below.", "info": "[q] = what was typed" },
+    { "type": "image_picker", "id": "card_image", "label": "Card picture (replaces the icon)" },
+    { "type": "checkbox", "id": "card_image_key", "label": "Remove the picture's background (light lines only)", "default": true },
+    { "type": "checkbox", "id": "pin_motion", "label": "Animate the picture (pin drop + hop)", "default": true },
     { "type": "select", "id": "card_icon", "label": "Card icon", "options": [{ "value": "none", "label": "None" }, { "value": "pin", "label": "Location pin" }, { "value": "truck", "label": "Truck" }, { "value": "box", "label": "Box" }, { "value": "chat", "label": "Chat" }], "default": "pin" },
     { "type": "text", "id": "card_button", "label": "Card button" },
     { "type": "url", "id": "card_link", "label": "Card button link" },

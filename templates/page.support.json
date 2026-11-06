@@ -79,7 +79,10 @@
         "card_text": "Got an order on the way? Check its status here.",
         "card_icon": "pin",
         "card_button": "Track order →",
-        "card_link": "/pages/track-order"
+        "card_link": "/pages/track-order",
+        "card_image": "shopify://shop_images/somna-support-pin-3x.png",
+        "card_image_key": true,
+        "pin_motion": true
       }
     },
     "wave_hero_track": {
