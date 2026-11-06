@@ -454,15 +454,19 @@
           "type": "tab",
           "settings": {
             "name": "Sleep Bundle",
-            "label": "Season Bundle",
-            "column_2_label": "Sleep Bundle",
-            "column_3_label": "Strips Only",
+            "label": "Sleep Bundle",
+            "column_2_label": "Strips + Tape, bought separately",
+            "column_3_label": "Strips only",
             "column_4_label": "",
-            "highlight": false,
+            "highlight": true,
             "only_on_match": true,
-            "eyebrow": "Made for your nights",
-            "heading": "<em>THE BUNDLE</em> VS SHORTER RUNS",
-            "text": "Same SOMNA strips and tape, fewer orders and more extras."
+            "eyebrow": "Better together",
+            "heading": "One routine. <em>Not half of one.</em>",
+            "text": "Strips for your nose, tape for your lips, one subscription.",
+            "image": "shopify://shop_images/somna-v2-sleep-bundle.png",
+            "column_2_image": "shopify://shop_images/tap1.png",
+            "column_3_image": "shopify://shop_images/strip-1_2b080541-bb5f-4874-9f2a-eb53b3f94218.png",
+            "show_names": true
           }
         },
         "csrow_1": {
@@ -544,31 +548,30 @@
           "type": "row",
           "settings": {
             "tab": "5",
-            "label": "3 free gifts on first order",
-            "column_1": true,
-            "column_2": true,
-            "column_3": false,
-            "column_4": false
+            "label": "Subscriptions to manage",
+            "column_1_text": "1",
+            "column_2_text": "2",
+            "column_3_text": "1"
           }
         },
         "slrow_4": {
           "type": "row",
           "settings": {
             "tab": "5",
-            "label": "Nights per box",
-            "column_1_text": "90",
-            "column_2_text": "30",
-            "column_3_text": "30"
+            "label": "Monthly price from month 2",
+            "column_1_text": "$39.95",
+            "column_2_text": "$45.90",
+            "column_3_text": "$22.95 (nose only)"
           }
         },
         "slrow_5": {
           "type": "row",
           "settings": {
             "tab": "5",
-            "label": "Price per night",
+            "label": "Price per night from month 2",
             "column_1_text": "$1.33 for both",
-            "column_2_text": "$1.33 for both",
-            "column_3_text": "$0.67"
+            "column_2_text": "$1.53 for both",
+            "column_3_text": "$0.77 (nose only)"
           }
         }
       },
