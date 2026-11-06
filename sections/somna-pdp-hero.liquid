@@ -149,7 +149,7 @@
         </ul>
       {%- endif -%}
 
-      <div class="somna-pdp-hero__main{% if s.drip_edges %} somna-edge-drip-top somna-pdp-hero__main--{{ s.main_drip | default: 'over' }}{% endif %}">
+      <div class="somna-pdp-hero__main{% if s.drip_edges %} somna-edge-drip-top somna-pdp-hero__main--{{ s.main_drip | default: 'over' }}{% endif %}{% if s.main_shape != blank and s.main_shape != 'natural' %} somna-pdp-hero__main--shape-{{ s.main_shape }}{% endif %}">
         {%- if first_image -%}
           {{ first_image | image_url: width: 1100 | image_tag: data-main: '', loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 1300px) 570px, (min-width: 990px) 445px, (min-width: 750px) 45vw, 100vw', widths: '600, 900, 1100', alt: first_image.alt | default: product.title }}
         {%- endif -%}
@@ -799,6 +799,26 @@
      about the same height (navy shows at the sides); none = no drip on the main photo, rounded corners instead */
   .somna-pdp-hero__main--fit {
     padding: calc(var(--somna-drip-h) - 6px) 4.5% 0;
+  }
+
+  /* "Main photo box" setting: square = every photo gets the same square box, so a wide first photo
+     (Season Bundle 4:3) is as tall as the square gallery photos. square-fit shows the whole photo on navy,
+     square-fill fills the box and trims the photo's sides. */
+  .somna-pdp-hero__main--shape-square-fit,
+  .somna-pdp-hero__main--shape-square-fill {
+    aspect-ratio: 1;
+  }
+
+  .somna-pdp-hero__main--shape-square-fit img,
+  .somna-pdp-hero__main--shape-square-fill img {
+    height: 100%;
+    object-fit: contain;
+    object-position: 50% 60%;
+  }
+
+  .somna-pdp-hero__main--shape-square-fill img {
+    object-fit: cover;
+    object-position: 50% 50%;
   }
 
   .somna-pdp-hero__main--none.somna-edge-drip-top {
@@ -2540,6 +2560,7 @@
     { "type": "checkbox", "id": "quote_from_judgeme", "label": "Quote card: use a Judge.me review when the product has no Hero quote", "info": "Picks a short, named 5★ review of this product.", "default": true },
     { "type": "text", "id": "quote_skip_words", "label": "Quote card: skip Judge.me reviews containing", "info": "Comma-separated, no spaces after commas (spaces count, so \" but \" matches the word only). Skips mixed reviews such as \"worked fine at first, but…\".", "default": " but ,loose,okay,fell off" },
     { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified Buyer" },
+    { "type": "select", "id": "main_shape", "label": "Main photo box", "options": [{ "value": "natural", "label": "Photo's own shape" }, { "value": "square-fit", "label": "Square, whole photo on navy" }, { "value": "square-fill", "label": "Square, photo fills (sides trimmed)" }], "default": "natural", "info": "Square keeps the main photo as tall as the square gallery photos." },
     { "type": "select", "id": "main_drip", "label": "Main photo and drip edge", "options": [{ "value": "over", "label": "Drip over the photo's top" }, { "value": "below", "label": "Photo below the drip (whole photo)" }, { "value": "below-crop", "label": "Photo below the drip, bottom trimmed" }, { "value": "fit", "label": "Photo below the drip, a bit smaller" }, { "value": "none", "label": "No drip on the photo" }], "default": "over" },
     { "type": "select", "id": "video_shape", "label": "Video cards", "options": [{ "value": "natural", "label": "Each video's own shape" }, { "value": "equal", "label": "Same width (narrowest shape)" }], "default": "natural" },
     { "type": "text", "id": "videos_heading", "label": "Videos heading", "default": "Real Nights, On Camera" },
