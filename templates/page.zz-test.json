@@ -1,0 +1,106 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "somna-page-hero",
+      "blocks": {
+        "b1": {
+          "type": "button",
+          "settings": {
+            "label": "Nasal Strips",
+            "link": "#nasal-strips",
+            "style": "pill"
+          }
+        }
+      },
+      "block_order": [
+        "b1"
+      ],
+      "settings": {
+        "style": "open",
+        "padding_top": 104
+      }
+    },
+    "strips": {
+      "type": "somna-guide",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-howto-strip-step-1.png",
+            "text": "Clean and dry the bridge of your nose."
+          }
+        }
+      },
+      "block_order": [
+        "step_1"
+      ],
+      "settings": {
+        "image": "shopify://shop_images/somna-v2-season-how-strip.png",
+        "layout": "split",
+        "image_align": "right",
+        "padding_top": 72
+      }
+    },
+    "together": {
+      "type": "somna-guide",
+      "settings": {
+        "layout": "split",
+        "image_2": "shopify://shop_images/somna-v2-season-how-strip.png",
+        "card_product": "sleep-bundle",
+        "card_image": "shopify://shop_images/somna-v2-sleep-bundle.png",
+        "card_text": "Both, from [price]"
+      }
+    },
+    "settling": {
+      "type": "section",
+      "blocks": {
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>x</p>",
+            "max_width": "narrow",
+            "letter_spacing": "normal"
+          },
+          "blocks": {}
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "label": "30-Night",
+            "link": "/policies/refund-policy",
+            "style_class": "button-custom",
+            "width": "custom",
+            "custom_width": 32,
+            "custom_width_mobile": 100,
+            "width_mobile": "custom"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text",
+        "button"
+      ],
+      "settings": {
+        "background_color": "#000000",
+        "gap": 24,
+        "padding-block-start": 72
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "strips",
+    "together",
+    "settling"
+  ]
+}
