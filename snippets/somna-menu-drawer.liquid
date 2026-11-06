@@ -114,7 +114,7 @@
       {%- endfor -%}
     </ul>
 
-    {%- if shop.customer_accounts_enabled -%}
+    {%- if shop.customer_accounts_enabled and st.somna_drawer_show_account -%}
       <div class="somna-md__account">
         {%- if customer -%}
           <a class="somna-md__btn somna-md__btn--dark somna-md__btn--block" href="{{ routes.account_url }}">{{ st.somna_drawer_account_label | default: 'My account →' | escape }}</a>
