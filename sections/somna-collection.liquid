@@ -22,7 +22,7 @@
 {%- capture card_style -%}--sc-bg: {{ s.background_color }}; --sc-fg: {{ s.text_color }}; --sc-accent: {{ s.accent_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;{%- endcapture -%}
 
 <div
-  class="somna-collection somna-collection--{{ s.layout }}"
+  class="somna-collection somna-collection--{{ s.layout }}{% if s.hover_grow != blank and s.hover_grow != 'none' %} somna-collection--grow-{{ s.hover_grow }}{% endif %}{% if s.pointer_motion == 'draw_shake' %} somna-pointing{% endif %}"
   style="{{ card_style }}"
   {% if s.anchor != blank %}id="{{ s.anchor | handleize }}"{% endif %}
 >
@@ -53,13 +53,13 @@
         <div class="somna-collection__pointer" aria-hidden="true">
           <span class="somna-collection__sticker somna-shake--pop">{{ s.sticker | escape }}</span>
           <svg class="somna-collection__arrow" viewBox="0 0 150 140" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 4c-6 40 2 86 40 104 22 10 42-4 36-20-6-15-28-9-26 9 3 22 36 26 72 20"/>
-            <path d="M126 104l12 13-16 7"/>
+            <path class="somna-point-line" pathLength="420" d="M14 4c-6 40 2 86 40 104 22 10 42-4 36-20-6-15-28-9-26 9 3 22 36 26 72 20"/>
+            <path class="somna-point-head" d="M126 104l12 13-16 7"/>
           </svg>
         </div>
       {%- endif -%}
 
-      <somna-collection-chooser class="somna-collection__picks">
+      <somna-collection-chooser class="somna-collection__picks somna-point-target">
         {%- assign has_selected = false -%}
         {%- for block in section.blocks -%}{%- if block.settings.selected -%}{%- assign has_selected = true -%}{%- endif -%}{%- endfor -%}
         {%- for block in section.blocks -%}
@@ -102,7 +102,7 @@
               {%- assign p_group = p.metafields.custom.collection_group.value | default: '' | downcase -%}
               {%- if p_group == group -%}
                 <li class="somna-collection__item">
-                  {%- render 'somna-collection-card', product: p, style: s.layout, price_format: s.price_format, button: s.button_label, rating_format: s.rating_format -%}
+                  {%- render 'somna-collection-card', product: p, style: s.layout, price_format: s.price_format, button: s.button_label, rating_format: s.rating_format, card_fields: s.use_card_fields -%}
                 </li>
               {%- endif -%}
               {%- break -%}
@@ -240,6 +240,37 @@
 
   .somna-ccard__price s {
     opacity: 0.6;
+  }
+
+  .somna-ccard__price--split {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .somna-ccard__title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .somna-ccard__dots {
+    display: flex;
+    flex: none;
+    margin-top: 6px;
+  }
+
+  .somna-ccard__dots i {
+    width: 17px;
+    height: 17px;
+    margin-left: -4px;
+    border-radius: 50%;
+    background: var(--d);
+  }
+
+  .somna-ccard__dots i:first-child {
+    margin-left: 0;
   }
 
   /* Figma "btn-switch": lavender, soft drop shadow */
@@ -572,6 +603,76 @@
       font-size: 1.25rem;
     }
   }
+
+  /* Hover grow (like the homepage "Meet your match" cards): on desktop with a mouse the hovered card widens,
+     the others make room. Photos keep a fixed height so nothing below moves. */
+  @media (hover: hover) and (pointer: fine) and (min-width: 990px) {
+    .somna-collection--grow-large .somna-collection__list,
+    .somna-collection--grow-small .somna-collection__list {
+      display: flex;
+    }
+
+    .somna-collection--grow-large .somna-collection__item,
+    .somna-collection--grow-small .somna-collection__item {
+      flex: 1 1 0;
+      min-width: 0;
+      transition: flex-grow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .somna-collection--grow-large.somna-collection--singles .somna-collection__list {
+      width: min(100%, 829px);
+      gap: 25px;
+    }
+
+    .somna-collection--grow-large .somna-collection__item:is(:hover, :focus-within) {
+      flex-grow: 1.4;
+    }
+
+    .somna-collection--grow-small .somna-collection__item:is(:hover, :focus-within) {
+      flex-grow: 1.18;
+    }
+
+    .somna-collection--grow-large .somna-ccard--singles .somna-ccard__media {
+      height: 335px;
+      aspect-ratio: auto;
+    }
+
+    :is(.somna-collection--grow-large, .somna-collection--grow-small) .somna-ccard--bundles .somna-ccard__media {
+      height: 203px;
+      aspect-ratio: auto;
+    }
+
+    :is(.somna-collection--grow-large, .somna-collection--grow-small) .somna-ccard {
+      transition: box-shadow 0.4s ease;
+    }
+
+    :is(.somna-collection--grow-large, .somna-collection--grow-small) .somna-collection__item:hover .somna-ccard {
+      box-shadow: 0 18px 40px rgb(0 0 0 / 0.22);
+    }
+  }
+
+  /* chooser: the arrow draws itself to the card, then the card shakes (snippets/somna-shared-styles); the arrow only shows from 990px */
+  @media screen and (min-width: 990px) {
+    .somna-pointing .somna-point-line {
+      stroke-dasharray: 420;
+      animation: somnaPointLine 3.6s ease-in-out infinite;
+    }
+
+    .somna-pointing .somna-point-head {
+      animation: somnaPointHead 3.6s ease-in-out infinite;
+    }
+
+    .somna-pointing .somna-point-target {
+      transform-origin: 50% 60%;
+      animation: somnaPointShake 3.6s ease-in-out infinite;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :is(.somna-collection--grow-large, .somna-collection--grow-small) .somna-collection__item {
+      transition: none;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -591,6 +692,9 @@
     { "type": "text", "id": "rating_format", "label": "Rating line", "default": "[rating]/5 · [count] reviews", "info": "[rating] and [count] come from the product's rating field. Empty hides it." },
     { "type": "text", "id": "price_format", "label": "Price line", "default": "From [price] [compare] · Subscribe & Save", "info": "[price]: lowest Subscribe & Save price; [compare]: that variant's compare-at price (struck through)." },
     { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
+    { "type": "checkbox", "id": "use_card_fields", "label": "Use the products' Card details and Card note fields", "default": false, "info": "Card details replaces the feature line; [note] in the price line shows Card note ([night] = per-night price). Put | in the price line to push the rest to the right." },
+    { "type": "select", "id": "hover_grow", "label": "Hover (desktop)", "options": [{ "value": "none", "label": "Picture zoom only" }, { "value": "large", "label": "Card widens a lot" }, { "value": "small", "label": "Card widens a little" }], "default": "none" },
+    { "type": "select", "id": "pointer_motion", "label": "Arrow motion (Chooser)", "options": [{ "value": "none", "label": "Still" }, { "value": "draw_shake", "label": "Arrow draws, card shakes" }], "default": "none" },
     { "type": "header", "content": "Colours" },
     { "type": "color", "id": "background_color", "label": "Background", "default": "#f3feee" },
     { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },
