@@ -137,7 +137,8 @@
         "padding_top": 72,
         "padding_bottom": 40,
         "layout": "split",
-        "image_align": "left"
+        "image_align": "left",
+        "cutout_motion": "hop"
       }
     },
     "wave_strips_tape": {
@@ -214,7 +215,8 @@
         "padding_top": 72,
         "padding_bottom": 40,
         "layout": "split",
-        "image_align": "left"
+        "image_align": "left",
+        "cutout_motion": "hop"
       }
     },
     "wave_tape_together": {
@@ -264,7 +266,8 @@
         "card_rating": "[rating]/5 · [count] reviews",
         "card_title": "The Sleep Bundle",
         "card_text": "Both, from [price]",
-        "card_button": "Shop now"
+        "card_button": "Shop now",
+        "cutout_motion": "hop"
       }
     },
     "settling": {
@@ -275,7 +278,7 @@
           "settings": {
             "text": "<h2>Settling in.</h2>",
             "width": "100%",
-            "max_width": "none",
+            "max_width": "normal",
             "alignment": "center",
             "type_preset": "custom",
             "font": "var(--font-accent--family)",
@@ -294,7 +297,7 @@
           "settings": {
             "text": "<p>If anything feels wrong (too tight, irritating, or not holding), try repositioning it before deciding it's not for you. You have 30 nights to find out, with our 30-Night Money-Back Guarantee.</p>",
             "width": "100%",
-            "max_width": "narrow",
+            "max_width": "normal",
             "alignment": "center",
             "type_preset": "custom",
             "font": "var(--font-body--family)",
