@@ -727,6 +727,10 @@
   }
   .sgp-tab--peek:hover .sgp-tab__icon { height: 54px; }
 
+  /* product pages: sit above the sticky add to cart bar */
+  html.somna-sticky-on .sgp-tab:is(.sgp-tab--bubble, .sgp-tab--pill) { bottom: calc(var(--somna-sticky-h, 0px) + 16px); }
+  html.somna-sticky-on .sgp-tab--peek { bottom: var(--somna-sticky-h, 0px); }
+
   @media (prefers-reduced-motion: reduce) {
     .sgp-tab, .sgp-tab svg { animation: none !important; }
   }
