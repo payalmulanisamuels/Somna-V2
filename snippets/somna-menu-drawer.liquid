@@ -35,7 +35,7 @@
         <span class="somna-md__quiz-title">{{ st.somna_drawer_quiz_heading | escape }}</span>
         {%- if st.somna_drawer_quiz_text != blank -%}<span class="somna-md__quiz-text">{{ st.somna_drawer_quiz_text | escape }}</span>{%- endif -%}
         {%- if st.somna_drawer_quiz_button != blank -%}<span class="somna-md__btn somna-md__btn--dark">{{ st.somna_drawer_quiz_button | escape }}</span>{%- endif -%}
-        {%- if st.somna_drawer_quiz_sticker != blank -%}<span class="somna-md__sticker" aria-hidden="true"><span>{{ st.somna_drawer_quiz_sticker | escape }}</span></span>{%- endif -%}
+        {%- if st.somna_drawer_quiz_sticker != blank -%}<span class="somna-md__sticker somna-shake--pop" style="--somna-shake-delay: 0.6s;" aria-hidden="true"><span>{{ st.somna_drawer_quiz_sticker | escape }}</span></span>{%- endif -%}
       </a>
     {%- endif -%}
 
