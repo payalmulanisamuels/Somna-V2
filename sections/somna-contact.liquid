@@ -778,12 +778,96 @@
       padding-block: 20px 6px !important;
     }
 
+    /* Figma 4958:8603: two-line heading, compact 37px link buttons, the email card after the form */
+    .somna-contact--card .somna-contact__grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .somna-contact--card .somna-contact__intro {
+      display: contents;
+    }
+
+    .somna-contact--card .somna-contact__heading {
+      font-size: clamp(1.75rem, 9.6vw, 2.375rem);
+      line-height: 1.15;
+    }
+
+    .somna-contact--card .somna-contact__heading em {
+      display: block;
+    }
+
+    .somna-contact--card .somna-contact__text {
+      margin-top: 6px;
+      font-size: clamp(0.6875rem, 3.1vw, 0.8125rem);
+      letter-spacing: 0.04em;
+      line-height: 1.35;
+    }
+
     .somna-contact__links {
-      gap: 18px;
+      gap: 16px;
+      margin-top: 16px;
     }
 
     .somna-contact__link {
+      gap: 10px;
+      min-height: 38px;
+      padding: 0 14px 0 6px;
+      border-width: 2px;
+      box-shadow: 2.5px 3px 0 #000;
+      font-size: clamp(0.75rem, 3.4vw, 0.875rem);
+      letter-spacing: 0.06em;
+    }
+
+    .somna-contact__link--dark {
+      box-shadow: 2.5px 3px 0 var(--scf-accent);
+    }
+
+    .somna-contact__link-icon {
+      width: 40px;
+      height: 32px;
+    }
+
+    .somna-contact__link-icon .somna-contact__mask {
+      transform: scale(0.78);
+    }
+
+    .somna-contact__link-arrow {
       font-size: 1rem;
+    }
+
+    .somna-contact--card .somna-contact__panel {
+      order: 5;
+      margin-top: 26px;
+    }
+
+    .somna-contact--card .somna-contact__direct {
+      order: 6;
+      gap: 10px;
+      margin-top: 22px;
+      padding: 8px 10px 8px 6px;
+      border: 1px solid #000;
+      border-radius: 6px;
+      background: var(--scf-accent);
+    }
+
+    .somna-contact--card .somna-contact__direct-icon {
+      width: 60px;
+      height: 60px;
+      flex: none;
+      border-radius: 50%;
+      background: #000;
+      color: #fff;
+    }
+
+    .somna-contact--card .somna-contact__direct-icon .somna-contact__mask--direct {
+      width: 38px;
+      height: 34px;
+    }
+
+    .somna-contact--card .somna-contact__direct-body {
+      font-size: 0.8125rem;
       letter-spacing: 0.04em;
     }
   }
