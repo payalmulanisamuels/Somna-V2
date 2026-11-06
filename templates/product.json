@@ -132,7 +132,8 @@
         "padding_bottom": 24,
         "wave_color": "#0b0f1d",
         "wave_shape": "drip-1",
-        "video_shape": "equal"
+        "video_shape": "equal",
+        "main_shape": "square-fit"
       }
     },
     "recently_viewed": {
