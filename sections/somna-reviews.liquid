@@ -207,10 +207,14 @@
           {%- for pic in photo_rv.pictures_urls -%}
             {%- if photo_count >= s.gallery_limit -%}{%- break -%}{%- endif -%}
             {%- assign pic_src = pic.original | default: pic.huge | split: '&width=' | first -%}
-            {%- comment -%} same picture uploaded twice: compare the file name without its upload number {%- endcomment -%}
+            {%- comment -%}
+              same picture uploaded twice by the same reviewer: compare the file name without its upload number.
+              Judge.me shortens file names, so different photos can share a name — only treat it as a repeat within
+              one reviewer's photos.
+            {%- endcomment -%}
             {%- assign pic_file = pic_src | split: '?' | first | split: '/' | last -%}
             {%- assign pic_head = pic_file | split: '-' | first -%}
-            {%- assign pic_key = pic_file | remove_first: pic_head -%}
+            {%- assign pic_key = pic_file | remove_first: pic_head | prepend: photo_rv.reviewer_name | replace: '^', '' -%}
             {%- unless jm_keys contains pic_key -%}
               {%- assign rv_first = photo_rv.reviewer_name | split: ' ' | first | replace: '|', '' | replace: '^', '' -%}
               {%- assign jm_photos = jm_photos | append: pic_src | append: '|' | append: rv_first | append: '^' -%}
