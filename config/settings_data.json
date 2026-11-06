@@ -194,7 +194,8 @@
       "the-colour-set"
     ],
     "somna_mega_feature_product": "season-bundle",
-    "somna_mega_feature_link": "/collections/all"
+    "somna_mega_feature_link": "/collections/all",
+    "somna_mega_style": "classic"
   },
   "presets": {
     "Horizon": {
