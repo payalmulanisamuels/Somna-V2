@@ -3,98 +3,115 @@
   submenu for the top link named in Theme settings → Somna Shop menu, so opening, closing, hover delay,
   keyboard and the reveal animation all stay the theme's (assets/header-menu.js).
 
-  Columns: "Start with one" products, "Bundles" products (picked in theme settings), then a feature
-  picture card. Each row: the product's card picture, title, colour dots and a short line
-  (Collection – card details field, else "From [price]").
+  Three looks (Layout setting): columns (rows with thumbnails + feature picture), cards (picture cards
+  per group), preview (names on the left, the hovered product's big card on the right).
+  Product rows/cards: snippets/somna-mega-item.
 {%- enddoc -%}
 {%- liquid
   assign st = settings
   assign feature = st.somna_mega_feature_product
   assign feature_img = st.somna_mega_feature_image | default: feature.metafields.custom.card_image.value | default: feature.featured_image
+  # look: Theme settings → Somna Shop menu → Layout; the demo pages ?view=mega-demo-b / -c show the other looks
+  assign layout = st.somna_mega_layout | default: 'columns'
+  if template.suffix == 'mega-demo-b'
+    assign layout = 'cards'
+  elsif template.suffix == 'mega-demo-c'
+    assign layout = 'preview'
+  elsif template.suffix == 'mega-demo'
+    assign layout = 'columns'
+  endif
+  assign feature_href = st.somna_mega_feature_link | default: feature.url | default: routes.all_products_collection_url
 -%}
-<div class="somna-mega">
-  {%- for col in (1..2) -%}
-    {%- liquid
-      assign h_key = 'somna_mega_col' | append: col | append: '_heading'
-      assign p_key = 'somna_mega_col' | append: col | append: '_products'
-      assign col_heading = st[h_key]
-      assign col_products = st[p_key]
-    -%}
-    {%- if col_products != blank -%}
-      <div class="somna-mega__col">
-        {%- if col_heading != blank -%}<p class="somna-mega__heading">{{ col_heading | escape }}</p>{%- endif -%}
-        <ul class="somna-mega__list" role="list">
-          {%- for p in col_products -%}
-            {%- liquid
-              assign mf = p.metafields.custom
-              assign pic = mf.card_image.value | default: p.featured_image
-              # lowest Subscribe & Save price, else the lowest price
-              assign best = nil
-              for v in p.variants
-                for a in v.selling_plan_allocations
-                  if best == nil or a.price < best
-                    assign best = a.price
-                  endif
-                endfor
-              endfor
-              if best == nil
-                assign best = p.price_min
-              endif
-              assign best_money = best | money
-              assign line = mf.card_details.value
-              if line == blank
-                assign line = st.somna_mega_price_format | default: 'From [price]' | replace: '[price]', best_money
-              endif
-              assign dots = ''
-              for o in p.options_with_values
-                assign oname = o.name | downcase
-                if oname == 'color' or oname == 'colour'
-                  assign dots = o.values | join: '|'
-                endif
-              endfor
-              if dots == blank and mf.pdp_box_colors.value != blank
-                assign dots = mf.pdp_box_colors.value | join: '|'
-              endif
-            -%}
-            <li>
-              <a class="somna-mega__item" href="{{ p.url }}"{% if p.url == request.path %} aria-current="page"{% endif %}>
-                <span class="somna-mega__thumb">
-                  {%- if pic != blank -%}{{ pic | image_url: width: 160 | image_tag: loading: 'lazy', alt: '', width: 72, height: 72 }}{%- endif -%}
-                </span>
-                <span class="somna-mega__info">
-                  <span class="somna-mega__title">
-                    {{- p.title | escape -}}
-                    {%- if dots != blank -%}
-                      <span class="somna-mega__dots" aria-hidden="true">{%- assign dot_list = dots | split: '|' -%}{%- for c in dot_list -%}<i style="--d: {% render 'somna-swatch-color', name: c %};"></i>{%- endfor -%}</span>
-                    {%- endif -%}
-                  </span>
-                  <span class="somna-mega__line">{{ line | escape }}</span>
-                </span>
-                <span class="somna-mega__arrow" aria-hidden="true">→</span>
-              </a>
-            </li>
-          {%- endfor -%}
-        </ul>
-      </div>
-    {%- endif -%}
-  {%- endfor -%}
+<div class="somna-mega somna-mega--{{ layout }}">
+  {%- if layout == 'preview' -%}
+    {%- comment -%} C: product names on the left, a big picture card on the right that follows the hovered name {%- endcomment -%}
+    <div class="somna-mega__names">
+      {%- for col in (1..2) -%}
+        {%- assign h_key = 'somna_mega_col' | append: col | append: '_heading' -%}
+        {%- assign p_key = 'somna_mega_col' | append: col | append: '_products' -%}
+        {%- if st[p_key] != blank -%}
+          <div class="somna-mega__group">
+            {%- if st[h_key] != blank -%}<p class="somna-mega__heading">{{ st[h_key] | escape }}</p>{%- endif -%}
+            <ul class="somna-mega__list" role="list">
+              {%- for p in st[p_key] -%}
+                {%- assign name_first = false -%}
+                {%- if col == 1 and forloop.first -%}{%- assign name_first = true -%}{%- endif -%}
+                <li>{%- render 'somna-mega-item', product: p, style: 'name', key: p.handle, active: name_first -%}</li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+      <a class="somna-mega__all" href="{{ feature_href }}">{{ st.somna_mega_feature_label | default: 'Shop all products' | escape }} <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="somna-mega__stage">
+      {%- for col in (1..2) -%}
+        {%- assign p_key = 'somna_mega_col' | append: col | append: '_products' -%}
+        {%- for p in st[p_key] -%}
+          {%- assign is_first = false -%}
+          {%- if col == 1 and forloop.first -%}{%- assign is_first = true -%}{%- endif -%}
+          {%- render 'somna-mega-item', product: p, style: 'stage', key: p.handle, active: is_first -%}
+        {%- endfor -%}
+      {%- endfor -%}
+    </div>
+  {%- else -%}
+    {%- for col in (1..2) -%}
+      {%- liquid
+        assign h_key = 'somna_mega_col' | append: col | append: '_heading'
+        assign p_key = 'somna_mega_col' | append: col | append: '_products'
+        assign col_heading = st[h_key]
+        assign col_products = st[p_key]
+      -%}
+      {%- if col_products != blank -%}
+        <div class="somna-mega__col" style="--n: {{ col_products.size }};">
+          {%- if col_heading != blank -%}<p class="somna-mega__heading">{{ col_heading | escape }}</p>{%- endif -%}
+          <ul class="somna-mega__list" role="list">
+            {%- for p in col_products -%}
+              <li>{%- if layout == 'cards' -%}{%- render 'somna-mega-item', product: p, style: 'card' -%}{%- else -%}{%- render 'somna-mega-item', product: p, style: 'row' -%}{%- endif -%}</li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
 
-  {%- if feature_img != blank -%}
-    <a class="somna-mega__feature" href="{{ st.somna_mega_feature_link | default: feature.url | default: routes.all_products_collection_url }}">
-      <span class="somna-mega__feature-media">
-        {{ feature_img | image_url: width: 900 | image_tag: loading: 'lazy', alt: '', widths: '450, 700, 900', sizes: '420px' }}
-        {%- if st.somna_mega_feature_sticker != blank -%}<span class="somna-mega__sticker">{{ st.somna_mega_feature_sticker | escape }}</span>{%- endif -%}
-      </span>
-      {%- if st.somna_mega_feature_label != blank -%}<span class="somna-mega__feature-label">{{ st.somna_mega_feature_label | escape }} <span aria-hidden="true">→</span></span>{%- endif -%}
-    </a>
+    {%- if layout == 'cards' -%}
+      <a class="somna-mega__all somna-mega__all--bar" href="{{ feature_href }}">{{ st.somna_mega_feature_label | default: 'Shop all products' | escape }} <span aria-hidden="true">→</span></a>
+    {%- elsif feature_img != blank -%}
+      <a class="somna-mega__feature" href="{{ feature_href }}">
+        <span class="somna-mega__feature-media">
+          {{ feature_img | image_url: width: 900 | image_tag: loading: 'lazy', alt: '', widths: '450, 700, 900', sizes: '420px' }}
+          {%- if st.somna_mega_feature_sticker != blank -%}<span class="somna-mega__sticker">{{ st.somna_mega_feature_sticker | escape }}</span>{%- endif -%}
+        </span>
+        {%- if st.somna_mega_feature_label != blank -%}<span class="somna-mega__feature-label">{{ st.somna_mega_feature_label | escape }} <span aria-hidden="true">→</span></span>{%- endif -%}
+      </a>
+    {%- endif -%}
   {%- endif -%}
 </div>
+
+{%- if layout == 'preview' -%}
+<script type="module">
+  // Preview look: hovering or focusing a product name shows its card on the right. One delegated listener.
+  if (!window.__somnaMegaPreview) {
+    window.__somnaMegaPreview = true;
+    const show = (event) => {
+      const link = event.target instanceof Element ? event.target.closest('[data-mega-key]') : null;
+      if (!link) return;
+      const mega = link.closest('.somna-mega');
+      if (!mega) return;
+      mega.querySelectorAll('[data-mega-key]').forEach((el) => el.classList.toggle('is-active', el.dataset.megaKey === link.dataset.megaKey));
+    };
+    document.addEventListener('pointerover', show);
+    document.addEventListener('focusin', show);
+  }
+</script>
+{%- endif -%}
 
 {% stylesheet %}
   /* Shop mega menu: mint panel, two product columns split by thin lines, feature picture on the right */
   .somna-mega {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 380px);
+    box-sizing: border-box;
     gap: 0;
     width: min(100%, 1232px);
     margin-inline: auto;
@@ -299,14 +316,311 @@
     border-radius: 14px;
   }
 
+  /* ---------- B: cards — a picture card per product, grouped, with a "Shop all" bar ---------- */
+  .somna-mega--cards {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    row-gap: 18px;
+  }
+
+  .somna-mega--cards .somna-mega__list {
+    grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .somna-mega__card {
+    display: grid;
+    align-content: start;
+    gap: 5px;
+    padding: 8px 8px 12px;
+    border-radius: 14px;
+    color: #000;
+    text-decoration: none;
+    transition: background-color 0.25s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-mega__card:hover,
+  .somna-mega__card:focus-visible {
+    background: #afbdf8;
+    transform: translateY(-3px);
+  }
+
+  .somna-mega__card:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
+
+  .somna-mega__card-media {
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    margin-bottom: 6px;
+    border-radius: 10px;
+    background: #0b0f1d;
+  }
+
+  .somna-mega__card-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-mega__card:hover .somna-mega__card-media img {
+    transform: scale(1.06);
+  }
+
+  .somna-mega__line--price {
+    font-weight: 600;
+    opacity: 0.9;
+  }
+
+  .somna-mega__all {
+    color: #000;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .somna-mega__all span {
+    display: inline-block;
+    transition: transform 0.25s ease;
+  }
+
+  .somna-mega__all:hover span {
+    transform: translateX(4px);
+  }
+
+  .somna-mega__all--bar {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    border-radius: 10px;
+    background: #000;
+    color: #f3feee;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  .somna-mega__all--bar:hover {
+    background: #afbdf8;
+    color: #000;
+  }
+
+  .somna-mega__all:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 3px;
+  }
+
+  /* ---------- C: preview — names on the left, the hovered product's big card on the right ---------- */
+  .somna-mega--preview {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
+    gap: 32px;
+  }
+
+  .somna-mega__names {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    gap: 22px 28px;
+    padding-inline-start: 8px;
+  }
+
+  .somna-mega__names .somna-mega__all {
+    grid-column: 1 / -1;
+    align-self: end;
+  }
+
+  .somna-mega__group + .somna-mega__group {
+    padding-inline-start: 28px;
+    border-inline-start: 1px solid rgb(0 0 0 / 0.15);
+  }
+
+  .somna-mega--preview .somna-mega__list {
+    gap: 2px;
+  }
+
+  .somna-mega__name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    color: #000;
+    font-size: 1.125rem;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .somna-mega__name .somna-mega__arrow {
+    margin-inline-start: auto;
+  }
+
+  .somna-mega__name:is(:hover, :focus-visible, .is-active) {
+    background: #afbdf8;
+  }
+
+  .somna-mega__name:is(:hover, :focus-visible, .is-active) .somna-mega__arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .somna-mega__name:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
+
+  .somna-mega__stage {
+    display: grid;
+  }
+
+  .somna-mega__stage-card {
+    grid-area: 1 / 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 10px 14px;
+    color: #000;
+    text-decoration: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.3s;
+  }
+
+  .somna-mega__stage-card.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .somna-mega__stage-media {
+    grid-column: 1 / -1;
+    overflow: hidden;
+    aspect-ratio: 560 / 300;
+    border-radius: 14px;
+    background: #0b0f1d;
+  }
+
+  .somna-mega__stage-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .somna-mega__stage-info {
+    display: grid;
+    gap: 3px;
+  }
+
+  .somna-mega__stage-btn {
+    display: grid;
+    place-items: center;
+    min-height: 44px;
+    padding: 0 22px;
+    border-radius: 9px;
+    background: #afbdf8;
+    box-shadow: 0 3.9px 5.9px rgb(0 0 0 / 0.25);
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .somna-mega__stage-card:hover .somna-mega__stage-btn {
+    background: #000;
+    color: #f3feee;
+  }
+
+  /* ---------- responsive: the desktop menu shows from 750px ---------- */
   @media screen and (max-width: 1199px) {
     .somna-mega {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 300px);
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 280px);
+      padding: 22px 20px 24px;
+    }
+
+    .somna-mega__col {
+      padding-inline-end: 18px;
+    }
+
+    .somna-mega__col + .somna-mega__col,
+    .somna-mega__feature,
+    .somna-mega__group + .somna-mega__group {
+      padding-inline-start: 18px;
+    }
+
+    .somna-mega--cards {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    }
+
+    .somna-mega--preview {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+      gap: 22px;
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    /* tablets: columns lose the feature picture, cards stack the two groups, preview keeps a smaller card */
+    .somna-mega {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .somna-mega__feature {
+      display: none;
+    }
+
+    .somna-mega__item {
+      grid-template-columns: 56px minmax(0, 1fr) auto;
+      gap: 10px;
+    }
+
+    .somna-mega__thumb {
+      width: 56px;
+      height: 56px;
+    }
+
+    .somna-mega--cards {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .somna-mega--cards .somna-mega__col + .somna-mega__col {
+      padding-inline-start: 8px;
+      padding-top: 16px;
+      border-inline-start: 0;
+      border-top: 1px solid rgb(0 0 0 / 0.15);
+    }
+
+    .somna-mega--cards .somna-mega__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .somna-mega--preview {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+    }
+
+    .somna-mega__names {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .somna-mega__group + .somna-mega__group {
+      padding-inline-start: 0;
+      border-inline-start: 0;
+    }
+
+    .somna-mega__name {
+      font-size: 1rem;
+    }
+
+    .somna-mega__stage-card {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .somna-mega :is(img, .somna-mega__arrow, .somna-mega__feature-label span) {
+    .somna-mega :is(img, .somna-mega__arrow, .somna-mega__feature-label span, .somna-mega__card, .somna-mega__stage-card) {
       transition: none;
     }
   }

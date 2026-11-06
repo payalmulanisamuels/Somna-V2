@@ -2781,6 +2781,26 @@
         "default": "Shop"
       },
       {
+        "type": "select",
+        "id": "somna_mega_layout",
+        "label": "Layout",
+        "options": [
+          {
+            "value": "columns",
+            "label": "A: rows with thumbnails + picture"
+          },
+          {
+            "value": "cards",
+            "label": "B: picture cards"
+          },
+          {
+            "value": "preview",
+            "label": "C: names + big preview card"
+          }
+        ],
+        "default": "columns"
+      },
+      {
         "type": "text",
         "id": "somna_mega_col1_heading",
         "label": "Column 1 heading",
@@ -2810,6 +2830,12 @@
         "label": "Line under a product",
         "default": "From [price] · Subscribe & Save",
         "info": "Used when the product has no Collection – card details. [price] = lowest Subscribe & Save price."
+      },
+      {
+        "type": "text",
+        "id": "somna_mega_button",
+        "label": "Preview card button (C)",
+        "default": "Shop now"
       },
       {
         "type": "header",
