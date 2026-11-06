@@ -9,98 +9,32 @@
  */
 {
   "sections": {
-    "hero": {
-      "type": "somna-page-hero",
-      "blocks": {
-        "b1": {
-          "type": "button",
-          "settings": {
-            "label": "Nasal Strips",
-            "link": "#nasal-strips",
-            "style": "pill"
-          }
-        }
-      },
-      "block_order": [
-        "b1"
-      ],
-      "settings": {
-        "style": "open",
-        "padding_top": 104
-      }
-    },
-    "strips": {
-      "type": "somna-guide",
-      "blocks": {
-        "step_1": {
-          "type": "step",
-          "settings": {
-            "image": "shopify://shop_images/somna-v2-howto-strip-step-1.png",
-            "text": "Clean and dry the bridge of your nose."
-          }
-        }
-      },
-      "block_order": [
-        "step_1"
-      ],
-      "settings": {
-        "image": "shopify://shop_images/somna-v2-season-how-strip.png",
-        "layout": "split",
-        "image_align": "right",
-        "padding_top": 72
-      }
-    },
-    "together": {
-      "type": "somna-guide",
-      "settings": {
-        "layout": "split",
-        "image_2": "shopify://shop_images/somna-v2-season-how-strip.png",
-        "card_product": "sleep-bundle",
-        "card_image": "shopify://shop_images/somna-v2-sleep-bundle.png",
-        "card_text": "Both, from [price]"
-      }
-    },
     "settling": {
       "type": "section",
       "blocks": {
-        "text": {
-          "type": "text",
-          "settings": {
-            "text": "<p>x</p>",
-            "max_width": "narrow",
-            "letter_spacing": "normal"
-          },
-          "blocks": {}
-        },
         "button": {
           "type": "button",
           "settings": {
             "label": "30-Night",
             "link": "/policies/refund-policy",
-            "style_class": "button-custom",
-            "width": "custom",
-            "custom_width": 32,
-            "custom_width_mobile": 100,
-            "width_mobile": "custom"
+            "style_class": "button-custom"
           },
           "blocks": {}
         }
       },
       "block_order": [
-        "text",
         "button"
       ],
+      "custom_css": [
+        ".button-custom {border-radius: 35px; border-width: 2.437px; box-shadow: 3.249px 4.061px 0 #000; min-height: 48px; font-weight: 700; font-size: 1.3284rem; text-transform: none;}",
+        "h2 {letter-spacing: 0; font-size: clamp(2.5rem, 4.45vw, 4rem);}"
+      ],
       "settings": {
-        "background_color": "#000000",
-        "gap": 24,
-        "padding-block-start": 72
+        "background_color": "#000000"
       }
     }
   },
   "order": [
-    "hero",
-    "strips",
-    "together",
     "settling"
   ]
 }
