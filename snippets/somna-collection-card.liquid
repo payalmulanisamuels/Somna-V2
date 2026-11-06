@@ -74,7 +74,7 @@
       {{ 'product-1' | placeholder_svg_tag }}
     {%- endif -%}
   </a>
-  {%- if style == 'singles' and rating_line != blank -%}
+  {%- if rating_line != blank -%}
     <p class="somna-ccard__rating"><span class="somna-ccard__stars" aria-hidden="true">★★★★★</span> {{ rating_line | escape }}</p>
   {%- endif -%}
   <h3 class="somna-ccard__title"><a href="{{ p.url }}">{{ name | escape }}</a></h3>

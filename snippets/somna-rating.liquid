@@ -6,6 +6,8 @@
 
   @param {product} product
   @param {string} format - "[rating]" and "[count]" are replaced, e.g. "[rating]/5 · [count] reviews"
+  @param {string} [tag] - when set (p, span), outputs the card rating line: <tag class="somna-stars-line …">★★★★★ text</tag>
+  @param {string} [class] - extra class for that line
 {%- enddoc -%}
 {%- liquid
   assign r_rating = ''
@@ -25,5 +27,9 @@
   endif
 -%}
 {%- if r_rating != blank and format != blank -%}
-  {{- format | replace: '[rating]', r_rating | replace: '[count]', r_count -}}
+  {%- if tag != blank -%}
+    <{{ tag }} class="somna-stars-line {{ class }}"><span class="somna-stars-line__stars" aria-hidden="true">★★★★★</span><span class="somna-stars-line__text">{{ format | replace: '[rating]', r_rating | replace: '[count]', r_count | escape }}</span></{{ tag }}>
+  {%- else -%}
+    {{- format | replace: '[rating]', r_rating | replace: '[count]', r_count -}}
+  {%- endif -%}
 {%- endif -%}

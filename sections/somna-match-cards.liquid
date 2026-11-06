@@ -47,6 +47,10 @@
             </div>
           {%- endif -%}
           <div class="somna-match__body">
+            {%- assign m_handle = b.button_link | split: '/products/' | last | split: '?' | first -%}
+            {%- if b.button_link contains '/products/' and all_products[m_handle] != blank -%}
+              {%- render 'somna-rating', product: all_products[m_handle], format: '[rating]/5 · [count] reviews', tag: 'p', class: 'somna-match__rating' -%}
+            {%- endif -%}
             <h3 class="somna-match__title">{{ b.title }}</h3>
             {%- if b.subtitle != blank -%}<p class="somna-match__subtitle">{{ b.subtitle }}</p>{%- endif -%}
             {%- assign points = b.points | newline_to_br | split: '<br />' -%}
@@ -176,6 +180,10 @@
     flex-direction: column;
     flex: 1;
     padding: 12px 8px 0;
+  }
+
+  .somna-match__rating {
+    margin: 0 0 2px;
   }
 
   .somna-match__title {
@@ -323,12 +331,12 @@
   @media screen and (max-width: 989px) {
     @supports (grid-template-rows: subgrid) {
       .somna-match__cards {
-        grid-template-rows: repeat(5, auto);
+        grid-template-rows: repeat(6, auto);
       }
 
       .somna-match__card {
         display: grid;
-        grid-row: span 5;
+        grid-row: span 6;
         grid-template-rows: subgrid;
         row-gap: 0;
       }
@@ -338,10 +346,11 @@
       }
 
       .somna-match__media { grid-row: 1; }
-      .somna-match__title { grid-row: 2; padding: 12px 8px 0; }
-      .somna-match__subtitle { grid-row: 3; padding-inline: 8px; }
-      .somna-match__points { grid-row: 4; align-content: start; padding-inline: 8px; }
-      .somna-match__button { grid-row: 5; margin-inline: 8px; }
+      .somna-match__rating { grid-row: 2; padding: 12px 8px 0; }
+      .somna-match__title { grid-row: 3; padding: 4px 8px 0; }
+      .somna-match__subtitle { grid-row: 4; padding-inline: 8px; }
+      .somna-match__points { grid-row: 5; align-content: start; padding-inline: 8px; }
+      .somna-match__button { grid-row: 6; margin-inline: 8px; }
     }
   }
 

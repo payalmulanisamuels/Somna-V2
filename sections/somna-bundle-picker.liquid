@@ -25,6 +25,8 @@
       "block": {{ block.id | json }},
       "title": {{ p.title | json }},
       "subtitle": {{ block.settings.subtitle | json }},
+      {%- capture b_rating -%}{%- render 'somna-rating', product: p, format: '[rating]/5 · [count] reviews' -%}{%- endcapture -%}
+      "rating": {{ b_rating | strip | json }},
       "badge": {{ block.settings.badge | json }},
       "url": {{ p.url | json }},
       "nights": {{ block.settings.nights | default: 0 }},
@@ -89,6 +91,7 @@
       <div class="somna-bundle__featured-wrap">
       <article class="somna-bundle__featured{% if s.drip_edges %} somna-edge-drip-bottom{% endif %}" aria-live="polite" data-featured>
         <header class="somna-bundle__featured-head">
+          <p class="somna-stars-line somna-bundle__rating" data-f-rating hidden><span class="somna-stars-line__stars" aria-hidden="true">★★★★★</span><span class="somna-stars-line__text"></span></p>
           <h3 class="somna-bundle__title" data-f-title></h3>
           <p class="somna-bundle__subtitle" data-f-subtitle></p>
         </header>
@@ -168,6 +171,8 @@
         const pr = this.priceFor(v);
         const q = (sel) => this.querySelector(sel);
         q('[data-f-title]').textContent = p.title;
+        const fr = q('[data-f-rating]');
+        if (fr) { fr.hidden = !p.rating; fr.lastElementChild.textContent = p.rating || ''; }
         q('[data-f-subtitle]').textContent = p.subtitle || '';
         const badge = q('[data-f-badge]');
         badge.textContent = p.badge || '';
@@ -195,7 +200,7 @@
           const night = o.nights > 0 ? ` · ${this.money(Math.round(op.price / o.nights))} ${this.labels.night}` : '';
           return `<li><button type="button" class="somna-bundle__other" data-pick="${i}">
             ${o.thumb ? `<img src="${o.thumb}" alt="" width="146" height="110" loading="lazy">` : ''}
-            <span class="somna-bundle__other-text"><span class="somna-bundle__other-title">${o.title.replace(/</g, '&lt;')}</span>
+            <span class="somna-bundle__other-text">${o.rating ? `<span class="somna-stars-line somna-bundle__other-rating"><span class="somna-stars-line__stars" aria-hidden="true">★★★★★</span><span class="somna-stars-line__text">${o.rating.replace(/</g, '&lt;')}</span></span>` : ''}<span class="somna-bundle__other-title">${o.title.replace(/</g, '&lt;')}</span>
             <span class="somna-bundle__other-price">${this.money(op.price)}${op.compare ? ` · <s>${this.money(op.compare)}</s>` : ''}${night}</span></span>
           </button></li>`;
         }).join('');
@@ -541,6 +546,16 @@
   .somna-bundle__other-text {
     display: grid;
     gap: 6px;
+  }
+
+  .somna-bundle__rating {
+    margin-bottom: 4px;
+    color: #000;
+  }
+
+  .somna-bundle__other-rating {
+    margin-bottom: -4px;
+    color: #000;
   }
 
   .somna-bundle__other-title {
