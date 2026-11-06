@@ -585,3 +585,20 @@
     font-size: 0.8125rem !important;
   }
 }
+
+/* How to use, phones (Figma 4958:9260): "Settling in." text and button sized down */
+@media screen and (max-width: 749px) {
+  main[data-template^='page'] [id$='__settling'] [class*='__text'] p {
+    font-size: 0.8125rem !important;
+    line-height: 1.45 !important;
+  }
+
+  main[data-template^='page'] [id$='__settling'] .button-custom {
+    width: min(100%, 308px) !important;
+    min-height: 42px !important;
+    margin-inline: auto;
+    padding-block: 8px !important;
+    font-size: 0.875rem !important;
+    line-height: 1.25 !important;
+  }
+}
