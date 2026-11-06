@@ -372,21 +372,28 @@
           "settings": {
             "name": "Season Bundle",
             "label": "Season Bundle",
-            "column_2_label": "Sleep Bundle",
-            "column_3_label": "Strips Only",
+            "column_2_label": "Sleep Bundle, monthly",
+            "column_3_label": "Strips + Tape, bought separately",
             "column_4_label": "",
-            "highlight": false,
+            "highlight": true,
             "only_on_match": true,
-            "eyebrow": "Made for your nights",
-            "heading": "<em>THE SEASON</em> VS SHORTER RUNS",
-            "text": "Built for bedtime, not borrowed from the first-aid kit."
+            "eyebrow": "Do the maths",
+            "heading": "90 nights. <em>One box.</em>",
+            "text": "Same strips and tape, fewer orders, less shipping.",
+            "image": "shopify://shop_images/somna-v2-season-bundle.png",
+            "column_2_image": "shopify://shop_images/somna-v2-sleep-bundle.png",
+            "column_3_image": "shopify://shop_images/strip-1_2b080541-bb5f-4874-9f2a-eb53b3f94218.png",
+            "show_names": true,
+            "sticker": "Save up to $21.65",
+            "note": "All Subscribe & Save prices, shipping included. \"Separately\" = 1 pack of Strips + 1 pack of Tape each month ($19.95 each first month, $22.95 each after)."
           }
         },
         "bsrow_1": {
           "type": "row",
           "settings": {
             "tab": "3",
-            "label": "Covers your nose",
+            "label": "Covers nose and lips",
+            "total": false,
             "column_1": true,
             "column_2": true,
             "column_3": true,
@@ -397,42 +404,44 @@
           "type": "row",
           "settings": {
             "tab": "3",
-            "label": "Covers your lips",
-            "column_1": true,
-            "column_2": true,
-            "column_3": false,
-            "column_4": false
+            "label": "Nights covered",
+            "total": false,
+            "column_1_text": "90",
+            "column_2_text": "90 (3 deliveries)",
+            "column_3_text": "90 (3 deliveries)"
           }
         },
         "bsrow_3": {
           "type": "row",
           "settings": {
             "tab": "3",
-            "label": "3 free gifts on first order",
-            "column_1": true,
-            "column_2": true,
-            "column_3": false,
-            "column_4": false
+            "label": "Deliveries",
+            "total": false,
+            "column_1_text": "1",
+            "column_2_text": "3",
+            "column_3_text": "3"
           }
         },
         "bsrow_4": {
           "type": "row",
           "settings": {
             "tab": "3",
-            "label": "Nights per delivery",
-            "column_1_text": "90",
-            "column_2_text": "30",
-            "column_3_text": "30"
+            "label": "Shipping",
+            "total": false,
+            "column_1_text": "$4.95",
+            "column_2_text": "$14.85",
+            "column_3_text": "$14.85"
           }
         },
         "bsrow_5": {
           "type": "row",
           "settings": {
             "tab": "3",
-            "label": "Shipping for 90 nights",
-            "column_1_text": "1 × $4.95",
-            "column_2_text": "3 × $4.95",
-            "column_3_text": "3 × $4.95"
+            "label": "Total for 90 nights",
+            "total": true,
+            "column_1_text": "$124.90",
+            "column_2_text": "$134.70",
+            "column_3_text": "$146.55"
           }
         },
         "tab_color": {
@@ -1502,4 +1511,3 @@
     "somna_recently_viewed_record"
   ]
 }
-
