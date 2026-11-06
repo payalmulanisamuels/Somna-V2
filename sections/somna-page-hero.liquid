@@ -51,10 +51,7 @@
       {%- endif -%}
       {%- if s.eyebrow != blank -%}<p class="somna-page-hero__eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
       <h1 class="somna-page-hero__title somna-accent">{{ heading }}</h1>
-      {%- if aside -%}
-        </div>
-        <div class="somna-page-hero__aside">
-      {%- endif -%}
+      {%- capture hero_rest -%}
       {%- if s.tagline != blank -%}<p class="somna-page-hero__tagline">{{ s.tagline | escape }}</p>{%- endif -%}
       {%- if s.text != blank -%}<div class="somna-page-hero__text">{{ s.text }}</div>{%- endif -%}
       {%- if section.blocks.size > 0 -%}
@@ -73,7 +70,10 @@
           {%- endfor -%}
         </div>
       {%- endif -%}
+      {%- endcapture -%}
+      {%- unless aside -%}{{ hero_rest }}{%- endunless -%}
     </div>
+    {%- if aside -%}<div class="somna-page-hero__aside">{{ hero_rest }}</div>{%- endif -%}
   </div>
 </div>
 
