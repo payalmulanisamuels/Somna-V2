@@ -1,0 +1,574 @@
+{%- doc -%}
+  Somna V2 — Collection page product rows (Figma 4823:999). One section, three layouts:
+  - singles: heading + text on the left, dark product cards on the right ("Start with one.")
+  - bundles: centred heading, mint product cards in a row ("Or save with a bundle.")
+  - chooser: heading + answer chips on the left, "Your best start" sticker and one product card that
+    changes with the chosen answer ("What keeps you from sleeping well?")
+  Singles and bundles list the products of the current collection (or the fallback collection) whose
+  "Collection group" field (custom.collection_group) matches the section's group, in collection order.
+  Card picture: the product's "Card image" field (custom.card_image), else its featured image.
+  Rating: the product's rating field (custom.custom_review_rating_review_count, same as the product page).
+  Price: the lowest Subscribe & Save price of any variant, with that variant's compare-at price.
+{%- enddoc -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  assign source = collection
+  if source == blank or source.products_count == 0
+    assign source = s.collection
+  endif
+-%}
+
+{%- capture card_style -%}--sc-bg: {{ s.background_color }}; --sc-fg: {{ s.text_color }}; --sc-accent: {{ s.accent_color }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;{%- endcapture -%}
+
+<div
+  class="somna-collection somna-collection--{{ s.layout }}"
+  style="{{ card_style }}"
+  {% if s.anchor != blank %}id="{{ s.anchor | handleize }}"{% endif %}
+>
+  <div class="somna-container somna-collection__inner">
+    <div class="somna-collection__intro">
+      {%- if s.heading != blank -%}<h2 class="somna-collection__heading somna-accent">{{ s.heading }}</h2>{%- endif -%}
+      {%- if s.text != blank -%}<div class="somna-collection__text">{{ s.text }}</div>{%- endif -%}
+
+      {%- if s.layout == 'chooser' and section.blocks.size > 0 -%}
+        <div class="somna-collection__choices" role="group" aria-label="{{ s.heading | strip_html | escape }}">
+          {%- for block in section.blocks -%}
+            <button
+              type="button"
+              class="somna-collection__choice"
+              data-choice="{{ forloop.index0 }}"
+              aria-pressed="{% if block.settings.selected %}true{% else %}false{% endif %}"
+              {{ block.shopify_attributes }}
+            >
+              {{- block.settings.label | escape -}}
+            </button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- if s.layout == 'chooser' -%}
+      {%- if s.sticker != blank -%}
+        <div class="somna-collection__pointer" aria-hidden="true">
+          <span class="somna-collection__sticker somna-shake--pop">{{ s.sticker | escape }}</span>
+          <svg class="somna-collection__arrow" viewBox="0 0 150 140" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 4c-6 40 2 86 40 104 22 10 42-4 36-20-6-15-28-9-26 9 3 22 36 26 72 20"/>
+            <path d="M126 104l12 13-16 7"/>
+          </svg>
+        </div>
+      {%- endif -%}
+
+      <somna-collection-chooser class="somna-collection__picks">
+        {%- assign has_selected = false -%}
+        {%- for block in section.blocks -%}{%- if block.settings.selected -%}{%- assign has_selected = true -%}{%- endif -%}{%- endfor -%}
+        {%- for block in section.blocks -%}
+          {%- assign b = block.settings -%}
+          {%- assign p = b.product -%}
+          {%- assign shown = false -%}
+          {%- if b.selected -%}{%- assign shown = true -%}{%- elsif has_selected == false and forloop.first -%}{%- assign shown = true -%}{%- endif -%}
+          <div class="somna-collection__pick" data-pick="{{ forloop.index0 }}"{% unless shown %} hidden{% endunless %}>
+            {%- if p != blank -%}
+              {%- render 'somna-collection-card', product: p, style: 'pick', image: b.image, title: b.title, details: b.text, price_format: s.price_format, button: s.button_label, rating_format: s.rating_format -%}
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </somna-collection-chooser>
+    {%- else -%}
+      <ul class="somna-collection__list" role="list">
+        {%- assign group = s.group | downcase -%}
+        {%- for p in source.products -%}
+          {%- assign p_group = p.metafields.custom.collection_group.value | default: '' | downcase -%}
+          {%- if p_group == group -%}
+            <li class="somna-collection__item">
+              {%- render 'somna-collection-card', product: p, style: s.layout, price_format: s.price_format, button: s.button_label, rating_format: s.rating_format -%}
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- if s.layout == 'chooser' -%}
+<script type="module">
+  /* Collection chooser: the answer chips show the matching product card (no library). */
+  if (!customElements.get('somna-collection-chooser')) {
+    customElements.define('somna-collection-chooser', class extends HTMLElement {
+      connectedCallback() {
+        this.chips = [...this.closest('.somna-collection').querySelectorAll('[data-choice]')];
+        this.chips.forEach((chip) => chip.addEventListener('click', () => this.show(chip.dataset.choice)));
+        if (!this.chips.some((c) => c.getAttribute('aria-pressed') === 'true') && this.chips[0]) this.chips[0].setAttribute('aria-pressed', 'true');
+      }
+      show(i) {
+        this.chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.choice === i)));
+        this.querySelectorAll('[data-pick]').forEach((p) => {
+          const on = p.dataset.pick === i;
+          p.hidden = !on;
+          if (on && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            p.animate([{ opacity: 0, transform: 'translateY(10px) scale(0.98)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+          }
+        });
+      }
+    });
+  }
+</script>
+{%- endif -%}
+
+{% stylesheet %}
+  .somna-collection {
+    --somna-content-width: 1232px;
+    background: var(--sc-bg);
+    color: var(--sc-fg);
+  }
+
+  .somna-collection__inner {
+    display: grid;
+    gap: 28px;
+  }
+
+  .somna-collection__heading {
+    --somna-accent: var(--sc-accent);
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-size: clamp(2rem, 3.86vw, 3.4766rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .somna-collection__heading em {
+    display: block;
+    font-style: normal;
+  }
+
+  .somna-collection__text {
+    max-width: 346px;
+    margin-top: 6px;
+    font-size: clamp(1rem, 1.37vw, 1.2315rem);
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+  }
+
+  .somna-collection__text p {
+    margin: 0;
+  }
+
+  .somna-collection__list {
+    display: grid;
+    gap: 25px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* ---------- card (snippets/somna-collection-card) ---------- */
+  .somna-ccard {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: inherit;
+  }
+
+  .somna-ccard__media {
+    display: block;
+    overflow: hidden;
+    border-radius: 12px;
+  }
+
+  .somna-ccard__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-ccard:hover .somna-ccard__media img {
+    transform: scale(1.04);
+  }
+
+  .somna-ccard__title {
+    margin: 0;
+  }
+
+  .somna-ccard__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .somna-ccard__rating,
+  .somna-ccard__details,
+  .somna-ccard__price {
+    margin: 0;
+  }
+
+  .somna-ccard__stars {
+    color: #efb400;
+    letter-spacing: 0.04em;
+  }
+
+  .somna-ccard__price s {
+    opacity: 0.6;
+  }
+
+  /* Figma "btn-switch": lavender, soft drop shadow */
+  .somna-ccard__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: auto;
+    border-radius: 9.5px;
+    background: #afbdf8;
+    box-shadow: 0 3.9px 5.9px rgb(0 0 0 / 0.25);
+    color: #000;
+    font-weight: 600;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background-color 0.2s, color 0.2s, translate 0.2s;
+  }
+
+  .somna-ccard__button:hover {
+    background: #000;
+    color: #f3feee;
+    translate: 0 -2px;
+  }
+
+  .somna-ccard__button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  /* singles — Figma 4837:1080: 402×523 navy card, 345×335 photo, Boldonse title */
+  .somna-ccard--singles {
+    padding: 16px 16px 15px;
+    border: 1.35px solid rgb(0 0 0 / 0.1);
+    border-radius: 22px;
+    background: #0b0f1d;
+    color: #f4fef3;
+  }
+
+  .somna-ccard--singles .somna-ccard__media {
+    width: calc(100% - 26px);
+    margin-inline: auto;
+    aspect-ratio: 345 / 335;
+  }
+
+  .somna-ccard--singles .somna-ccard__rating {
+    margin: 12px 13px 0;
+    color: #7e7e7e;
+    font-size: 0.9375rem;
+  }
+
+  .somna-ccard--singles .somna-ccard__title {
+    margin: 10px 13px 0;
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.25rem, 1.66vw, 1.4945rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .somna-ccard--singles .somna-ccard__price {
+    margin: 2px 13px 16px;
+    font-size: 0.77rem;
+    font-weight: 300;
+  }
+
+  .somna-ccard--singles .somna-ccard__button {
+    min-height: 48px;
+    font-size: 1rem;
+  }
+
+  /* bundles + chooser pick — Figma 4837:1138 / 4852:1233: mint card, wide photo, Inter titles */
+  .somna-ccard--bundles,
+  .somna-ccard--pick {
+    padding: 15px 20px 20px;
+    border: 1.13px solid rgb(0 0 0 / 0.1);
+    border-radius: 18.5px;
+    background: #f3feee;
+    color: #000;
+  }
+
+  .somna-ccard--bundles .somna-ccard__media,
+  .somna-ccard--pick .somna-ccard__media {
+    aspect-ratio: 348 / 203;
+    border-radius: 8px;
+  }
+
+  .somna-ccard--bundles .somna-ccard__title,
+  .somna-ccard--pick .somna-ccard__title {
+    margin-top: 18px;
+    font-size: clamp(1.25rem, 1.61vw, 1.4473rem);
+    font-weight: 500;
+    line-height: 1;
+    text-shadow: 0 6.8px 6.8px rgb(0 0 0 / 0.1);
+    text-transform: uppercase;
+  }
+
+  .somna-ccard--bundles .somna-ccard__details,
+  .somna-ccard--pick .somna-ccard__details {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    line-height: 1.18;
+  }
+
+  .somna-ccard--bundles .somna-ccard__price,
+  .somna-ccard--pick .somna-ccard__price {
+    margin: 6px 0 14px;
+    font-size: 0.85rem;
+    font-weight: 300;
+    line-height: 1.18;
+  }
+
+  .somna-ccard--bundles .somna-ccard__button,
+  .somna-ccard--pick .somna-ccard__button {
+    min-height: 59px;
+    font-size: 1.1875rem;
+  }
+
+  .somna-ccard--pick {
+    border-color: transparent;
+    border-radius: 19.6px;
+  }
+
+  .somna-ccard--pick .somna-ccard__title {
+    font-size: clamp(1.25rem, 1.7vw, 1.5323rem);
+  }
+
+  .somna-ccard--pick .somna-ccard__button {
+    min-height: 62px;
+  }
+
+  /* ---------- chooser ---------- */
+  .somna-collection__choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 38px 9px;
+    max-width: 540px;
+    margin-top: 40px;
+  }
+
+  /* Figma 4852:1222: 56px chips, Inter Bold 19.7px; chosen one black */
+  .somna-collection__choice {
+    min-height: 56px;
+    padding: 0 12px;
+    border: 1px solid #000;
+    border-radius: 34px;
+    background: #f3feee;
+    color: #000;
+    font: inherit;
+    font-size: clamp(1rem, 1.37vw, 1.2315rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, translate 0.2s;
+  }
+
+  .somna-collection__choice:hover {
+    translate: 0 -2px;
+  }
+
+  .somna-collection__choice[aria-pressed='true'] {
+    background: #000;
+    color: #f3feee;
+  }
+
+  .somna-collection__choice:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 3px;
+  }
+
+  .somna-collection__pointer {
+    display: none;
+  }
+
+  .somna-collection__sticker {
+    display: inline-block;
+    padding: 10px 16px;
+    border: 2px solid #000;
+    border-radius: 999px;
+    background: #f3feee;
+    box-shadow: 2px 4px 0 #000;
+    color: #000;
+    font-family: var(--font-accent--family);
+    font-size: clamp(0.875rem, 1.2vw, 1.0625rem);
+    line-height: 1.2;
+    rotate: -1.5deg;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .somna-collection__arrow {
+    display: block;
+    width: 150px;
+    margin: 14px 0 0 64px;
+    color: #000;
+  }
+
+  .somna-collection__picks {
+    display: block;
+    max-width: 410px;
+  }
+
+  .somna-collection__pick[hidden] {
+    display: none;
+  }
+
+  /* ---------- desktop ---------- */
+  @media screen and (min-width: 990px) {
+    .somna-collection--singles .somna-collection__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 829px);
+      align-items: start;
+    }
+
+    .somna-collection--singles .somna-collection__intro {
+      padding-top: 30px;
+    }
+
+    .somna-collection--singles .somna-collection__list {
+      grid-template-columns: repeat(2, minmax(0, 402px));
+    }
+
+    .somna-collection--bundles .somna-collection__inner {
+      gap: 40px;
+    }
+
+    .somna-collection--bundles .somna-collection__intro {
+      text-align: center;
+    }
+
+    .somna-collection--bundles .somna-collection__list {
+      grid-template-columns: repeat(3, minmax(0, 387px));
+      justify-content: space-between;
+      gap: 39px;
+    }
+
+    .somna-collection--chooser .somna-collection__inner {
+      grid-template-columns: minmax(0, 513px) minmax(0, 1fr) minmax(0, 410px);
+      align-items: start;
+      gap: 20px;
+    }
+
+    .somna-collection--chooser .somna-collection__pointer {
+      display: block;
+      padding-top: 16px;
+    }
+
+    .somna-collection--chooser .somna-collection__picks {
+      padding-top: 34px;
+    }
+  }
+
+  /* tablets */
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-collection__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .somna-collection--bundles .somna-collection__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .somna-collection--bundles .somna-collection__intro {
+      text-align: center;
+    }
+
+    .somna-collection--chooser .somna-collection__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 360px);
+      align-items: start;
+    }
+  }
+
+  /* phones */
+  @media screen and (max-width: 749px) {
+    .somna-collection {
+      padding-block: 24px 32px !important;
+    }
+
+    .somna-collection__heading {
+      font-size: 1.75rem;
+    }
+
+    .somna-collection__text {
+      font-size: 0.9375rem;
+      letter-spacing: 0.06em;
+    }
+
+    .somna-collection--bundles .somna-collection__intro {
+      text-align: center;
+    }
+
+    .somna-collection__list {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+      max-width: 402px;
+      margin-inline: auto;
+      width: 100%;
+    }
+
+    .somna-collection__choices {
+      gap: 10px 8px;
+      margin-top: 22px;
+    }
+
+    .somna-collection__choice {
+      min-height: 44px;
+      font-size: 0.9375rem;
+      letter-spacing: 0.04em;
+    }
+
+    .somna-collection__picks {
+      width: 100%;
+      margin-inline: auto;
+    }
+
+    .somna-ccard--singles .somna-ccard__title {
+      font-size: 1.25rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna collection products",
+  "tag": "section",
+  "class": "somna-collection-section",
+  "settings": [
+    { "type": "select", "id": "layout", "label": "Layout", "options": [{ "value": "singles", "label": "Singles: text left, dark cards" }, { "value": "bundles", "label": "Bundles: centred heading, mint cards" }, { "value": "chooser", "label": "Chooser: answer chips change the card" }], "default": "singles" },
+    { "type": "text", "id": "group", "label": "Collection group", "default": "Single", "info": "Singles and Bundles layouts: lists the collection's products whose \"Collection group\" field is this value (Single or Bundle)." },
+    { "type": "collection", "id": "collection", "label": "Fallback collection", "info": "Used when the page isn't a collection page." },
+    { "type": "text", "id": "anchor", "label": "Anchor (for jump links)", "info": "e.g. singles → link to #singles" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "info": "Italic words start a new line in the accent colour." },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "text", "id": "sticker", "label": "Sticker (Chooser)", "default": "Your best start" },
+    { "type": "text", "id": "rating_format", "label": "Rating line", "default": "[rating]/5 · [count] reviews", "info": "[rating] and [count] come from the product's rating field. Empty hides it." },
+    { "type": "text", "id": "price_format", "label": "Price line", "default": "From [price] [compare] · Subscribe & Save", "info": "[price]: lowest Subscribe & Save price; [compare]: that variant's compare-at price (struck through)." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#f3feee" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },
+    { "type": "color", "id": "accent_color", "label": "Accent (italic words)", "default": "#98a3de" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24 }
+  ],
+  "blocks": [
+    {
+      "type": "choice",
+      "name": "Chooser answer",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Chip label", "default": "Blocked nose" },
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "checkbox", "id": "selected", "label": "Chosen when the page opens", "default": false },
+        { "type": "text", "id": "title", "label": "Card title", "info": "Empty uses the product title." },
+        { "type": "text", "id": "text", "label": "Card details", "info": "Empty uses the product's hero feature titles." },
+        { "type": "image_picker", "id": "image", "label": "Card image", "info": "Empty uses the product's Card image field, then its featured image." }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [{ "name": "Somna collection products" }]
+}
+{% endschema %}
