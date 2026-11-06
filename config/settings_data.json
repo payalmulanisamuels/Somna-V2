@@ -218,7 +218,8 @@
     "ur4_b_product": "season-bundle",
     "ur5_a_product": "the-colour-set",
     "ur6_a_product": "mouth-tape",
-    "ur6_b_product": "season-bundle"
+    "ur6_b_product": "season-bundle",
+    "upsell_show_rating": true
   },
   "presets": {
     "Horizon": {
