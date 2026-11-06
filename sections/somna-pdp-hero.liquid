@@ -744,9 +744,18 @@
         this.addEventListener('click', this.onClick);
         this.onKey = (e) => { if (e.key === 'Escape' && this.classList.contains('is-open')) { this.toggle(false); this.open.focus(); } };
         document.addEventListener('keydown', this.onKey);
-        // show once the buy box's form has gone off the top of the screen
-        this.io = new IntersectionObserver(([e]) => this.show(!e.isIntersecting && e.boundingClientRect.top < 0));
-        this.io.observe(buy.form);
+        // phones: show as soon as the Subscribe & Save option is on screen (and below it);
+        // tablet / desktop: show once the buy box's form has gone off the top of the screen
+        this.mq = matchMedia('(max-width: 749px)');
+        this.watch = () => {
+          this.io?.disconnect();
+          const target = this.mq.matches ? buy.querySelector('[data-mode-box]') || buy.querySelector('.somna-pdp-hero__modes') || buy.form : buy.form;
+          const early = this.mq.matches && target !== buy.form;
+          this.io = new IntersectionObserver(([e]) => this.show(early ? e.isIntersecting || e.boundingClientRect.top < 0 : !e.isIntersecting && e.boundingClientRect.top < 0));
+          this.io.observe(target);
+        };
+        this.mq.addEventListener('change', this.watch);
+        this.watch();
         this.ro = new ResizeObserver(() => document.documentElement.style.setProperty('--somna-sticky-h', this.querySelector('.somna-sticky-atc__bar').offsetHeight + 'px'));
         this.ro.observe(this.querySelector('.somna-sticky-atc__bar'));
         this.render();
@@ -756,6 +765,7 @@
         document.removeEventListener('keydown', this.onKey);
         this.io?.disconnect();
         this.ro?.disconnect();
+        this.mq?.removeEventListener('change', this.watch);
         document.documentElement.classList.remove('somna-sticky-on');
       }
       show(on) {
