@@ -477,7 +477,12 @@
       err.textContent = (e && e.message) || 'Could not add to cart. Please try again.'; err.hidden = false;
     });
   }
-  $$('[data-sq-buynow]').forEach(function (b) { b.addEventListener('click', function () { buyNow(b); }); });
+  $$('[data-sq-buynow]').forEach(function (b) { b.dataset.label = b.innerHTML; b.addEventListener('click', function () { buyNow(b); }); });
+  // Back from checkout: the browser restores the page as it was left, so put the Buy now / Add to cart buttons back to normal
+  window.addEventListener('pageshow', function (e) {
+    if (!e.persisted) return;
+    $$('[data-sq-buynow]').forEach(function (b) { if (b.dataset.label) b.innerHTML = b.dataset.label; b.removeAttribute('aria-busy'); });
+  });
 
   // Sticky Add to Cart: shows once the main button has scrolled above the screen
   var stickyBar = $('[data-sq-sticky]'), io = null;
