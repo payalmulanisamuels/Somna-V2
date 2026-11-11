@@ -134,7 +134,7 @@
                 class="somna-strip__video"
                 playsinline
                 preload="none"
-                {% if poster != blank %}poster="{{ poster | image_url: width: 640 }}"{% endif %}
+                {% if poster != blank %}data-poster="{{ poster | image_url: width: 640 }}"{% endif %}
                 data-sources="{{ sources | strip | escape }}"
                 {% if b.video != blank %}width="{{ b.video.preview_image.width | default: 1080 }}" height="{{ b.video.preview_image.height | default: 1920 }}"{% endif %}
                 aria-label="{{ label | escape }}"

@@ -268,5 +268,7 @@
 
     {%- render 'somna-cursor' -%}
     {% section 'somna-scratch-popup' %}
+    {%- comment -%} wave dividers: one copy of the script for the whole page (snippets/somna-wave.liquid) {%- endcomment -%}
+    <script src="{{ 'somna-wave.js' | asset_url }}" defer></script>
   </body>
 </html>

@@ -58,7 +58,7 @@
 
         <div class="somna-steps__list-wrap{% if s.thumbs != blank %} has-thumbs{% endif %}">
           {%- if s.thumbs != blank -%}
-            {{ s.thumbs | image_url: width: 400 | image_tag: class: 'somna-steps__thumbs', alt: '', loading: 'lazy' }}
+            {{ s.thumbs | image_url: width: 400 | image_tag: widths: '130, 180, 260, 360', sizes: '(min-width: 750px) 175px, 125px', class: 'somna-steps__thumbs', alt: '', loading: 'lazy' }}
           {%- endif -%}
           <ol class="somna-steps__list" role="list">
             {%- for block in section.blocks -%}
