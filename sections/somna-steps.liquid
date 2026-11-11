@@ -90,6 +90,7 @@
           {%- endif -%}
         {%- endif -%}
         {%- if has_video and s.button_label != blank -%}
+          {{ 'somna-video-modal.css' | asset_url | stylesheet_tag }}
           <dialog id="SomnaHowVideo-{{ section.id }}" class="somna-video-modal" aria-label="{{ s.button_label | escape }}" data-somna-video-modal>
             <button type="button" class="somna-video-modal__close" aria-label="{{ 'accessibility.close' | t | default: 'Close' }}" data-somna-video-close>
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
