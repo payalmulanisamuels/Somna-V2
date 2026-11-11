@@ -17,10 +17,14 @@
 
 {% if only_when_first_section %}
   <script>
-    const section = document.currentScript.closest('.shopify-section');
-    if (section && section === section.closest('#MainContent')?.firstElementChild) {
-      window.measureHeaderHeights?.();
-    }
+    // Wrapped in its own scope: several heroes on one page each render this, and a top-level
+    // `const section` in each would clash ("Identifier 'section' has already been declared").
+    (function () {
+      const section = document.currentScript.closest('.shopify-section');
+      if (section && section === section.closest('#MainContent')?.firstElementChild) {
+        window.measureHeaderHeights?.();
+      }
+    })();
   </script>
 {% elsif only_on_desktop %}
   <script>
