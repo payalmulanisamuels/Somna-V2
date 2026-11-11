@@ -94,7 +94,7 @@
             <button type="button" class="somna-video-modal__close" aria-label="{{ 'accessibility.close' | t | default: 'Close' }}" data-somna-video-close>
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
             </button>
-            {{ s.video | video_tag: controls: true, playsinline: true, preload: 'none', class: 'somna-video-modal__video', image_size: '1080x' }}
+            {{ s.video | video_tag: controls: true, playsinline: true, preload: 'none', class: 'somna-video-modal__video', image_size: '1080x'  | replace: ' poster=', ' data-poster=' }}
           </dialog>
           <script src="{{ 'somna-video-modal.js' | asset_url }}" defer></script>
         {%- endif -%}

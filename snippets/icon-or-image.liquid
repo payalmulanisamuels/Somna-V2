@@ -29,6 +29,13 @@
     assign media_width_mobile = '100vw'
     assign sizes = '(min-width: 1024px) 1024px, ' | append: media_width_desktop | append: ', ' | append: media_width_mobile
     assign widths = '240, 352, 832, 1200'
+    # Speed: the icon is shown at a fixed width, so ask for files of that size (1x, 2x, 3x)
+    if width > 0
+      assign sizes = width | append: 'px'
+      assign w2 = width | times: 2
+      assign w3 = width | times: 3
+      assign widths = width | append: ', ' | append: w2 | append: ', ' | append: w3
+    endif
   %}
 
   {% assign image_style = 'width: ' | append: width | append: 'px;' %}

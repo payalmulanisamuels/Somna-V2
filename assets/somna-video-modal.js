@@ -20,6 +20,8 @@
         });
       }
       modal.showModal();
+      // the poster is only fetched when the popup opens (it was data-poster until now)
+      if (video && video.dataset.poster && !video.poster) video.poster = video.dataset.poster;
       if (video) {
         video.currentTime = 0;
         video.play().catch(() => {});
