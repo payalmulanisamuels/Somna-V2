@@ -82,7 +82,7 @@
             -%}
             <div class="somna-guide__card">
               <a class="somna-guide__card-media" href="{{ cp.url }}" tabindex="-1" aria-hidden="true">
-                {%- if card_img != blank -%}{{ card_img | image_url: width: 300 | image_tag: loading: 'lazy', alt: '' }}{%- endif -%}
+                {%- if card_img != blank -%}{{ card_img | image_url: width: 300 | image_tag: loading: 'lazy', alt: '', widths: '100, 200, 300', sizes: '96px' }}{%- endif -%}
               </a>
               <div class="somna-guide__card-body">
                 {%- capture card_rating -%}{%- if s.card_rating contains '[rating]' -%}{%- render 'somna-rating', product: s.card_product, format: s.card_rating -%}{%- else -%}{{ s.card_rating }}{%- endif -%}{%- endcapture -%}{%- assign card_rating = card_rating | strip -%}

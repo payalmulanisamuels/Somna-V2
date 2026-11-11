@@ -36,7 +36,7 @@
             {%- endfor -%}
           </span>
         {%- elsif s.avatars != blank -%}
-          {{ s.avatars | image_url: width: 240 | image_tag: class: 'somna-steps__avatars', alt: '', loading: 'lazy', width: 120 }}
+          {{ s.avatars | image_url: width: 240 | image_tag: class: 'somna-steps__avatars', alt: '', loading: 'lazy', width: 120, widths: '120, 240', sizes: '120px' }}
         {%- endif -%}
         {%- if s.rating_text != blank -%}<p class="somna-steps__rating">{{ s.rating_text }}</p>{%- endif -%}
       </div>

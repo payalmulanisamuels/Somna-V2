@@ -52,7 +52,7 @@
         <div class="somna-pdp-pair__trend">
           {%- if s.trending_label != blank -%}<p class="somna-pdp-pair__trend-label">{{ s.trending_label }}</p>{%- endif -%}
           <a class="somna-pdp-pair__trend-card" href="{{ trend.url }}">
-            {%- if trend.featured_image -%}{{ trend.featured_image | image_url: width: 300 | image_tag: loading: 'lazy', alt: '', width: 117, height: 89 }}{%- endif -%}
+            {%- if trend.featured_image -%}{{ trend.featured_image | image_url: width: 300 | image_tag: loading: 'lazy', alt: '', width: 117, height: 89, widths: '120, 240, 300', sizes: '117px' }}{%- endif -%}
             <span>
               {%- render 'somna-rating', product: trend, format: '[rating]/5 · [count] reviews', tag: 'span', class: 'somna-pdp-pair__rating' -%}
               <span class="somna-pdp-pair__trend-title">{{ trend.title }}</span>
