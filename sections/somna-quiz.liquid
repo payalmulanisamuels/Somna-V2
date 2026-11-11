@@ -131,8 +131,10 @@
             {%- comment -%} Buy box: built by the script from the product data below (bags, Autoship / one-time, Add to Cart) {%- endcomment -%}
             <div class="sq-buy" data-sq-buy>
               <div data-sq-buy-ui></div>
-              <button type="button" class="sq-cta sq-atc" data-sq-atc><span aria-hidden="true">🛒</span> {{ section.settings.atc_label }}</button>
-              {%- if section.settings.buy_now_label != blank -%}<button type="button" class="sq-cta sq-buynow" data-sq-buynow>{{ section.settings.buy_now_label }}</button>{%- endif -%}
+              {%- assign sq_show_atc = section.settings.show_atc -%}
+              {%- if section.settings.buy_now_label == blank -%}{%- assign sq_show_atc = true -%}{%- endif -%}
+              {%- if sq_show_atc -%}<button type="button" class="sq-cta sq-atc" data-sq-atc><span aria-hidden="true">🛒</span> {{ section.settings.atc_label }}</button>{%- endif -%}
+              {%- if section.settings.buy_now_label != blank -%}<button type="button" class="sq-cta{% if sq_show_atc %} sq-buynow{% endif %}" data-sq-buynow>{{ section.settings.buy_now_label }}</button>{%- endif -%}
               <p class="sq-err" role="alert" data-sq-atc-err hidden></p>
               {%- if section.settings.result_extras and section.settings.ship_note != blank -%}<p class="sq-buy-ship"><span aria-hidden="true">🚚</span> {{ section.settings.ship_note }}</p>{%- endif -%}
               {%- if section.settings.atc_note != blank -%}<p class="sq-buy-note">↻ {{ section.settings.atc_note }}</p>{%- endif -%}
@@ -365,7 +367,11 @@
 
       {%- comment -%} Sticky Add to Cart (shows once the main button scrolls out of view) {%- endcomment -%}
       <div class="sq-sticky" data-sq-sticky hidden>
+        {%- if section.settings.show_atc or section.settings.buy_now_label == blank -%}
         <button type="button" class="sq-cta" data-sq-sticky-atc><span aria-hidden="true">🛒</span> {{ section.settings.atc_label }} · <span data-sq-sticky-price></span></button>
+        {%- else -%}
+        <button type="button" class="sq-cta" data-sq-buynow data-sq-sticky-buy>{{ section.settings.buy_now_label }} · <span data-sq-sticky-price></span></button>
+        {%- endif -%}
       </div>
     </div>
   </div>
@@ -937,6 +943,13 @@
       "id": "atc_label",
       "label": "Button",
       "default": "Add to cart"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_atc",
+      "label": "Show Add to cart button",
+      "info": "Off: only the Buy now button shows (it goes straight to checkout).",
+      "default": false
     },
     {
       "type": "text",
