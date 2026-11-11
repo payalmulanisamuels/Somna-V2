@@ -132,6 +132,7 @@
             <div class="sq-buy" data-sq-buy>
               <div data-sq-buy-ui></div>
               <button type="button" class="sq-cta sq-atc" data-sq-atc><span aria-hidden="true">🛒</span> {{ section.settings.atc_label }}</button>
+              {%- if section.settings.buy_now_label != blank -%}<button type="button" class="sq-cta sq-buynow" data-sq-buynow>{{ section.settings.buy_now_label }}</button>{%- endif -%}
               <p class="sq-err" role="alert" data-sq-atc-err hidden></p>
               {%- if section.settings.result_extras and section.settings.ship_note != blank -%}<p class="sq-buy-ship"><span aria-hidden="true">🚚</span> {{ section.settings.ship_note }}</p>{%- endif -%}
               {%- if section.settings.atc_note != blank -%}<p class="sq-buy-note">↻ {{ section.settings.atc_note }}</p>{%- endif -%}
@@ -460,6 +461,7 @@
       "autoship": {{ section.settings.autoship_label | json }},
       "onetime": {{ section.settings.onetime_label | json }},
       "lock": {{ section.settings.lock_text | json }},
+      "cancel": {{ section.settings.cancel_text | json }},
       "ship1": {{ section.settings.ship_single | json }},
       "shipFree": {{ section.settings.ship_free | json }},
       "save": {{ section.settings.save_text | json }},
@@ -907,6 +909,12 @@
     },
     {
       "type": "text",
+      "id": "cancel_text",
+      "label": "Autoship line 2",
+      "default": "Skip, pause or cancel anytime"
+    },
+    {
+      "type": "text",
       "id": "gifts",
       "label": "Free gifts (2+ bags)",
       "info": "Separated by |. Shown with Autoship on 2+ bags.",
@@ -929,6 +937,13 @@
       "id": "atc_label",
       "label": "Button",
       "default": "Add to cart"
+    },
+    {
+      "type": "text",
+      "id": "buy_now_label",
+      "label": "Buy now button",
+      "info": "Adds the item and goes straight to checkout. Leave blank to hide.",
+      "default": "Buy now"
     },
     {
       "type": "text",
