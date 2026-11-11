@@ -11,8 +11,12 @@
 {%- if template.name == 'index' -%}
   {{ boldonse_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
 {%- endif -%}
+{%- if settings.type_body_font.family == 'Inter' -%}
+  {{ 'inter-latin-wght-normal.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{%- endif -%}
 <style>
-  {%- if somna_body_600 -%}{{ somna_body_600 | font_face: font_display: 'swap' }}{%- endif %}
+  {%- comment -%} Inter 600 comes from the variable Inter file (snippets/theme-styles-variables.liquid) {%- endcomment -%}
+  {%- if somna_body_600 and somna_body_600.family != 'Inter' -%}{{ somna_body_600 | font_face: font_display: 'swap' }}{%- endif %}
   @font-face {
     font-family: 'Boldonse';
     src: url('{{ boldonse_url }}') format('woff2');
