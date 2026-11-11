@@ -138,7 +138,7 @@
               <p class="sq-err" role="alert" data-sq-atc-err hidden></p>
               {%- if section.settings.result_extras and section.settings.ship_note != blank -%}<p class="sq-buy-ship"><span aria-hidden="true">🚚</span> {{ section.settings.ship_note }}</p>{%- endif -%}
               {%- if section.settings.atc_note != blank -%}<p class="sq-buy-note">↻ {{ section.settings.atc_note }}</p>{%- endif -%}
-              {%- if section.settings.view_product_label != blank -%}<p class="sq-buy-view"><a href="{{ rp.url }}">{{ section.settings.view_product_label }} →</a></p>{%- endif -%}
+              {%- if section.settings.view_product_label != blank -%}<p class="sq-buy-view"><a href="{{ rp.url }}">{{ section.settings.view_product_label }} <span class="sq-buy-view-arr" aria-hidden="true">→</span></a></p>{%- endif -%}
               {%- if rbs.how_it_works != blank -%}
                 <details class="sq-acc sq-acc--box" open>
                   <summary>{{ section.settings.how_it_works_heading }}</summary>
