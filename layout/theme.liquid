@@ -268,6 +268,33 @@
 
     {%- render 'somna-cursor' -%}
     {% section 'somna-scratch-popup' %}
+    {%- comment -%}
+      Speed: the Instagram feed (Instafeed app block) loads its script only when the feed is about to
+      scroll into view, instead of on page load. The app's own loader skips loading when a script with
+      the same address is already on the page, so a non-running placeholder holds it back until then.
+      Remove this block to undo.
+    {%- endcomment -%}
+    <script>
+      (function () {
+        if (typeof instafeedScriptSrc === 'undefined') return;
+        var feed = document.getElementById('insta-feed');
+        if (!feed || !('IntersectionObserver' in window)) return;
+        var hold = document.createElement('script');
+        hold.type = 'text/plain';
+        hold.src = instafeedScriptSrc;
+        hold.setAttribute('data-somna-held', '');
+        document.head.appendChild(hold);
+        var io = new IntersectionObserver(function (entries) {
+          if (!entries.some(function (e) { return e.isIntersecting; })) return;
+          io.disconnect();
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = instafeedScriptSrc;
+          document.body.appendChild(s);
+        }, { rootMargin: '800px 0px' });
+        io.observe(feed);
+      })();
+    </script>
     {%- comment -%} wave dividers: one copy of the script for the whole page (snippets/somna-wave.liquid) {%- endcomment -%}
     <script src="{{ 'somna-wave.js' | asset_url }}" defer></script>
   </body>
