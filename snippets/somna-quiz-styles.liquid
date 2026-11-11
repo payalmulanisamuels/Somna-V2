@@ -111,6 +111,9 @@ padding: 10px 16px 40px; min-height: 100vh;
 /* buttons — purple pill with soft glow (original quiz) */
 .sq .sq-cta { appearance: none; display: block; width: 100%; min-height: 56px; margin: 20px 0 0; padding: 17px 22px; border: 0; border-radius: 999px; background: var(--sq-accent); color: #fff; font: 700 15px/1.2 var(--sq-sans); letter-spacing: .05em; text-transform: uppercase; text-align: center; text-decoration: none; cursor: pointer; box-shadow: 0 8px 24px rgba(109,73,224,.35); transition: transform .06s, background-color .15s, opacity .15s; }
 .sq .sq-cta:hover { background: var(--sq-accent-h); color: #fff; }
+.sq .sq-buynow { margin-top: 10px; background: transparent; color: var(--sq-ink); border: 1.5px solid var(--sq-ink); box-shadow: none; }
+.sq .sq-buynow:hover { background: var(--sq-ink); color: var(--sq-bg); }
+.sq .sq-buynow[disabled] { opacity: .5; cursor: not-allowed; }
 .sq .sq-cta:active { transform: scale(.99); }
 .sq .sq-cta:disabled { opacity: .35; cursor: not-allowed; box-shadow: none; }
 .sq .sq-cta[aria-busy="true"] { cursor: progress; }
@@ -439,6 +442,8 @@ cart-drawer-component :is(.somna-cart-totals__saved, .somna-cart-totals__saved *
 cart-drawer-component :is(.cart-drawer__inner, .cart-drawer__content, .cart-drawer__items, .cart-drawer__summary, .theme-drawer__close-button) { background: #0d0d1c !important; color: #fff; }
 cart-drawer-component, cart-drawer-component * { color: #fff !important; }
 cart-drawer-component input { background: transparent !important; }
+/* "+1 bag" box stays a white card, so its copy is dark */
+cart-drawer-component .somna-nudge, cart-drawer-component .somna-nudge * { color: #0B0F1D !important; }
 cart-drawer-component .theme-drawer__header { border-color: #2a2a45; }
 cart-drawer-component .theme-drawer__close-button, cart-drawer-component .theme-drawer__close-button * { color: #c9c7df !important; }
 cart-drawer-component :is(.cart-items__details, .cart-items__variants, .cart-items__properties) * { color: #c9c7df !important; }
@@ -561,6 +566,8 @@ body { background: #F3FEEE; }
 .sq--v2 .sq-res-links a, .sq--v2 .sq-linkbtn { color: var(--sq-ink); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 /* buy box: navy card like the product page (packs, mint plan box, lavender Add to Cart) */
 .sq--v2 .sq-buy { --sq-ink: #F3FEEE; --sq-mut: #C9CCD6; --sq-card: #2E3134; --sq-line: #F3FEEE; --sq-em: #AFBDF8; padding: 18px 16px 14px; border-radius: 24px; background: #0B0F1D; color: var(--sq-ink); box-shadow: var(--sq-shadow); }
+.sq--v2 .sq-buy .sq-buynow { margin-top: 10px; background: transparent; color: var(--sq-ink); border: 1.6px solid var(--sq-ink); box-shadow: none; }
+.sq--v2 .sq-buy .sq-buynow:hover { background: var(--sq-ink); color: #0B0F1D; }
 .sq--v2 .sq-swatch { border-color: #0B0F1D; box-shadow: 0 0 0 1.5px #5A5F6B; }
 .sq--v2 .sq-swatch[aria-checked="true"] { box-shadow: 0 0 0 2.5px #F3FEEE; }
 .sq--v2 .sq-tier { background: #2E3134; border: 2.4px solid #F3FEEE; border-radius: 11px; color: #fff; padding-top: 20px; }

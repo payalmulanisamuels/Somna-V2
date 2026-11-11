@@ -281,7 +281,7 @@
     if (!r) return;
     var why = (cfg.why || {})[s.problem]; $('[data-sq-why]', r).textContent = why ? why[s.partner ? 1 : 0] : '';
     $$('img', r).forEach(function (im, n) { if (n < 2) im.loading = 'eager'; });
-    if (!sel[k]) { var v0 = variantsOf(k)[0] || {}; sel[k] = { color: v0.color || '', bags: v0.bags || 1, mode: v0.sub != null ? 'sub' : 'once' }; }
+    if (!sel[k]) { var v0 = variantsOf(k)[0] || {}; sel[k] = { color: v0.color || '', bags: v0.bags || 1, mode: 'once' }; }
     renderBuy(k);
     var rv = $('[data-sq-rv]', r);
     if (rv && !rv._pg) {
@@ -335,6 +335,7 @@
       var ship = v.bags > 1 ? (BUY.shipFree || '') : (BUY.ship1 || '');
       ul.appendChild(el('li', '', [money(Math.round(v.sub / v.bags)) + (v.bags > 1 ? '/bag' : '/mo'), ship, 'every ' + (v.days || v.nights) + ' days'].filter(Boolean).join(' · ')));
       if (BUY.lock) ul.appendChild(el('li', '', BUY.lock));
+      if (BUY.cancel) ul.appendChild(el('li', '', BUY.cancel));
       a.appendChild(ul);
       if (v.bags > 1 && BUY.gifts) {
         var g = el('div', 'sq-gifts'); String(BUY.gifts).split('|').forEach(function (t) { if (t.trim()) g.appendChild(el('span', 'sq-gift', '🎁 ' + t.trim())); }); a.appendChild(g);
@@ -347,7 +348,8 @@
     ui.appendChild(opts);
     var price = st.mode === 'sub' && v.sub != null ? v.sub : v.once;
     var sp = $('[data-sq-sticky-price]'); if (sp) sp.textContent = money(price);
-    $('[data-sq-atc]', r).disabled = !v.available;
+    var atcB = $('[data-sq-atc]', r); if (atcB) atcB.disabled = !v.available;
+    var bn = $('[data-sq-buynow]', r); if (bn) bn.disabled = !v.available;
   }
   function planBtn(k, mode, label, was, now) {
     var st = sel[k], b = el('div', 'sq-plan' + (st.mode === mode ? ' is-on' : ''), null);
@@ -457,6 +459,31 @@
   }
   $$('[data-sq-atc]').forEach(function (b) { b.addEventListener('click', function () { addToCart(b); }); });
 
+  // Buy now: adds the chosen bag / plan (same line as Add to Cart) and goes straight to checkout
+  function buyNow(btn) {
+    var k = score().result, st = sel[k]; if (!st || btn.getAttribute('aria-busy') === 'true') return;
+    var v = pick(k), r = resEl(k), err = $('[data-sq-atc-err]', r);
+    var body = { id: v.id, quantity: 1 };
+    if (st.mode === 'sub' && v.plan) body.selling_plan = v.plan;
+    var label = btn.innerHTML; btn.dataset.label = label; btn.setAttribute('aria-busy', 'true'); btn.innerHTML = '<span class="sq-spin" aria-hidden="true"></span> ' + (BUY.buying || 'Going to checkout…'); err.hidden = true;
+    fetch(ROOT_URL + 'cart/add.js', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body)
+    }).then(function (res) { return res.json(); }).then(function (added) {
+      if (added.status) throw new Error(added.description || added.message || 'Could not add to cart');
+      try { if (window.fbq) fbq('track', 'AddToCart', { content_name: PRODUCTS[k].title, content_category: 'SOMNA Quiz' }); } catch (e) {}
+      window.location.href = ROOT_URL + 'checkout';
+    }).catch(function (e) {
+      btn.innerHTML = label; btn.removeAttribute('aria-busy');
+      err.textContent = (e && e.message) || 'Could not add to cart. Please try again.'; err.hidden = false;
+    });
+  }
+  $$('[data-sq-buynow]').forEach(function (b) { b.addEventListener('click', function () { buyNow(b); }); });
+  // Back from checkout: the browser restores the page as it was left, so put the Buy now / Add to cart buttons back to normal
+  window.addEventListener('pageshow', function (e) {
+    if (!e.persisted) return;
+    $$('[data-sq-buynow]').forEach(function (b) { if (b.dataset.label) b.innerHTML = b.dataset.label; b.removeAttribute('aria-busy'); });
+  });
+
   // Sticky Add to Cart: shows once the main button has scrolled above the screen
   var stickyBar = $('[data-sq-sticky]'), io = null;
   function sticky(on) {
@@ -464,12 +491,12 @@
     if (io) { io.disconnect(); io = null; }
     stickyBar.hidden = true;
     if (!on || !('IntersectionObserver' in window)) return;
-    var r = current(), atc = r && $('[data-sq-atc]', r); if (!atc) return;
+    var r = current(), atc = r && ($('[data-sq-atc]', r) || $('[data-sq-buynow]', r)); if (!atc) return;
     io = new IntersectionObserver(function (es) { stickyBar.hidden = es[0].isIntersecting || es[0].boundingClientRect.top > 0; });
     io.observe(atc);
   }
   var stickyBtn = $('[data-sq-sticky-atc]');
-  if (stickyBtn) stickyBtn.addEventListener('click', function () { var r = current(); if (r) addToCart($('[data-sq-atc]', r)); });
+  if (stickyBtn) stickyBtn.addEventListener('click', function () { var r = current(); if (r && $('[data-sq-atc]', r)) addToCart($('[data-sq-atc]', r)); });
 
   // Retake quiz: clears the answers and starts again at Q1
   $$('[data-sq-retake]').forEach(function (b) { b.addEventListener('click', function () { answers = {}; if (otherText) otherText.value = ''; syncMulti(); go(0); }); });
