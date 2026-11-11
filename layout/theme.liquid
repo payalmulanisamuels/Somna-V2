@@ -101,7 +101,7 @@
     {%- unless request.design_mode -%}
     {%- comment -%}
       Speed (2026-11-11): Microsoft Clarity's tag (www.clarity.ms/tag/...) is held back until the visitor
-      first scrolls, taps, clicks or presses a key, or 3.5 s after the page has loaded, whichever comes
+      first scrolls, taps, clicks or presses a key, or 6 s after the page has loaded, whichever comes
       first. Clarity's own queue (window.clarity) keeps every call made before that, including the
       consent signal. Same Clarity project and settings. Remove this block to undo.
     {%- endcomment -%}
@@ -150,7 +150,7 @@
           });
         }
         events.forEach(function (e) { addEventListener(e, start, { capture: true, passive: true }); });
-        addEventListener('load', function () { setTimeout(start, 3500); }, { once: true });
+        addEventListener('load', function () { setTimeout(start, 6000); }, { once: true });
       })();
     </script>
     {%- endunless -%}
