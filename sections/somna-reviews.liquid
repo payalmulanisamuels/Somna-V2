@@ -158,7 +158,7 @@
         {%- if f_text != blank -%}<p class="somna-reviews__text">“{{ f_text | strip_html }}”</p>{%- endif -%}
         <div class="somna-reviews__byline">
           {%- if f_avatar != blank -%}
-            {{ f_avatar | image_url: width: 120, height: 120, crop: 'center' | image_tag: class: 'somna-reviews__avatar somna-reviews__avatar--lg', alt: f_name, loading: 'lazy', width: 56, height: 56 }}
+            {{ f_avatar | image_url: width: 120, height: 120, crop: 'center' | image_tag: class: 'somna-reviews__avatar somna-reviews__avatar--lg', alt: f_name, loading: 'lazy', width: 56, height: 56, widths: '60, 120', sizes: '56px' }}
           {%- elsif f_name != blank -%}
             <span class="somna-reviews__avatar somna-reviews__avatar--lg somna-reviews__avatar--initials" aria-hidden="true">{{ f_name | slice: 0 }}</span>
           {%- endif -%}

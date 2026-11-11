@@ -136,6 +136,9 @@
     attach(video) {
       if (video.dataset.attached) return;
       video.dataset.attached = '1';
+      // The card's <img> is the poster on screen; the video only gets its poster when it is used,
+      // so the hidden <video> doesn't download a second copy of every poster on page load.
+      if (video.dataset.poster && !video.poster) video.poster = video.dataset.poster;
       (video.dataset.sources || '').split(',').forEach(function (entry) {
         var parts = entry.split('|');
         if (!parts[0]) return;

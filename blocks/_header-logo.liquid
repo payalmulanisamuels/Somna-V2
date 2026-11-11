@@ -41,7 +41,8 @@
   -%}
   {%- unless loaded_weights contains logo_text_weight -%}
     {%- assign logo_font = settings.type_body_font | font_modify: 'weight', logo_text_weight -%}
-    {%- if logo_font -%}
+    {%- comment -%} Inter: every weight is already in the variable Inter file (snippets/theme-styles-variables.liquid) {%- endcomment -%}
+    {%- if logo_font and logo_font.family != 'Inter' -%}
       <style>
         {{ logo_font | font_face: font_display: 'swap' }}
       </style>

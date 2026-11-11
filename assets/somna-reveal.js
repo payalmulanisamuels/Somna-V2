@@ -53,13 +53,24 @@
   let raf = 0;
   let timer = 0;
 
+  // Speed: computed styles are cached for one setup pass (many candidates share the same ancestors),
+  // and nothing is written to the page while styles and positions are read, so the browser never has
+  // to re-calculate layout in between (no "forced reflow").
+  let styleCache = null;
+  const styleOf = (el) => {
+    if (!styleCache) return getComputedStyle(el);
+    let s = styleCache.get(el);
+    if (!s) styleCache.set(el, (s = getComputedStyle(el)));
+    return s;
+  };
+
   const skippable = (el, section) => {
     if (el.closest(SKIP)) return true;
-    const cs = getComputedStyle(el);
+    const cs = styleOf(el);
     if (cs.animationName !== 'none' || cs.translate !== 'none' || cs.scale !== 'none') return true;
     if (cs.opacity === '0' || cs.visibility === 'hidden' || cs.position === 'fixed' || cs.position === 'sticky') return true;
     for (let a = el.parentElement; a && a !== section; a = a.parentElement) {
-      const s = getComputedStyle(a);
+      const s = styleOf(a);
       if (/(auto|scroll)/.test(s.overflowX) || s.position === 'sticky' || s.position === 'fixed') return true;
     }
     return false;
@@ -79,13 +90,13 @@
       if (kids.length < 3 || kids.length > 24) return;
       const sig = (k) => k.tagName + '.' + (k.classList[0] || '');
       if (!kids.every((k) => sig(k) === sig(kids[0]))) return;
-      if (getComputedStyle(kids[0]).display.startsWith('inline')) return;
+      if (styleOf(kids[0]).display.startsWith('inline')) return;
       if (box.closest('h1, h2, h3, p, a, button, table')) return;
       kids.forEach((k) => add(k, 'item'));
     });
 
     section.querySelectorAll('h1, h2, h3').forEach((h) => {
-      const lines = [...h.children].filter((c) => getComputedStyle(c).display === 'block');
+      const lines = [...h.children].filter((c) => styleOf(c).display === 'block');
       if (lines.length >= 2) lines.forEach((l) => add(l, 'line'));
       else add(h, 'heading');
     });
@@ -195,16 +206,42 @@
     timer = setTimeout(check, 120); // whichever comes first
   }
 
+  // read-only: what to track in a section and which of those start hidden (below the fold)
+  function prep(section) {
+    const group = !!section.querySelector('[data-reveal-group]');
+    const vh = innerHeight;
+    const sectionBelow = section.getBoundingClientRect().top >= vh;
+    const items = collect(section).map(({ el, type }) => ({
+      el,
+      type,
+      // below the fold: hidden until it scrolls in (a group section: only if the section itself is below)
+      below: group ? sectionBelow : el.getBoundingClientRect().top >= vh,
+    }));
+    return { section, group, items };
+  }
+
+  // write-only: start tracking and hide the below-the-fold ones
+  function apply({ section, group, items }) {
+    section.dataset.somnaReveal = '1';
+    items.forEach(({ el, type }) => all.set(el, { type, section, group }));
+    items.forEach(({ el, below }) => below && arm(el));
+  }
+
   function observe(section) {
     if (!section || section.dataset.somnaReveal) return;
-    section.dataset.somnaReveal = '1';
-    const group = !!section.querySelector('[data-reveal-group]');
-    const sectionBelow = section.getBoundingClientRect().top >= innerHeight;
-    collect(section).forEach(({ el, type }) => {
-      all.set(el, { type, section, group });
-      // below the fold: hidden until it scrolls in (a group section: only if the section itself is below)
-      if (group ? sectionBelow : el.getBoundingClientRect().top >= innerHeight) arm(el);
-    });
+    styleCache = new Map();
+    const p = prep(section);
+    styleCache = null;
+    apply(p);
+    schedule();
+  }
+
+  function observeAll(sections) {
+    sections = sections.filter((s) => s && !s.dataset.somnaReveal);
+    styleCache = new Map();
+    const preps = sections.map(prep); // all reads first...
+    styleCache = null;
+    preps.forEach(apply); // ...then all writes
     schedule();
   }
 
@@ -221,7 +258,12 @@
   function init() {
     if (!MQ.matches) return;
     const sections = [...document.querySelectorAll('main .shopify-section')];
-    sections.slice(1).forEach(observe); // the first section (hero) keeps its own entrance
+    // the first section (hero) keeps its own entrance. Setting up waits for a quiet moment after load
+    // (at most 1.5 s) so it doesn't compete with the page's first paint; everything it hides is below
+    // the fold, so nothing visible changes.
+    const setup = () => observeAll(sections.slice(1));
+    if ('requestIdleCallback' in window) requestIdleCallback(setup, { timeout: 1500 });
+    else setTimeout(setup, 200);
     // scroll events from any scroller (the page may scroll inside .page-wrapper)
     document.addEventListener('scroll', schedule, { capture: true, passive: true });
     addEventListener('resize', schedule, { passive: true });

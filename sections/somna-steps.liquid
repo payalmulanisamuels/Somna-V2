@@ -36,7 +36,7 @@
             {%- endfor -%}
           </span>
         {%- elsif s.avatars != blank -%}
-          {{ s.avatars | image_url: width: 240 | image_tag: class: 'somna-steps__avatars', alt: '', loading: 'lazy', width: 120 }}
+          {{ s.avatars | image_url: width: 240 | image_tag: class: 'somna-steps__avatars', alt: '', loading: 'lazy', width: 120, widths: '120, 240', sizes: '120px' }}
         {%- endif -%}
         {%- if s.rating_text != blank -%}<p class="somna-steps__rating">{{ s.rating_text }}</p>{%- endif -%}
       </div>
@@ -58,7 +58,7 @@
 
         <div class="somna-steps__list-wrap{% if s.thumbs != blank %} has-thumbs{% endif %}">
           {%- if s.thumbs != blank -%}
-            {{ s.thumbs | image_url: width: 400 | image_tag: class: 'somna-steps__thumbs', alt: '', loading: 'lazy' }}
+            {{ s.thumbs | image_url: width: 400 | image_tag: widths: '130, 180, 260, 360', sizes: '(min-width: 750px) 175px, 125px', class: 'somna-steps__thumbs', alt: '', loading: 'lazy' }}
           {%- endif -%}
           <ol class="somna-steps__list" role="list">
             {%- for block in section.blocks -%}
@@ -90,11 +90,12 @@
           {%- endif -%}
         {%- endif -%}
         {%- if has_video and s.button_label != blank -%}
+          {{ 'somna-video-modal.css' | asset_url | stylesheet_tag }}
           <dialog id="SomnaHowVideo-{{ section.id }}" class="somna-video-modal" aria-label="{{ s.button_label | escape }}" data-somna-video-modal>
             <button type="button" class="somna-video-modal__close" aria-label="{{ 'accessibility.close' | t | default: 'Close' }}" data-somna-video-close>
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
             </button>
-            {{ s.video | video_tag: controls: true, playsinline: true, preload: 'none', class: 'somna-video-modal__video', image_size: '1080x' }}
+            {{ s.video | video_tag: controls: true, playsinline: true, preload: 'none', class: 'somna-video-modal__video', image_size: '1080x'  | replace: ' poster=', ' data-poster=' | replace: '<img ', '<img loading="lazy" ' }}
           </dialog>
           <script src="{{ 'somna-video-modal.js' | asset_url }}" defer></script>
         {%- endif -%}
@@ -441,3 +442,4 @@
   ]
 }
 {% endschema %}
+

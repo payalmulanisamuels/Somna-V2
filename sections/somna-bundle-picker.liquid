@@ -30,7 +30,7 @@
       "badge": {{ block.settings.badge | json }},
       "url": {{ p.url | json }},
       "nights": {{ block.settings.nights | default: 0 }},
-      "image": {{ img | image_url: width: 1100 | json }},
+      "image": {{ img | image_url: width: 900 | json }},
       "thumb": {{ img | image_url: width: 300 | json }},
       "alt": {{ img.alt | default: p.title | json }},
       "variants": [

@@ -1,0 +1,84 @@
+/* "Watch how it works" video popup — shared by the product page story (sections/somna-pdp-story.liquid)
+   and the homepage steps (sections/somna-steps.liquid). Loaded by both. */
+  /* "Watch how it works" video popup */
+  .somna-video-modal {
+    width: fit-content;
+    max-width: min(92vw, 1100px);
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 20px;
+    background: #000;
+  }
+
+  .somna-video-modal::backdrop {
+    background: rgb(11 15 29 / 0.86);
+    backdrop-filter: blur(4px);
+  }
+
+  .somna-video-modal[open] {
+    animation: somna-video-in 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .somna-video-modal__video {
+    display: block;
+    width: auto;
+    max-width: min(92vw, 1100px);
+    height: auto;
+    max-height: 82vh;
+    max-height: 82dvh;
+    border-radius: 20px;
+    background: #000;
+  }
+
+  .somna-video-modal__close {
+    position: absolute;
+    top: -18px;
+    right: -18px;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 2px solid #000;
+    border-radius: 50%;
+    background: #f3feee;
+    color: #000;
+    box-shadow: 2px 3px 0 #000;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .somna-video-modal__close:hover {
+    background: #afbdf8;
+  }
+
+  .somna-video-modal__close:focus-visible {
+    outline: 2px solid #f3feee;
+    outline-offset: 3px;
+  }
+
+  html:has(.somna-video-modal[open]) {
+    overflow: hidden;
+  }
+
+  @keyframes somna-video-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.97);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .somna-video-modal__close {
+      top: -52px;
+      right: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-video-modal[open] {
+      animation: none;
+    }
+  }

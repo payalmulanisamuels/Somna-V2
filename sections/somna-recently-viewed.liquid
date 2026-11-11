@@ -132,7 +132,9 @@
         if (products.length < threshold) { root.hidden = true; return; }
         ul.innerHTML = products.map(function (p) {
           var img = p.featured_image ? p.featured_image.replace(/^\/\//, 'https://') : '';
-          var src = img ? img + (img.indexOf('?') > -1 ? '&' : '?') + 'width=600' : '';
+          // speed: the card image is ~120px wide, so ask for a matching file (240/360 for sharp screens)
+          var sized = function (w) { return img ? img + (img.indexOf('?') > -1 ? '&' : '?') + 'width=' + w : ''; };
+          var src = sized(360);
           var sub = p.selling_plan_groups && p.selling_plan_groups.length ? '<span class="somna-rv__sub">' + esc(labels.sub) + '</span>' : '';
           // lowest price: Subscribe & Save plan price, else the one-time sale price (regular minus the sale %)
           var hasPlans = !!(p.selling_plan_groups && p.selling_plan_groups.length);
@@ -145,7 +147,7 @@
           });
           return '<li class="somna-rv__card">' +
             '<a class="somna-rv__media" href="' + esc(p.url) + '" tabindex="-1" aria-hidden="true">' +
-              (src ? '<img src="' + esc(src) + '" alt="" width="600" height="468" loading="lazy" decoding="async">' : '') +
+              (src ? '<img src="' + esc(src) + '" srcset="' + esc(sized(240)) + ' 240w, ' + esc(src) + ' 360w, ' + esc(sized(600)) + ' 600w" sizes="(min-width: 750px) 150px, 120px" alt="" width="600" height="468" loading="lazy" decoding="async">' : '') +
             '</a>' +
             (ratings[p.handle] ? '<p class="somna-stars-line somna-rv__rating"><span class="somna-stars-line__stars" aria-hidden="true">★★★★★</span><span class="somna-stars-line__text">' + esc(ratings[p.handle]) + '</span></p>' : '') +
             '<h3 class="somna-rv__title"><a href="' + esc(p.url) + '">' + esc(p.title) + '</a></h3>' +

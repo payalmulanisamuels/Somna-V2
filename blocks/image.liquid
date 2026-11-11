@@ -37,7 +37,15 @@
   assign media_width_desktop = '100vw'
   assign media_width_mobile = '100vw'
   assign sizes = 'auto, (min-width: 750px) ' | append: media_width_desktop | append: ', ' | append: media_width_mobile
-  assign widths = '240, 352, 832, 1200, 1600, 1920, 2560, 3840'
+  assign widths = '96, 160, 240, 352, 832, 1200, 1600, 1920, 2560, 3840'
+
+  # Speed: small images (avatars, selfies, badges) load lazily, so the browser picks a file that
+  # fits their real size ("sizes: auto") instead of a 1920px file. Only a large image in the first
+  # section of the page loads straight away, since it may be the main image people see first.
+  assign image_loading = 'lazy'
+  if section.index == 1 and block_settings.width == 'fill'
+    assign image_loading = 'eager'
+  endif
 %}
 
 {% capture image %}
@@ -51,7 +59,8 @@
         height: block_settings.image.height,
         class: 'image-block__image border-style',
         style: image_border_style,
-        sizes: sizes
+        sizes: sizes,
+        loading: image_loading
     }}
   {%- else -%}
     <div class="placeholder-image border-style size-style" style="{{ image_border_style }}">
