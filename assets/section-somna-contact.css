@@ -1,0 +1,756 @@
+/* moved from sections/somna-contact.liquid {% stylesheet %} so it only loads on pages that use it (speed) */
+somna-contact {
+    display: block;
+    background: var(--scf-bg);
+    color: #000;
+  }
+
+  .somna-contact__grid {
+    display: grid;
+    gap: 28px;
+  }
+
+  .somna-contact__intro {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .somna-contact__eyebrow {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .somna-contact__heading {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.35;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .somna-contact__text {
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    line-height: 1.45;
+  }
+
+  .somna-contact__text p {
+    margin: 0;
+  }
+
+  .somna-contact__direct {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-top: 8px;
+    padding: 22px 24px;
+    border-radius: 12px;
+    background: var(--scf-card);
+  }
+
+  .somna-contact__direct-icon {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #0b0f1d;
+    color: var(--scf-accent);
+  }
+
+  .somna-contact__svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .somna-contact__svg--small {
+    width: 18px;
+    height: 18px;
+    flex: none;
+  }
+
+  .somna-contact__direct-body {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .somna-contact__direct-label {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .somna-contact__email {
+    color: #000;
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    overflow-wrap: anywhere;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+    transition: color 0.2s ease;
+  }
+
+  .somna-contact__email:hover {
+    color: #2c3a8c;
+  }
+
+  .somna-contact__response {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 0;
+    font-size: 0.9375rem;
+    letter-spacing: 0.04em;
+  }
+
+  .somna-contact__panel {
+    --somna-drip-h: 60px;
+    position: relative;
+    padding: 28px 20px 44px;
+    border-radius: 12px;
+    background: var(--scf-panel);
+    color: #fff;
+  }
+
+  .somna-contact__form-heading {
+    margin: 0 0 6px;
+    color: #f3feee;
+    font-family: var(--font-accent--family);
+    font-size: clamp(1.5rem, 2.2vw, 2rem);
+    font-weight: var(--font-accent--weight);
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .somna-contact__required-note {
+    margin: 0 0 18px;
+    color: #9a9a9a;
+    font-size: 0.875rem;
+  }
+
+  .somna-contact__req,
+  .somna-contact__required-note span {
+    color: var(--scf-accent);
+  }
+
+  .somna-contact__fields {
+    display: grid;
+    gap: 16px;
+  }
+
+  .somna-contact__field {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .somna-contact__field label {
+    color: #f3feee;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .somna-contact__field :is(input, select, textarea) {
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 16px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: #f3feee;
+    color: #000;
+    font: inherit;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    appearance: none;
+  }
+
+  .somna-contact__field textarea {
+    min-height: 150px;
+    resize: vertical;
+  }
+
+  .somna-contact__field :is(input, textarea)::placeholder {
+    color: #6b6f7a;
+  }
+
+  .somna-contact__field :is(input, select, textarea):hover {
+    border-color: var(--scf-accent);
+  }
+
+  .somna-contact__field :is(input, select, textarea):focus-visible {
+    border-color: var(--scf-accent);
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(175 189 248 / 0.45);
+  }
+
+  .somna-contact__field [aria-invalid='true'] {
+    border-color: #ff8a8a;
+  }
+
+  .somna-contact__select {
+    position: relative;
+  }
+
+  .somna-contact__select::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 18px;
+    width: 9px;
+    height: 9px;
+    border-right: 2px solid #000;
+    border-bottom: 2px solid #000;
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
+  }
+
+  .somna-contact__select select {
+    padding-right: 44px;
+    cursor: pointer;
+  }
+
+  .somna-contact__select select:invalid {
+    color: #6b6f7a;
+  }
+
+  .somna-contact__error {
+    margin: 0;
+    color: #ffb4b4;
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
+  }
+
+  .somna-contact__submit {
+    position: relative;
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 60px;
+    margin-top: 22px;
+    padding: 0 28px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--scf-accent);
+    color: #000;
+    cursor: pointer;
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+
+  .somna-contact__submit:hover:not(:disabled) {
+    background: #f3feee;
+    color: #0b0f1d;
+    transform: translateY(-2px);
+  }
+
+  .somna-contact__submit:focus-visible {
+    outline: 2px solid #f3feee;
+    outline-offset: 3px;
+  }
+
+  .somna-contact__submit:disabled {
+    cursor: progress;
+    opacity: 0.85;
+  }
+
+  .somna-contact__spinner {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: somna-contact-spin 0.7s linear infinite;
+  }
+
+  .somna-contact__submit.is-sending .somna-contact__spinner {
+    display: inline-block;
+  }
+
+  @keyframes somna-contact-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .somna-contact__notice {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+    padding: 16px 18px;
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    letter-spacing: 0.03em;
+    line-height: 1.45;
+  }
+
+  .somna-contact__notice:focus {
+    outline: none;
+  }
+
+  .somna-contact__notice p,
+  .somna-contact__notice ul {
+    margin: 0;
+  }
+
+  .somna-contact__notice ul {
+    padding-left: 18px;
+  }
+
+  .somna-contact__notice--success {
+    background: #f3feee;
+    color: #0b0f1d;
+  }
+
+  .somna-contact__notice--success .somna-contact__svg {
+    flex: none;
+    color: #3f7f3a;
+  }
+
+  .somna-contact__notice--error {
+    display: grid;
+    background: #ffe3e3;
+    color: #6d1010;
+  }
+
+
+  /* Quick links (Figma 4859:1636 / 1643): lavender buttons, the dark one inverted; icons are masks so they take the text colour */
+  .somna-contact__links {
+    display: grid;
+    gap: 28px;
+    max-width: 464px;
+    margin: 18px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .somna-contact__link {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    min-height: 50px;
+    padding: 0 22px 0 8px;
+    border: 2.437px solid #000;
+    border-radius: 8px;
+    background: var(--scf-accent);
+    color: #000;
+    box-shadow: 3.249px 4.061px 0 #000;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    text-decoration: none;
+    transition: translate 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .somna-contact__link--dark {
+    border-color: var(--scf-accent);
+    background: #000;
+    color: #f3feee;
+    box-shadow: 3.249px 4.061px 0 var(--scf-accent);
+  }
+
+  .somna-contact__link:hover {
+    translate: -2px -2px;
+    box-shadow: 5px 6px 0 #000;
+  }
+
+  .somna-contact__link--dark:hover {
+    box-shadow: 5px 6px 0 var(--scf-accent);
+  }
+
+  .somna-contact__link:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 3px;
+  }
+
+  .somna-contact__link-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 50px;
+    height: 40px;
+  }
+
+  /* all three link icons drawn the same size (the refresh PNG has no padding, so it looked bigger) */
+  .somna-contact__mask {
+    width: 30px;
+    height: 28px;
+    background: currentColor;
+    -webkit-mask: var(--scf-mask) center / contain no-repeat;
+    mask: var(--scf-mask) center / contain no-repeat;
+  }
+
+  .somna-contact__link-icon .somna-contact__svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .somna-contact__link-label {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .somna-contact__link-arrow {
+    flex: none;
+    font-size: 1.125rem;
+  }
+
+  /* "Card" style (Figma 4859:1355): headings in Boldonse with a lavender second part, the form in a mint card with
+     a black border and offset shadow, inputs with the same border/shadow, black Send button */
+  .somna-contact--card {
+    --somna-content-width: 1232px;
+  }
+
+  .somna-contact--card .somna-contact__heading {
+    font-size: clamp(2rem, 3.2vw, 2.874rem);
+    text-wrap: initial;
+  }
+
+  .somna-contact--card .somna-contact__heading em {
+    color: #98a3de;
+    font-style: normal;
+  }
+
+  .somna-contact--card .somna-contact__text {
+    font-size: 1.018rem;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+  }
+
+  /* the envelope sits in the same column as the link icons, the text lines up with the link labels */
+  .somna-contact--card .somna-contact__direct {
+    gap: 14px;
+    align-items: center;
+    margin-top: 22px;
+    padding: 0 0 0 10.4px;
+    border-radius: 0;
+    background: none;
+  }
+
+  .somna-contact--card .somna-contact__direct-icon {
+    width: 50px;
+    height: 44px;
+    border-radius: 0;
+    background: none;
+    color: #000;
+  }
+
+  .somna-contact--card .somna-contact__direct-icon .somna-contact__svg {
+    width: 40px;
+    height: 36px;
+  }
+
+  .somna-contact--card .somna-contact__direct-body {
+    gap: 2px;
+    font-size: 1.018rem;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+  }
+
+  .somna-contact--card .somna-contact__direct-label {
+    font-size: 0.875rem;
+  }
+
+  .somna-contact--card .somna-contact__email {
+    font-size: 1.125rem;
+  }
+
+  .somna-contact--card .somna-contact__response {
+    font-size: 0.9375rem;
+  }
+
+  .somna-contact--card .somna-contact__panel {
+    padding: 24px 20px 26px;
+    border: 2.437px solid #000;
+    border-radius: 21px;
+    background: var(--scf-card-bg, #f3feee);
+    color: #000;
+    box-shadow: 3.249px 4.061px 0 #000;
+  }
+
+  .somna-contact--card .somna-contact__form-heading {
+    margin-bottom: 20px;
+    color: #000;
+    font-size: clamp(1.75rem, 2.7vw, 2.418rem);
+  }
+
+  .somna-contact--card .somna-contact__form-heading em {
+    display: block;
+    color: #98a3de;
+    font-style: normal;
+  }
+
+  /* required fields keep their browser/JS checks; the Figma shows no asterisks */
+  .somna-contact--card :is(.somna-contact__required-note, .somna-contact__req) {
+    display: none;
+  }
+
+  .somna-contact--card .somna-contact__fields {
+    gap: 14px 24px;
+  }
+
+  .somna-contact--card .somna-contact__field {
+    gap: 4px;
+  }
+
+  .somna-contact--card .somna-contact__field label {
+    color: #000;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .somna-contact--card .somna-contact__field :is(input, select, textarea) {
+    min-height: 48px;
+    padding: 10px 12px;
+    border: 2.437px solid #000;
+    border-radius: 8px;
+    background: #f3feee;
+    box-shadow: 3.249px 4.061px 0 #000;
+    font-size: 0.9375rem;
+    letter-spacing: 0.08em;
+  }
+
+  .somna-contact--card .somna-contact__field textarea {
+    min-height: 92px;
+  }
+
+  .somna-contact--card .somna-contact__field :is(input, textarea)::placeholder,
+  .somna-contact--card .somna-contact__select select:invalid {
+    color: #000;
+  }
+
+  .somna-contact--card .somna-contact__field :is(input, select, textarea):hover,
+  .somna-contact--card .somna-contact__field :is(input, select, textarea):focus-visible {
+    border-color: #000;
+    box-shadow: 3.249px 4.061px 0 var(--scf-accent);
+  }
+
+  .somna-contact--card .somna-contact__field [aria-invalid='true'] {
+    border-color: #c62828;
+  }
+
+  .somna-contact--card .somna-contact__error {
+    color: #c62828;
+  }
+
+  .somna-contact--card .somna-contact__submit {
+    min-height: 58px;
+    margin-top: 18px;
+    border-radius: 15px;
+    background: #000;
+    color: #f2fdee;
+    filter: drop-shadow(0 4.8px 7.2px rgb(0 0 0 / 0.25));
+    font-size: clamp(1.125rem, 1.67vw, 1.5rem);
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  .somna-contact--card .somna-contact__submit:hover:not(:disabled) {
+    background: var(--scf-accent);
+    color: #000;
+  }
+
+  .somna-contact--card .somna-contact__submit:focus-visible {
+    outline-color: #000;
+  }
+
+  @media screen and (max-width: 749px) {
+    .somna-contact.somna-contact--card {
+      padding-block: 20px 6px !important;
+    }
+
+    /* Figma 4958:8603: two-line heading, compact 37px link buttons, the email card after the form */
+    .somna-contact--card .somna-contact__grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .somna-contact--card .somna-contact__intro {
+      display: contents;
+    }
+
+    .somna-contact--card .somna-contact__heading {
+      font-size: clamp(1.75rem, 9.6vw, 2.375rem);
+      line-height: 1.15;
+    }
+
+    .somna-contact--card .somna-contact__heading em {
+      display: block;
+    }
+
+    .somna-contact--card .somna-contact__text {
+      margin-top: 6px;
+      font-size: clamp(0.6875rem, 3.1vw, 0.8125rem);
+      letter-spacing: 0.04em;
+      line-height: 1.35;
+    }
+
+    .somna-contact__links {
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .somna-contact__link {
+      gap: 10px;
+      min-height: 38px;
+      padding: 0 14px 0 6px;
+      border-width: 2px;
+      box-shadow: 2.5px 3px 0 #000;
+      font-size: clamp(0.75rem, 3.4vw, 0.875rem);
+      letter-spacing: 0.06em;
+    }
+
+    .somna-contact__link--dark {
+      box-shadow: 2.5px 3px 0 var(--scf-accent);
+    }
+
+    .somna-contact__link-icon {
+      width: 40px;
+      height: 32px;
+    }
+
+    .somna-contact__link-icon .somna-contact__mask {
+      transform: scale(0.78);
+    }
+
+    .somna-contact__link-arrow {
+      font-size: 1rem;
+    }
+
+    .somna-contact--card .somna-contact__panel {
+      order: 5;
+      margin-top: 26px;
+    }
+
+    .somna-contact--card .somna-contact__direct {
+      order: 6;
+      gap: 10px;
+      margin-top: 22px;
+      padding: 8px 10px 8px 6px;
+      border: 1px solid #000;
+      border-radius: 6px;
+      background: var(--scf-accent);
+    }
+
+    .somna-contact--card .somna-contact__direct-icon {
+      width: 60px;
+      height: 60px;
+      flex: none;
+      border-radius: 50%;
+      background: #000;
+      color: #fff;
+    }
+
+    .somna-contact--card .somna-contact__direct-icon .somna-contact__mask--direct {
+      width: 38px;
+      height: 34px;
+    }
+
+    .somna-contact--card .somna-contact__direct-body {
+      font-size: 0.8125rem;
+      letter-spacing: 0.04em;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .somna-contact--card .somna-contact__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 601px);
+      gap: 48px;
+    }
+
+    .somna-contact--card .somna-contact__panel {
+      padding: 24px 26px 22px;
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .somna-contact__grid {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: clamp(32px, 4.5vw, 72px);
+      align-items: start;
+    }
+
+    .somna-contact__intro {
+      position: sticky;
+      top: 120px;
+    }
+
+    .somna-contact__eyebrow {
+      font-size: clamp(15px, 1.25vw, 18px);
+    }
+
+    .somna-contact__text {
+      font-size: clamp(1rem, 1.37vw, 1.2rem);
+    }
+
+    .somna-contact__panel {
+      padding: clamp(28px, 3vw, 44px) clamp(24px, 3vw, 44px) 64px;
+    }
+
+    .somna-contact__fields {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px 20px;
+    }
+
+    .somna-contact__field--full {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-contact__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .somna-contact__intro {
+      position: static;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .somna-contact__submit,
+    .somna-contact__field :is(input, select, textarea) {
+      transition: none;
+    }
+
+    .somna-contact__spinner {
+      animation-duration: 2s;
+    }
+  }
+
+  /* Figma 4859:1660 envelope (transparent PNG with its own padding) */
+  .somna-contact__mask--direct {
+    width: 50px;
+    height: 44px;
+  }
+
+  /* phones: tighter band like the other sections (the waves add their own space) */
+  @media screen and (max-width: 749px) {
+    .somna-contact {
+      padding-block: 20px 6px !important;
+    }
+  }
