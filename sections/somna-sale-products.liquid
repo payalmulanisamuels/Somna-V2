@@ -111,7 +111,7 @@
                   {%- assign d_sub = sub -%}{%- assign d_once = once -%}{%- assign d_full = full -%}{%- assign d_id = v.id -%}
                   {%- assign default_set = true -%}
                 {%- endif -%}
-                {%- capture chip -%}<button type="button" class="somna-sale-card__chip" aria-pressed="{% if n_sizes == 1 %}true{% else %}false{% endif %}" data-id="{{ v.id }}" data-sub="{{ sub | money }}" data-once="{{ once | money }}" data-full="{{ full | money }}"{% unless v.available %} disabled{% endunless %}>{{ size_label | escape }}</button>{%- endcapture -%}
+                {%- capture chip -%}<button type="button" class="somna-sale-card__chip" aria-pressed="{% if n_sizes == 1 %}true{% else %}false{% endif %}" data-id="{{ v.id }}" data-price-sub="{{ sub | money }}" data-price-once="{{ once | money }}" data-price-full="{{ full | money }}"{% unless v.available %} disabled{% endunless %}>{{ size_label | escape }}</button>{%- endcapture -%}
                 {%- assign chips = chips | append: chip -%}
               {%- endfor -%}
 
@@ -173,9 +173,9 @@
           card.querySelectorAll('.somna-sale-card__chip').forEach((chip) => chip.addEventListener('click', () => {
             card.querySelectorAll('.somna-sale-card__chip').forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
             const set = (sel, val) => card.querySelectorAll(sel).forEach((el) => { el.textContent = val; });
-            set('[data-sub]', chip.dataset.sub);
-            set('[data-once]', chip.dataset.once);
-            set('[data-full]', chip.dataset.full);
+            set('[data-sub]', chip.dataset.priceSub);
+            set('[data-once]', chip.dataset.priceOnce);
+            set('[data-full]', chip.dataset.priceFull);
             if (btn) btn.href = btn.dataset.base + '?variant=' + chip.dataset.id;
           }));
         });
