@@ -876,6 +876,18 @@
   html.somna-sticky-on .sgp-tab:is(.sgp-tab--bubble, .sgp-tab--pill) { bottom: calc(var(--somna-sticky-h, 0px) + 16px); }
   html.somna-sticky-on .sgp-tab--peek { bottom: var(--somna-sticky-h, 0px); }
 
+  /* "Choose your pack" sheet open: the gift tab drops behind the sheet and its dim backdrop (sticky ATC is z-index 30) */
+  html:has(.somna-sticky-atc.is-open) .sgp-tab { z-index: 29; }
+
+  /* mobile: smaller gift + speech bubble */
+  @media screen and (max-width: 749px) {
+    .sgp-tab--peek { left: 12px; gap: 4px; }
+    .sgp-tab--peek .sgp-tab__label { padding: 4px 8px; border-radius: 8px; font-size: 0.6875rem; }
+    .sgp-tab--peek .sgp-tab__label::after { bottom: -6px; left: 16px; width: 9px; height: 9px; }
+    .sgp-tab--peek .sgp-tab__icon { margin: 0 0 8px 8px; }
+    .sgp-tab--peek .sgp-tab__icon svg { width: 40px; height: 38px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .sgp-tab, .sgp-tab svg { animation: none !important; }
   }
