@@ -1,0 +1,115 @@
+{%- doc -%}
+  Somna V2 — sale offer cards (Black Friday sale page, Figma 5039:852 "60% OFF / 50% OFF / 3 FREE GIFTS").
+  One block per card: big offer line (Boldonse), title and a short line. Sticker cards: navy outline + hard shadow.
+  Desktop: cards in one row. Phones: stacked.
+{%- enddoc -%}
+{%- render 'somna-shared-styles' -%}
+{%- assign s = section.settings -%}
+<div
+  class="somna-sale-offers"
+  style="--sso-bg: {{ s.background_color }}; --sso-card: {{ s.card_color }}; --sso-fg: {{ s.text_color }}; --sso-pt: {{ s.padding_top }}px; --sso-pb: {{ s.padding_bottom }}px;"
+>
+  <div class="somna-container">
+    <ul class="somna-sale-offers__list" role="list">
+      {%- for block in section.blocks -%}
+        <li class="somna-sale-offers__card" {{ block.shopify_attributes }}>
+          {%- if block.settings.offer != blank -%}<p class="somna-sale-offers__offer">{{ block.settings.offer | escape }}</p>{%- endif -%}
+          {%- if block.settings.title != blank -%}<p class="somna-sale-offers__title">{{ block.settings.title | escape }}</p>{%- endif -%}
+          {%- if block.settings.text != blank -%}<p class="somna-sale-offers__text">{{ block.settings.text | escape }}</p>{%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% stylesheet %}
+  .somna-sale-offers {
+    --somna-content-width: 1305px;
+    background: var(--sso-bg);
+    color: var(--sso-fg);
+    padding-block: var(--sso-pt) var(--sso-pb);
+  }
+  .somna-sale-offers__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .somna-sale-offers__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 266px;
+    padding: 28px 20px;
+    border: 2.4px solid #000;
+    border-radius: 21px;
+    background: var(--sso-card);
+    box-shadow: 3.25px 4px 0 #000;
+    text-align: center;
+  }
+  .somna-sale-offers__offer {
+    margin: 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 48px;
+    line-height: 1.35;
+    text-transform: uppercase;
+    color: #0b0f1d;
+  }
+  .somna-sale-offers__title {
+    margin: 8px 0 0;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .somna-sale-offers__text {
+    max-width: 394px;
+    margin: 8px 0 0;
+    font-size: 20px;
+    line-height: 1.35;
+  }
+  @media screen and (max-width: 1199px) {
+    .somna-sale-offers__offer { font-size: 38px; }
+    .somna-sale-offers__title { font-size: 26px; }
+    .somna-sale-offers__text { font-size: 17px; }
+  }
+  @media screen and (max-width: 749px) {
+    .somna-sale-offers { padding-block: calc(var(--sso-pt) * 0.5) calc(var(--sso-pb) * 0.5); }
+    .somna-sale-offers__list { grid-template-columns: 1fr; gap: 16px; }
+    .somna-sale-offers__card { min-height: 0; padding: 22px 16px; border-width: 2px; border-radius: 16px; box-shadow: 2.4px 3px 0 #000; }
+    .somna-sale-offers__offer { font-size: 32px; }
+    .somna-sale-offers__title { margin-top: 4px; font-size: 22px; }
+    .somna-sale-offers__text { margin-top: 4px; font-size: 15px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna sale offers",
+  "tag": "section",
+  "class": "section-somna-sale-offers",
+  "settings": [
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#afbdf8" },
+    { "type": "color", "id": "card_color", "label": "Card", "default": "#afbdf8" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 24 }
+  ],
+  "blocks": [
+    {
+      "type": "offer",
+      "name": "Offer card",
+      "settings": [
+        { "type": "text", "id": "offer", "label": "Offer", "default": "60% off" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Subscribe & Save" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Every product. Skip, pause or cancel anytime." }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [{ "name": "Somna sale offers", "blocks": [{ "type": "offer" }, { "type": "offer" }, { "type": "offer" }] }]
+}
+{% endschema %}

@@ -1,0 +1,487 @@
+{%- doc -%}
+  Somna V2 — "Shop everything" product grid for the Black Friday sale page (Figma 5039:852).
+  Badge + heading, filter pills (All / Strips / Tape / Bundles, from each card's Filter setting) and one card per
+  Product block: picture, name, short line, Subscribe & Save and One-time prices, size chips and a Shop button.
+  Prices come from the product: Subscribe & Save = the lowest selling plan price of the chosen size; One-time = the
+  price less the one-time sale % (theme setting, snippets/somna-sale); struck = compare-at price, else the full price.
+  Tapping a size chip updates both prices and the button link (?variant=). A Quiz block adds the "Not sure which?" card.
+{%- enddoc -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  capture once_off
+    render 'somna-sale', get: 'once_off'
+  endcapture
+  assign once_off = once_off | strip | plus: 0
+  assign once_factor = 100 | minus: once_off | times: 1.0 | divided_by: 100
+
+  assign n_all = 0
+  assign n_strips = 0
+  assign n_tape = 0
+  assign n_bundles = 0
+  for block in section.blocks
+    if block.type == 'product' and block.settings.product != blank
+      assign n_all = n_all | plus: 1
+      case block.settings.filter
+        when 'strips'
+          assign n_strips = n_strips | plus: 1
+        when 'tape'
+          assign n_tape = n_tape | plus: 1
+        when 'bundles'
+          assign n_bundles = n_bundles | plus: 1
+      endcase
+    endif
+  endfor
+-%}
+<somna-sale-products
+  {% if s.anchor != blank %}id="{{ s.anchor | handleize }}"{% endif %}
+  class="somna-sale-products"
+  style="--ssp-bg: {{ s.background_color }}; --ssp-pt: {{ s.padding_top }}px; --ssp-pb: {{ s.padding_bottom }}px;"
+>
+  <div class="somna-container">
+    <div class="somna-sale-products__head">
+      <div class="somna-sale-products__intro">
+        {%- if s.badge != blank -%}<p class="somna-sale-badge">{{ s.badge | escape }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="somna-sale-products__heading somna-display">{{ s.heading | remove: '<p>' | remove: '</p>' }}</h2>{%- endif -%}
+      </div>
+      {%- if s.show_filters and n_all > 1 -%}
+        <div class="somna-sale-products__filters" role="group" aria-label="{{ s.filters_label | escape }}">
+          <button type="button" class="somna-sale-products__filter" data-filter="all" aria-pressed="true">{{ s.all_label | escape }} ({{ n_all }})</button>
+          {%- if n_strips > 0 -%}<button type="button" class="somna-sale-products__filter" data-filter="strips" aria-pressed="false">{{ s.strips_label | escape }}</button>{%- endif -%}
+          {%- if n_tape > 0 -%}<button type="button" class="somna-sale-products__filter" data-filter="tape" aria-pressed="false">{{ s.tape_label | escape }}</button>{%- endif -%}
+          {%- if n_bundles > 0 -%}<button type="button" class="somna-sale-products__filter" data-filter="bundles" aria-pressed="false">{{ s.bundles_label | escape }}</button>{%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <ul class="somna-sale-products__grid" role="list">
+      {%- for block in section.blocks -%}
+        {%- assign b = block.settings -%}
+        {%- if block.type == 'product' -%}
+          {%- assign p = b.product -%}
+          {%- if p == blank -%}{%- continue -%}{%- endif -%}
+          {%- liquid
+            # one variant per size: the first colour's variants (or every variant when there is one option)
+            assign first_color = ''
+            assign size_index = 0
+            if p.options.size > 1
+              assign first_color = p.variants.first.option1
+              assign size_index = 1
+            endif
+            assign pic = b.image | default: p.metafields.custom.card_image.value | default: p.featured_image
+          -%}
+          <li class="somna-sale-products__item" data-cat="{{ b.filter }}" {{ block.shopify_attributes }}>
+            <article class="somna-sale-card" data-sale-card>
+              <a class="somna-sale-card__media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
+                {%- if pic != blank -%}
+                  {{ pic | image_url: width: 900 | image_tag: widths: '380, 600, 760, 900', sizes: '(min-width: 1300px) 377px, (min-width: 990px) 30vw, (min-width: 750px) 45vw, 92vw', loading: 'lazy', alt: p.title }}
+                {%- endif -%}
+              </a>
+              <h3 class="somna-sale-card__title"><a href="{{ p.url }}">{{ b.title | default: p.title | escape }}</a></h3>
+              {%- if b.text != blank -%}<p class="somna-sale-card__text">{{ b.text | escape }}</p>{%- endif -%}
+
+              {%- assign chips = '' -%}
+              {%- assign n_sizes = 0 -%}
+              {%- assign default_set = false -%}
+              {%- for v in p.variants -%}
+                {%- if first_color != '' and v.option1 != first_color -%}{%- continue -%}{%- endif -%}
+                {%- liquid
+                  assign sub = nil
+                  for a in v.selling_plan_allocations
+                    if sub == nil or a.price < sub
+                      assign sub = a.price
+                    endif
+                  endfor
+                  if sub == nil
+                    assign sub = v.price
+                  endif
+                  assign once = v.price | times: once_factor | round
+                  assign full = v.compare_at_price | default: 0
+                  if full <= v.price
+                    assign full = v.price
+                  endif
+                  if size_index == 1
+                    assign size_label = v.option2
+                  else
+                    assign size_label = v.option1
+                  endif
+                  assign n_sizes = n_sizes | plus: 1
+                -%}
+                {%- if default_set == false -%}
+                  {%- assign d_sub = sub -%}{%- assign d_once = once -%}{%- assign d_full = full -%}{%- assign d_id = v.id -%}
+                  {%- assign default_set = true -%}
+                {%- endif -%}
+                {%- capture chip -%}<button type="button" class="somna-sale-card__chip" aria-pressed="{% if n_sizes == 1 %}true{% else %}false{% endif %}" data-id="{{ v.id }}" data-sub="{{ sub | money }}" data-once="{{ once | money }}" data-full="{{ full | money }}"{% unless v.available %} disabled{% endunless %}>{{ size_label | escape }}</button>{%- endcapture -%}
+                {%- assign chips = chips | append: chip -%}
+              {%- endfor -%}
+
+              <div class="somna-sale-card__prices">
+                <div class="somna-sale-card__price somna-sale-card__price--sub">
+                  <span class="somna-sale-card__price-label">{{ s.sub_label | escape }}</span>
+                  <span class="somna-sale-card__price-row"><b data-sub>{{ d_sub | money }}</b> {% if d_full > d_sub %}<s data-full>{{ d_full | money }}</s>{% endif %}</span>
+                </div>
+                <div class="somna-sale-card__price somna-sale-card__price--once">
+                  <span class="somna-sale-card__price-label">{{ s.once_label | escape }}</span>
+                  <span class="somna-sale-card__price-row"><b data-once>{{ d_once | money }}</b> {% if d_full > d_once %}<s data-full>{{ d_full | money }}</s>{% endif %}</span>
+                </div>
+              </div>
+
+              <div class="somna-sale-card__meta">
+                {%- if n_sizes > 1 -%}
+                  <div class="somna-sale-card__chips" role="group" aria-label="{{ s.size_label | escape }}">{{ chips }}</div>
+                {%- endif -%}
+                {%- if s.gifts_note != blank -%}<p class="somna-sale-card__gifts"><span aria-hidden="true">🎁</span> {{ s.gifts_note | escape }}</p>{%- endif -%}
+              </div>
+
+              <a class="somna-sale-card__btn" href="{{ p.url }}?variant={{ d_id }}" data-base="{{ p.url }}">{{ b.button_label | default: s.button_label | escape }}</a>
+            </article>
+          </li>
+        {%- elsif block.type == 'quiz' -%}
+          <li class="somna-sale-products__item somna-sale-products__item--quiz" data-cat="quiz" {{ block.shopify_attributes }}>
+            <div class="somna-sale-quiz">
+              {%- if b.image != blank -%}
+                {{ b.image | image_url: width: 420 | image_tag: widths: '204, 408', sizes: '204px', loading: 'lazy', class: 'somna-sale-quiz__img', alt: '' }}
+              {%- endif -%}
+              {%- if b.eyebrow != blank -%}<p class="somna-sale-quiz__eyebrow">{{ b.eyebrow | escape }}</p>{%- endif -%}
+              {%- if b.heading != blank -%}<p class="somna-sale-quiz__heading">{{ b.heading | remove: '<p>' | remove: '</p>' }}</p>{%- endif -%}
+              {%- if b.text != blank -%}<p class="somna-sale-quiz__text">{{ b.text | escape }}</p>{%- endif -%}
+              {%- if b.button_label != blank -%}<a class="somna-sale-quiz__btn" href="{{ b.button_link | default: '/pages/quiz' }}">{{ b.button_label | escape }}</a>{%- endif -%}
+            </div>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  </div>
+</somna-sale-products>
+
+<script>
+  if (!customElements.get('somna-sale-products')) {
+    customElements.define('somna-sale-products', class extends HTMLElement {
+      connectedCallback() {
+        // filter pills: show the cards of one group (the quiz card always stays)
+        const pills = this.querySelectorAll('[data-filter]');
+        pills.forEach((pill) => pill.addEventListener('click', () => {
+          const f = pill.dataset.filter;
+          pills.forEach((p) => p.setAttribute('aria-pressed', String(p === pill)));
+          this.querySelectorAll('.somna-sale-products__item').forEach((li) => {
+            li.hidden = !(f === 'all' || li.dataset.cat === f || li.dataset.cat === 'quiz');
+          });
+        }));
+        // size chips: update the prices and the button link
+        this.querySelectorAll('[data-sale-card]').forEach((card) => {
+          const btn = card.querySelector('.somna-sale-card__btn');
+          card.querySelectorAll('.somna-sale-card__chip').forEach((chip) => chip.addEventListener('click', () => {
+            card.querySelectorAll('.somna-sale-card__chip').forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+            const set = (sel, val) => card.querySelectorAll(sel).forEach((el) => { el.textContent = val; });
+            set('[data-sub]', chip.dataset.sub);
+            set('[data-once]', chip.dataset.once);
+            set('[data-full]', chip.dataset.full);
+            if (btn) btn.href = btn.dataset.base + '?variant=' + chip.dataset.id;
+          }));
+        });
+      }
+    });
+  }
+</script>
+
+{% stylesheet %}
+  .somna-sale-products {
+    --somna-content-width: 1305px;
+    display: block;
+    scroll-margin-top: 80px;
+    background: var(--ssp-bg);
+    color: #000;
+    padding-block: var(--ssp-pt) var(--ssp-pb);
+  }
+  .somna-sale-badge {
+    display: inline-block;
+    margin: 0 0 12px;
+    padding: 7px 14px;
+    border: 1.5px solid #000;
+    border-radius: 8px;
+    background: #afbdf8;
+    box-shadow: 2.4px 3px 0 #000;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.5;
+    color: #000;
+    text-transform: uppercase;
+    rotate: -2deg;
+  }
+  .somna-sale-products__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+  .somna-sale-products__heading {
+    font-size: 64px;
+    line-height: 1.35;
+    color: #000;
+  }
+  .somna-sale-products__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    padding-bottom: 14px;
+  }
+  .somna-sale-products__filter {
+    min-height: 38px;
+    padding: 0 16px;
+    border: 1px solid #000;
+    border-radius: 24px;
+    background: #f3feee;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: #000;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .somna-sale-products__filter[aria-pressed='true'] { border-color: #afbdf8; background: #afbdf8; }
+  .somna-sale-products__filter:hover { background: #afbdf8; }
+  .somna-sale-products__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .somna-sale-products__item[hidden] { display: none; }
+
+  .somna-sale-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 19px 19px 38px;
+    border: 1.8px solid #000;
+    border-radius: 16px;
+    background: #f3feee;
+    box-shadow: 2.4px 3px 0 #000;
+  }
+  .somna-sale-card__media {
+    display: block;
+    aspect-ratio: 377 / 351;
+    border-radius: 17px;
+    overflow: hidden;
+    background: #0b0f1d;
+  }
+  .somna-sale-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .somna-sale-card:hover .somna-sale-card__media img { transform: scale(1.04); }
+  .somna-sale-card__title {
+    margin: 30px 0 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 26.75px;
+    line-height: 1.35;
+    color: #000;
+  }
+  .somna-sale-card__title a { color: inherit; text-decoration: none; }
+  .somna-sale-card__text {
+    margin: 4px 0 0;
+    font-size: 14.86px;
+    line-height: 1.35;
+  }
+  .somna-sale-card__prices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px;
+    margin-top: 17px;
+  }
+  .somna-sale-card__price {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 63px;
+    padding: 6px 8px;
+    border: 1.5px solid #000;
+    border-radius: 6.5px;
+    text-align: center;
+  }
+  .somna-sale-card__price--sub { background: rgb(175 189 248 / 0.58); }
+  .somna-sale-card__price--once { background: #f3feee; }
+  .somna-sale-card__price-label {
+    font-size: 13.93px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0.08em;
+  }
+  .somna-sale-card__price-row { line-height: 1.3; letter-spacing: 0.045em; }
+  .somna-sale-card__price-row b { font-size: 20.58px; font-weight: 700; }
+  .somna-sale-card__price-row s { font-size: 11.64px; font-weight: 500; }
+  .somna-sale-card__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 28px;
+    margin-top: 22px;
+  }
+  .somna-sale-card__chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .somna-sale-card__chip {
+    min-height: 28px;
+    padding: 0 10px;
+    border: 0.75px solid #000;
+    border-radius: 17.5px;
+    background: #f3feee;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 500;
+    color: #000;
+    cursor: pointer;
+  }
+  .somna-sale-card__chip[aria-pressed='true'] { background: #afbdf8; }
+  .somna-sale-card__chip:disabled { opacity: 0.4; cursor: not-allowed; }
+  .somna-sale-card__gifts {
+    margin: 0 0 0 auto;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.35;
+    white-space: nowrap;
+  }
+  .somna-sale-card__btn,
+  .somna-sale-quiz__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50.5px;
+    margin-top: auto;
+    border-radius: 14.3px;
+    background: #afbdf8;
+    box-shadow: 0 4.2px 6.3px rgb(0 0 0 / 0.22);
+    font-size: 14.8px;
+    font-weight: 700;
+    color: #000;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .somna-sale-card__meta + .somna-sale-card__btn,
+  .somna-sale-card__prices + .somna-sale-card__btn { margin-top: 20px; }
+  .somna-sale-card__btn:hover,
+  .somna-sale-quiz__btn:hover { transform: translateY(-2px); box-shadow: 0 7px 12px rgb(0 0 0 / 0.25); }
+
+  .somna-sale-quiz {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 24px 15px;
+    text-align: center;
+  }
+  .somna-sale-quiz__img { width: 204px; height: auto; margin-bottom: 26px; }
+  .somna-sale-quiz__eyebrow { margin: 0; font-size: 19.3px; font-weight: 700; line-height: 1.35; text-transform: uppercase; }
+  .somna-sale-quiz__heading {
+    margin: 4px 0 0;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 26.75px;
+    line-height: 1.1;
+    color: #98a3de;
+  }
+  .somna-sale-quiz__heading em { font-style: normal; color: #000; }
+  .somna-sale-quiz__text { margin: 18px 0 0; font-size: 14.9px; font-weight: 700; line-height: 1.18; }
+  .somna-sale-quiz__btn {
+    width: 100%;
+    max-width: 378px;
+    margin-top: 20px;
+    background: #000;
+    color: #fff;
+  }
+
+  @media screen and (max-width: 1299px) {
+    .somna-sale-products__heading { font-size: 52px; }
+    .somna-sale-card__gifts { font-size: 12.5px; }
+  }
+  @media screen and (max-width: 989px) {
+    .somna-sale-products__head { flex-direction: column; align-items: flex-start; margin-bottom: 32px; }
+    .somna-sale-products__filters { padding-bottom: 0; }
+    .somna-sale-products__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  }
+  @media screen and (max-width: 749px) {
+    .somna-sale-products { padding-block: calc(var(--ssp-pt) * 0.6) calc(var(--ssp-pb) * 0.6); }
+    .somna-sale-badge { font-size: 14px; padding: 5px 10px; }
+    .somna-sale-products__heading { font-size: 32px; }
+    .somna-sale-products__head { gap: 16px; margin-bottom: 24px; }
+    .somna-sale-products__filter { min-height: 34px; padding: 0 14px; font-size: 13px; }
+    .somna-sale-products__grid { grid-template-columns: 1fr; gap: 20px; }
+    .somna-sale-card { padding: 14px 14px 22px; border-radius: 14px; }
+    .somna-sale-card__title { margin-top: 18px; font-size: 22px; }
+    .somna-sale-card__text { font-size: 14px; }
+    .somna-sale-card__price-label { font-size: 12px; letter-spacing: 0.05em; }
+    .somna-sale-card__price-row b { font-size: 18px; }
+    .somna-sale-card__meta { margin-top: 16px; }
+    .somna-sale-card__meta + .somna-sale-card__btn,
+    .somna-sale-card__prices + .somna-sale-card__btn { margin-top: 16px; }
+    .somna-sale-card__btn, .somna-sale-quiz__btn { min-height: 48px; }
+    .somna-sale-quiz { padding: 8px 0 0; }
+    .somna-sale-quiz__img { width: 150px; margin-bottom: 16px; }
+    .somna-sale-quiz__heading { font-size: 22px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna sale products",
+  "tag": "section",
+  "class": "section-somna-sale-products",
+  "settings": [
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#f3feee" },
+    { "type": "text", "id": "anchor", "label": "Link name", "info": "Buttons can jump here with #name, e.g. /pages/black-friday-sale#shop-everything", "default": "shop-everything" },
+    { "type": "text", "id": "badge", "label": "Badge", "default": "Pre-Black Friday sale" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Shop everything</p>" },
+    { "type": "header", "content": "Filters" },
+    { "type": "checkbox", "id": "show_filters", "label": "Show filters", "default": true },
+    { "type": "text", "id": "filters_label", "label": "Filters name (screen readers)", "default": "Filter products" },
+    { "type": "text", "id": "all_label", "label": "All", "default": "All" },
+    { "type": "text", "id": "strips_label", "label": "Strips", "default": "Strips" },
+    { "type": "text", "id": "tape_label", "label": "Tape", "default": "Tape" },
+    { "type": "text", "id": "bundles_label", "label": "Bundles", "default": "Bundles" },
+    { "type": "header", "content": "Cards" },
+    { "type": "text", "id": "sub_label", "label": "Subscribe price label", "default": "Subscribe & Save" },
+    { "type": "text", "id": "once_label", "label": "One-time price label", "default": "One-time:" },
+    { "type": "text", "id": "size_label", "label": "Size chips name (screen readers)", "default": "Choose a size" },
+    { "type": "text", "id": "gifts_note", "label": "Gifts note", "default": "3 gifts on 2+" },
+    { "type": "text", "id": "button_label", "label": "Button", "default": "Shop now →" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "select", "id": "filter", "label": "Filter", "options": [{ "value": "strips", "label": "Strips" }, { "value": "tape", "label": "Tape" }, { "value": "bundles", "label": "Bundles" }], "default": "strips" },
+        { "type": "image_picker", "id": "image", "label": "Picture", "info": "Leave empty to use the product's Card image, else its main photo." },
+        { "type": "text", "id": "title", "label": "Name", "info": "Leave empty to use the product title." },
+        { "type": "text", "id": "text", "label": "Short line" },
+        { "type": "text", "id": "button_label", "label": "Button", "info": "Leave empty to use the section's button text." }
+      ]
+    },
+    {
+      "type": "quiz",
+      "name": "Quiz card",
+      "limit": 1,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Picture" },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Not sure which?" },
+        { "type": "richtext", "id": "heading", "label": "Heading", "info": "Italic words show in black.", "default": "<p>Take the <em>60-second</em> sleep quiz.</p>" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Tell us what keeps you up. We'll pick for you." },
+        { "type": "text", "id": "button_label", "label": "Button", "default": "Take the quiz →" },
+        { "type": "url", "id": "button_link", "label": "Button link" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Somna sale products", "blocks": [{ "type": "product" }, { "type": "product" }, { "type": "quiz" }] }]
+}
+{% endschema %}
