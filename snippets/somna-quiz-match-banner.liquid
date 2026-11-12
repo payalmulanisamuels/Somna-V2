@@ -5,6 +5,7 @@
   problem back), plus an optional chip from Q6, "Retake quiz" and a close ×. Missing answers → neutral fallback line.
   Rendered by sections/somna-pdp-hero.liquid. No answers are stored; closing it only hides it for this visit.
   @param {object} product
+  @param {number} [pad_top] - the hero's top padding (px), so the banner sits with equal space above and below
 {%- enddoc -%}
 {%- liquid
   assign qb_name = product.title
@@ -21,7 +22,7 @@
   endif
   assign qb_quiz = pages['quiz'].url | default: '/pages/quiz'
 -%}
-<div class="somna-qmatch somna-container" data-somna-qmatch data-kind="{{ qb_kind }}" data-name="{{ qb_name | escape }}" hidden>
+<div class="somna-qmatch somna-container" style="--qm-pad: {{ pad_top | default: 48 }}px;" data-somna-qmatch data-kind="{{ qb_kind }}" data-name="{{ qb_name | escape }}" hidden>
   <div class="somna-qmatch__box" role="status">
     <span class="somna-qmatch__tick" aria-hidden="true">
       <svg viewBox="0 0 20 20" width="12" height="12"><path d="M5 10.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -80,7 +81,12 @@
 </script>
 <style>
   /* same width as the product hero below it */
-  .somna-qmatch { --somna-content-width: 1330px; margin-bottom: 16px; }
+  /* equal space above and below: the hero's top padding is pulled back to the same gap as below
+     (below leaves room for the product photo's "Up to 60% off" sticker, which sits above the photo) */
+  .somna-qmatch { --somna-content-width: 1330px; --qm-gap: 28px; margin-top: calc(var(--qm-gap) - var(--qm-pad, 48px)); margin-bottom: var(--qm-gap); }
+  @media screen and (max-width: 749px) {
+    .somna-qmatch { --qm-gap: 20px; --qm-pad: 28px !important; }
+  }
   .somna-qmatch[hidden] { display: none; }
   .somna-qmatch__box {
     position: relative;
@@ -139,7 +145,7 @@
   .somna-qmatch__x:hover { background: rgb(11 15 29 / 0.08); }
   .somna-qmatch__x:focus-visible, .somna-qmatch__retake:focus-visible { outline: 2px solid #3d52d5; outline-offset: 2px; }
   @media screen and (min-width: 990px) {
-    .somna-qmatch { --somna-content-width: 1355px; margin-bottom: 24px; }
+    .somna-qmatch { --somna-content-width: 1355px; --qm-gap: 40px; }
     .somna-qmatch__box { align-items: center; padding: 14px 48px 14px 16px; }
     .somna-qmatch__body { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
     .somna-qmatch__h { font-size: 1rem; }
