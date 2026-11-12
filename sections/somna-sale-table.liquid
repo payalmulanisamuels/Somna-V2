@@ -82,7 +82,7 @@
                 <td class="is-center">{{ once | money }}</td>
                 <td class="is-center">
                   {%- if bags >= s.gift_min and s.gifts_note != blank -%}
-                    <span class="somna-sale-table__gift"><span aria-hidden="true">🎁</span> {{ s.gifts_note | escape }}</span>
+                    <span class="somna-sale-table__gift">{% render 'somna-gift-glyph' %} {{ s.gifts_note | escape }}</span>
                   {%- else -%}
                     <span class="somna-sale-table__none" aria-label="{{ s.no_gifts_label | escape }}"></span>
                   {%- endif -%}
@@ -164,7 +164,8 @@
   .somna-sale-table__table td.is-center { text-align: center; white-space: nowrap; }
   .somna-sale-table__table td.is-hi { background: rgb(175 189 248 / 0.26); }
   .somna-sale-table__group + .somna-sale-table__group tr:first-child > * { border-top: 1px solid #000; }
-  .somna-sale-table__gift { font-size: 14px; font-weight: 700; letter-spacing: 0; white-space: nowrap; }
+  .somna-sale-table__gift { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; letter-spacing: 0; white-space: nowrap; }
+  .somna-sale-table__gift .somna-gift-glyph { flex: none; width: 20px; height: 20px; }
   .somna-sale-table__none { display: inline-block; width: 53px; border-top: 1px solid #000; vertical-align: middle; }
 
   @media screen and (max-width: 1199px) {

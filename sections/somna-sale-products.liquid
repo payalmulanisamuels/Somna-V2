@@ -130,7 +130,7 @@
                 {%- if n_sizes > 1 -%}
                   <div class="somna-sale-card__chips" role="group" aria-label="{{ s.size_label | escape }}">{{ chips }}</div>
                 {%- endif -%}
-                {%- if s.gifts_note != blank -%}<p class="somna-sale-card__gifts"><span aria-hidden="true">🎁</span> {{ s.gifts_note | escape }}</p>{%- endif -%}
+                {%- if s.gifts_note != blank -%}<p class="somna-sale-card__gifts">{% render 'somna-gift-glyph' %} {{ s.gifts_note | escape }}</p>{%- endif -%}
               </div>
 
               <a class="somna-sale-card__btn" href="{{ p.url }}?variant={{ d_id }}" data-base="{{ p.url }}">{{ b.button_label | default: s.button_label | escape }}</a>
@@ -325,6 +325,7 @@
     min-height: 28px;
     margin-top: 22px;
   }
+  .somna-sale-card__gifts .somna-gift-glyph { flex: none; width: 20px; height: 20px; }
   .somna-sale-card__chips { display: flex; flex-wrap: wrap; gap: 5px; }
   .somna-sale-card__chip {
     min-height: 28px;
@@ -341,6 +342,9 @@
   .somna-sale-card__chip[aria-pressed='true'] { background: #afbdf8; }
   .somna-sale-card__chip:disabled { opacity: 0.4; cursor: not-allowed; }
   .somna-sale-card__gifts {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     margin: 0 0 0 auto;
     font-size: 14px;
     font-weight: 700;
