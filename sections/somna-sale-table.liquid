@@ -21,6 +21,7 @@
 
     <div class="somna-sale-table__card" tabindex="0" role="region" aria-label="{{ s.heading | strip_html | escape }}">
       <table class="somna-sale-table__table">
+        <colgroup><col style="width: 28%"><col style="width: 20.5%"><col style="width: 19.6%"><col style="width: 16.2%"><col style="width: 15.7%"></colgroup>
         <thead>
           <tr>
             <th scope="col">{{ s.col_product | escape }}</th>
@@ -124,6 +125,7 @@
   }
   .somna-sale-table__table {
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
     font-size: 20px;
     line-height: 1.3;
@@ -159,7 +161,7 @@
     font-weight: 700;
     text-align: left;
   }
-  .somna-sale-table__table td.is-center { text-align: center; }
+  .somna-sale-table__table td.is-center { text-align: center; white-space: nowrap; }
   .somna-sale-table__table td.is-hi { background: rgb(175 189 248 / 0.26); }
   .somna-sale-table__group + .somna-sale-table__group tr:first-child > * { border-top: 1px solid #000; }
   .somna-sale-table__gift { font-size: 14px; font-weight: 700; letter-spacing: 0; white-space: nowrap; }
@@ -167,7 +169,7 @@
 
   @media screen and (max-width: 1199px) {
     .somna-sale-table__heading { font-size: 42px; }
-    .somna-sale-table__table { font-size: 17px; }
+    .somna-sale-table__table { font-size: 16px; letter-spacing: 0.04em; }
     .somna-sale-table__table thead th { font-size: 22px; }
     .somna-sale-table__table thead th.is-hi, .somna-sale-table__table thead th:nth-child(4) { font-size: 17px; }
   }
@@ -176,7 +178,7 @@
     .somna-sale-table__eyebrow { font-size: 14px; }
     .somna-sale-table__heading { margin-bottom: 18px; font-size: 28px; }
     .somna-sale-table__card { overflow-x: auto; overscroll-behavior-x: contain; border-radius: 14px; }
-    .somna-sale-table__table { min-width: 620px; font-size: 14px; letter-spacing: 0.03em; }
+    .somna-sale-table__table { min-width: 640px; font-size: 14px; letter-spacing: 0.03em; }
     .somna-sale-table__table thead th { height: 60px; padding: 6px 12px; font-size: 15px; }
     .somna-sale-table__table thead th.is-hi, .somna-sale-table__table thead th:nth-child(4) { font-size: 13px; }
     .somna-sale-table__table tbody th, .somna-sale-table__table tbody td { height: 58px; padding: 6px 12px; }
