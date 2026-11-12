@@ -102,7 +102,7 @@
                 "heading": {
                   "type": "text",
                   "settings": {
-                    "text": "<h1>Up to <em>60% off</em> everything.</h1>",
+                    "text": "<h1>Up to <em>60% off</em><br>everything.</h1>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
