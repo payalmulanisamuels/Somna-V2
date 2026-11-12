@@ -173,11 +173,16 @@
     .somna-sale-table__table thead th { font-size: 22px; }
     .somna-sale-table__table thead th.is-hi, .somna-sale-table__table thead th:nth-child(4) { font-size: 17px; }
   }
+  /* tablets and phones: the table keeps its columns and scrolls sideways inside its card */
+  @media screen and (max-width: 989px) {
+    .somna-sale-table__card { overflow-x: auto; overscroll-behavior-x: contain; }
+    .somna-sale-table__table { min-width: 760px; }
+  }
   @media screen and (max-width: 749px) {
     .somna-sale-table { padding-block: calc(var(--sst-pt) * 0.6) calc(var(--sst-pb) * 0.6); }
     .somna-sale-table__eyebrow { font-size: 14px; }
     .somna-sale-table__heading { margin-bottom: 18px; font-size: 28px; }
-    .somna-sale-table__card { overflow-x: auto; overscroll-behavior-x: contain; border-radius: 14px; }
+    .somna-sale-table__card { border-radius: 14px; }
     .somna-sale-table__table { min-width: 640px; font-size: 14px; letter-spacing: 0.03em; }
     .somna-sale-table__table thead th { height: 60px; padding: 6px 12px; font-size: 15px; }
     .somna-sale-table__table thead th.is-hi, .somna-sale-table__table thead th:nth-child(4) { font-size: 13px; }
