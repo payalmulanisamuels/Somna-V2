@@ -57,7 +57,7 @@
                 "align_baseline": false,
                 "horizontal_alignment_flex_direction_column": "flex-start",
                 "vertical_alignment_flex_direction_column": "center",
-                "gap": 10,
+                "gap": 24,
                 "width": "fill",
                 "custom_width": 100,
                 "width_mobile": "fill",
@@ -102,7 +102,7 @@
                 "heading": {
                   "type": "text",
                   "settings": {
-                    "text": "<h1>Up to <em>60% off.</em></h1>",
+                    "text": "<h1>Up to <em>60% off</em> everything.</h1>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -176,13 +176,19 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {}
+                },
+                "sale_line": {
+                  "type": "custom-liquid",
+                  "settings": {
+                    "custom_liquid": "{%- render 'somna-sale-hero-line', handle: 'nasal-strips' -%}"
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
                 "badge",
                 "heading",
-                "subheading",
-                "description"
+                "sale_line"
               ]
             },
             "tiles": {
@@ -940,11 +946,7 @@
             }
           },
           "block_order": [
-            "intro",
-            "tiles",
-            "cta",
-            "review",
-            "join"
+            "intro"
           ]
         }
       },
@@ -966,14 +968,14 @@
         "content_direction": "column",
         "vertical_on_mobile": true,
         "horizontal_alignment": "space-between",
-        "vertical_alignment": "flex-end",
+        "vertical_alignment": "center",
         "align_baseline": true,
         "horizontal_alignment_flex_direction_column": "flex-start",
         "vertical_alignment_flex_direction_column": "center",
         "gap": 0,
         "section_width": "page-width",
-        "section_height": "full-screen",
-        "section_height_custom": 50,
+        "section_height": "custom",
+        "section_height_custom": 78,
         "background_color": "#0b0f1d",
         "toggle_overlay": true,
         "overlay_color": "#0b0f1d",

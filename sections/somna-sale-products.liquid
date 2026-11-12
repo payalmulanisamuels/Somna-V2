@@ -72,6 +72,8 @@
           -%}
           <li class="somna-sale-products__item" data-cat="{{ b.filter }}" {{ block.shopify_attributes }}>
             <article class="somna-sale-card" data-sale-card>
+              {%- assign sticker = b.sticker | default: s.sticker -%}
+              {%- if sticker != blank and sticker != '-' -%}<p class="somna-sale-card__sticker"><span>{{ sticker | escape }}</span></p>{%- endif -%}
               <a class="somna-sale-card__media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
                 {%- if pic != blank -%}
                   {{ pic | image_url: width: 900 | image_tag: widths: '380, 600, 760, 900', sizes: '(min-width: 1300px) 377px, (min-width: 990px) 30vw, (min-width: 750px) 45vw, 92vw', loading: 'lazy', alt: p.title }}
@@ -252,6 +254,7 @@
   .somna-sale-products__item[hidden] { display: none; }
 
   .somna-sale-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -260,6 +263,34 @@
     border-radius: 16px;
     background: #f3feee;
     box-shadow: 2.4px 3px 0 #000;
+  }
+  /* "UP TO 60% OFF" round sticker over the card's top-right corner (Figma 5075:3823) */
+  .somna-sale-products__item { position: relative; z-index: 0; }
+  .somna-sale-products__item:has(.somna-sale-card__sticker) { z-index: 1; }
+  .somna-sale-card__sticker {
+    position: absolute;
+    top: -21px;
+    right: -41px;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 118px;
+    height: 115px;
+    margin: 0;
+    border-radius: 50%;
+    background: #1f2023;
+    rotate: -10.7deg;
+    pointer-events: none;
+  }
+  .somna-sale-card__sticker span {
+    max-width: 84px;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 20.8px;
+    line-height: 1.05;
+    text-align: center;
+    text-transform: uppercase;
+    color: #f3feee;
   }
   .somna-sale-card__media {
     display: block;
@@ -410,6 +441,8 @@
     .somna-sale-products__head { flex-direction: column; align-items: flex-start; margin-bottom: 32px; }
     .somna-sale-products__filters { padding-bottom: 0; }
     .somna-sale-products__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+    .somna-sale-card__sticker { right: -14px; width: 100px; height: 98px; }
+    .somna-sale-card__sticker span { max-width: 72px; font-size: 18px; }
     .somna-sale-card__price-label { font-size: 12px; letter-spacing: 0.04em; }
     .somna-sale-card__price-row b { font-size: 18px; }
   }
@@ -421,6 +454,8 @@
     .somna-sale-products__filter { min-height: 34px; padding: 0 14px; font-size: 13px; }
     .somna-sale-products__grid { grid-template-columns: 1fr; gap: 20px; }
     .somna-sale-card { padding: 14px 14px 22px; border-radius: 14px; }
+    .somna-sale-card__sticker { top: -12px; right: -6px; width: 86px; height: 84px; }
+    .somna-sale-card__sticker span { max-width: 62px; font-size: 15px; }
     .somna-sale-card__title { margin-top: 18px; font-size: 22px; }
     .somna-sale-card__text { font-size: 14px; }
     .somna-sale-card__price-label { font-size: 12px; letter-spacing: 0.05em; }
@@ -456,6 +491,7 @@
     { "type": "text", "id": "sub_label", "label": "Subscribe price label", "default": "Subscribe & Save" },
     { "type": "text", "id": "once_label", "label": "One-time price label", "default": "One-time:" },
     { "type": "text", "id": "size_label", "label": "Size chips name (screen readers)", "default": "Choose a size" },
+    { "type": "text", "id": "sticker", "label": "Card sticker", "info": "Round sticker on each card's corner. Leave empty to hide.", "default": "Up to 60% off" },
     { "type": "text", "id": "gifts_note", "label": "Gifts note", "default": "3 gifts on 2+" },
     { "type": "text", "id": "button_label", "label": "Button", "default": "Shop now →" },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
@@ -471,7 +507,8 @@
         { "type": "image_picker", "id": "image", "label": "Picture", "info": "Leave empty to use the product's Card image, else its main photo." },
         { "type": "text", "id": "title", "label": "Name", "info": "Leave empty to use the product title." },
         { "type": "text", "id": "text", "label": "Short line" },
-        { "type": "text", "id": "button_label", "label": "Button", "info": "Leave empty to use the section's button text." }
+        { "type": "text", "id": "button_label", "label": "Button", "info": "Leave empty to use the section's button text." },
+        { "type": "text", "id": "sticker", "label": "Sticker", "info": "Leave empty to use the section's card sticker; type - to hide it on this card." }
       ]
     },
     {

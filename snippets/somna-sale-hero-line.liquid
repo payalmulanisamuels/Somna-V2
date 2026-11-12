@@ -1,0 +1,39 @@
+{%- doc -%}
+  Black Friday sale page hero (Figma 5039:852, updated): the price line under the heading, with live prices
+  (Subscribe & Save = lowest selling plan price, One-time = price less the one-time sale %), and the hero's
+  sticker badge look (lavender, mint outline + hard mint shadow, slight tilt).
+  Rendered from a Custom Liquid block in the sale page hero.
+  @param {string} [handle] - product the prices come from (default nasal-strips)
+{%- enddoc -%}
+{%- liquid
+  assign hp = all_products[handle] | default: all_products['nasal-strips']
+  assign hv = hp.first_available_variant | default: hp.variants.first
+  assign sub = hv.price
+  for a in hv.selling_plan_allocations
+    if a.price < sub
+      assign sub = a.price
+    endif
+  endfor
+  capture once_off
+    render 'somna-sale', get: 'once_off'
+  endcapture
+  assign once_off = once_off | strip | plus: 0
+  assign once = 100 | minus: once_off | times: hv.price | divided_by: 100
+-%}
+<p class="somna-sale-hero-line">Strips, Tape and every bundle. Subscribe &amp; Save from <b>{{ sub | money }}</b>, one-time from <b>{{ once | money }}</b>.</p>
+<style>
+  .somna-sale-hero-line { max-width: 514px; margin: 0; font-size: 16.5px; line-height: 1.35; color: rgb(243 254 238 / 0.67); }
+  .somna-sale-hero-line b { font-weight: 700; color: #afbdf8; }
+  .hero-wrapper:has(.somna-sale-hero-line) .somna-badge { rotate: -0.82deg; }
+  .hero-wrapper:has(.somna-sale-hero-line) .somna-badge__main {
+    padding: 0.45rem 0.9rem;
+    border: 1.8px solid #f3feee;
+    border-radius: 12px;
+    box-shadow: 4.5px 3.6px 0 #f3feee;
+    font-size: 17px;
+  }
+  @media screen and (max-width: 749px) {
+    .somna-sale-hero-line { margin-inline: auto; font-size: 14px; text-align: center; }
+    .hero-wrapper:has(.somna-sale-hero-line) .somna-badge__main { font-size: 14px; }
+  }
+</style>
