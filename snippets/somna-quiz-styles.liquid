@@ -479,26 +479,51 @@ cart-drawer-component :is(.hz-cart-totals-saved, .hz-cart-totals-saved *, [class
 .sq-adding-s { color: #98A3DE; }
 {%- endif %}
 {%- if design == 'light' %}
-/* ---------- Light design (Design = "Light"): the night look in a soft lavender-white, dark text for contrast ---------- */
-body { background: #F5F3FE; }
+/* ---------- Light design (Design = "Light"): the product page palette (option A, 12 Nov 2026) ----------
+   Periwinkle #AFBDF8 background like the PDP hero, mint #F3FEEE cards with a navy outline and offset shadow,
+   navy selected answers and buttons, Boldonse uppercase headings, blue #3D52D5 highlights. */
+body { background: #AFBDF8; }
 .sq.sq--light {
---sq-bg: #F5F3FE; --sq-card: #fff; --sq-card2: #EEEAFB; --sq-line: #DCD6F5; --sq-track: #E4DFF8;
---sq-ink: #17152E; --sq-mut: #5C5878; --sq-accent: #6D49E0; --sq-accent-h: #5A37CC; --sq-lav: #5646C2; --sq-err: #C0392B;
+--sq-bg: #AFBDF8; --sq-card: #F3FEEE; --sq-card2: rgba(243,254,238,.55); --sq-line: #0B0F1D; --sq-track: rgba(11,15,29,.15);
+--sq-ink: #0B0F1D; --sq-mut: #2B3150; --sq-accent: #0B0F1D; --sq-accent-h: #232A45; --sq-lav: #3D52D5; --sq-err: #A3231B;
+--sq-grad: #0B0F1D; --sq-hard: 2px 3px 0 #0B0F1D;
 }
-.sq--light .sq-pill { background: rgba(109,73,224,.1); }
-.sq--light .sq-ico { background: rgba(109,73,224,.1); color: var(--sq-accent); }
-.sq--light .sq-opt { box-shadow: 0 1px 2px rgba(23,21,46,.05); }
-.sq--light .sq-opt:hover { border-color: #B9AEF0; }
-.sq--light .sq-intro-meta { background: rgba(109,73,224,.07); border-color: rgba(109,73,224,.3); }
-.sq--light .sq-intro-meta strong { color: #9A5B00; }
-.sq--light .sq-cta { box-shadow: 0 8px 20px rgba(109,73,224,.25); }
-.sq--light .sq-checks li { box-shadow: 0 1px 2px rgba(23,21,46,.04); }
-.sq--light .sq-rc-card, .sq--light .sq-review { box-shadow: 0 1px 3px rgba(23,21,46,.06); }
-.sq--light .sq-sticky { background: rgba(245,243,254,.94); }
-.sq--light .sq-plan-save { color: #A4520B; }
-.sq--light .sq-tier-k--good, .sq--light .sq-buy-ship { color: #1E7A4C; }
-.sq--light .sq-gift { background: rgba(30,122,76,.1); color: #1E5E3E; }
-.sq--light .sq-buy p.sq-buy-view a:hover { color: var(--sq-accent); }
+.sq--light .sq-intro-h, .sq--light .sq-q, .sq--light .sq-res-h3 { font-family: 'Boldonse', var(--sq-sans); font-weight: 400; text-transform: uppercase; letter-spacing: 0; line-height: 1.5; }
+.sq--light .sq-intro-h { font-size: 19px; }
+.sq--light .sq-q { font-size: 19px; }
+.sq--light .sq-q--sm { font-size: 16px; }
+.sq--light em { font-style: normal; color: #3D52D5; }
+.sq--light .sq-pill { background: var(--sq-card); color: var(--sq-ink); border: 1.5px solid #0B0F1D; }
+.sq--light .sq-intro-meta { background: rgba(243,254,238,.6); border: 1.5px solid #0B0F1D; color: var(--sq-ink); }
+.sq--light .sq-intro-meta strong { color: #3D52D5; }
+.sq--light :is(.sq-opt, .sq-review, .sq-rc-card, .sq-checks li, .sq-note, .sq-textarea) { border: 1.5px solid #0B0F1D; box-shadow: var(--sq-hard); }
+.sq--light .sq-note { background: rgba(243,254,238,.55); }
+.sq--light .sq-ico { background: #AFBDF8; color: #0B0F1D; }
+.sq--light .sq-opt:hover { border-color: #0B0F1D; translate: -1px -1px; box-shadow: 3px 4px 0 #0B0F1D; }
+.sq--light .sq-opt[aria-pressed="true"] { background: #0B0F1D; border-color: #0B0F1D; color: #F3FEEE; }
+.sq--light .sq-opt[aria-pressed="true"] .sq-ico { background: #2A3050; color: #F3FEEE; }
+.sq--light .sq-opt[aria-pressed="true"] strong { color: #AFBDF8; }
+.sq--light .sq-cta { border-radius: 18px; background: #0B0F1D; color: #F3FEEE; box-shadow: 0 6px 18px rgba(11,15,29,.25); }
+.sq--light .sq-cta:hover { background: #232A45; color: #F3FEEE; }
+.sq--light .sq-cta:disabled { box-shadow: none; }
+.sq--light .sq-checks li { color: var(--sq-mut); }
+.sq--light .sq-checks li.is-done { color: var(--sq-ink); border-color: #0B0F1D; }
+.sq--light .sq-tick { border-color: rgba(11,15,29,.3); }
+.sq--light .is-done > .sq-tick { border-color: #0B0F1D; background-color: #0B0F1D; }
+.sq--light .sq-back:hover { color: #0B0F1D; }
+.sq--light .sq-rc-dot { background: rgba(11,15,29,.2); }
+.sq--light .sq-rc-dot[aria-current="true"] { background: #0B0F1D; }
+.sq--light .sq-rc-stars svg.is-off { fill: rgba(11,15,29,.2); }
+.sq--light .sq-fine--go { color: #0B0F1D; }
+.sq--light .sq-sticky { background: rgba(175,189,248,.95); border-top-color: #0B0F1D; }
+.sq--light .sq-plan-save { color: #8A3F00; }
+.sq--light .sq-tier-k--good, .sq--light .sq-buy-ship { color: #145C38; }
+.sq--light .sq-buy p.sq-buy-view a:hover { color: #3D52D5; }
+@media screen and (min-width: 750px) {
+  .sq--light .sq-intro-h { font-size: 23px; }
+  .sq--light .sq-q { font-size: 24px; }
+  .sq--light .sq-q--sm { font-size: 19px; }
+}
 {%- endif %}
 {%- if design == 'v2' %}
 /* ---------- SOMNA V2 design (Design = "SOMNA V2"): the look of the Somna-V2 product pages ----------
