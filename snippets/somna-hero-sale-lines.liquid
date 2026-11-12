@@ -16,5 +16,10 @@
     .somna-hero-line--offer b { font-weight: 700; color: #afbdf8; }
     .somna-hero-line--ship { margin-top: -8px; font-size: 12px; line-height: 1.35; color: #848484; }
     .hero-wrapper:has(.somna-hero-line) .somna-badge { display: none; }
+    /* phone type sizes from the mobile design: big two-line offer, one-line strapline */
+    .hero-wrapper:has(.somna-hero-line) h1 { max-width: 300px; margin-inline: auto; font-size: 42px !important; line-height: 1.35 !important; }
+    .hero-wrapper:has(.somna-hero-line) h2 { font-size: 16.4px !important; line-height: 1.35 !important; }
+    /* the taller copy pushes the pouches photo down a little so the lines under the button stay clear of it */
+    .hero-wrapper:has(.somna-hero-line) img.hero__media { object-position: 50% 40px !important; }
   }
 </style>
