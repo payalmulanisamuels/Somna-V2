@@ -7,9 +7,11 @@
   as in the mobile design.
 {%- enddoc -%}
 <style>
-  .somna-hero-line { display: none; margin: 0; text-align: center; }
+  /* the Custom Liquid block's wrapper is hidden too, so it leaves no gap on desktop */
+  :has(> .somna-hero-line) { display: none; }
+  .somna-hero-line { margin: 0; text-align: center; }
   @media screen and (max-width: 749px) {
-    .somna-hero-line { display: block; }
+    :has(> .somna-hero-line) { display: block; width: 100%; }
     .somna-hero-line--offer { font-size: 12px; line-height: 1.3; color: #f3feee; }
     .somna-hero-line--offer b { font-weight: 700; color: #afbdf8; }
     .somna-hero-line--ship { margin-top: -8px; font-size: 12px; line-height: 1.35; color: #848484; }
