@@ -97,8 +97,8 @@
                 "badge": {
                   "type": "somna-badge",
                   "settings": {
-                    "label": "Up to 60% off",
-                    "text": "3+ gifts on your first order",
+                    "label": "Pre-Black Friday sale",
+                    "text": "",
                     "color": "#afbdf8",
                     "text_color": "#000000",
                     "text_color_2": "#ffffff"
@@ -108,13 +108,13 @@
                 "heading": {
                   "type": "text",
                   "settings": {
-                    "text": "<h1>Small change<br><em>softer nights.</em></h1>",
+                    "text": "<h1>Up to <em>60% off.</em></h1>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
                     "type_preset": "custom",
                     "font": "var(--font-accent--family)",
-                    "font_size": "3.5rem",
+                    "font_size": "3.85rem",
                     "line_height": "normal",
                     "letter_spacing": "normal",
                     "case": "uppercase",
@@ -156,11 +156,38 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {}
+                },
+                "subheading": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h2>Small change <em>softer nights.</em></h2>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-accent--family)",
+                    "font_size": "1.5rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "uppercase",
+                    "wrap": "balance",
+                    "text_color": "#ffffff",
+                    "accent_color": "#98a3de",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
                 "badge",
                 "heading",
+                "subheading",
                 "description"
               ]
             },
@@ -431,7 +458,7 @@
                     "label": {
                       "type": "text",
                       "settings": {
-                        "text": "<p>3 Free gifts</p>",
+                        "text": "<p>3 Free gifts on 2+ packs</p>",
                         "width": "100%",
                         "max_width": "none",
                         "alignment": "center",
@@ -511,8 +538,8 @@
                 "button": {
                   "type": "button",
                   "settings": {
-                    "label": "SHOP NOW  →",
-                    "link": "shopify://products/sleep-bundle",
+                    "label": "SHOP THE SALE  →",
+                    "link": "/pages/black-friday-sale",
                     "open_in_new_tab": false,
                     "style_class": "button-custom",
                     "custom_button_background": "#afbdf8",
@@ -525,10 +552,18 @@
                     "custom_width_mobile": 100
                   },
                   "blocks": {}
+                },
+                "sale_ship": {
+                  "type": "custom-liquid",
+                  "settings": {
+                    "custom_liquid": "<p class=\"somna-hero-line somna-hero-line--ship\">$4.95 shipping<br>Delivered in 7–9 business days</p>"
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
-                "button"
+                "button",
+                "sale_ship"
               ]
             },
             "review": {
@@ -916,11 +951,19 @@
                 "avatars",
                 "text"
               ]
+            },
+            "sale_offer": {
+              "type": "custom-liquid",
+              "settings": {
+                "custom_liquid": "{%- render 'somna-hero-sale-lines' -%}\n<p class=\"somna-hero-line somna-hero-line--offer\">Subscribe &amp; Save <b>60% off</b>, from <b>{{ all_products['nasal-strips'].first_available_variant.selling_plan_allocations.first.price | money }}</b> · One-time <b>50% off</b></p>"
+              },
+              "blocks": {}
             }
           },
           "block_order": [
             "intro",
             "tiles",
+            "sale_offer",
             "cta",
             "review",
             "join"
