@@ -83,9 +83,9 @@
   /* same width as the product hero below it */
   /* equal space above and below: the hero's top padding is pulled back to the same gap as below
      (below leaves room for the product photo's "Up to 60% off" sticker, which sits above the photo) */
-  .somna-qmatch { --somna-content-width: 1330px; --qm-gap: 28px; margin-top: calc(var(--qm-gap) - var(--qm-pad, 48px)); margin-bottom: var(--qm-gap); }
+  .somna-qmatch { --somna-content-width: 1330px; --qm-gap: 24px; --qm-below: 34px; margin-top: calc(var(--qm-gap) - var(--qm-pad, 48px)); margin-bottom: var(--qm-below); }
   @media screen and (max-width: 749px) {
-    .somna-qmatch { --qm-gap: 20px; --qm-pad: 28px !important; }
+    .somna-qmatch { --qm-gap: 16px; --qm-below: 22px; --qm-pad: 28px !important; }
   }
   .somna-qmatch[hidden] { display: none; }
   .somna-qmatch__box {
@@ -145,7 +145,8 @@
   .somna-qmatch__x:hover { background: rgb(11 15 29 / 0.08); }
   .somna-qmatch__x:focus-visible, .somna-qmatch__retake:focus-visible { outline: 2px solid #3d52d5; outline-offset: 2px; }
   @media screen and (min-width: 990px) {
-    .somna-qmatch { --somna-content-width: 1355px; --qm-gap: 40px; }
+    /* the photo's sticker pokes ~36px above the photo, so the space below is measured to the sticker */
+    .somna-qmatch { --somna-content-width: 1355px; --qm-gap: 28px; --qm-below: 64px; }
     .somna-qmatch__box { align-items: center; padding: 14px 48px 14px 16px; }
     .somna-qmatch__body { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
     .somna-qmatch__h { font-size: 1rem; }
