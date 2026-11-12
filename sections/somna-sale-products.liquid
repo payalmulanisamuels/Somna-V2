@@ -141,7 +141,13 @@
         {%- elsif block.type == 'quiz' -%}
           <li class="somna-sale-products__item somna-sale-products__item--quiz" data-cat="quiz" {{ block.shopify_attributes }}>
             <div class="somna-sale-quiz">
-              {%- if b.image != blank -%}
+              {%- if b.tiles != blank -%}
+                {%- comment -%} QUIZ keys (approved option A "Typing"): each key presses down in turn, then a pause {%- endcomment -%}
+                {%- assign letters = b.tiles | strip | upcase | split: '' -%}
+                <div class="somna-sale-quiz__keys" aria-hidden="true">
+                  {%- for l in letters limit: 4 -%}<span class="somna-sale-quiz__key" style="--key-i: {{ forloop.index0 }};">{{ l | escape }}</span>{%- endfor -%}
+                </div>
+              {%- elsif b.image != blank -%}
                 {{ b.image | image_url: width: 420 | image_tag: widths: '204, 408', sizes: '204px', loading: 'lazy', class: 'somna-sale-quiz__img', alt: '' }}
               {%- endif -%}
               {%- if b.eyebrow != blank -%}<p class="somna-sale-quiz__eyebrow">{{ b.eyebrow | escape }}</p>{%- endif -%}
@@ -414,6 +420,35 @@
     text-align: center;
   }
   .somna-sale-quiz__img { width: 204px; height: auto; margin-bottom: 26px; }
+  .somna-sale-quiz__keys {
+    display: grid;
+    grid-template-columns: repeat(2, 98px);
+    gap: 6px;
+    margin-bottom: 30px;
+  }
+  .somna-sale-quiz__key {
+    display: grid;
+    place-items: center;
+    width: 98px;
+    height: 98px;
+    border: 7px solid #000;
+    border-radius: 18px;
+    background: #f3feee;
+    box-shadow: 0 6px 0 #000;
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1;
+    color: #000;
+    animation: somna-quiz-key 3.2s ease-in-out infinite;
+    animation-delay: calc(var(--key-i, 0) * 0.25s);
+  }
+  @keyframes somna-quiz-key {
+    0%, 14%, 100% { transform: translateY(0); box-shadow: 0 6px 0 #000; background: #f3feee; }
+    5% { transform: translateY(5px); box-shadow: 0 1px 0 #000; background: #afbdf8; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .somna-sale-quiz__key { animation: none; }
+  }
   .somna-sale-quiz__eyebrow { margin: 0; font-size: 19.3px; font-weight: 700; line-height: 1.35; text-transform: uppercase; }
   .somna-sale-quiz__heading {
     margin: 4px 0 0;
@@ -466,6 +501,8 @@
     .somna-sale-card__btn, .somna-sale-quiz__btn { min-height: 48px; }
     .somna-sale-quiz { padding: 8px 0 0; }
     .somna-sale-quiz__img { width: 150px; margin-bottom: 16px; }
+    .somna-sale-quiz__keys { grid-template-columns: repeat(2, 72px); gap: 5px; margin-bottom: 20px; }
+    .somna-sale-quiz__key { width: 72px; height: 72px; border-width: 5px; border-radius: 14px; box-shadow: 0 4px 0 #000; font-size: 30px; }
     .somna-sale-quiz__heading { font-size: 22px; }
   }
 {% endstylesheet %}
@@ -516,7 +553,8 @@
       "name": "Quiz card",
       "limit": 1,
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Picture" },
+        { "type": "text", "id": "tiles", "label": "Animated keys", "info": "Up to 4 letters shown as keys that press down in turn. Leave empty to show the picture instead.", "default": "QUIZ" },
+        { "type": "image_picker", "id": "image", "label": "Picture", "info": "Used when Animated keys is empty." },
         { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Not sure which?" },
         { "type": "richtext", "id": "heading", "label": "Heading", "info": "Italic words show in black.", "default": "<p>Take the <em>60-second</em> sleep quiz.</p>" },
         { "type": "text", "id": "text", "label": "Text", "default": "Tell us what keeps you up. We'll pick for you." },

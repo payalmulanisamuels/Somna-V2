@@ -300,7 +300,8 @@
             "heading": "<p>Take the <em>60-second</em> sleep quiz.</p>",
             "text": "Tell us what keeps you up. We'll pick for you.",
             "button_label": "Take the quiz →",
-            "button_link": "shopify://pages/quiz"
+            "button_link": "shopify://pages/quiz",
+            "tiles": "QUIZ"
           }
         }
       },
