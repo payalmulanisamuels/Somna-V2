@@ -56,6 +56,7 @@ padding: 10px 16px 40px; min-height: 100vh;
 .sq .sq-sub strong { color: var(--sq-ink); font-weight: 700; }
 .sq .sq-hint { font-size: 14px; line-height: 1.4; color: var(--sq-mut); margin: -8px 0 14px; }
 .sq .sq-fine { font-size: 12px; line-height: 1.45; color: var(--sq-mut); margin-top: 12px; }
+.sq .sq-fine--go { font-size: 13.5px; font-weight: 700; color: var(--sq-ink); }
 .sq .sq-lbl { font-size: 11px; line-height: 1.3; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--sq-lav); }
 .sq .sq-pill { display: inline-block; background: rgba(152,163,222,.15); color: var(--sq-lav); font-size: 11px; line-height: 1.3; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 6px 12px; border-radius: 999px; margin-bottom: 14px; }
 .sq .sq-pill--c { display: table; margin-left: auto; margin-right: auto; }
@@ -476,6 +477,28 @@ cart-drawer-component :is(.hz-cart-totals-saved, .hz-cart-totals-saved *, [class
 /* the line being added (preview) */
 .sq-adding { border-color: #3a3a5c; background: #16162b; color: #fff; }
 .sq-adding-s { color: #98A3DE; }
+{%- endif %}
+{%- if design == 'light' %}
+/* ---------- Light design (Design = "Light"): the night look in a soft lavender-white, dark text for contrast ---------- */
+body { background: #F5F3FE; }
+.sq.sq--light {
+--sq-bg: #F5F3FE; --sq-card: #fff; --sq-card2: #EEEAFB; --sq-line: #DCD6F5; --sq-track: #E4DFF8;
+--sq-ink: #17152E; --sq-mut: #5C5878; --sq-accent: #6D49E0; --sq-accent-h: #5A37CC; --sq-lav: #5646C2; --sq-err: #C0392B;
+}
+.sq--light .sq-pill { background: rgba(109,73,224,.1); }
+.sq--light .sq-ico { background: rgba(109,73,224,.1); color: var(--sq-accent); }
+.sq--light .sq-opt { box-shadow: 0 1px 2px rgba(23,21,46,.05); }
+.sq--light .sq-opt:hover { border-color: #B9AEF0; }
+.sq--light .sq-intro-meta { background: rgba(109,73,224,.07); border-color: rgba(109,73,224,.3); }
+.sq--light .sq-intro-meta strong { color: #9A5B00; }
+.sq--light .sq-cta { box-shadow: 0 8px 20px rgba(109,73,224,.25); }
+.sq--light .sq-checks li { box-shadow: 0 1px 2px rgba(23,21,46,.04); }
+.sq--light .sq-rc-card, .sq--light .sq-review { box-shadow: 0 1px 3px rgba(23,21,46,.06); }
+.sq--light .sq-sticky { background: rgba(245,243,254,.94); }
+.sq--light .sq-plan-save { color: #A4520B; }
+.sq--light .sq-tier-k--good, .sq--light .sq-buy-ship { color: #1E7A4C; }
+.sq--light .sq-gift { background: rgba(30,122,76,.1); color: #1E5E3E; }
+.sq--light .sq-buy p.sq-buy-view a:hover { color: var(--sq-accent); }
 {%- endif %}
 {%- if design == 'v2' %}
 /* ---------- SOMNA V2 design (Design = "SOMNA V2"): the look of the Somna-V2 product pages ----------

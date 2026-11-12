@@ -1,0 +1,149 @@
+{%- doc -%}
+  Personalised "Your SOMNA match" banner at the top of the product page (SOMNA_Quiz_v2_Redirect_and_PDP_Banner, 12 Nov 2026).
+  The quiz ends on the matched product with ?quiz=1&for=me|partner|both&p=snoring|nose|mouth|tired|both&tried=strips,tape,...
+  Shows only when quiz=1 is in the URL. Line 1 names the match, line 2 says what it was picked to help with (never states the
+  problem back), plus an optional chip from Q6, "Retake quiz" and a close ×. Missing answers → neutral fallback line.
+  Rendered by sections/somna-pdp-hero.liquid. No answers are stored; closing it only hides it for this visit.
+  @param {object} product
+{%- enddoc -%}
+{%- liquid
+  assign qb_name = product.title
+  if product.handle contains 'bundle'
+    assign qb_name = 'the ' | append: product.title
+  endif
+  assign qb_kind = ''
+  if product.handle contains 'strip'
+    assign qb_kind = 'strips'
+  elsif product.handle contains 'tape'
+    assign qb_kind = 'tape'
+  elsif product.handle contains 'bundle'
+    assign qb_kind = 'bundle'
+  endif
+  assign qb_quiz = pages['quiz'].url | default: '/pages/quiz'
+-%}
+<div class="somna-qmatch somna-container" data-somna-qmatch data-kind="{{ qb_kind }}" data-name="{{ qb_name | escape }}" hidden>
+  <div class="somna-qmatch__box" role="status">
+    <span class="somna-qmatch__tick" aria-hidden="true">
+      <svg viewBox="0 0 20 20" width="12" height="12"><path d="M5 10.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    <div class="somna-qmatch__body">
+      <p class="somna-qmatch__h" data-qm-h></p>
+      <p class="somna-qmatch__t"><span data-qm-t></span> <a class="somna-qmatch__retake" href="{{ qb_quiz }}">Retake quiz</a></p>
+      <p class="somna-qmatch__chip" data-qm-chip hidden></p>
+    </div>
+    <button type="button" class="somna-qmatch__x" data-qm-x aria-label="Close">
+      <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</div>
+<script>
+(function () {
+  var box = document.currentScript && document.currentScript.previousElementSibling;
+  if (!box || !box.hasAttribute('data-somna-qmatch')) return;
+  var q; try { q = new URLSearchParams(location.search); } catch (e) { return; }
+  if (q.get('quiz') !== '1') return;
+  try { if (sessionStorage.getItem('somna-qmatch-closed') === location.pathname) return; } catch (e) {}
+  var who = q.get('for'), p = q.get('p'), tried = String(q.get('tried') || '').split(',');
+  var kind = box.getAttribute('data-kind'), name = box.getAttribute('data-name');
+  // Line 2 by Q2 answer: [for me, my partner, both of us (after "Picked for both of you: ")]
+  var LINES = {
+    snoring: ['Picked to help air move more easily through your nose at night, which is often where snoring starts.',
+      'Picked to help air move more easily through their nose at night, so you can both sleep better.',
+      'easier nose breathing at night.'],
+    nose: ['Picked to help your nose feel clearer when you lie down.',
+      'Picked to help their nose feel clearer when they lie down, so you can both sleep better.',
+      'easier nose breathing at night.'],
+    mouth: ['Picked to help you wake up without that dry-mouth feeling.',
+      'Picked to help them wake up without that dry-mouth feeling, so you can both sleep better.',
+      'fewer dry-mouth mornings.'],
+    tired: ['Picked to help you breathe more easily through the night, so mornings feel better.',
+      'Picked to help them breathe more easily through the night, so you can both sleep better.',
+      'easier breathing through the night.'],
+    both: ['Picked for easier nose breathing and fewer dry-mouth mornings.',
+      'Picked for easier nose breathing and fewer dry-mouth mornings, so you can both sleep better.',
+      'easier nose breathing and fewer dry-mouth mornings.']
+  };
+  var idx = { me: 0, partner: 1, both: 2 }[who], row = LINES[p];
+  var line = row && idx != null ? (idx === 2 ? 'Picked for both of you: ' + row[2] : row[idx]) : 'Picked based on your quiz answers.';
+  box.querySelector('[data-qm-h]').textContent = (who === 'partner' ? 'Their' : 'Your') + ' SOMNA match: ' + name;
+  box.querySelector('[data-qm-t]').textContent = line;
+  var chip = '';
+  if (kind === 'strips' && tried.indexOf('strips') > -1) chip = 'Built to stay on all night, unlike the cheap ones.';
+  else if (kind === 'tape' && tried.indexOf('tape') > -1) chip = 'Soft on lips and easy to peel off.';
+  var c = box.querySelector('[data-qm-chip]'); if (chip) { c.textContent = chip; c.hidden = false; }
+  box.hidden = false;
+  box.querySelector('[data-qm-x]').addEventListener('click', function () {
+    box.hidden = true;
+    try { sessionStorage.setItem('somna-qmatch-closed', location.pathname); } catch (e) {}
+  });
+})();
+</script>
+<style>
+  .somna-qmatch { margin-bottom: 16px; }
+  .somna-qmatch[hidden] { display: none; }
+  .somna-qmatch__box {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 40px 12px 12px;
+    border: 1.5px solid #0b0f1d;
+    border-radius: 14px;
+    background: #f3feee;
+    color: #0b0f1d;
+    box-shadow: 3px 4px 0 #0b0f1d;
+  }
+  .somna-qmatch__tick {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    margin-top: 1px;
+    border-radius: 50%;
+    background: #3d52d5;
+    color: #fff;
+  }
+  .somna-qmatch__body { min-width: 0; }
+  .somna-qmatch__h { margin: 0; font-size: 0.9375rem; font-weight: 700; line-height: 1.3; color: #0b0f1d; }
+  .somna-qmatch__t { margin: 2px 0 0; font-size: 0.8125rem; line-height: 1.4; color: #2e3240; }
+  .somna-qmatch__retake { color: #3d52d5; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
+  .somna-qmatch__retake:hover { color: #0b0f1d; }
+  .somna-qmatch__chip {
+    display: inline-block;
+    margin: 6px 0 0;
+    padding: 3px 10px;
+    border: 1px solid #c9d0f5;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: #2e3240;
+  }
+  .somna-qmatch__x {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #0b0f1d;
+    cursor: pointer;
+  }
+  .somna-qmatch__x:hover { background: rgb(11 15 29 / 0.08); }
+  .somna-qmatch__x:focus-visible, .somna-qmatch__retake:focus-visible { outline: 2px solid #3d52d5; outline-offset: 2px; }
+  @media screen and (min-width: 990px) {
+    .somna-qmatch { margin-bottom: 24px; }
+    .somna-qmatch__box { align-items: center; padding: 14px 48px 14px 16px; }
+    .somna-qmatch__body { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+    .somna-qmatch__h { font-size: 1rem; }
+    .somna-qmatch__t { margin: 0; font-size: 0.875rem; }
+    .somna-qmatch__chip { margin: 0; }
+    .somna-qmatch__x { top: 50%; translate: 0 -50%; }
+  }
+</style>

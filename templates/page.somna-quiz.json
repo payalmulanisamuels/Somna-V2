@@ -248,6 +248,7 @@
         "product_tape": "mouth-tape",
         "product_bundle": "sleep-bundle",
         "v2_sections": true,
+        "design": "light",
         "v2_cursor": true,
         "result_extras": true,
         "perk_1": "$4.95 shipping",
