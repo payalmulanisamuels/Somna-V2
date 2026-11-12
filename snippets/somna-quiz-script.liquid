@@ -47,14 +47,15 @@
   function trend() { return score().result; }
 
   // ---- "Finding your match…" checklist (their own answers) ----
+  // softer lines (Quiz v2 redirect PDF): describe the answer, never state "your problem" back to them
   var TXT = {
-    problem: { snoring: ['Snoring is your biggest problem', 'Snoring is their biggest problem'],
-      nose: ['A blocked nose is your biggest problem', 'A blocked nose is their biggest problem'],
-      mouth: ['Dry mouth is your biggest problem', 'Dry mouth is their biggest problem'],
-      tired: ['Waking up tired, even after a full night', 'Waking up tired, even after a full night'],
-      both: ['Your nose and your mouth, both', 'Their nose and their mouth, both'] },
-    nose: { blocked: 'Nose blocked most nights', stuffy: 'Nose stuffy with a cold or allergies', clear: 'Nose clear at night' },
-    energy: { '1': 'Running on empty during the day', '2': '3pm crash, every day', '3': 'Foggy until coffee', '4': 'Pretty good during the day' },
+    problem: { snoring: ['Snoring at night', 'Snoring at night'],
+      nose: ['Blocked or stuffy nose', 'Blocked or stuffy nose'],
+      mouth: ['Dry mouth on waking', 'Dry mouth on waking'],
+      tired: ['Waking up tired', 'Waking up tired'],
+      both: ['Nose and mouth at night', 'Nose and mouth at night'] },
+    nose: { blocked: 'Nose blocked most nights', stuffy: 'Nose stuffy with colds or allergies', clear: 'Nose clear at night' },
+    energy: { '1': 'Low energy in the day', '2': 'Afternoon dip in energy', '3': 'Slow to get going in the morning', '4': 'Good energy, wants better sleep' },
     tried: { strips: 'cheap nasal strips', tape: 'mouth tape', pills: 'melatonin', earlier: 'sleeping earlier', spray: 'nasal spray', other: 'other' }
   };
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
@@ -232,6 +233,29 @@
     busy = true; go(i + 1);
   });
 
+  // ---- end of quiz → matched product page (no result page). The URL carries the key answers for the PDP banner:
+  // ?quiz=1&for=me|partner|both&p=snoring|nose|mouth|tired|both&tried=strips,tape,spray,pills,none (no name or email).
+  var FOR = { self: 'me', partner: 'partner', both: 'both' };
+  function triedKeys(s) {
+    var t = s.tried.filter(function (k) { return k && k !== 'other' && k !== 'earlier'; }).map(function (k) { return k === 'nothing' ? 'none' : k; });
+    return t.length ? t : (s.tried.indexOf('nothing') > -1 ? ['none'] : []);
+  }
+  function matchUrl(s) {
+    var pr = PRODUCTS[s.result]; if (!pr || !pr.url) return null;
+    var q = ['quiz=1'];
+    if (FOR[s.who]) q.push('for=' + FOR[s.who]);
+    if (s.problem) q.push('p=' + encodeURIComponent(s.problem));
+    var t = triedKeys(s); if (t.length) q.push('tried=' + encodeURIComponent(t.join(',')));
+    return pr.url + (pr.url.indexOf('?') > -1 ? '&' : '?') + q.join('&');
+  }
+  function prefetch(url) {
+    try { if (document.querySelector('link[rel="prefetch"][href="' + url + '"]')) return; var l = document.createElement('link'); l.rel = 'prefetch'; l.href = url; l.as = 'document'; document.head.appendChild(l); } catch (e) {}
+  }
+  function trackDone(s) {
+    var props = { match: s.result, product: PRODUCTS[s.result] && PRODUCTS[s.result].title, for: FOR[s.who] || '', problem: s.problem, nose: s.nose, mouth: s.mouth, energy: s.energy, tried: triedKeys(s).join(',') };
+    try { if (window.posthog && typeof posthog.capture === 'function') posthog.capture('quiz_completed', props, { send_instantly: true, transport: 'sendBeacon' }); } catch (e) {}
+  }
+
   // ---- "Finding your match…": 0→100% in 2 seconds, ticks off their own answers, then the result ----
   function runAnalyze() {
     var s = score(), my = run, p = s.partner ? 1 : 0;
@@ -243,14 +267,22 @@
     var ring = $('[data-sq-ring]'), pct = $('[data-sq-pct]');
     var C = 2 * Math.PI * 52; ring.style.strokeDasharray = C; ring.style.strokeDashoffset = C;
     var t0 = null, DUR = 2000;
+    var dest = cfg.redirect ? matchUrl(s) : null, foot = $('[data-sq-analyze-foot]');
+    if (foot) { if (foot.dataset.text == null) foot.dataset.text = foot.textContent; foot.textContent = foot.dataset.text; foot.hidden = !foot.textContent.trim(); }
+    if (dest) prefetch(dest);                              // the product page loads during the animation, so it opens at once
     function frame(ts) {
       if (my !== run) return;                              // left the screen
       if (t0 == null) t0 = ts;
       var f = Math.min(1, (ts - t0) / DUR), v = Math.round(f * 100);
       ring.style.strokeDashoffset = C * (1 - f); pct.textContent = v + '%';
       lis.forEach(function (li, k) { li.classList.toggle('is-done', f >= (k + 1) / (lis.length + 0.5)); });
-      if (f < 1) requestAnimationFrame(frame);
-      else timer = setTimeout(function () { if (my === run) go(i + 1); }, 250);
+      if (f < 1) { requestAnimationFrame(frame); return; }
+      if (!dest) { timer = setTimeout(function () { if (my === run) go(i + 1); }, 250); return; }
+      // 100%: "Taking you to your match…", PostHog quiz_completed, then the matched product page (~2.5 s in all, no button).
+      // replace(): Back from the product page does not land on this half-finished screen.
+      if (foot && cfg.redirectLine) { foot.textContent = cfg.redirectLine; foot.hidden = false; foot.classList.add('sq-fine--go'); }
+      trackDone(s);
+      timer = setTimeout(function () { if (my === run) window.location.replace(dest); }, 500);
     }
     requestAnimationFrame(frame);
   }

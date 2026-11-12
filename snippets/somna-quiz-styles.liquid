@@ -56,6 +56,7 @@ padding: 10px 16px 40px; min-height: 100vh;
 .sq .sq-sub strong { color: var(--sq-ink); font-weight: 700; }
 .sq .sq-hint { font-size: 14px; line-height: 1.4; color: var(--sq-mut); margin: -8px 0 14px; }
 .sq .sq-fine { font-size: 12px; line-height: 1.45; color: var(--sq-mut); margin-top: 12px; }
+.sq .sq-fine--go { font-size: 13.5px; font-weight: 700; color: var(--sq-ink); }
 .sq .sq-lbl { font-size: 11px; line-height: 1.3; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--sq-lav); }
 .sq .sq-pill { display: inline-block; background: rgba(152,163,222,.15); color: var(--sq-lav); font-size: 11px; line-height: 1.3; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 6px 12px; border-radius: 999px; margin-bottom: 14px; }
 .sq .sq-pill--c { display: table; margin-left: auto; margin-right: auto; }
@@ -256,8 +257,12 @@ padding: 10px 16px 40px; min-height: 100vh;
 .sq .sq-plan-save { margin: 6px 0 0 24px; font-size: 12.5px; color: #F5A65B; }
 .sq .sq-atc { margin-top: 14px; }
 .sq .sq-buy-note { margin-top: 10px; font-size: 12px; color: var(--sq-mut); text-align: center; }
-.sq .sq-buy-view { margin-top: 8px; text-align: center; font-size: 13.5px; font-weight: 600; }
+.sq .sq-buy-view { margin-top: 10px; text-align: center; font-size: 15px; font-weight: 700; }
 .sq .sq-buy-view a { color: var(--sq-lav); text-decoration: underline; text-underline-offset: 3px; }
+.sq .sq-buy-view a { text-decoration-color: rgba(152,163,222,.45); transition: color .2s, text-decoration-color .2s, text-underline-offset .2s; }
+.sq .sq-buy-view-arr { display: inline-block; transition: transform .2s; }
+.sq .sq-buy p.sq-buy-view a:hover { color: #fff; text-decoration-color: transparent; }
+.sq .sq-buy-view a:hover .sq-buy-view-arr { transform: translateX(6px); }
 .sq .sq-buy-view a:focus-visible { outline: 2px solid var(--sq-lav); outline-offset: 3px; border-radius: 4px; }
 /* accordions (How It Works, FAQ) */
 .sq .sq-acc { border-bottom: 1px solid var(--sq-line); }
@@ -473,6 +478,53 @@ cart-drawer-component :is(.hz-cart-totals-saved, .hz-cart-totals-saved *, [class
 .sq-adding { border-color: #3a3a5c; background: #16162b; color: #fff; }
 .sq-adding-s { color: #98A3DE; }
 {%- endif %}
+{%- if design == 'light' %}
+/* ---------- Light design (Design = "Light"): the product page palette (option A, 12 Nov 2026) ----------
+   Periwinkle #AFBDF8 background like the PDP hero, mint #F3FEEE cards with a navy outline and offset shadow,
+   navy selected answers and buttons, Boldonse uppercase headings, blue #3D52D5 highlights. */
+body { background: #AFBDF8; }
+.sq.sq--light {
+--sq-bg: #AFBDF8; --sq-card: #F3FEEE; --sq-card2: rgba(243,254,238,.55); --sq-line: #0B0F1D; --sq-track: rgba(11,15,29,.15);
+--sq-ink: #0B0F1D; --sq-mut: #2B3150; --sq-accent: #0B0F1D; --sq-accent-h: #232A45; --sq-lav: #3D52D5; --sq-err: #A3231B;
+--sq-grad: #0B0F1D; --sq-hard: 2px 3px 0 #0B0F1D;
+}
+.sq--light .sq-intro-h, .sq--light .sq-q, .sq--light .sq-res-h3 { font-family: 'Boldonse', var(--sq-sans); font-weight: 400; text-transform: uppercase; letter-spacing: 0; line-height: 1.5; }
+.sq--light .sq-intro-h { font-size: 19px; }
+.sq--light .sq-q { font-size: 19px; }
+.sq--light .sq-q--sm { font-size: 16px; }
+.sq--light em { font-style: normal; color: #3D52D5; }
+.sq--light .sq-pill { background: var(--sq-card); color: var(--sq-ink); border: 1.5px solid #0B0F1D; }
+.sq--light .sq-intro-meta { background: rgba(243,254,238,.6); border: 1.5px solid #0B0F1D; color: var(--sq-ink); }
+.sq--light .sq-intro-meta strong { color: #3D52D5; }
+.sq--light :is(.sq-opt, .sq-review, .sq-rc-card, .sq-checks li, .sq-note, .sq-textarea) { border: 1.5px solid #0B0F1D; box-shadow: var(--sq-hard); }
+.sq--light .sq-note { background: rgba(243,254,238,.55); }
+.sq--light .sq-ico { background: #AFBDF8; color: #0B0F1D; }
+.sq--light .sq-opt:hover { border-color: #0B0F1D; translate: -1px -1px; box-shadow: 3px 4px 0 #0B0F1D; }
+.sq--light .sq-opt[aria-pressed="true"] { background: #0B0F1D; border-color: #0B0F1D; color: #F3FEEE; }
+.sq--light .sq-opt[aria-pressed="true"] .sq-ico { background: #2A3050; color: #F3FEEE; }
+.sq--light .sq-opt[aria-pressed="true"] strong { color: #AFBDF8; }
+.sq--light .sq-cta { border-radius: 18px; background: #0B0F1D; color: #F3FEEE; box-shadow: 0 6px 18px rgba(11,15,29,.25); }
+.sq--light .sq-cta:hover { background: #232A45; color: #F3FEEE; }
+.sq--light .sq-cta:disabled { box-shadow: none; }
+.sq--light .sq-checks li { color: var(--sq-mut); }
+.sq--light .sq-checks li.is-done { color: var(--sq-ink); border-color: #0B0F1D; }
+.sq--light .sq-tick { border-color: rgba(11,15,29,.3); }
+.sq--light .is-done > .sq-tick { border-color: #0B0F1D; background-color: #0B0F1D; }
+.sq--light .sq-back:hover { color: #0B0F1D; }
+.sq--light .sq-rc-dot { background: rgba(11,15,29,.2); }
+.sq--light .sq-rc-dot[aria-current="true"] { background: #0B0F1D; }
+.sq--light .sq-rc-stars svg.is-off { fill: rgba(11,15,29,.2); }
+.sq--light .sq-fine--go { color: #0B0F1D; }
+.sq--light .sq-sticky { background: rgba(175,189,248,.95); border-top-color: #0B0F1D; }
+.sq--light .sq-plan-save { color: #8A3F00; }
+.sq--light .sq-tier-k--good, .sq--light .sq-buy-ship { color: #145C38; }
+.sq--light .sq-buy p.sq-buy-view a:hover { color: #3D52D5; }
+@media screen and (min-width: 750px) {
+  .sq--light .sq-intro-h { font-size: 23px; }
+  .sq--light .sq-q { font-size: 24px; }
+  .sq--light .sq-q--sm { font-size: 19px; }
+}
+{%- endif %}
 {%- if design == 'v2' %}
 /* ---------- SOMNA V2 design (Design = "SOMNA V2"): the look of the Somna-V2 product pages ----------
    Mint #F3FEEE and lavender #AFBDF8 bands, navy #0B0F1D buy box, Boldonse uppercase headings,
@@ -597,6 +649,7 @@ body { background: #F3FEEE; }
 .sq--v2 .sq-buy .sq-acc { border-bottom: 0; }
 .sq--v2 .sq-buy .sq-acc summary::after { color: #AFBDF8; }
 .sq--v2 .sq-buy-view a { color: #AFBDF8; }
+.sq--v2 .sq-buy p.sq-buy-view a:hover { color: #F3FEEE; text-decoration-color: transparent; }
 /* sticky Add to Cart */
 .sq--v2 .sq-sticky { background: rgba(243,254,238,.96); border-top: 1.6px solid #0B0F1D; }
 @media screen and (min-width: 750px) {

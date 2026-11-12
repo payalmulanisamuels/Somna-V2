@@ -8,6 +8,8 @@
 {%- endcomment -%}
 {%- liquid
   assign sid = section.id
+  # PDF "Quiz v2 redirect" (12 Nov 2026): no result page, the matching screen sends them to the matched product page
+  assign sq_redirect = section.settings.end_redirect
   # Fall back to the live product handles if a product setting is empty (e.g. template out of sync)
   assign p_strips = section.settings.product_strips | default: all_products['nasal-strips']
   assign p_tape = section.settings.product_tape | default: all_products['mouth-tape']
@@ -20,7 +22,7 @@
   assign sq_once_keep = 100 | minus: sq_once_off
 -%}
 
-<section class="sq{% if section.settings.design == 'v2' %} sq--v2{% endif %}{% if section.settings.result_extras %} sq--extras{% endif %}" id="sq-{{ sid }}" data-sq aria-label="Sleep quiz">
+<section class="sq{% if section.settings.design == 'v2' %} sq--v2{% elsif section.settings.design == 'light' %} sq--light{% endif %}{% if section.settings.result_extras %} sq--extras{% endif %}" id="sq-{{ sid }}" data-sq aria-label="Sleep quiz">
   <div class="sq-wrap">
     <a class="sq-logo" href="{{ routes.root_url }}" aria-label="SOMNA home">
       {%- if settings.logo != blank -%}
@@ -49,10 +51,11 @@
         <span class="sq-ring-pct" data-sq-pct>0%</span>
       </div>
       <ul class="sq-checks" data-sq-checks></ul>
-      {%- if section.settings.analyze_foot != blank -%}<p class="sq-fine">{{ section.settings.analyze_foot }}</p>{%- endif -%}
+      <p class="sq-fine" data-sq-analyze-foot{% if section.settings.analyze_foot == blank %} hidden{% endif %}>{{ section.settings.analyze_foot }}</p>
     </div>
 
     {%- comment -%} 9 · Result: the matched product's page (one per product, the script shows the match) {%- endcomment -%}
+    {%- unless sq_redirect -%}
     <div class="sq-s sq-result" data-type="result">
       {%- for r in (1..3) -%}
         {%- liquid
@@ -138,7 +141,7 @@
               <p class="sq-err" role="alert" data-sq-atc-err hidden></p>
               {%- if section.settings.result_extras and section.settings.ship_note != blank -%}<p class="sq-buy-ship"><span aria-hidden="true">🚚</span> {{ section.settings.ship_note }}</p>{%- endif -%}
               {%- if section.settings.atc_note != blank -%}<p class="sq-buy-note">↻ {{ section.settings.atc_note }}</p>{%- endif -%}
-              {%- if section.settings.view_product_label != blank -%}<p class="sq-buy-view"><a href="{{ rp.url }}">{{ section.settings.view_product_label }} →</a></p>{%- endif -%}
+              {%- if section.settings.view_product_label != blank -%}<p class="sq-buy-view"><a href="{{ rp.url }}">{{ section.settings.view_product_label }} <span class="sq-buy-view-arr" aria-hidden="true">→</span></a></p>{%- endif -%}
               {%- if rbs.how_it_works != blank -%}
                 <details class="sq-acc sq-acc--box" open>
                   <summary>{{ section.settings.how_it_works_heading }}</summary>
@@ -374,6 +377,7 @@
         {%- endif -%}
       </div>
     </div>
+    {%- endunless -%}
   </div>
 </section>
 
@@ -462,6 +466,8 @@
       "tired": [{{ section.settings.why_tired | json }}, {{ section.settings.why_tired_partner | json }}],
       "both": [{{ section.settings.why_both | json }}, {{ section.settings.why_both_partner | json }}]
     },
+    "redirect": {{ sq_redirect | json }},
+    "redirectLine": {{ section.settings.analyze_redirect | json }},
     "buy": {
       "banner": {{ section.settings.buy_banner | json }},
       "autoship": {{ section.settings.autoship_label | json }},
@@ -494,6 +500,7 @@
       "label": "Design",
       "options": [
         { "value": "night", "label": "Night (navy + purple)" },
+        { "value": "light", "label": "Light (periwinkle, product page colours)" },
         { "value": "v2", "label": "SOMNA V2 (mint, lavender, Boldonse)" }
       ],
       "default": "night"
@@ -745,6 +752,19 @@
       "id": "analyze_foot",
       "label": "Small print",
       "default": "Takes 2 seconds · goes straight to your match"
+    },
+    {
+      "type": "checkbox",
+      "id": "end_redirect",
+      "label": "Go straight to the matched product page",
+      "info": "No result page: after the matching screen the quiz opens the matched product with a personalised banner at the top.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "analyze_redirect",
+      "label": "Line at 100%",
+      "default": "Taking you to your match…"
     },
     {
       "type": "header",

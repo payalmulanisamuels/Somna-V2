@@ -129,6 +129,9 @@
     ]
   </script>
 
+  {%- comment -%} "Your SOMNA match" banner: only when they arrive from the quiz (?quiz=1) {%- endcomment -%}
+  {%- render 'somna-quiz-match-banner', product: product, pad_top: s.padding_top -%}
+
   <div class="somna-pdp-hero__inner somna-container">
     {%- comment -%} left column (gallery + quote + videos): on desktop it stays in view while a long buy panel scrolls {%- endcomment -%}
     <div class="somna-pdp-hero__gallery-wrap">
