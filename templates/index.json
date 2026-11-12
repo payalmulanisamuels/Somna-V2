@@ -547,7 +547,7 @@
                     "custom_button_border": "#afbdf8",
                     "link_text_color": "",
                     "width": "custom",
-                    "custom_width": 100,
+                    "custom_width": 48,
                     "width_mobile": "custom",
                     "custom_width_mobile": 100
                   },
@@ -4378,4 +4378,3 @@
     "wave_black_mint_footer"
   ]
 }
-
