@@ -538,7 +538,7 @@
                 "button": {
                   "type": "button",
                   "settings": {
-                    "label": "SHOP THE SALE  →",
+                    "label": "SHOP THE SALE",
                     "link": "/pages/black-friday-sale",
                     "open_in_new_tab": false,
                     "style_class": "button-custom",
@@ -559,10 +559,29 @@
                     "custom_liquid": "<p class=\"somna-hero-line somna-hero-line--ship\">$4.95 shipping<br>Delivered in 7–9 business days</p>"
                   },
                   "blocks": {}
+                },
+                "button_mobile": {
+                  "type": "button",
+                  "settings": {
+                    "label": "SHOP NOW",
+                    "link": "/pages/black-friday-sale",
+                    "open_in_new_tab": false,
+                    "style_class": "button-custom",
+                    "custom_button_background": "#afbdf8",
+                    "custom_button_text": "#000000",
+                    "custom_button_border": "#afbdf8",
+                    "link_text_color": "",
+                    "width": "custom",
+                    "custom_width": 75,
+                    "width_mobile": "custom",
+                    "custom_width_mobile": 100
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
                 "button",
+                "button_mobile",
                 "sale_ship"
               ]
             },
