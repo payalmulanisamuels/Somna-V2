@@ -64,17 +64,17 @@
   @media screen and (min-width: 750px) {
     /* taller hero, so the copy sits lower as in the design */
     .hero-wrapper:has(.somna-hero-line) .hero__content-wrapper > .group-block > .group-block-content { min-height: 800px; }
-    .hero-wrapper:has(.somna-hero-line) img.hero__media { object-position: 50% 100%; }
-    .hero-wrapper:has(.somna-hero-line) [class*='__description'] { max-width: 476px !important; }
+    .hero-wrapper:has(.somna-hero-line) img.hero__media { object-position: 100% 100%; }
+    .hero-wrapper:has(.somna-hero-line) [class*='__description'],
+    .hero-wrapper:has(.somna-hero-line) [class*='__description'] p { max-width: 476px !important; }
     .hero-wrapper:has(.somna-hero-line) [class*='__tiles'] { margin-top: 43px; }
     .hero-wrapper:has(.somna-hero-line) [class*='__review'],
     .hero-wrapper:has(.somna-hero-line) [class*='__join'] { margin-top: -11px; }
     /* review: small photo and compact text, as in the design */
-    .hero-wrapper:has(.somna-hero-line) [class*='__review'] > :first-child { --size-style-width: 41px; width: 41px; flex: none; }
+    .hero-wrapper:has(.somna-hero-line) [class*='__review'] [class*='__avatar'] { --size-style-width: 41px; width: 41px !important; flex: none; }
     .hero-wrapper:has(.somna-hero-line) [class*='__review'] p { font-size: 12px; }
     .hero-wrapper:has(.somna-hero-line) [class*='__review'] [class*='__name'] p { font-size: 10px; }
     .hero-wrapper:has(.somna-hero-line) [class*='__join'] p { font-size: 12.5px; }
-    .hero-wrapper:has(.somna-hero-line) [class*='__join'] [class*='__avatars'] { --size-style-width: 40px; width: 40px; flex: none; }
   }
   @media screen and (max-width: 749px) {
     .hero-wrapper:has(.somna-hero-line) .somna-badge { display: flex; justify-content: center; width: 100%; margin-bottom: 4px; }
