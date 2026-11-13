@@ -8,6 +8,7 @@
   - Closing hides it for the rest of the browser session (session cookie); the side tab then lets the
     visitor reopen it on every page.
   - Never shows again after a successful sign-up (localStorage).
+  - Never shows for the rest of the browser session after arriving from the quiz result (?quiz=1, sessionStorage).
   - Suppressed for visitors arriving from a Klaviyo email link or already known to Klaviyo.
   - Unwrap: tap / click the box or the button, or Enter / Space.
   - Email goes to the Klaviyo list (client subscriptions API) — same list and company as live.
@@ -916,6 +917,7 @@
       dismissedAt: 'somna_popup_dismissed_at', // legacy 14-day cooldown key, cleared on load
       signedUp: 'somna_popup_signed_up',       // localStorage: signed up, never show again
       suppressed: 'somna_popup_suppressed',    // localStorage: arrived from Klaviyo / known profile
+      fromQuiz: 'somna_popup_quiz',            // sessionStorage: arrived on a product from the quiz (?quiz=1)
       scratched: 'somna_popup_scratched',      // legacy localStorage key, cleared on load
       closed: 'somna_popup_closed',            // session cookie: closed this browser session
     };
@@ -946,6 +948,10 @@
       if (excluded.some((p) => path.includes(p))) return true;
       if (storage.get('localStorage', KEYS.signedUp) || storage.get('localStorage', KEYS.suppressed)) return true;
       const params = new URLSearchParams(window.location.search);
+      // came to a product from the quiz result: no popup (or side tab) for the rest of this browser session,
+      // so the quiz match isn't interrupted, even for first-time visitors
+      if (params.get('quiz') === '1') storage.set('sessionStorage', KEYS.fromQuiz, '1');
+      if (storage.get('sessionStorage', KEYS.fromQuiz)) return true;
       const fromKlaviyo =
         params.has('_kx') ||
         /klaviyo/i.test(params.get('utm_source') || '') ||
