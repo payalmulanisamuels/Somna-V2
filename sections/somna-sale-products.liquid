@@ -4,7 +4,9 @@
   Product block: picture, name, short line, Subscribe & Save and One-time prices, size chips and a Shop button.
   Prices come from the product: Subscribe & Save = the lowest selling plan price of the chosen size; One-time = the
   price less the one-time sale % (theme setting, snippets/somna-sale); struck = compare-at price, else the full price.
-  Tapping a size chip updates both prices and the button link (?variant=). A Quiz block adds the "Not sure which?" card.
+  Tapping a size chip updates both prices; the plan boxes pick Subscribe & Save or One-time. The Shop button adds that
+  size + plan to the cart and opens the cart drawer (setting "Button adds to cart"; off or without JavaScript it opens
+  the product page with ?variant=&plan=). A Quiz block adds the "Not sure which?" card.
 {%- enddoc -%}
 {%- render 'somna-shared-styles' -%}
 {%- liquid
@@ -37,6 +39,7 @@
   {% if s.anchor != blank %}id="{{ s.anchor | handleize }}"{% endif %}
   class="somna-sale-products"
   style="--ssp-bg: {{ s.background_color }}; --ssp-pt: {{ s.padding_top }}px; --ssp-pb: {{ s.padding_bottom }}px;"
+  data-adding="{{ s.adding_label | escape }}" data-added="{{ s.added_label | escape }}" data-error="{{ s.error_label | escape }}"
 >
   <div class="somna-container">
     <div class="somna-sale-products__head">
@@ -89,9 +92,11 @@
                 {%- if first_color != '' and v.option1 != first_color -%}{%- continue -%}{%- endif -%}
                 {%- liquid
                   assign sub = nil
+                  assign sub_plan = ''
                   for a in v.selling_plan_allocations
                     if sub == nil or a.price < sub
                       assign sub = a.price
+                      assign sub_plan = a.selling_plan.id
                     endif
                   endfor
                   if sub == nil
@@ -110,10 +115,10 @@
                   assign n_sizes = n_sizes | plus: 1
                 -%}
                 {%- if default_set == false -%}
-                  {%- assign d_sub = sub -%}{%- assign d_once = once -%}{%- assign d_full = full -%}{%- assign d_id = v.id -%}
+                  {%- assign d_sub = sub -%}{%- assign d_once = once -%}{%- assign d_full = full -%}{%- assign d_id = v.id -%}{%- assign d_plan = sub_plan -%}
                   {%- assign default_set = true -%}
                 {%- endif -%}
-                {%- capture chip -%}<button type="button" class="somna-sale-card__chip" aria-pressed="{% if n_sizes == 1 %}true{% else %}false{% endif %}" data-id="{{ v.id }}" data-price-sub="{{ sub | money }}" data-price-once="{{ once | money }}" data-price-full="{{ full | money }}"{% unless v.available %} disabled{% endunless %}>{{ size_label | escape }}</button>{%- endcapture -%}
+                {%- capture chip -%}<button type="button" class="somna-sale-card__chip" aria-pressed="{% if n_sizes == 1 %}true{% else %}false{% endif %}" data-id="{{ v.id }}" data-plan-id="{{ sub_plan }}" data-price-sub="{{ sub | money }}" data-price-once="{{ once | money }}" data-price-full="{{ full | money }}"{% unless v.available %} disabled{% endunless %}>{{ size_label | escape }}</button>{%- endcapture -%}
                 {%- assign chips = chips | append: chip -%}
               {%- endfor -%}
 
@@ -140,7 +145,9 @@
                 {%- if s.gifts_note != blank -%}<p class="somna-sale-card__gifts">{% render 'somna-gift-glyph' %} {{ s.gifts_note | escape }}</p>{%- endif -%}
               </div>
 
-              <a class="somna-sale-card__btn" href="{{ p.url }}?variant={{ d_id }}{% unless has_sub %}&plan=once{% endunless %}" data-base="{{ p.url }}" data-variant="{{ d_id }}">{{ b.button_label | default: s.button_label | escape }}</a>
+              {%- comment -%} adds the chosen size + plan to the cart (AJAX, opens the cart drawer); without JavaScript it opens the product page {%- endcomment -%}
+              <a class="somna-sale-card__btn" href="{{ p.url }}?variant={{ d_id }}{% unless has_sub %}&plan=once{% endunless %}" data-base="{{ p.url }}" data-variant="{{ d_id }}" data-plan-id="{{ d_plan }}" data-title="{{ p.title | escape }}"{% if s.add_to_cart %} data-atc role="button"{% endif %}>{{ b.button_label | default: s.button_label | escape }}</a>
+              <p class="somna-sale-card__err" role="alert" hidden></p>
             </article>
           </li>
         {%- elsif block.type == 'quiz' -%}
@@ -195,7 +202,7 @@
             set('[data-sub]', chip.dataset.priceSub);
             set('[data-once]', chip.dataset.priceOnce);
             set('[data-full]', chip.dataset.priceFull);
-            if (btn) btn.dataset.variant = chip.dataset.id;
+            if (btn) { btn.dataset.variant = chip.dataset.id; btn.dataset.planId = chip.dataset.planId || ''; }
             link();
           }));
           const plans = [...card.querySelectorAll('[data-plan]')];
@@ -213,6 +220,61 @@
             });
           });
           link();
+          if (btn && btn.hasAttribute('data-atc')) btn.addEventListener('click', (e) => { e.preventDefault(); this.addToCart(card, btn); });
+        });
+        // back from checkout / another page: put the buttons back to normal
+        window.addEventListener('pageshow', (e) => {
+          if (e.persisted) this.querySelectorAll('[data-atc][aria-busy]').forEach((b) => { if (b.dataset.label) b.innerHTML = b.dataset.label; b.removeAttribute('aria-busy'); });
+        });
+      }
+
+      // Add to cart: same flow as the quiz page — /cart/add.js with the chosen size and plan, the cart drawer is refilled
+      // from the section Shopify returns and opened, and the theme's cart event updates the cart icon.
+      addToCart(card, btn) {
+        if (btn.getAttribute('aria-busy') === 'true') return;
+        const root = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
+        const err = card.querySelector('.somna-sale-card__err');
+        const plan = card.querySelector('[data-plan][aria-checked="true"]');
+        const id = Number(btn.dataset.variant);
+        const body = { id, quantity: 1 };
+        if (plan && plan.dataset.plan === 'sub' && btn.dataset.planId) body.selling_plan = Number(btn.dataset.planId);
+        const ids = [...document.querySelectorAll('cart-items-component')].map((c) => c.dataset.sectionId).filter(Boolean);
+        if (ids.length) body.sections = ids.join(',');
+        const drawer = document.querySelector('cart-drawer-component');
+        const td = drawer && drawer.closest('theme-drawer');
+        const wasEmpty = !!(drawer && drawer.querySelector('[data-cart-drawer-empty], .cart-drawer--empty'));
+        btn.dataset.label = btn.dataset.label || btn.innerHTML;
+        btn.setAttribute('aria-busy', 'true');
+        btn.innerHTML = '<span class="somna-sale-card__spin" aria-hidden="true"></span> ' + this.dataset.adding;
+        if (err) err.hidden = true;
+        let deferred = null, Ev = null;
+        const addReq = fetch(root + 'cart/add.js', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body)
+        }).then((r) => r.json());
+        const renderer = import('@theme/section-renderer').catch(() => null);
+        import('@shopify/events').catch(() => null).then((m) => {
+          Ev = m && m.CartLinesUpdateEvent;
+          deferred = Ev ? Ev.createPromise() : null;
+          if (deferred) btn.dispatchEvent(new Ev({ action: 'add', context: 'product', lines: [{ merchandiseId: String(id), quantity: 1 }], promise: deferred.promise }));
+          return addReq;
+        }).then((added) => {
+          if (added.status) throw new Error(added.description || added.message || this.dataset.error);
+          const html = added.sections && ids[0] && added.sections[ids[0]];
+          const shown = renderer.then((rs) => {
+            if (rs && rs.morphSection && html) return rs.morphSection(ids[0], html, { mode: 'hydration', injectStylesheet: wasEmpty });
+          }).catch(() => {}).then(() => {
+            if (td && typeof td.open === 'function') { if (!td.isOpen) td.open(); } else window.location.href = root + 'cart';
+          });
+          btn.textContent = this.dataset.added;
+          setTimeout(() => { btn.innerHTML = btn.dataset.label; btn.removeAttribute('aria-busy'); }, 1800);
+          try { if (window.fbq) fbq('track', 'AddToCart', { content_name: btn.dataset.title, content_category: 'Black Friday sale' }); } catch (e) {}
+          return shown.then(() => fetch(root + 'cart.js')).then((r) => r.json()).then((cart) => {
+            if (deferred) deferred.resolve({ cart: Ev.createCartFromAjaxResponse(cart), detail: { items: cart.items, source: 'somna-sale', itemCount: 1, productId: String(added.product_id || ''), sections: added.sections, didError: false } });
+          });
+        }).catch((e) => {
+          if (deferred) deferred.reject(e);
+          btn.innerHTML = btn.dataset.label; btn.removeAttribute('aria-busy');
+          if (err) { err.textContent = (e && e.message) || this.dataset.error; err.hidden = false; }
         });
       }
     });
@@ -444,6 +506,14 @@
   .somna-sale-card__prices + .somna-sale-card__btn { margin-top: 20px; }
   .somna-sale-card__btn:hover,
   .somna-sale-quiz__btn:hover { transform: translateY(-2px); box-shadow: 0 7px 12px rgb(0 0 0 / 0.25); }
+  .somna-sale-card__btn { gap: 8px; cursor: pointer; }
+  .somna-sale-card__btn[aria-busy='true'] { pointer-events: none; opacity: 0.85; }
+  .somna-sale-card__spin {
+    width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%;
+    animation: somna-sale-spin 0.7s linear infinite;
+  }
+  @keyframes somna-sale-spin { to { transform: rotate(360deg); } }
+  .somna-sale-card__err { margin: 8px 0 0; font-size: 13px; font-weight: 600; color: #b3261e; text-align: center; }
 
   .somna-sale-quiz {
     display: flex;
@@ -567,6 +637,10 @@
     { "type": "text", "id": "sticker", "label": "Card sticker", "info": "Round sticker on each card's corner. Leave empty to hide.", "default": "Up to 60% off" },
     { "type": "text", "id": "gifts_note", "label": "Gifts note", "default": "3 gifts on 2+" },
     { "type": "text", "id": "button_label", "label": "Button", "default": "Shop now →" },
+    { "type": "checkbox", "id": "add_to_cart", "label": "Button adds to cart", "info": "On: the button adds the chosen size and plan to the cart and opens the cart drawer. Off: it opens the product page.", "default": true },
+    { "type": "text", "id": "adding_label", "label": "Button while adding", "default": "Adding…" },
+    { "type": "text", "id": "added_label", "label": "Button when added", "default": "Added ✓" },
+    { "type": "text", "id": "error_label", "label": "Add to cart error", "default": "Could not add to cart. Please try again." },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
     { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 }
   ],
