@@ -93,7 +93,8 @@
 
     /* FAQ: uppercase eyebrow + heading, no "Can't find your answer" line (as in the phone design) */
     body:has(.somna-sale-hero-line) [id$='__faq'] [class*='__eyebrow'] p { text-transform: uppercase; }
-    body:has(.somna-sale-hero-line) [id$='__faq'] [class*='__heading'] * { text-transform: uppercase; font-size: 36px !important; line-height: 1.2 !important; }
+    body:has(.somna-sale-hero-line) main [id$='__faq'] [class*='__heading'] :is(h2, p) { text-transform: uppercase !important; font-size: 36px !important; line-height: 1.2 !important; }
+    body:has(.somna-sale-hero-line) [id$='__faq'] summary { font-size: 12.5px; }
     body:has(.somna-sale-hero-line) [id$='__faq'] [class*='-block--'][class*='__text'] { display: none; }
   }
 </style>
