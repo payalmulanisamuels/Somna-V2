@@ -117,15 +117,20 @@
                 {%- assign chips = chips | append: chip -%}
               {%- endfor -%}
 
-              <div class="somna-sale-card__prices">
-                <div class="somna-sale-card__price somna-sale-card__price--sub">
+              {%- comment -%} plan choice: Subscribe & Save (default) or One-time; carried to the product page {%- endcomment -%}
+              {%- assign has_sub = false -%}
+              {%- if p.selling_plan_groups.size > 0 -%}{%- assign has_sub = true -%}{%- endif -%}
+              <div class="somna-sale-card__prices" role="radiogroup" aria-label="{{ s.plan_label | escape }}">
+                {%- if has_sub -%}
+                <button type="button" class="somna-sale-card__price somna-sale-card__price--sub" role="radio" aria-checked="true" data-plan="sub">
                   <span class="somna-sale-card__price-label">{{ s.sub_label | escape }}</span>
                   <span class="somna-sale-card__price-row"><b data-sub>{{ d_sub | money }}</b> {% if d_full > d_sub %}<s data-full>{{ d_full | money }}</s>{% endif %}</span>
-                </div>
-                <div class="somna-sale-card__price somna-sale-card__price--once">
+                </button>
+                {%- endif -%}
+                <button type="button" class="somna-sale-card__price somna-sale-card__price--once" role="radio" aria-checked="{% if has_sub %}false{% else %}true{% endif %}" data-plan="once">
                   <span class="somna-sale-card__price-label">{{ s.once_label | escape }}</span>
                   <span class="somna-sale-card__price-row"><b data-once>{{ d_once | money }}</b> {% if d_full > d_once %}<s data-full>{{ d_full | money }}</s>{% endif %}</span>
-                </div>
+                </button>
               </div>
 
               <div class="somna-sale-card__meta">
@@ -135,7 +140,7 @@
                 {%- if s.gifts_note != blank -%}<p class="somna-sale-card__gifts">{% render 'somna-gift-glyph' %} {{ s.gifts_note | escape }}</p>{%- endif -%}
               </div>
 
-              <a class="somna-sale-card__btn" href="{{ p.url }}?variant={{ d_id }}" data-base="{{ p.url }}">{{ b.button_label | default: s.button_label | escape }}</a>
+              <a class="somna-sale-card__btn" href="{{ p.url }}?variant={{ d_id }}{% unless has_sub %}&plan=once{% endunless %}" data-base="{{ p.url }}" data-variant="{{ d_id }}">{{ b.button_label | default: s.button_label | escape }}</a>
             </article>
           </li>
         {%- elsif block.type == 'quiz' -%}
@@ -175,17 +180,39 @@
             li.hidden = !(f === 'all' || li.dataset.cat === f || li.dataset.cat === 'quiz');
           });
         }));
-        // size chips: update the prices and the button link
+        // buy box: size chips update the prices; the plan boxes choose Subscribe & Save or One-time.
+        // The button opens the product page with that size (?variant=) and plan (&plan=sub|once) already chosen.
         this.querySelectorAll('[data-sale-card]').forEach((card) => {
           const btn = card.querySelector('.somna-sale-card__btn');
+          const link = () => {
+            if (!btn) return;
+            const plan = card.querySelector('[data-plan][aria-checked="true"]');
+            btn.href = btn.dataset.base + '?variant=' + btn.dataset.variant + '&plan=' + (plan ? plan.dataset.plan : 'once');
+          };
           card.querySelectorAll('.somna-sale-card__chip').forEach((chip) => chip.addEventListener('click', () => {
             card.querySelectorAll('.somna-sale-card__chip').forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
             const set = (sel, val) => card.querySelectorAll(sel).forEach((el) => { el.textContent = val; });
             set('[data-sub]', chip.dataset.priceSub);
             set('[data-once]', chip.dataset.priceOnce);
             set('[data-full]', chip.dataset.priceFull);
-            if (btn) btn.href = btn.dataset.base + '?variant=' + chip.dataset.id;
+            if (btn) btn.dataset.variant = chip.dataset.id;
+            link();
           }));
+          const plans = [...card.querySelectorAll('[data-plan]')];
+          plans.forEach((box) => {
+            box.addEventListener('click', () => {
+              plans.forEach((b) => b.setAttribute('aria-checked', String(b === box)));
+              link();
+            });
+            // arrow keys move between the two plans (radio group)
+            box.addEventListener('keydown', (e) => {
+              if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) return;
+              e.preventDefault();
+              const other = plans.find((b) => b !== box);
+              if (other) { other.focus(); other.click(); }
+            });
+          });
+          link();
         });
       }
     });
@@ -341,10 +368,18 @@
     padding: 6px 8px;
     border: 1.5px solid #000;
     border-radius: 6.5px;
+    background: #f3feee;
+    font: inherit;
+    color: #000;
     text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
   }
-  .somna-sale-card__price--sub { background: rgb(175 189 248 / 0.58); }
-  .somna-sale-card__price--once { background: #f3feee; }
+  /* the chosen plan is lavender with a small hard shadow; the other stays mint */
+  .somna-sale-card__price[aria-checked='true'] { background: rgb(175 189 248 / 0.58); box-shadow: 2px 2.5px 0 #000; }
+  .somna-sale-card__price:hover { background: rgb(175 189 248 / 0.3); }
+  .somna-sale-card__price[aria-checked='true']:hover { background: rgb(175 189 248 / 0.58); }
+  .somna-sale-card__price:focus-visible { outline: 2px solid #3d52d5; outline-offset: 2px; }
   .somna-sale-card__price-label {
     font-size: 13.93px;
     font-weight: 700;
@@ -525,6 +560,7 @@
     { "type": "text", "id": "tape_label", "label": "Tape", "default": "Tape" },
     { "type": "text", "id": "bundles_label", "label": "Bundles", "default": "Bundles" },
     { "type": "header", "content": "Cards" },
+    { "type": "text", "id": "plan_label", "label": "Plan choice name (screen readers)", "default": "Choose a plan" },
     { "type": "text", "id": "sub_label", "label": "Subscribe price label", "default": "Subscribe & Save" },
     { "type": "text", "id": "once_label", "label": "One-time price label", "default": "One-time:" },
     { "type": "text", "id": "size_label", "label": "Size chips name (screen readers)", "default": "Choose a size" },

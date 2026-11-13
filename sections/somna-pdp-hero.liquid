@@ -581,6 +581,8 @@
         const checked = this.querySelector('[data-pack]:checked');
         this.v = checked ? Number(checked.value) : 0;
         this.mode = this.querySelector('[data-mode-input]:checked')?.value || 'once';
+        // ?plan=once / ?plan=sub (e.g. from the Black Friday sale cards) picks the purchase type on arrival
+        try { const qp = new URLSearchParams(location.search).get('plan'); if (qp === 'once' || qp === 'sub') this.mode = qp; } catch (e) {}
         this.planSelect = this.querySelector('[data-plan]');
         this.nights = Number(this.dataset.nights) || 0;
         this.giftMin = Number(this.dataset.giftMin) || 99;
