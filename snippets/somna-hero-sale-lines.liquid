@@ -3,15 +3,28 @@
   icons and the shipping lines under the button. They are Custom Liquid blocks in the hero (text editable there):
     <p class="somna-hero-line somna-hero-line--offer">…<b>60% off</b>…</p>
     <p class="somna-hero-line somna-hero-line--ship">…</p>
-  Both show on phones only (the desktop design has neither).
+  Phones: offer line under the icons, shipping lines under the button. Desktop: offer line under the description,
+  shipping lines beside the button.
   Also styles the rest of this hero to the Figma frames (desktop 5004:104, mobile 5056:3809): sticker badge,
   Shop button with the Figma arrow (two Button blocks: "button" on desktop, "button_mobile" on phones), spacing,
   description width and the compact review row. Everything is scoped to the hero that holds these lines.
 {%- enddoc -%}
 <style>
   /* the Custom Liquid block's wrapper is hidden too, so it leaves no gap on desktop */
-  div:has(> .somna-hero-line) { display: none; }
   .somna-hero-line { margin: 0; text-align: center; }
+  /* desktop (Figma 5004:104): the offer line sits between the description and the icons, the shipping lines
+     to the right of the Shop button */
+  @media screen and (min-width: 750px) {
+    div:has(> .somna-hero-line) { display: block; }
+    .somna-hero-line { text-align: left; }
+    .somna-hero-line--offer { font-size: 16px; line-height: 1.35; color: #f3feee; }
+    .somna-hero-line--offer b { font-weight: 700; color: #afbdf8; }
+    .somna-hero-line--ship { font-size: 14px; line-height: 1.4; color: #848484; white-space: nowrap; }
+    .hero-wrapper:has(.somna-hero-line) .hero__content-wrapper > .group-block > .group-block-content > [class*='__intro'] { order: -2; }
+    .hero-wrapper:has(.somna-hero-line) .hero__content-wrapper > .group-block > .group-block-content > div:has(> .somna-hero-line--offer) { order: -1; margin-top: -8px; }
+    .hero-wrapper:has(.somna-hero-line) [class*='__cta'] { width: auto !important; --size-style-width: auto; }
+    .hero-wrapper:has(.somna-hero-line) [class*='__cta'] > .group-block-content { flex-direction: row; align-items: center; gap: 22px; }
+  }
   @media screen and (max-width: 749px) {
     div:has(> .somna-hero-line) { display: block; width: 100%; }
     .somna-hero-line--offer { font-size: 12px; line-height: 1.3; color: #f3feee; }
@@ -67,7 +80,6 @@
     .hero-wrapper:has(.somna-hero-line) img.hero__media { object-position: 100% 100%; }
     .hero-wrapper:has(.somna-hero-line) [class*='__description'],
     .hero-wrapper:has(.somna-hero-line) [class*='__description'] p { max-width: 476px !important; }
-    .hero-wrapper:has(.somna-hero-line) [class*='__tiles'] { margin-top: 43px; }
     .hero-wrapper:has(.somna-hero-line) [class*='__review'],
     .hero-wrapper:has(.somna-hero-line) [class*='__join'] { margin-top: -11px; }
     /* review: small photo and compact text, as in the design */
