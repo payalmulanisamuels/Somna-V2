@@ -591,24 +591,34 @@
     .somna-sale-badge { font-size: 14px; padding: 5px 10px; }
     .somna-sale-products__heading { font-size: 32px; }
     .somna-sale-products__head { gap: 16px; margin-bottom: 24px; }
-    .somna-sale-products__filter { min-height: 34px; padding: 0 14px; font-size: 13px; }
-    .somna-sale-products__grid { grid-template-columns: 1fr; gap: 20px; }
-    .somna-sale-card { padding: 14px 14px 22px; border-radius: 14px; }
+    .somna-sale-products__filters { width: 100%; justify-content: center; }
+    .somna-sale-products__filter { min-height: 36px; padding: 0 14px; font-size: 15px; }
+    .somna-sale-products__grid { grid-template-columns: 1fr; gap: 26px; padding-inline: 22px; }
+    .somna-sale-card { padding: 16px 16px 22px; border-radius: 14px; }
     .somna-sale-card__sticker { top: -12px; right: -6px; width: 86px; height: 84px; }
     .somna-sale-card__sticker span { max-width: 60px; font-size: 14px; }
     .somna-sale-card__title { margin-top: 18px; font-size: 22px; }
     .somna-sale-card__text { font-size: 14px; }
-    .somna-sale-card__price-label { font-size: 12px; letter-spacing: 0.05em; }
-    .somna-sale-card__price-row b { font-size: 18px; }
+    /* plan boxes: left-aligned and compact, as in the phone design */
+    .somna-sale-card__prices { gap: 10px; }
+    .somna-sale-card__price { align-items: flex-start; min-height: 49px; padding: 5px 8px; border-radius: 6px; text-align: left; }
+    .somna-sale-card__price-label { font-size: 11px; letter-spacing: 0.04em; }
+    .somna-sale-card__price-row b { font-size: 16px; }
+    .somna-sale-card__price-row s { font-size: 9.5px; }
     .somna-sale-card__meta { margin-top: 16px; }
+    .somna-sale-card__chips { gap: 4px; }
+    .somna-sale-card__chip { min-height: 22px; padding: 0 8px; font-size: 10px; }
+    .somna-sale-card__gifts { font-size: 11px; }
+    .somna-sale-card__gifts .somna-gift-glyph { width: 16px; height: 16px; }
     .somna-sale-card__meta + .somna-sale-card__btn,
     .somna-sale-card__prices + .somna-sale-card__btn { margin-top: 16px; }
-    .somna-sale-card__btn, .somna-sale-quiz__btn { min-height: 48px; }
+    .somna-sale-card__btn, .somna-sale-quiz__btn { min-height: 40px; font-size: 12px; }
+    .somna-sale-quiz__btn { width: 100%; max-width: 296px; }
     .somna-sale-quiz { padding: 8px 0 0; }
     .somna-sale-quiz__img { width: 150px; margin-bottom: 16px; }
-    .somna-sale-quiz__keys { grid-template-columns: repeat(2, 72px); gap: 5px; margin-bottom: 20px; }
-    .somna-sale-quiz__key { width: 72px; height: 72px; border-width: 5px; border-radius: 14px; box-shadow: 0 4px 0 #000; font-size: 30px; }
-    .somna-sale-quiz__heading { font-size: 22px; }
+    .somna-sale-quiz__keys { grid-template-columns: repeat(2, 77px); gap: 4px; margin-bottom: 24px; }
+    .somna-sale-quiz__key { width: 77px; height: 77px; border-width: 5px; border-radius: 15px; box-shadow: 0 4px 0 #000; font-size: 32px; }
+    .somna-sale-quiz__heading { max-width: 290px; margin-inline: auto; font-size: 26px; line-height: 1.15; }
   }
 {% endstylesheet %}
 

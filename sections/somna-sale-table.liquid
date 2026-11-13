@@ -3,7 +3,7 @@
   One Product block per product group; its rows come from the product's sizes (first colour only):
   size + nights (bags × the product's custom.nights, 30 when empty), Subscribe & Save price (lowest selling plan
   price), One-time price (price less the one-time sale %, snippets/somna-sale) and the gifts note on 2+ bags.
-  The Subscribe & Save column is highlighted. Phones: the table scrolls sideways inside its card.
+  The Subscribe & Save column is highlighted. Phones: the same rows as a stacked list (Figma 5075:3845) with a note under it.
 {%- enddoc -%}
 {%- render 'somna-shared-styles' -%}
 {%- liquid
@@ -93,6 +93,69 @@
         {%- endfor -%}
       </table>
     </div>
+
+    {%- comment -%} phones (Figma 5075:3845): the same rows as a stacked list — size + gifts on the left, Subscribe & Save price and the one-time price on the right {%- endcomment -%}
+    <div class="somna-sale-table__list">
+      {%- for block in section.blocks -%}
+        {%- assign p = block.settings.product -%}
+        {%- if p == blank -%}{%- continue -%}{%- endif -%}
+        {%- liquid
+          assign first_color = ''
+          assign size_index = 0
+          if p.options.size > 1
+            assign first_color = p.variants.first.option1
+            assign size_index = 1
+          endif
+          assign nights_per = p.metafields.custom.nights.value | default: 30
+        -%}
+        <div class="somna-sale-table__mgroup">
+          <p class="somna-sale-table__mtitle">{{ block.settings.label | default: p.title | escape }}</p>
+          {%- for v in p.variants -%}
+            {%- if first_color != '' and v.option1 != first_color -%}{%- continue -%}{%- endif -%}
+            {%- liquid
+              if size_index == 1
+                assign size_label = v.option2
+              else
+                assign size_label = v.option1
+              endif
+              assign bags = size_label | split: ' ' | first | plus: 0
+              if bags < 1
+                assign bags = 1
+              endif
+              assign nights = bags | times: nights_per
+              assign sub = nil
+              for a in v.selling_plan_allocations
+                if sub == nil or a.price < sub
+                  assign sub = a.price
+                endif
+              endfor
+              if sub == nil
+                assign sub = v.price
+              endif
+              assign once = v.price | times: once_factor | round
+              if size_label == 'Default Title'
+                assign size_text = s.single_size | replace: '[nights]', nights
+              else
+                assign size_text = size_label | downcase | append: ' · ' | append: nights | append: ' nights'
+              endif
+            -%}
+            <div class="somna-sale-table__mrow">
+              <div>
+                <p class="somna-sale-table__msize">{{ size_text | escape }}</p>
+                {%- if bags >= s.gift_min and s.gifts_note != blank -%}
+                  <p class="somna-sale-table__mgift">{% render 'somna-gift-glyph' %} {{ s.gifts_note | escape }}</p>
+                {%- endif -%}
+              </div>
+              <div class="somna-sale-table__mprice">
+                <p class="somna-sale-table__msub">{{ sub | money }}</p>
+                <p class="somna-sale-table__monce">{{ s.once_short | escape }} {{ once | money }}</p>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+    {%- if s.footnote != blank -%}<p class="somna-sale-table__note">{{ s.footnote | escape }}</p>{%- endif -%}
   </div>
 </div>
 
@@ -179,7 +242,30 @@
     .somna-sale-table__card { overflow-x: auto; overscroll-behavior-x: contain; }
     .somna-sale-table__table { min-width: 760px; }
   }
+  .somna-sale-table__list, .somna-sale-table__note { display: none; }
   @media screen and (max-width: 749px) {
+    /* phones: the table becomes a stacked list (Figma 5075:3845) */
+    .somna-sale-table__card { display: none; }
+    .somna-sale-table__list {
+      display: block;
+      margin-inline: 8px;
+      padding: 14px 18px 4px;
+      border: 2px solid #000;
+      border-radius: 16px;
+      background: #f4fef3;
+      box-shadow: 2.4px 3px 0 #000;
+    }
+    .somna-sale-table__list p { margin: 0; }
+    .somna-sale-table__mgroup + .somna-sale-table__mgroup { margin-top: 6px; }
+    .somna-sale-table__mtitle { font-size: 15px; font-weight: 700; letter-spacing: 0.04em; }
+    .somna-sale-table__mrow { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; min-height: 64px; padding-top: 4px; }
+    .somna-sale-table__msize { font-size: 18px; line-height: 1.3; letter-spacing: 0.06em; }
+    .somna-sale-table__mgift { display: flex; align-items: center; gap: 4px; margin-top: 2px !important; font-size: 11px; font-weight: 700; color: #98a3de; }
+    .somna-sale-table__mgift .somna-gift-glyph { flex: none; width: 18px; height: 18px; color: #000; }
+    .somna-sale-table__mprice { flex: none; text-align: right; }
+    .somna-sale-table__msub { font-size: 14px; font-weight: 700; line-height: 1.3; letter-spacing: 0.04em; }
+    .somna-sale-table__monce { font-size: 10px; line-height: 1.3; letter-spacing: 0.06em; }
+    .somna-sale-table__note { display: block; max-width: 330px; margin: 18px 8px 0; font-size: 11px; font-weight: 700; line-height: 1.3; letter-spacing: 0.04em; }
     .somna-sale-table { padding-block: calc(var(--sst-pt) * 0.6) calc(var(--sst-pb) * 0.6); }
     .somna-sale-table__eyebrow { font-size: 14px; }
     .somna-sale-table__heading { margin-bottom: 18px; font-size: 28px; }
@@ -213,6 +299,10 @@
     { "type": "text", "id": "gifts_note", "label": "Gifts note", "default": "3 gifts on 2+" },
     { "type": "range", "id": "gift_min", "label": "Gifts from (bags)", "min": 1, "max": 4, "step": 1, "default": 2 },
     { "type": "text", "id": "no_gifts_label", "label": "No gifts (screen readers)", "default": "No gifts" },
+    { "type": "header", "content": "Phones" },
+    { "type": "paragraph", "content": "On phones the table shows as a list: size and gifts on the left, the Subscribe & Save price and the one-time price on the right." },
+    { "type": "text", "id": "once_short", "label": "One-time price label", "default": "one-time" },
+    { "type": "text", "id": "footnote", "label": "Note under the list", "default": "Every order: $4.95 standard shipping · Delivered in 7–9 business days · 30-Night Money-Back Guarantee" },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 56 },
     { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 }
   ],
