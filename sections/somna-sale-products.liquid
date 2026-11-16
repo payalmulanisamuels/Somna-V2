@@ -267,7 +267,6 @@
           });
           btn.textContent = this.dataset.added;
           setTimeout(() => { btn.innerHTML = btn.dataset.label; btn.removeAttribute('aria-busy'); }, 1800);
-          try { if (window.fbq) fbq('track', 'AddToCart', { content_name: btn.dataset.title, content_category: 'Black Friday sale' }); } catch (e) {}
           return shown.then(() => fetch(root + 'cart.js')).then((r) => r.json()).then((cart) => {
             if (deferred) deferred.resolve({ cart: Ev.createCartFromAjaxResponse(cart), detail: { items: cart.items, source: 'somna-sale', itemCount: 1, productId: String(added.product_id || ''), sections: added.sections, didError: false } });
           });

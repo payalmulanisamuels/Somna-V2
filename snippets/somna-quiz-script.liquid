@@ -477,7 +477,6 @@
       });
       btn.textContent = BUY.added || 'Added ✓';
       setTimeout(function () { btn.innerHTML = label; btn.removeAttribute('aria-busy'); }, 1800);
-      try { if (window.fbq) fbq('track', 'AddToCart', { content_name: PRODUCTS[k].title, content_category: 'SOMNA Quiz' }); } catch (e) {}
       // 2) cart icon and the rest of the theme: the full cart, in the background (the drawer is already up to date)
       return shown.then(function () { return fetch(ROOT_URL + 'cart.js'); }).then(function (res) { return res.json(); }).then(function (cart) {
         if (deferred) deferred.resolve({ cart: Ev.createCartFromAjaxResponse(cart), detail: { items: cart.items, source: 'somna-quiz', itemCount: 1, productId: String(PRODUCTS[k].id), sections: added.sections, didError: false } });
@@ -502,7 +501,6 @@
       method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body)
     }).then(function (res) { return res.json(); }).then(function (added) {
       if (added.status) throw new Error(added.description || added.message || 'Could not add to cart');
-      try { if (window.fbq) fbq('track', 'AddToCart', { content_name: PRODUCTS[k].title, content_category: 'SOMNA Quiz' }); } catch (e) {}
       window.location.href = ROOT_URL + 'checkout';
     }).catch(function (e) {
       btn.innerHTML = label; btn.removeAttribute('aria-busy');
