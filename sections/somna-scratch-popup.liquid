@@ -9,6 +9,8 @@
     visitor reopen it on every page.
   - Never shows again after a successful sign-up (localStorage).
   - Never shows for the rest of the browser session after arriving from the quiz result (?quiz=1, sessionStorage).
+  - Never shows for the rest of the browser session after arriving from a Meta ad (fbclid, or utm_source
+    facebook / instagram / fb / ig / meta, sessionStorage).
   - Suppressed for visitors arriving from a Klaviyo email link or already known to Klaviyo.
   - Unwrap: tap / click the box or the button, or Enter / Space.
   - Email goes to the Klaviyo list (client subscriptions API) — same list and company as live.
@@ -918,6 +920,7 @@
       signedUp: 'somna_popup_signed_up',       // localStorage: signed up, never show again
       suppressed: 'somna_popup_suppressed',    // localStorage: arrived from Klaviyo / known profile
       fromQuiz: 'somna_popup_quiz',            // sessionStorage: arrived on a product from the quiz (?quiz=1)
+      fromMeta: 'somna_popup_meta',            // sessionStorage: arrived from a Facebook / Instagram ad
       scratched: 'somna_popup_scratched',      // legacy localStorage key, cleared on load
       closed: 'somna_popup_closed',            // session cookie: closed this browser session
     };
@@ -952,6 +955,12 @@
       // so the quiz match isn't interrupted, even for first-time visitors
       if (params.get('quiz') === '1') storage.set('sessionStorage', KEYS.fromQuiz, '1');
       if (storage.get('sessionStorage', KEYS.fromQuiz)) return true;
+      // came from a Meta ad (Facebook / Instagram): Meta adds fbclid to ad clicks, and ad links carry
+      // utm_source=facebook / instagram / fb / ig / meta (or Meta's own site source names an / msg).
+      // No popup or side tab for the rest of that browser session.
+      const metaSource = /^(facebook|instagram|fb|ig|meta|an|msg)([_\-\s.].*)?$/i.test((params.get('utm_source') || '').trim());
+      if (params.has('fbclid') || metaSource) storage.set('sessionStorage', KEYS.fromMeta, '1');
+      if (storage.get('sessionStorage', KEYS.fromMeta)) return true;
       const fromKlaviyo =
         params.has('_kx') ||
         /klaviyo/i.test(params.get('utm_source') || '') ||
