@@ -19,10 +19,10 @@
   style="--signup-width: {{ s.width }}%; --signup-input-bg: {{ s.input_background }}; --signup-input-text: {{ s.input_text }}; --signup-btn-bg: {{ s.button_background }}; --signup-btn-text: {{ s.button_text }}; --signup-note: {{ s.note_color }};"
   {{ block.shopify_attributes }}
 >
-  {%- comment -%} Real Shopify customer form: Shopify adds its spam check (CAPTCHA) to it, then it posts into the hidden frame below so the page stays put. {%- endcomment -%}
-  {%- assign frame_name = 'somna-signup-frame-' | append: uid -%}
-  {%- assign form_id = frame_name | append: '-form' -%}
-  {%- form 'customer', id: form_id, class: 'somna-signup__form', novalidate: 'novalidate', target: frame_name -%}
+  {%- comment -%} Real Shopify customer form: Shopify adds its spam check (CAPTCHA). After signing up Shopify reloads this page with ?customer_posted=true, and the script below shows the message. {%- endcomment -%}
+  {%- assign form_id = 'somna-signup-' | append: uid -%}
+  {%- form 'customer', id: form_id, class: 'somna-signup__form', novalidate: 'novalidate' -%}
+    {%- if form.errors -%}<span data-form-errors hidden></span>{%- endif -%}
     <input type="hidden" name="contact[tags]" value="newsletter, signup-newsletter-block">
     <label class="visually-hidden" for="{{ uid }}-email">{{ s.placeholder }}</label>
     <input
@@ -39,7 +39,6 @@
     >
     <button class="somna-signup__button" type="submit" data-submit>{{ s.button_label }}</button>
   {%- endform -%}
-  <iframe name="{{ frame_name }}" data-frame hidden tabindex="-1" aria-hidden="true" title="Sign-up"></iframe>
   <p class="somna-signup__msg" id="{{ uid }}-msg" role="status" aria-live="polite" data-msg></p>
   {%- if s.consent != blank -%}<div class="somna-signup__consent">{{ s.consent }}</div>{%- endif -%}
 </somna-klaviyo-signup>
@@ -59,51 +58,37 @@
 <script type="module">
   if (!customElements.get('somna-klaviyo-signup')) {
     const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const FROM_KEY = 'somna_signup_from';
     customElements.define('somna-klaviyo-signup', class extends HTMLElement {
       connectedCallback() {
         this.labels = { ok: this.dataset.ok, err: this.dataset.err, bad: this.dataset.bad };
         this.form = this.querySelector('form.somna-signup__form');
-        this.frame = this.querySelector('[data-frame]');
         this.input = this.querySelector('[data-email]');
         this.btn = this.querySelector('[data-submit]');
         this.msg = this.querySelector('[data-msg]');
         this.form.addEventListener('submit', this.onSubmit);
-        this.frame.addEventListener('load', this.onFrameLoad);
+        this.showResult();
       }
-      disconnectedCallback() {
-        this.form.removeEventListener('submit', this.onSubmit);
-        this.frame.removeEventListener('load', this.onFrameLoad);
-      }
+      disconnectedCallback() { this.form.removeEventListener('submit', this.onSubmit); }
       say(text, state) { this.msg.textContent = text; this.dataset.state = state || ''; this.input.setAttribute('aria-invalid', String(state === 'error')); }
-      done() { this.busy = false; this.btn.disabled = false; this.btn.removeAttribute('aria-busy'); }
+      // After the page comes back from Shopify: show the result on the form that was used.
+      showResult() {
+        let from = null;
+        try { from = sessionStorage.getItem(FROM_KEY); } catch (e) {}
+        if (!from || from !== this.form.id) return;
+        try { sessionStorage.removeItem(FROM_KEY); } catch (e) {}
+        if (new URLSearchParams(location.search).get('customer_posted') === 'true') this.say(this.labels.ok, 'success');
+        else if (this.querySelector('[data-form-errors]')) this.say(this.labels.err, 'error');
+      }
       // Shopify email marketing (Messaging welcome flow), was Klaviyo list before 2026-11-17.
-      // Not prevented when valid: the real form submits (with Shopify's CAPTCHA) into the hidden frame.
+      // A valid email is not prevented: the real form submits (Shopify adds its CAPTCHA).
       onSubmit = (e) => {
         const email = this.input.value.trim();
-        if (this.busy || !EMAIL.test(email)) {
-          e.preventDefault();
-          if (!this.busy) { this.say(this.labels.bad, 'error'); this.input.focus(); }
-          return;
-        }
+        if (this.busy) { e.preventDefault(); return; }
+        if (!EMAIL.test(email)) { e.preventDefault(); this.say(this.labels.bad, 'error'); this.input.focus(); return; }
         this.input.value = email;
+        try { sessionStorage.setItem(FROM_KEY, this.form.id); } catch (err) {}
         this.busy = true; this.btn.disabled = true; this.btn.setAttribute('aria-busy', 'true'); this.say('', '');
-      };
-      onFrameLoad = () => {
-        if (!this.busy) return;
-        let url = '';
-        try { url = this.frame.contentWindow.location.href; } catch (error) {}
-        if (url.indexOf('customer_posted=true') > -1) {
-          this.form.reset();
-          this.say(this.labels.ok, 'success');
-        } else if (url.indexOf('/challenge') > -1) {
-          // Shopify wants a visible check: send the visitor to it; they come back afterwards.
-          this.form.target = '_self';
-          this.form.submit();
-          return;
-        } else {
-          this.say(this.labels.err, 'error');
-        }
-        this.done();
       };
     });
   }

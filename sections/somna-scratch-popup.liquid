@@ -123,15 +123,14 @@
 
       <p id="somna-already-subscribed" class="sgp__notice somna-hidden" role="status">{{ s.already_text }}</p>
 
-      {%- comment -%} Real Shopify customer form (Shopify adds its CAPTCHA), posting into the hidden frame so the popup stays open. {%- endcomment -%}
-      {%- form 'customer', id: 'somna-signup-form', class: 'sgp__form', novalidate: 'novalidate', target: 'somna-signup-frame' -%}
+      {%- comment -%} Real Shopify customer form (Shopify adds its CAPTCHA). Shopify reloads the page with ?customer_posted=true and the popup reopens on the code screen. {%- endcomment -%}
+      {%- form 'customer', id: 'somna-signup-form', class: 'sgp__form', novalidate: 'novalidate' -%}
         <input type="hidden" name="contact[tags]" value="newsletter, signup-popup">
         <label for="somna-email-input" class="sgp__label">{{ s.email_label }}</label>
         <input type="email" id="somna-email-input" class="sgp__input" name="contact[email]" placeholder="{{ s.email_placeholder | escape }}" required autocomplete="email" aria-describedby="somna-error-container">
         <div class="sgp__error" id="somna-error-container" role="alert" aria-live="assertive"></div>
         <button type="submit" class="sgp__btn sgp__btn--accent" id="somna-submit-btn">{{ s.submit_label }}</button>
       {%- endform -%}
-      <iframe name="somna-signup-frame" id="somna-signup-frame" hidden tabindex="-1" aria-hidden="true" title="Sign-up"></iframe>
 
       <p class="sgp__consent">{{ s.consent }} <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}" target="_blank" rel="noopener">Privacy Policy</a></p>
       <button type="button" class="sgp__decline somna-close-trigger">{{ s.decline }}</button>
@@ -1018,7 +1017,12 @@
       storage.remove('localStorage', KEYS.scratched);
       storage.remove('localStorage', KEYS.dismissedAt);
 
-      if (!inEditor && isSuppressed()) return;
+      // Back from Shopify after a popup sign-up: open on the code screen.
+      const backFromSignup = storage.get('sessionStorage', 'somna_signup_from') === 'somna-signup-form';
+      const signupPosted = backFromSignup && new URLSearchParams(location.search).get('customer_posted') === 'true';
+      if (backFromSignup) storage.remove('sessionStorage', 'somna_signup_from');
+
+      if (!inEditor && !signupPosted && isSuppressed()) return;
 
       const closedThisSession = closedForSession.get();
       if (closedThisSession && !inEditor) teaserTab?.classList.remove('somna-hidden');
@@ -1056,7 +1060,7 @@
         if (isOpen) return;
         // Automatic triggers (timer, exit intent) never reopen it after a close or a sign-up;
         // only the visitor's own click on the side tab can.
-        if (trigger !== 'teaser' && trigger !== 'editor' && (closedForSession.get() || storage.get('localStorage', KEYS.signedUp))) return;
+        if (trigger !== 'teaser' && trigger !== 'editor' && trigger !== 'signup_return' && (closedForSession.get() || storage.get('localStorage', KEYS.signedUp))) return;
         isOpen = true;
         clearTimeout(openTimer);
         clearTimeout(closeTimer);
@@ -1163,8 +1167,8 @@
       }
 
       // Shopify email marketing (Messaging welcome flow), was Klaviyo list before 2026-11-17.
-      // Not prevented when valid: the real form submits (with Shopify's CAPTCHA) into the hidden frame.
-      const signupFrame = document.getElementById('somna-signup-frame');
+      // A valid email is not prevented: the real form submits (Shopify adds its CAPTCHA), Shopify reloads
+      // the page with ?customer_posted=true, and the popup reopens on the code screen (see "Back from Shopify").
       let signupBusy = false;
       form?.addEventListener('submit', (event) => {
         const email = emailInput.value.trim();
@@ -1175,23 +1179,8 @@
         emailInput.value = email;
         signupBusy = true;
         submitBtn.disabled = true;
+        storage.set('sessionStorage', 'somna_signup_from', 'somna-signup-form');
         track('email_submit');
-      });
-      signupFrame?.addEventListener('load', () => {
-        if (!signupBusy) return;
-        let url = '';
-        try { url = signupFrame.contentWindow.location.href; } catch (error) {}
-        if (url.indexOf('/challenge') > -1) {
-          // Shopify wants a visible check: send the visitor to it; they come back afterwards.
-          storage.set('localStorage', KEYS.signedUp, '1');
-          form.target = '_self';
-          form.submit();
-          return;
-        }
-        signupBusy = false;
-        submitBtn.disabled = false;
-        // Same as before: show the code even if the sign-up itself did not go through.
-        success();
       });
 
       // ---------- Code screen ----------
@@ -1260,6 +1249,7 @@
         if ({{ s.editor_preview | json }}) openPopup('editor');
         return;
       }
+      if (signupPosted) { openPopup('signup_return'); success(); return; }
       if (closedThisSession) return;
       openTimer = setTimeout(() => openWhenClear('timer'), config.delayMs);
 
