@@ -89,6 +89,9 @@
         this.input.value = email;
         try { sessionStorage.setItem(FROM_KEY, this.form.id); } catch (err) {}
         this.busy = true; this.btn.disabled = true; this.btn.setAttribute('aria-busy', 'true'); this.say('', '');
+        // If the visitor closes Shopify's spam check, the page stays here: let them try again.
+        clearTimeout(this.resetTimer);
+        this.resetTimer = setTimeout(() => { this.busy = false; this.btn.disabled = false; this.btn.removeAttribute('aria-busy'); }, 15000);
       };
     });
   }

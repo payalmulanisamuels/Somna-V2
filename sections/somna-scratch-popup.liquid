@@ -1180,6 +1180,8 @@
         signupBusy = true;
         submitBtn.disabled = true;
         storage.set('sessionStorage', 'somna_signup_from', 'somna-signup-form');
+        // If the visitor closes Shopify's spam check, the page stays here: let them try again.
+        setTimeout(() => { signupBusy = false; submitBtn.disabled = false; }, 15000);
         track('email_submit');
       });
 
