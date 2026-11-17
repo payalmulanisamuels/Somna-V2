@@ -13,7 +13,8 @@
     facebook / instagram / fb / ig / meta, sessionStorage).
   - Suppressed for visitors arriving from a Klaviyo email link or already known to Klaviyo.
   - Unwrap: tap / click the box or the button, or Enter / Space.
-  - Email goes to the Klaviyo list (client subscriptions API) — same list and company as live.
+  - Email goes to Shopify email marketing (snippets/somna-shopify-subscribe.liquid) since 2026-11-17,
+    which starts the Shopify Messaging welcome flow. The Klaviyo list settings are no longer used.
   - Fixed discount code (default WELCOME10), auto-applied via /discount/CODE.
   - Tracking events (dataLayer, Shopify customer events, Klaviyo): somna_popup_view,
     somna_popup_scratch_complete (method: unwrap), somna_popup_email_submit, somna_popup_code_copied,
@@ -35,6 +36,7 @@
   assign popup_shop_url = '/discount/' | append: popup_code | append: '?redirect=' | append: popup_redirect
 -%}
 
+{% render 'somna-shopify-subscribe' %}
 {%- capture sgp_gift -%}
   <svg class="sgp-gift" viewBox="0 0 180 170" aria-hidden="true" focusable="false">
     <g class="sgp-gift__lid">
@@ -1122,7 +1124,7 @@
       }
       screens[0].querySelectorAll('[data-unwrap]').forEach((el) => el.addEventListener('click', unwrap));
 
-      // ---------- Email capture (Klaviyo) ----------
+      // ---------- Email capture (Shopify email marketing) ----------
       const form = document.getElementById('somna-signup-form');
       const emailInput = document.getElementById('somna-email-input');
       const errorBox = document.getElementById('somna-error-container');
@@ -1167,34 +1169,11 @@
 
         submitBtn.disabled = true;
         track('email_submit');
-        const payload = {
-          data: {
-            type: 'subscription',
-            attributes: {
-              custom_source: 'Scratch Popup',
-              profile: {
-                data: {
-                  type: 'profile',
-                  attributes: { email, subscriptions: { email: { marketing: { consent: 'SUBSCRIBED' } } } },
-                },
-              },
-            },
-            relationships: { list: { data: { type: 'list', id: config.klaviyoListId } } },
-          },
-        };
-
+        // Shopify email marketing (Messaging welcome flow), was Klaviyo list before 2026-11-17
         try {
-          const response = await fetch(
-            `https://a.klaviyo.com/client/subscriptions/?company_id=${encodeURIComponent(config.klaviyoCompanyId)}`,
-            {
-              method: 'POST',
-              headers: { Accept: 'application/vnd.api+json', 'Content-Type': 'application/vnd.api+json', Revision: '2026-01-15' },
-              body: JSON.stringify(payload),
-            }
-          );
-          if (response.ok) success();
-          else if (response.status === 400) showError(config.invalid);
-          else success();
+          const result = await window.somnaShopifySubscribe(email, 'newsletter, signup-popup');
+          if (result === 'challenge') { storage.set('localStorage', KEYS.signedUp, '1'); return; }
+          success();
         } catch (error) {
           success();
         } finally {

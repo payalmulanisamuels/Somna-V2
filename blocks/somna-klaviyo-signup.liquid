@@ -1,7 +1,7 @@
 {%- comment -%}
-  Somna V2 — email signup that subscribes straight to a Klaviyo list (client Subscriptions API,
-  public company ID only). Defaults are the live footer form "Footer Signup - 10% Off":
-  list "Email List" (XyWydk), source "Footer Signup - 10% Off". No Klaviyo script is loaded.
+  Somna V2 — email signup. Since 2026-11-17 it subscribes the email to Shopify email marketing
+  (snippets/somna-shopify-subscribe.liquid), which starts the Shopify Messaging welcome flow.
+  The Klaviyo company / list settings are kept but no longer used.
 {%- endcomment -%}
 {%- liquid
   assign s = block.settings
@@ -51,6 +51,7 @@
   </style>
 {%- endif -%}
 
+{% render 'somna-shopify-subscribe' %}
 <script type="module">
   if (!customElements.get('somna-klaviyo-signup')) {
     const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -70,18 +71,12 @@
         if (this.busy) return;
         const email = this.input.value.trim();
         if (!EMAIL.test(email)) { this.say(this.labels.bad, 'error'); this.input.focus(); return; }
-        const { company, list, source } = this.dataset;
-        if (!company || !list) { this.say(this.labels.err, 'error'); return; }
         this.busy = true; this.btn.disabled = true; this.btn.setAttribute('aria-busy', 'true'); this.say('', '');
-        const body = { data: { type: 'subscription', attributes: {
-          custom_source: source,
-          profile: { data: { type: 'profile', attributes: { email, properties: { 'Signup source': source } } } }
-        }, relationships: { list: { data: { type: 'list', id: list } } } } };
         try {
-          const res = await fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + encodeURIComponent(company), {
-            method: 'POST', headers: { 'Content-Type': 'application/json', revision: '2024-10-15' }, body: JSON.stringify(body)
-          });
-          if (!res.ok) throw new Error(String(res.status));
+          // Shopify email marketing (Messaging welcome flow), was Klaviyo list before 2026-11-17
+          const result = await window.somnaShopifySubscribe(email, 'newsletter, signup-newsletter-block');
+          if (result === 'challenge') return;
+          if (result !== 'ok') throw new Error(result);
           this.form.reset();
           this.say(this.labels.ok, 'success');
         } catch (error) {
