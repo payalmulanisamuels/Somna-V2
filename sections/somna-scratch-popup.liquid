@@ -13,8 +13,7 @@
     facebook / instagram / fb / ig / meta, sessionStorage).
   - Suppressed for visitors arriving from a Klaviyo email link or already known to Klaviyo.
   - Unwrap: tap / click the box or the button, or Enter / Space.
-  - Email goes to Shopify email marketing (real Shopify customer form) since 2026-11-17,
-    which starts the Shopify Messaging welcome flow. The Klaviyo list settings are no longer used.
+  - Email goes to the Klaviyo list (client subscriptions API) — same list and company as live.
   - Fixed discount code (default WELCOME10), auto-applied via /discount/CODE.
   - Tracking events (dataLayer, Shopify customer events, Klaviyo): somna_popup_view,
     somna_popup_scratch_complete (method: unwrap), somna_popup_email_submit, somna_popup_code_copied,
@@ -123,14 +122,12 @@
 
       <p id="somna-already-subscribed" class="sgp__notice somna-hidden" role="status">{{ s.already_text }}</p>
 
-      {%- comment -%} Real Shopify customer form (Shopify adds its CAPTCHA). Shopify reloads the page with ?customer_posted=true and the popup reopens on the code screen. {%- endcomment -%}
-      {%- form 'customer', id: 'somna-signup-form', class: 'sgp__form', novalidate: 'novalidate' -%}
-        <input type="hidden" name="contact[tags]" value="newsletter, signup-popup">
+      <form id="somna-signup-form" class="sgp__form" novalidate>
         <label for="somna-email-input" class="sgp__label">{{ s.email_label }}</label>
-        <input type="email" id="somna-email-input" class="sgp__input" name="contact[email]" placeholder="{{ s.email_placeholder | escape }}" required autocomplete="email" aria-describedby="somna-error-container">
+        <input type="email" id="somna-email-input" class="sgp__input" name="email" placeholder="{{ s.email_placeholder | escape }}" required autocomplete="email" aria-describedby="somna-error-container">
         <div class="sgp__error" id="somna-error-container" role="alert" aria-live="assertive"></div>
         <button type="submit" class="sgp__btn sgp__btn--accent" id="somna-submit-btn">{{ s.submit_label }}</button>
-      {%- endform -%}
+      </form>
 
       <p class="sgp__consent">{{ s.consent }} <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}" target="_blank" rel="noopener">Privacy Policy</a></p>
       <button type="button" class="sgp__decline somna-close-trigger">{{ s.decline }}</button>
@@ -1017,12 +1014,7 @@
       storage.remove('localStorage', KEYS.scratched);
       storage.remove('localStorage', KEYS.dismissedAt);
 
-      // Back from Shopify after a popup sign-up: open on the code screen.
-      const backFromSignup = storage.get('sessionStorage', 'somna_signup_from') === 'somna-signup-form';
-      const signupPosted = backFromSignup && new URLSearchParams(location.search).get('customer_posted') === 'true';
-      if (backFromSignup) storage.remove('sessionStorage', 'somna_signup_from');
-
-      if (!inEditor && !signupPosted && isSuppressed()) return;
+      if (!inEditor && isSuppressed()) return;
 
       const closedThisSession = closedForSession.get();
       if (closedThisSession && !inEditor) teaserTab?.classList.remove('somna-hidden');
@@ -1060,7 +1052,7 @@
         if (isOpen) return;
         // Automatic triggers (timer, exit intent) never reopen it after a close or a sign-up;
         // only the visitor's own click on the side tab can.
-        if (trigger !== 'teaser' && trigger !== 'editor' && trigger !== 'signup_return' && (closedForSession.get() || storage.get('localStorage', KEYS.signedUp))) return;
+        if (trigger !== 'teaser' && trigger !== 'editor' && (closedForSession.get() || storage.get('localStorage', KEYS.signedUp))) return;
         isOpen = true;
         clearTimeout(openTimer);
         clearTimeout(closeTimer);
@@ -1130,7 +1122,7 @@
       }
       screens[0].querySelectorAll('[data-unwrap]').forEach((el) => el.addEventListener('click', unwrap));
 
-      // ---------- Email capture (Shopify email marketing) ----------
+      // ---------- Email capture (Klaviyo) ----------
       const form = document.getElementById('somna-signup-form');
       const emailInput = document.getElementById('somna-email-input');
       const errorBox = document.getElementById('somna-error-container');
@@ -1166,23 +1158,48 @@
         card.focus({ preventScroll: true });
       }
 
-      // Shopify email marketing (Messaging welcome flow), was Klaviyo list before 2026-11-17.
-      // A valid email is not prevented: the real form submits (Shopify adds its CAPTCHA), Shopify reloads
-      // the page with ?customer_posted=true, and the popup reopens on the code screen (see "Back from Shopify").
-      let signupBusy = false;
-      form?.addEventListener('submit', (event) => {
+      form?.addEventListener('submit', async (event) => {
+        event.preventDefault();
         const email = emailInput.value.trim();
         showError('');
-        if (signupBusy) { event.preventDefault(); return; }
-        if (!EMAIL_RE.test(email)) { event.preventDefault(); showError(config.invalid); return; }
-        if (storage.get('localStorage', KEYS.signedUp)) { event.preventDefault(); showAlreadySubscribed(); return; }
-        emailInput.value = email;
-        signupBusy = true;
+        if (!EMAIL_RE.test(email)) { showError(config.invalid); return; }
+        if (storage.get('localStorage', KEYS.signedUp)) { showAlreadySubscribed(); return; }
+
         submitBtn.disabled = true;
-        storage.set('sessionStorage', 'somna_signup_from', 'somna-signup-form');
-        // If the visitor closes Shopify's spam check, the page stays here: let them try again.
-        setTimeout(() => { signupBusy = false; submitBtn.disabled = false; }, 15000);
         track('email_submit');
+        const payload = {
+          data: {
+            type: 'subscription',
+            attributes: {
+              custom_source: 'Scratch Popup',
+              profile: {
+                data: {
+                  type: 'profile',
+                  attributes: { email, subscriptions: { email: { marketing: { consent: 'SUBSCRIBED' } } } },
+                },
+              },
+            },
+            relationships: { list: { data: { type: 'list', id: config.klaviyoListId } } },
+          },
+        };
+
+        try {
+          const response = await fetch(
+            `https://a.klaviyo.com/client/subscriptions/?company_id=${encodeURIComponent(config.klaviyoCompanyId)}`,
+            {
+              method: 'POST',
+              headers: { Accept: 'application/vnd.api+json', 'Content-Type': 'application/vnd.api+json', Revision: '2026-01-15' },
+              body: JSON.stringify(payload),
+            }
+          );
+          if (response.ok) success();
+          else if (response.status === 400) showError(config.invalid);
+          else success();
+        } catch (error) {
+          success();
+        } finally {
+          submitBtn.disabled = false;
+        }
       });
 
       // ---------- Code screen ----------
@@ -1251,7 +1268,6 @@
         if ({{ s.editor_preview | json }}) openPopup('editor');
         return;
       }
-      if (signupPosted) { openPopup('signup_return'); success(); return; }
       if (closedThisSession) return;
       openTimer = setTimeout(() => openWhenClear('timer'), config.delayMs);
 

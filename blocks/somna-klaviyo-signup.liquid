@@ -1,7 +1,7 @@
 {%- comment -%}
-  Somna V2 — email signup. Since 2026-11-17 it is a real Shopify customer form (newsletter): the
-  email is subscribed to Shopify email marketing, which starts the Shopify Messaging welcome flow.
-  The Klaviyo company / list settings are kept but no longer used.
+  Somna V2 — email signup that subscribes straight to a Klaviyo list (client Subscriptions API,
+  public company ID only). Defaults are the live footer form "Footer Signup - 10% Off":
+  list "Email List" (XyWydk), source "Footer Signup - 10% Off". No Klaviyo script is loaded.
 {%- endcomment -%}
 {%- liquid
   assign s = block.settings
@@ -19,17 +19,13 @@
   style="--signup-width: {{ s.width }}%; --signup-input-bg: {{ s.input_background }}; --signup-input-text: {{ s.input_text }}; --signup-btn-bg: {{ s.button_background }}; --signup-btn-text: {{ s.button_text }}; --signup-note: {{ s.note_color }};"
   {{ block.shopify_attributes }}
 >
-  {%- comment -%} Real Shopify customer form: Shopify adds its spam check (CAPTCHA). After signing up Shopify reloads this page with ?customer_posted=true, and the script below shows the message. {%- endcomment -%}
-  {%- assign form_id = 'somna-signup-' | append: uid -%}
-  {%- form 'customer', id: form_id, class: 'somna-signup__form', novalidate: 'novalidate' -%}
-    {%- if form.errors -%}<span data-form-errors hidden></span>{%- endif -%}
-    <input type="hidden" name="contact[tags]" value="newsletter, signup-newsletter-block">
+  <form class="somna-signup__form" novalidate data-form>
     <label class="visually-hidden" for="{{ uid }}-email">{{ s.placeholder }}</label>
     <input
       class="somna-signup__input"
       id="{{ uid }}-email"
       type="email"
-      name="contact[email]"
+      name="email"
       autocomplete="email"
       inputmode="email"
       required
@@ -38,7 +34,7 @@
       data-email
     >
     <button class="somna-signup__button" type="submit" data-submit>{{ s.button_label }}</button>
-  {%- endform -%}
+  </form>
   <p class="somna-signup__msg" id="{{ uid }}-msg" role="status" aria-live="polite" data-msg></p>
   {%- if s.consent != blank -%}<div class="somna-signup__consent">{{ s.consent }}</div>{%- endif -%}
 </somna-klaviyo-signup>
@@ -58,40 +54,41 @@
 <script type="module">
   if (!customElements.get('somna-klaviyo-signup')) {
     const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-    const FROM_KEY = 'somna_signup_from';
     customElements.define('somna-klaviyo-signup', class extends HTMLElement {
       connectedCallback() {
         this.labels = { ok: this.dataset.ok, err: this.dataset.err, bad: this.dataset.bad };
-        this.form = this.querySelector('form.somna-signup__form');
+        this.form = this.querySelector('[data-form]');
         this.input = this.querySelector('[data-email]');
         this.btn = this.querySelector('[data-submit]');
         this.msg = this.querySelector('[data-msg]');
         this.form.addEventListener('submit', this.onSubmit);
-        this.showResult();
       }
       disconnectedCallback() { this.form.removeEventListener('submit', this.onSubmit); }
       say(text, state) { this.msg.textContent = text; this.dataset.state = state || ''; this.input.setAttribute('aria-invalid', String(state === 'error')); }
-      // After the page comes back from Shopify: show the result on the form that was used.
-      showResult() {
-        let from = null;
-        try { from = sessionStorage.getItem(FROM_KEY); } catch (e) {}
-        if (!from || from !== this.form.id) return;
-        try { sessionStorage.removeItem(FROM_KEY); } catch (e) {}
-        if (new URLSearchParams(location.search).get('customer_posted') === 'true') this.say(this.labels.ok, 'success');
-        else if (this.querySelector('[data-form-errors]')) this.say(this.labels.err, 'error');
-      }
-      // Shopify email marketing (Messaging welcome flow), was Klaviyo list before 2026-11-17.
-      // A valid email is not prevented: the real form submits (Shopify adds its CAPTCHA).
-      onSubmit = (e) => {
+      onSubmit = async (e) => {
+        e.preventDefault();
+        if (this.busy) return;
         const email = this.input.value.trim();
-        if (this.busy) { e.preventDefault(); return; }
-        if (!EMAIL.test(email)) { e.preventDefault(); this.say(this.labels.bad, 'error'); this.input.focus(); return; }
-        this.input.value = email;
-        try { sessionStorage.setItem(FROM_KEY, this.form.id); } catch (err) {}
+        if (!EMAIL.test(email)) { this.say(this.labels.bad, 'error'); this.input.focus(); return; }
+        const { company, list, source } = this.dataset;
+        if (!company || !list) { this.say(this.labels.err, 'error'); return; }
         this.busy = true; this.btn.disabled = true; this.btn.setAttribute('aria-busy', 'true'); this.say('', '');
-        // If the visitor closes Shopify's spam check, the page stays here: let them try again.
-        clearTimeout(this.resetTimer);
-        this.resetTimer = setTimeout(() => { this.busy = false; this.btn.disabled = false; this.btn.removeAttribute('aria-busy'); }, 15000);
+        const body = { data: { type: 'subscription', attributes: {
+          custom_source: source,
+          profile: { data: { type: 'profile', attributes: { email, properties: { 'Signup source': source } } } }
+        }, relationships: { list: { data: { type: 'list', id: list } } } } };
+        try {
+          const res = await fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + encodeURIComponent(company), {
+            method: 'POST', headers: { 'Content-Type': 'application/json', revision: '2024-10-15' }, body: JSON.stringify(body)
+          });
+          if (!res.ok) throw new Error(String(res.status));
+          this.form.reset();
+          this.say(this.labels.ok, 'success');
+        } catch (error) {
+          this.say(this.labels.err, 'error');
+        } finally {
+          this.busy = false; this.btn.disabled = false; this.btn.removeAttribute('aria-busy');
+        }
       };
     });
   }
