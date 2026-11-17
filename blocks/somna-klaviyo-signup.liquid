@@ -1,6 +1,6 @@
 {%- comment -%}
-  Somna V2 — email signup. Since 2026-11-17 it subscribes the email to Shopify email marketing
-  (snippets/somna-shopify-subscribe.liquid), which starts the Shopify Messaging welcome flow.
+  Somna V2 — email signup. Since 2026-11-17 it is a real Shopify customer form (newsletter): the
+  email is subscribed to Shopify email marketing, which starts the Shopify Messaging welcome flow.
   The Klaviyo company / list settings are kept but no longer used.
 {%- endcomment -%}
 {%- liquid
@@ -19,13 +19,17 @@
   style="--signup-width: {{ s.width }}%; --signup-input-bg: {{ s.input_background }}; --signup-input-text: {{ s.input_text }}; --signup-btn-bg: {{ s.button_background }}; --signup-btn-text: {{ s.button_text }}; --signup-note: {{ s.note_color }};"
   {{ block.shopify_attributes }}
 >
-  <form class="somna-signup__form" novalidate data-form>
+  {%- comment -%} Real Shopify customer form: Shopify adds its spam check (CAPTCHA) to it, then it posts into the hidden frame below so the page stays put. {%- endcomment -%}
+  {%- assign frame_name = 'somna-signup-frame-' | append: uid -%}
+  {%- assign form_id = frame_name | append: '-form' -%}
+  {%- form 'customer', id: form_id, class: 'somna-signup__form', novalidate: 'novalidate', target: frame_name -%}
+    <input type="hidden" name="contact[tags]" value="newsletter, signup-newsletter-block">
     <label class="visually-hidden" for="{{ uid }}-email">{{ s.placeholder }}</label>
     <input
       class="somna-signup__input"
       id="{{ uid }}-email"
       type="email"
-      name="email"
+      name="contact[email]"
       autocomplete="email"
       inputmode="email"
       required
@@ -34,7 +38,8 @@
       data-email
     >
     <button class="somna-signup__button" type="submit" data-submit>{{ s.button_label }}</button>
-  </form>
+  {%- endform -%}
+  <iframe name="{{ frame_name }}" data-frame hidden tabindex="-1" aria-hidden="true" title="Sign-up"></iframe>
   <p class="somna-signup__msg" id="{{ uid }}-msg" role="status" aria-live="polite" data-msg></p>
   {%- if s.consent != blank -%}<div class="somna-signup__consent">{{ s.consent }}</div>{%- endif -%}
 </somna-klaviyo-signup>
@@ -51,39 +56,54 @@
   </style>
 {%- endif -%}
 
-{% render 'somna-shopify-subscribe' %}
 <script type="module">
   if (!customElements.get('somna-klaviyo-signup')) {
     const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     customElements.define('somna-klaviyo-signup', class extends HTMLElement {
       connectedCallback() {
         this.labels = { ok: this.dataset.ok, err: this.dataset.err, bad: this.dataset.bad };
-        this.form = this.querySelector('[data-form]');
+        this.form = this.querySelector('form.somna-signup__form');
+        this.frame = this.querySelector('[data-frame]');
         this.input = this.querySelector('[data-email]');
         this.btn = this.querySelector('[data-submit]');
         this.msg = this.querySelector('[data-msg]');
         this.form.addEventListener('submit', this.onSubmit);
+        this.frame.addEventListener('load', this.onFrameLoad);
       }
-      disconnectedCallback() { this.form.removeEventListener('submit', this.onSubmit); }
+      disconnectedCallback() {
+        this.form.removeEventListener('submit', this.onSubmit);
+        this.frame.removeEventListener('load', this.onFrameLoad);
+      }
       say(text, state) { this.msg.textContent = text; this.dataset.state = state || ''; this.input.setAttribute('aria-invalid', String(state === 'error')); }
-      onSubmit = async (e) => {
-        e.preventDefault();
-        if (this.busy) return;
+      done() { this.busy = false; this.btn.disabled = false; this.btn.removeAttribute('aria-busy'); }
+      // Shopify email marketing (Messaging welcome flow), was Klaviyo list before 2026-11-17.
+      // Not prevented when valid: the real form submits (with Shopify's CAPTCHA) into the hidden frame.
+      onSubmit = (e) => {
         const email = this.input.value.trim();
-        if (!EMAIL.test(email)) { this.say(this.labels.bad, 'error'); this.input.focus(); return; }
+        if (this.busy || !EMAIL.test(email)) {
+          e.preventDefault();
+          if (!this.busy) { this.say(this.labels.bad, 'error'); this.input.focus(); }
+          return;
+        }
+        this.input.value = email;
         this.busy = true; this.btn.disabled = true; this.btn.setAttribute('aria-busy', 'true'); this.say('', '');
-        try {
-          // Shopify email marketing (Messaging welcome flow), was Klaviyo list before 2026-11-17
-          const result = await window.somnaShopifySubscribe(email, 'newsletter, signup-newsletter-block');
-          if (result === 'challenge') return;
-          if (result !== 'ok') throw new Error(result);
+      };
+      onFrameLoad = () => {
+        if (!this.busy) return;
+        let url = '';
+        try { url = this.frame.contentWindow.location.href; } catch (error) {}
+        if (url.indexOf('customer_posted=true') > -1) {
           this.form.reset();
           this.say(this.labels.ok, 'success');
-        } catch (error) {
+        } else if (url.indexOf('/challenge') > -1) {
+          // Shopify wants a visible check: send the visitor to it; they come back afterwards.
+          this.form.target = '_self';
+          this.form.submit();
+          return;
+        } else {
           this.say(this.labels.err, 'error');
-        } finally {
-          this.busy = false; this.btn.disabled = false; this.btn.removeAttribute('aria-busy');
         }
+        this.done();
       };
     });
   }
