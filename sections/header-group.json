@@ -46,6 +46,22 @@
         "padding-block-end": 8
       }
     },
+    "somna_countdown": {
+      "type": "somna-countdown",
+      "settings": {
+        "end_at": "2026-11-23T23:59:00-08:00",
+        "label": "Pre-Black Friday sale ends in",
+        "date_text": "Mon 23 Nov, 11:59 PM PT",
+        "label_mobile": "Sale ends",
+        "date_mobile": "Mon 23 Nov",
+        "bg_color": "#141832",
+        "text_color": "#f3feee",
+        "accent_color": "#afbdf8",
+        "tile_color": "#262c52",
+        "muted_color": "#c3c9e8",
+        "moon_cycle": 10
+      }
+    },
     "header_section": {
       "type": "header",
       "blocks": {
@@ -141,6 +157,7 @@
   },
   "order": [
     "header_announcements_9jGBFp",
+    "somna_countdown",
     "header_section"
   ]
 }
