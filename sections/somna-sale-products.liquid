@@ -127,12 +127,12 @@
               {%- if p.selling_plan_groups.size > 0 -%}{%- assign has_sub = true -%}{%- endif -%}
               <div class="somna-sale-card__prices" role="radiogroup" aria-label="{{ s.plan_label | escape }}">
                 {%- if has_sub -%}
-                <button type="button" class="somna-sale-card__price somna-sale-card__price--sub" role="radio" aria-checked="true" data-plan="sub">
+                <button type="button" class="somna-sale-card__price somna-sale-card__price--sub" role="radio" aria-checked="{% if s.default_plan == 'sub' %}true{% else %}false{% endif %}" data-plan="sub">
                   <span class="somna-sale-card__price-label">{{ s.sub_label | escape }}</span>
                   <span class="somna-sale-card__price-row"><b data-sub>{{ d_sub | money }}</b> {% if d_full > d_sub %}<s data-full>{{ d_full | money }}</s>{% endif %}</span>
                 </button>
                 {%- endif -%}
-                <button type="button" class="somna-sale-card__price somna-sale-card__price--once" role="radio" aria-checked="{% if has_sub %}false{% else %}true{% endif %}" data-plan="once">
+                <button type="button" class="somna-sale-card__price somna-sale-card__price--once" role="radio" aria-checked="{% if has_sub and s.default_plan == 'sub' %}false{% else %}true{% endif %}" data-plan="once">
                   <span class="somna-sale-card__price-label">{{ s.once_label | escape }}</span>
                   <span class="somna-sale-card__price-row"><b data-once>{{ d_once | money }}</b> {% if d_full > d_once %}<s data-full>{{ d_full | money }}</s>{% endif %}</span>
                 </button>
@@ -146,7 +146,7 @@
               </div>
 
               {%- comment -%} adds the chosen size + plan to the cart (AJAX, opens the cart drawer); without JavaScript it opens the product page {%- endcomment -%}
-              <a class="somna-sale-card__btn" href="{{ p.url }}?variant={{ d_id }}{% unless has_sub %}&plan=once{% endunless %}" data-base="{{ p.url }}" data-variant="{{ d_id }}" data-plan-id="{{ d_plan }}" data-title="{{ p.title | escape }}"{% if s.add_to_cart %} data-atc role="button"{% endif %}>{{ b.button_label | default: s.button_label | escape }}</a>
+              <a class="somna-sale-card__btn" href="{{ p.url }}?variant={{ d_id }}{% if has_sub and s.default_plan == 'sub' %}&plan=sub{% else %}&plan=once{% endif %}" data-base="{{ p.url }}" data-variant="{{ d_id }}" data-plan-id="{{ d_plan }}" data-title="{{ p.title | escape }}"{% if s.add_to_cart %} data-atc role="button"{% endif %}>{{ b.button_label | default: s.button_label | escape }}</a>
               <p class="somna-sale-card__err" role="alert" hidden></p>
             </article>
           </li>
@@ -642,6 +642,7 @@
     { "type": "text", "id": "bundles_label", "label": "Bundles", "default": "Bundles" },
     { "type": "header", "content": "Cards" },
     { "type": "text", "id": "plan_label", "label": "Plan choice name (screen readers)", "default": "Choose a plan" },
+    { "type": "select", "id": "default_plan", "label": "Plan selected by default", "options": [{ "value": "once", "label": "One-time" }, { "value": "sub", "label": "Subscribe & Save" }], "default": "once" },
     { "type": "text", "id": "sub_label", "label": "Subscribe price label", "default": "Subscribe & Save" },
     { "type": "text", "id": "once_label", "label": "One-time price label", "default": "One-time:" },
     { "type": "text", "id": "size_label", "label": "Size chips name (screen readers)", "default": "Choose a size" },
