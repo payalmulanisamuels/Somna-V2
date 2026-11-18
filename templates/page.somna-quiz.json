@@ -198,6 +198,17 @@
             "results_image": "shopify://shop_images/somna_breathe_blue_final.png",
             "review_image": "shopify://shop_images/somna_tape_03_sofa.png"
           }
+        },
+        "review_tyler_bundle": {
+          "type": "review",
+          "settings": {
+            "product": "bundle",
+            "image": "shopify://shop_images/Somna_review_Tyler_Brown_bundle.png",
+            "name": "Tyler Brown",
+            "rating": 5,
+            "text": "Love having both items shipped together in one tidy box.",
+            "verified": false
+          }
         }
       },
       "block_order": [
@@ -206,6 +217,7 @@
         "review_AGyPqf",
         "review_U7gqcm",
         "review_b6njzh",
+        "review_tyler_bundle",
         "result_strips",
         "result_tape",
         "result_bundle"
