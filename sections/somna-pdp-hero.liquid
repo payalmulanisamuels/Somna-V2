@@ -154,6 +154,13 @@
         {%- endif -%}
       </div>
 
+      {%- if s.bf_layout and images.size > 1 -%}
+        <div class="somna-pdp-hero__dots" role="group" aria-label="{{ product.title | escape }}">
+          {%- for m in images limit: 8 -%}
+            <button type="button" data-media="{{ forloop.index0 }}" data-src="{{ m | image_url: width: 1100 }}" data-srcset="{{ m | image_url: width: 600 }} 600w, {{ m | image_url: width: 900 }} 900w, {{ m | image_url: width: 1100 }} 1100w" aria-label="{{ forloop.index }} / {{ images.size | at_most: 8 }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}"></button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
       {%- if s.badge_text != blank -%}<p class="somna-pdp-hero__badge{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}"><span>{{ s.badge_text }}</span>{% if s.bf_layout and s.badge_sub != blank %}<small>{{ s.badge_sub }}</small>{% endif %}</p>{%- endif -%}
       {%- if hero_sticker != blank -%}<p class="somna-pdp-hero__sticker{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}" style="--somna-shake-delay: 0.7s;">{{ hero_sticker }}</p>{%- endif -%}
     </div>
@@ -643,6 +650,8 @@
         this.addEventListener('change', this.onChange);
         this.addEventListener('click', this.onClick);
         this.form.addEventListener('submit', this.onSubmit);
+        const mainPhoto = this.querySelector('.somna-pdp-hero__main');
+        if (mainPhoto && this.querySelector('.somna-pdp-hero__dots')) { mainPhoto.addEventListener('touchstart', this.swipeStart, { passive: true }); mainPhoto.addEventListener('touchend', this.swipeEnd); }
         this.update();
       }
       disconnectedCallback() {
@@ -739,12 +748,23 @@
         else if (t.matches('[data-mode-input]')) { this.mode = t.value; this.update(); }
         else if (t.matches('[data-plan]')) { this.mode = 'sub'; this.update(); }
       };
+      swipeStart = (e) => { this.sx = e.touches[0].clientX; this.sy = e.touches[0].clientY; };
+      swipeEnd = (e) => {
+        const dots = [...this.querySelectorAll('.somna-pdp-hero__dots [data-media]')];
+        if (!dots.length || this.sx == null) return;
+        const dx = e.changedTouches[0].clientX - this.sx, dy = e.changedTouches[0].clientY - this.sy;
+        this.sx = null;
+        if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+        const i = Math.max(0, dots.findIndex((d) => d.getAttribute('aria-current') === 'true'));
+        const next = dots[(i + (dx < 0 ? 1 : -1) + dots.length) % dots.length];
+        next.click();
+      };
       onClick = (e) => {
         const thumb = e.target.closest('[data-media]');
         if (thumb) {
           const img = this.querySelector('[data-main]');
           if (img) { img.srcset = thumb.dataset.srcset; img.src = thumb.dataset.src; img.alt = thumb.getAttribute('aria-label') || ''; }
-          this.querySelectorAll('[data-media]').forEach((b) => b.setAttribute('aria-current', String(b === thumb)));
+          this.querySelectorAll('[data-media]').forEach((b) => b.setAttribute('aria-current', String(b.dataset.media === thumb.dataset.media)));
           return;
         }
         const play = e.target.closest('[data-video]');
@@ -3460,6 +3480,50 @@
     .somna-pdp-hero__trust-1 { font-size: 1rem; }
     .somna-pdp-hero__trust-2 { font-size: 0.9375rem; }
     .somna-pdp-hero__trust-sep { display: block; width: 0; height: 0; margin: 0; }
+  }
+
+  .somna-pdp-hero__dots { display: none; }
+  @media screen and (max-width: 749px) {
+    /* phones: short photo with dots, buy panel overlapping it, denser type so the buy box fits the first screens */
+    .somna-pdp-hero--bf .somna-pdp-hero__thumbs { display: none; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__main { height: 280px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__main img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+    .somna-pdp-hero--bf .somna-pdp-hero__dots {
+      position: absolute; right: 14px; bottom: 34px; z-index: 3; display: flex; gap: 6px; padding: 5px 8px; border-radius: 999px; background: rgb(243 254 238 / 0.9);
+    }
+    .somna-pdp-hero--bf .somna-pdp-hero__dots button { width: 10px; height: 10px; padding: 0; border: 1.5px solid #0b0f1d; border-radius: 50%; background: transparent; cursor: pointer; }
+    .somna-pdp-hero--bf .somna-pdp-hero__dots button[aria-current='true'] { background: #0b0f1d; }
+    .somna-pdp-hero--bf .somna-pdp-hero__sticker { display: none; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge { top: 16px; left: 16px; padding: 7px 14px 5px; rotate: -6deg; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge span { font-size: 24px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__badge small { font-size: 10px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__panel { position: relative; z-index: 2; margin-top: -26px; border-radius: 24px 24px 0 0; }
+    .somna-pdp-hero--bf .somna-pdp-hero__head { margin-top: 2px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__title { font-size: 2rem; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__rating { margin-bottom: 4px; font-size: 0.875rem; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__features { gap: 4px 14px; margin-top: 8px; font-size: 0.875rem; }
+    .somna-pdp-hero__offer { margin-top: 14px; padding: 5px 13px 3px; font-size: 1rem; box-shadow: 3px 3px 0 #afbdf8; }
+    .somna-pdp-hero__nocode { gap: 6px; margin-top: 8px; padding: 3px 11px; font-size: 0.8125rem; }
+    .somna-pdp-hero__nocode svg { width: 12px; height: 12px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__price { margin-top: 12px; }
+    .somna-pdp-hero__ship { margin-top: 4px; font-size: 0.875rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__packs legend { display: none; }
+    .somna-pdp-hero--bf .somna-pdp-hero__packs { margin-top: 18px; }
+    .somna-pdp-hero__giftbar { gap: 10px; margin: 10px 0 4px; }
+    .somna-pdp-hero__giftbar-icon { width: 18px; height: 18px; }
+    .somna-pdp-hero__giftbar p { margin-bottom: 6px; font-size: 0.875rem; }
+    .somna-pdp-hero__giftbar-track { height: 5px; }
+    .somna-pdp-hero__sub-line { font-size: 0.8125rem; }
+    .somna-pdp-hero__moon:has(somna-moon-line:not([hidden])) { margin-top: 10px; padding: 8px 12px; border-radius: 12px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__moon .somna-moonline { gap: 8px; font-size: 0.8125rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__moon .somna-moonline__moons svg { width: 100px; height: 12px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__add { margin-top: 10px; }
+    .somna-pdp-hero__trust { gap: 12px; margin-top: 12px; }
+    .somna-pdp-hero__trust .somna-seal { width: 56px; height: 56px; }
+    .somna-pdp-hero__trust .somna-seal b { font-size: 21px; }
+    .somna-pdp-hero__trust .somna-seal small { font-size: 8px; }
+    .somna-pdp-hero__trust-1 { font-size: 0.875rem; }
+    .somna-pdp-hero__trust-2 { font-size: 0.8125rem; }
   }
 {% endstylesheet %}
 
