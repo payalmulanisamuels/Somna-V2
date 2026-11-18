@@ -582,6 +582,18 @@ body { background: #AFBDF8; }
   .sq .sq-res-pdp [data-sq-atc] { min-height: 58px; margin-top: 10px; }
   .sq .sq-res-pdp .sq-pdp-buynow { min-height: 52px; margin-top: 10px; }
 }
+@media screen and (min-width: 750px) {
+  .sq.sq--wide:has(.sq-res-pdp) .sq-wrap { max-width: 1360px; }   /* tablets: the result uses the full width (was 600px) */
+}
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  /* tablets: match line, photos, buy panel, then quote + videos (stacked, so the buttons come up on the second scroll) */
+  .sq .sq-res-pdp .somna-pdp-hero__inner { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'gallery' 'panel' 'side'; gap: 16px; }
+  .sq .sq-res-pdp .sq-res-head { grid-area: head; margin-bottom: 0; }
+  .sq .sq-res-pdp .somna-pdp-hero__gallery { width: 100%; max-width: 620px; justify-self: center; }
+  .sq .sq-res-pdp .somna-pdp-hero__main { aspect-ratio: 4 / 3; }
+  .sq .sq-res-pdp .somna-pdp-hero__main img { object-fit: cover; object-position: 50% 55%; }
+  .sq .sq-res-pdp .somna-pdp-hero__side { align-content: start; }
+}
 /* Sleep Bundle (every screen): "What's in the Box?" + free gifts line move just under the buttons */
 .sq .sq-res-pdp .somna-pdp-hero__form { display: flex; flex-direction: column; }
 .sq .sq-res-pdp .somna-pdp-hero__form > * { order: 1; }
