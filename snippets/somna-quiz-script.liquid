@@ -307,6 +307,26 @@
     return vs.filter(function (v) { return v.bags === st.bags && (!st.color || v.color === st.color); })[0] || vs[0];
   }
 
+  // what to buy: the product page buy box in the result (<somna-pdp-buy>, "Result: product page layout") when it is there,
+  // else the quiz's own buy box. { id, plan, price, sub, image, color, size }
+  function pdpOf(k) { var r = resEl(k); return r && $('somna-pdp-buy', r); }
+  function choice(k) {
+    var e = pdpOf(k);
+    if (e && e.variants && e.variants.length && typeof e.plan === 'function') {
+      var pv = e.variants[e.v] || e.variants[0], pl = e.plan(pv), opts = pv.options || [];
+      var ci = Number(e.dataset.colorIndex), si = Number(e.dataset.sizeIndex) || 0;
+      return { id: pv.id, plan: pl ? pl.id : null, price: e.priceOf(pv), sub: !!pl, image: pv.image, available: pv.available,
+        color: ci > -1 ? opts[ci] : '', size: opts.length > 1 ? opts[si] : pv.title };
+    }
+    var st = sel[k], v = pick(k), sub = st.mode === 'sub' && v.sub != null;
+    return { id: v.id, plan: st.mode === 'sub' && v.plan ? v.plan : null, price: sub ? v.sub : v.once, sub: sub, image: v.image, available: v.available, color: v.color, size: v.size };
+  }
+  function stickyPrice(k) { var sp = $('[data-sq-sticky-price]'); if (sp && k) sp.textContent = money(choice(k).price); }
+  document.addEventListener('change', function (e) {
+    var b = e.target.closest && e.target.closest('somna-pdp-buy'); if (!b) return;
+    setTimeout(function () { stickyPrice(score().result); }, 0);
+  });
+
   function renderResult() {
     var s = score(), k = s.result, r = resEl(k);
     $$('.sq-res').forEach(function (e) { e.hidden = e !== r; });
@@ -314,7 +334,7 @@
     var why = (cfg.why || {})[s.problem]; $('[data-sq-why]', r).textContent = why ? why[s.partner ? 1 : 0] : '';
     $$('img', r).forEach(function (im, n) { if (n < 2) im.loading = 'eager'; });
     if (!sel[k]) { var v0 = variantsOf(k)[0] || {}; sel[k] = { color: v0.color || '', bags: v0.bags || 1, mode: 'once' }; }
-    renderBuy(k);
+    if ($('[data-sq-buy-ui]', r)) renderBuy(k); else stickyPrice(k);
     var rv = $('[data-sq-rv]', r);
     if (rv && !rv._pg) {
       rv._pg = pager(rv, $('[data-sq-rv-dots]', r)); rv._pg.onUser = function () { rvPause(rv); };
@@ -422,7 +442,7 @@
     var inner = drawer && drawer.querySelector('.cart-drawer__inner'), items = drawer && drawer.querySelector('cart-items-component');
     if (!inner || !td || typeof td.open !== 'function') return null;
     var card = el('div', 'sq-adding', null); card.setAttribute('role', 'status');
-    var pic = v.image, ri = !pic && $('[data-sq-res-img] img', resEl(k));
+    var pic = v.image, ri = !pic && $('[data-sq-res-img] img, [data-main]', resEl(k));
     if (ri) pic = ri.currentSrc || ri.src;
     if (pic) { var im = document.createElement('img'); im.src = pic; im.alt = ''; im.width = 72; im.height = 72; card.appendChild(im); } else card.classList.add('sq-adding--noimg');
     var body = el('div', 'sq-adding-b', null);
@@ -445,16 +465,16 @@
   }
   function addToCart(btn) {
     var k = score().result, st = sel[k]; if (!st || btn.getAttribute('aria-busy') === 'true') return;
-    var v = pick(k), r = resEl(k), err = $('[data-sq-atc-err]', r);
+    var v = choice(k), r = resEl(k), err = $('[data-sq-atc-err]', r);
     var body = { id: v.id, quantity: 1 };
-    if (st.mode === 'sub' && v.plan) body.selling_plan = v.plan;
+    if (v.plan) body.selling_plan = v.plan;
     var ids = $$('cart-items-component', document).map(function (c) { return c.dataset.sectionId; }).filter(Boolean);
     if (ids.length) body.sections = ids.join(',');
     var label = btn.innerHTML; btn.setAttribute('aria-busy', 'true'); btn.innerHTML = ADDING; err.hidden = true;
     var drawer = document.querySelector('cart-drawer-component'), td = drawer && drawer.closest('theme-drawer');
     var wasEmpty = !!(drawer && drawer.querySelector('[data-cart-drawer-empty], .cart-drawer--empty'));
     // Instant: open the drawer now with a preview of the line being added; the real cart replaces it when Shopify answers
-    var preview = showAdding(drawer, td, k, v, st.mode === 'sub' && v.sub != null ? v.sub : v.once, st.mode === 'sub' && v.sub != null);
+    var preview = showAdding(drawer, td, k, v, v.price, v.sub);
     var mod = null, deferred = null, Ev = null;
     // the add request starts right away; the events module (already preloaded by the theme) loads alongside it
     var addReq = fetch(ROOT_URL + 'cart/add.js', {
@@ -494,9 +514,9 @@
   // Buy now: adds the chosen bag / plan (same line as Add to Cart) and goes straight to checkout
   function buyNow(btn) {
     var k = score().result, st = sel[k]; if (!st || btn.getAttribute('aria-busy') === 'true') return;
-    var v = pick(k), r = resEl(k), err = $('[data-sq-atc-err]', r);
+    var v = choice(k), r = resEl(k), err = $('[data-sq-atc-err]', r);
     var body = { id: v.id, quantity: 1 };
-    if (st.mode === 'sub' && v.plan) body.selling_plan = v.plan;
+    if (v.plan) body.selling_plan = v.plan;
     var label = btn.innerHTML; btn.dataset.label = label; btn.setAttribute('aria-busy', 'true'); btn.innerHTML = '<span class="sq-spin" aria-hidden="true"></span> ' + (BUY.buying || 'Going to checkout…'); err.hidden = true;
     fetch(ROOT_URL + 'cart/add.js', {
       method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body)

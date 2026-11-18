@@ -20,8 +20,8 @@ padding: 10px 16px 40px; min-height: 100vh;
 }
 .sq *, .sq *::before, .sq *::after { box-sizing: border-box; }
 :where(.sq) :is(p, h1, h2, h3, ul, ol, figure, blockquote) { margin: 0; }   /* low priority: a class rule (e.g. the product page section in the result) keeps its own spacing */
-.sq ul, .sq ol { padding: 0; list-style: none; }
-.sq button { font-family: inherit; }
+:where(.sq) :is(ul, ol) { padding: 0; list-style: none; }
+:where(.sq) button { font-family: inherit; }
 .sq [hidden] { display: none !important; }
 .sq .sq-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .sq .sq-wrap { max-width: 460px; margin: 0 auto; }
@@ -336,6 +336,22 @@ padding: 10px 16px 40px; min-height: 100vh;
 .sq .sq-rv-stars { font-size: 12px; color: var(--sq-lav); }
 .sq .sq-rv-card blockquote { margin: 8px 0; font-size: 14.5px; line-height: 1.45; font-style: italic; }
 .sq .sq-rv-card figcaption { font-size: 12.5px; font-weight: 700; color: var(--sq-lav); }
+/* Result in the product page layout ("Result: product page layout"): the quiz's match line, then the product page
+   gallery + buy box (snippets/somna-quiz-pdp, styled by the product page's own styles), then Buy now and the quiz notes */
+.sq .sq-res-head { margin-bottom: 8px; }
+.sq .sq-res-pdp .somna-pdp-hero { padding-block: 8px 24px; background: transparent; }
+.sq .sq-res-pdp .somna-pdp-hero__inner { padding-inline: 0; }
+.sq .sq-res-pdp .sq-pdp-buynow { margin-top: 10px; background: transparent; color: var(--somna-mint, #f3feee); border: 2px solid var(--somna-mint, #f3feee); box-shadow: none; }
+.sq .sq-res-pdp .sq-pdp-buynow:hover { background: var(--somna-mint, #f3feee); color: #0b0f1d; }
+.sq .sq-res-pdp .sq-atc-err:not([hidden]) { margin-top: 8px; color: #FF9C8F; font-size: 14px; text-align: center; }
+.sq .sq-res-pdp .sq-pdp-extras { margin-top: 18px; color: #f3feee; }
+.sq .sq-res-pdp .sq-pdp-extras .sq-buy-note { color: #f3feee; text-align: center; font-size: 13px; }
+.sq .sq-res-pdp .sq-pdp-extras p.sq-buy-view { text-align: center; }
+.sq .sq-res-pdp .sq-pdp-extras p.sq-buy-view a { color: #afbdf8; }
+.sq .sq-res-pdp .sq-pdp-extras .sq-acc--box { margin-top: 14px; background: #161B2C; border: 1px solid #2E3134; box-shadow: none; }
+.sq .sq-res-pdp .sq-pdp-extras .sq-acc summary, .sq .sq-res-pdp .sq-pdp-extras .sq-acc summary:hover { color: #f3feee; }
+.sq .sq-res-pdp .sq-pdp-extras .sq-acc p { color: #c9ccd6; }
+.sq .sq-res-perks--pdp { margin-top: 16px; }
 /* "Sound familiar? / The fix" (product page problem section) in the result: full-width navy band */
 .sq .sq-problem { margin-top: 40px; padding-block: 40px 48px; box-shadow: 0 0 0 100vmax var(--somna-story-bg); clip-path: inset(0 -100vmax); }
 .sq .sq-problem .somna-pdp-story__inner { padding-inline: 0; }

@@ -1,0 +1,164 @@
+{%- comment -%}
+  SOMNA quiz result · the product page buy script (<somna-pdp-buy>, copied from sections/somna-pdp-hero.liquid) for the
+  product page layout in the quiz result (snippets/somna-quiz-pdp). Packs, colours, Subscribe & Save / One-time,
+  delivery frequency, prices and the thumbnails. Add to cart / Buy now are the quiz's own (they read this element's choice).
+  Labels are the product page's defaults. Keep in step with the product page script.
+{%- endcomment -%}
+<script type="module">
+  import { somnaAddToCart, somnaMoney } from '{{ 'somna-cart.js' | asset_url }}';
+
+  if (!customElements.get('somna-pdp-buy')) {
+    customElements.define('somna-pdp-buy', class extends HTMLElement {
+      connectedCallback() {
+        try { this.variants = JSON.parse(this.querySelector('[data-variants]').textContent); } catch (e) { this.variants = []; }
+        this.form = this.querySelector('[data-form]');
+        if (!this.form || !this.variants.length) return;
+        const checked = this.querySelector('[data-pack]:checked');
+        this.v = checked ? Number(checked.value) : 0;
+        this.mode = this.querySelector('[data-mode-input]:checked')?.value || 'once';
+        this.planSelect = this.querySelector('[data-plan]');
+        this.nights = Number(this.dataset.nights) || 0;
+        this.giftMin = Number(this.dataset.giftMin) || 99;
+        this.ci = Number(this.dataset.colorIndex);
+        this.si = Number(this.dataset.sizeIndex) || 0;
+        this.labels = { add: "Add to cart", soldOut: "Sold out", added: "Added to your cart.", error: "Couldn’t add to cart. Please try again.", night: "/night", save: "Save [percent]%", pct: " · [percent]% off" };
+        this.money = (c) => somnaMoney(c, this.dataset.currency, this.dataset.locale);
+        this.addEventListener('change', this.onChange);
+        this.addEventListener('click', this.onClick);
+        this.form.addEventListener('submit', this.onSubmit);
+        this.update();
+      }
+      disconnectedCallback() {
+        this.removeEventListener('change', this.onChange);
+        this.removeEventListener('click', this.onClick);
+        this.form?.removeEventListener('submit', this.onSubmit);
+      }
+      bags(v) { const n = parseInt(String(v.title).replace(/[^0-9]/g, ''), 10); return n > 0 ? n : 1; }
+      plan(v) {
+        if (this.mode !== 'sub' || !v.plans.length) return null;
+        const id = Number(this.planSelect?.value);
+        return v.plans.find((p) => p.id === id) || v.plans[0];
+      }
+      priceOf(v, mode = this.mode) { const p = mode === 'sub' && v.plans.length ? (this.plan(v) || v.plans[0]) : null; return p ? p.price : v.price; }
+      base(v, price) { return Math.max(v.compare || 0, price < v.price ? v.price : 0); } // v.compare = regular price (or compare-at), v.price = one-time sale price
+      pct(price, v) { const base = this.base(v, price); return base > price ? Math.round((1 - price / base) * 100) : 0; }
+      priceHTML(p) { const [a, b] = this.money(p).split('.'); return b ? `${a}<sup>${b}</sup>` : a; }
+      update() {
+        const v = this.variants[this.v];
+        const q = (s) => this.querySelector(s);
+        if (this.mode === 'sub' && !v.plans.length) this.mode = 'once';
+        const price = this.priceOf(v);
+        const plan = this.plan(v);
+        q('[data-id]').value = v.id;
+        q('[data-plan-input]').value = plan ? plan.id : '';
+        q('[data-price]').innerHTML = this.priceHTML(price);
+        const compare = this.base(v, price) > price ? this.base(v, price) : 0;
+        const c = q('[data-compare]'); c.hidden = !compare; c.textContent = compare ? this.money(compare).replace(/[.,]00(?=\D*$)/, '') : '';
+        const priceNight = q('[data-price-night]');
+        const priceNights = Number(this.dataset.priceNights) || 0;
+        if (priceNight && priceNights) priceNight.textContent = this.money(Math.round(price / priceNights)) + (this.dataset.nightLabel || '');
+        const pct = this.pct(price, v);
+        const save = q('[data-save]'); save.hidden = !pct; save.textContent = this.labels.save.replace('[percent]', pct);
+        this.querySelectorAll('[data-pack]').forEach((input) => {
+          const x = this.variants[Number(input.value)];
+          const pr = this.priceOf(x);
+          const label = input.closest('label');
+          label.querySelector('[data-pack-price]').textContent = this.money(pr);
+          const xb = this.base(x, pr);
+          label.querySelector('[data-pack-compare]').textContent = xb > pr ? this.money(xb).replace(/[.,]00(?=\D*$)/, '') : '';
+          const night = label.querySelector('[data-pack-night]');
+          if (night && this.nights) night.textContent = this.money(Math.round(pr / (this.bags(x) * this.nights))) + this.labels.night;
+        });
+        this.querySelectorAll('[data-mode-input]').forEach((r) => { r.checked = r.value === this.mode; r.disabled = r.value === 'sub' && !v.plans.length; });
+        this.querySelector('[data-mode-box]')?.classList.toggle('is-active', this.mode === 'sub');
+        const subPrice = v.plans.length ? this.priceOf(v, 'sub') : 0;
+        const subEl = q('[data-price-sub]'); if (subEl) subEl.textContent = subPrice ? this.money(subPrice) : '';
+        const subPct = subPrice ? this.pct(subPrice, v) : 0;
+        const subPctEl = q('[data-sub-pct]'); if (subPctEl) subPctEl.textContent = subPct ? this.labels.pct.replace('[percent]', subPct) : '';
+        this.querySelectorAll('[data-sub-each]').forEach((el) => { el.textContent = subPrice ? this.money(subPrice) : ''; });
+        const subPlan = v.plans.length ? (this.plan(v) || v.plans[0]) : null;
+        const opt = this.planSelect && subPlan ? [...this.planSelect.options].find((o) => Number(o.value) === subPlan.id) : null;
+        const intervalText = opt ? opt.textContent : (subPlan ? this.dataset.interval || '' : '');
+        this.querySelectorAll('[data-sub-interval]').forEach((el) => { el.textContent = intervalText.trim().replace(/^Deliver(y)?\s+/i, ''); });
+        q('[data-price-once]').textContent = this.money(v.price);
+        const oncePct = this.pct(v.price, v);
+        q('[data-once-pct]').textContent = oncePct ? this.labels.pct.replace('[percent]', oncePct) : '';
+        if (this.planSelect) this.planSelect.disabled = this.mode !== 'sub';
+        const add = q('[data-add]');
+        add.disabled = !v.available;
+        q('[data-add-label]').textContent = v.available ? `${this.labels.add} · ${this.money(price)}` : this.labels.soldOut;
+      }
+      // colour swatches: point every pack at the variant with that colour and its size, then show that colour's photo
+      setColor(color) {
+        this.querySelectorAll('[data-pack]').forEach((input) => {
+          const i = this.variants.findIndex((x) => x.options[this.ci] === color && x.options[this.si] === input.dataset.size);
+          if (i > -1) { input.value = i; input.disabled = !this.variants[i].available; input.closest('label').classList.toggle('is-sold-out', !this.variants[i].available); }
+        });
+        const checked = this.querySelector('[data-pack]:checked') || this.querySelector('[data-pack]');
+        if (checked) this.v = Number(checked.value);
+        const name = this.querySelector('[data-color-name]');
+        if (name) name.textContent = color;
+        const v = this.variants[this.v];
+        const img = this.querySelector('[data-main]');
+        if (img && v && v.image) {
+          img.removeAttribute('srcset');
+          img.src = v.image;
+          this.querySelectorAll('[data-media]').forEach((b) => b.setAttribute('aria-current', 'false'));
+        }
+        this.update();
+      }
+      onChange = (e) => {
+        const t = e.target;
+        if (t.matches('[data-pack]')) { this.v = Number(t.value); this.update(); }
+        else if (t.matches('[data-color]')) this.setColor(t.value);
+        else if (t.matches('[data-mode-input]')) { this.mode = t.value; this.update(); }
+        else if (t.matches('[data-plan]')) { this.mode = 'sub'; this.update(); }
+      };
+      onClick = (e) => {
+        const thumb = e.target.closest('[data-media]');
+        if (thumb) {
+          const img = this.querySelector('[data-main]');
+          if (img) { img.srcset = thumb.dataset.srcset; img.src = thumb.dataset.src; img.alt = thumb.getAttribute('aria-label') || ''; }
+          this.querySelectorAll('[data-media]').forEach((b) => b.setAttribute('aria-current', String(b === thumb)));
+          return;
+        }
+        const play = e.target.closest('[data-video]');
+        if (play) {
+          this.querySelectorAll('.somna-pdp-hero__video video').forEach((v) => v.pause());
+          const video = document.createElement('video');
+          video.src = play.dataset.video;
+          video.controls = true;
+          video.playsInline = true;
+          video.autoplay = true;
+          const poster = play.querySelector('img');
+          if (poster) video.poster = poster.currentSrc || poster.src;
+          play.replaceWith(video);
+          video.play().catch(() => {});
+          video.addEventListener('play', () => this.querySelectorAll('.somna-pdp-hero__video video').forEach((o) => { if (o !== video) o.pause(); }));
+        }
+      };
+      onSubmit = async (e) => {
+        e.preventDefault();
+        if (this.busy) return;
+        const v = this.variants[this.v];
+        if (!v.available) return;
+        const btn = this.querySelector('[data-add]');
+        const status = this.querySelector('[data-status]');
+        this.busy = true;
+        btn.setAttribute('aria-busy', 'true');
+        btn.disabled = true;
+        status.textContent = '';
+        try {
+          await somnaAddToCart(this, { id: v.id, quantity: 1, selling_plan: this.plan(v)?.id || null });
+          status.textContent = this.labels.added;
+        } catch (err) {
+          status.textContent = err && err.message ? err.message : this.labels.error;
+        } finally {
+          this.busy = false;
+          btn.removeAttribute('aria-busy');
+          btn.disabled = !v.available;
+        }
+      };
+    });
+  }
+</script>

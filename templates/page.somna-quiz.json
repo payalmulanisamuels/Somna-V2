@@ -258,7 +258,8 @@
         "retake_label": "",
         "end_redirect": false,
         "show_atc": true,
-        "show_problem": true
+        "show_problem": true,
+        "result_pdp": true
       }
     }
   },

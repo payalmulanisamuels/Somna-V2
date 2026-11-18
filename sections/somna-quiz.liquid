@@ -93,6 +93,37 @@
         -%}
         {%- if rp != blank -%}
         <div class="sq-res" data-res="{{ rk }}" hidden {% if rb %}{{ rb.shopify_attributes }}{% endif %}>
+          {%- if section.settings.result_pdp -%}
+            {%- comment -%} Product page layout (gallery + buy panel of sections/somna-pdp-hero) with the quiz's match line on top {%- endcomment -%}
+            <div class="sq-res-head">
+              <p class="sq-pill">✓ {{ section.settings.match_pill }}</p>
+              <h2 class="sq-q sq-res-h" tabindex="-1">{{ section.settings.fix_prefix }} <em>SOMNA {{ rp.title }}</em></h2>
+              <p class="sq-res-why" data-sq-why></p>
+            </div>
+            {%- capture pdp_left -%}
+              <ul class="sq-res-perks sq-res-perks--pdp">
+                {%- if rbs.emoji_1 != blank -%}<li>{{ rbs.emoji_1 }}</li>{%- endif -%}
+                {%- if rbs.emoji_2 != blank -%}<li>{{ rbs.emoji_2 }}</li>{%- endif -%}
+                {%- if rbs.emoji_3 != blank -%}<li>{{ rbs.emoji_3 }}</li>{%- endif -%}
+              </ul>
+            {%- endcapture -%}
+            {%- capture pdp_extras -%}
+              <div class="sq-pdp-extras">
+                {%- if section.settings.atc_note != blank -%}<p class="sq-buy-note">↻ {{ section.settings.atc_note }}</p>{%- endif -%}
+                {%- if section.settings.view_product_label != blank -%}<p class="sq-buy-view"><a href="{{ rp.url }}">{{ section.settings.view_product_label }} <span class="sq-buy-view-arr" aria-hidden="true">→</span></a></p>{%- endif -%}
+                {%- if rbs.how_it_works != blank -%}
+                  <details class="sq-acc sq-acc--box" open>
+                    <summary>{{ section.settings.how_it_works_heading }}</summary>
+                    <p>{{ rbs.how_it_works }}</p>
+                  </details>
+                {%- endif -%}
+              </div>
+            {%- endcapture -%}
+            <div class="sq-res-pdp" data-sq-pdp>
+              {%- capture pdp_sid -%}sq-{{ sid }}-{{ rk }}{%- endcapture -%}
+              {% render 'somna-quiz-pdp', product: rp, sid: pdp_sid, buy_now_label: section.settings.buy_now_label, extras: pdp_extras, left_extras: pdp_left %}
+            </div>
+          {%- else -%}
           {%- comment -%} Match + product {%- endcomment -%}
           <div class="sq-res-top">
             <div class="sq-res-intro">
@@ -150,6 +181,7 @@
               {%- endif -%}
             </div>
           </div>
+          {%- endif -%}
 
           {%- comment -%} "Sound familiar? / The fix": the product page's problem section for this product {%- endcomment -%}
           {%- if section.settings.show_problem -%}{% render 'somna-quiz-problem', product: rp, snore_direction: 'tilt' %}{%- endif -%}
@@ -490,6 +522,7 @@
 </script>
 {% render 'somna-quiz-styles', design: section.settings.design, extras: section.settings.result_extras %}
 {%- if section.settings.show_problem -%}{{ 'section-somna-pdp-story.css' | asset_url | stylesheet_tag }}{%- endif -%}
+{%- if section.settings.result_pdp -%}{% render 'somna-quiz-pdp-script' %}{%- endif -%}
 {%- if section.settings.v2_cursor -%}{% render 'somna-cursor', force: true %}{%- endif -%}
 {% render 'somna-quiz-script', sid: sid %}
 
@@ -514,6 +547,13 @@
       "id": "v2_sections",
       "label": "Result: use the SOMNA V2 product page sections",
       "info": "Main benefit = How it works diagram, How to use = numbered steps, Results = product with the per-night sticker. Read from each product's own V2 content; falls back to the images below.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "result_pdp",
+      "label": "Result: product page layout (gallery + buy box)",
+      "info": "The matched product's gallery and buy box exactly as on its product page (same packs, prices, Subscribe & Save, Add to cart), plus Buy now and the quiz's notes.",
       "default": false
     },
     {

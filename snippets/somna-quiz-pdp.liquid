@@ -1,0 +1,408 @@
+{%- comment -%}
+  SOMNA quiz result · the product page's top section (sections/somna-pdp-hero.liquid) for the matched product:
+  gallery (thumbnails, main photo, badge, sticker, quote card) and the buy panel (rating, title, tagline, icon row,
+  price, packs, Subscribe & Save / One-time, Add to cart, perks). Same markup, classes and buy script
+  (<somna-pdp-buy>) as the product page, so it looks and works the same; the theme stylesheet already has its styles.
+  Quiz additions: Buy now under Add to cart, the quiz's notes / How It Works / product link after the perks.
+  Add to cart and Buy now run the quiz's own cart code (instant drawer preview), with the variant and plan picked here.
+  Settings below are the product page template's hero settings (keep in step with templates/product.json "hero").
+  Params: product, sid (unique id for the radio names), buy_now_label, extras (HTML after the perks), left_extras (HTML under the quote)
+{%- endcomment -%}
+{%- liquid
+  assign s_brand = 'somna.'
+  assign s_rating_format = '[rating]/5 · [count] reviews'
+  assign s_save_label = 'Save [percent]%'
+  assign s_packs_label = 'Choose Your Pack'
+  assign s_selected_position = 1
+  assign s_badge_label = 'Recommended'
+  assign s_badge_2_label = 'Most popular'
+  assign s_badge_3_label = 'Best value'
+  assign s_gift_label = '+3 free gifts'
+  assign s_gift_min_bags = 2
+  assign s_nights_per_bag = 30
+  assign s_night_label = '/night'
+  assign s_default_mode = 'once'
+  assign s_sub_label = 'Subscribe & Save'
+  assign s_sub_points = '[price] [interval]
+3 free gifts on 2+ packs
+Skip, pause or cancel anytime'
+  assign s_once_label = 'One-time purchase'
+  assign s_add_label = 'Add to cart'
+  assign s_badge_text = 'Up to 60% off'
+  assign s_sticker_text = 'Bestseller'
+  assign s_verified_label = 'Verified Buyer'
+  assign s_box_heading = "What's in the Box?"
+  assign s_box_colors_label = 'Strip colors in this set:'
+-%}
+{%- if product != blank -%}
+{%- liquid
+  assign mf = product.metafields.custom
+  assign images = product.media | where: 'media_type', 'image'
+  # gallery = the product's own photos from Shopify admin only (in admin order)
+  assign first_image = images | first
+  # gallery layout "auto": thumbnails go below when the first photo is landscape (Season Bundle), beside it otherwise
+  assign gallery_below = false
+  if false
+    assign gallery_below = true
+  elsif false and first_image.aspect_ratio > 1
+    assign gallery_below = true
+  endif
+  # per-night next to the price: the product's Nights field, else the section's nights per bag
+  assign price_nights = mf.nights.value | default: s_nights_per_bag
+  assign selected_index = s_selected_position | minus: 1
+  assign current = product.selected_variant
+  if current == blank
+    assign current = product.variants[selected_index] | default: product.selected_or_first_available_variant
+  endif
+  assign has_plans = false
+  if product.selling_plan_groups.size > 0
+    assign has_plans = true
+  endif
+  assign mode = s_default_mode
+  if has_plans == false
+    assign mode = 'once'
+  endif
+  # one-time price = regular price minus the theme's one-time sale % (the automatic "Sale" discount applies it at checkout)
+  assign once_factor = 100 | minus: settings.somna_once_discount
+  assign current_once = current.price | times: once_factor | divided_by: 100
+  assign alloc = current.selling_plan_allocations | first
+  if mode == 'sub' and alloc
+    assign price = alloc.price
+  else
+    assign price = current_once
+  endif
+  assign compare = current.compare_at_price | default: 0
+  if price < current.price and current.price > compare
+    assign compare = current.price
+  endif
+  if compare <= price
+    assign compare = 0
+  endif
+
+  # products with a Color option plus a size option (Sleep Bundle): colour swatches + one pack per size
+  assign color_option = nil
+  assign color_idx = -1
+  assign size_idx = 0
+  if product.options_with_values.size == 2
+    for o in product.options_with_values
+      assign oname = o.name | downcase | strip
+      if oname == 'color' or oname == 'colour'
+        assign color_option = o
+        assign color_idx = forloop.index0
+      endif
+    endfor
+    if color_idx == 0
+      assign size_idx = 1
+    endif
+  endif
+  assign current_color = ''
+  if color_option
+    assign current_color = current.options[color_idx]
+  endif
+  assign hero_sticker = mf.pdp_hero_sticker.value | default: s_sticker_text
+
+  assign rating = ''
+  assign rating_count = ''
+  assign rating_raw = mf.custom_review_rating_review_count.value | strip_html | strip
+  if rating_raw != blank
+    assign rating = rating_raw | split: ' ' | first
+    if rating_raw contains '('
+      assign rating_count = rating_raw | split: '(' | last | split: ')' | first | strip
+    endif
+  endif
+  if false
+    assign jm_sum = product.metafields.judgeme.review_widget_data.value
+    if jm_sum and jm_sum.number_of_reviews > 0
+      assign rating = jm_sum.average_rating | times: 1.0 | round: 1
+      assign rating_count = jm_sum.number_of_reviews
+    endif
+  endif
+-%}
+<somna-pdp-buy
+  class="somna-pdp-hero sq-pdp"
+  data-interval="{{ product.selling_plan_groups.first.selling_plans.first.options.first.value | escape }}"
+  data-currency="{{ cart.currency.iso_code }}"
+  data-locale="{{ request.locale.iso_code }}"
+  data-nights="{{ s_nights_per_bag }}"
+  data-price-nights="{{ price_nights }}"
+  data-night-label="{{ mf.pdp_night_label.value | escape }}"
+  data-gift-min="{{ s_gift_min_bags }}"
+  data-color-index="{{ color_idx }}"
+  data-size-index="{{ size_idx }}"
+  style="--somna-pdp-bg: #afbdf8; --somna-panel: #0b0f1d; --somna-mint: #f3feee; --somna-chip: #afbdf8;"
+>
+  <script type="application/json" data-variants>
+    [
+    {%- for v in product.variants -%}
+      { "id": {{ v.id }}, "title": {{ v.title | json }}, "options": {{ v.options | json }}, "image": {% if v.featured_media %}{{ v.featured_media | image_url: width: 1100 | json }}{% else %}null{% endif %}, "available": {{ v.available | json }}, "price": {{ v.price | times: once_factor | divided_by: 100 }}, "compare": {% assign v_cmp = v.compare_at_price | default: 0 %}{% if v.price > v_cmp %}{{ v.price }}{% else %}{{ v_cmp }}{% endif %}, "plans": [
+        {%- for a in v.selling_plan_allocations -%}{ "id": {{ a.selling_plan.id }}, "price": {{ a.price }} }{% unless forloop.last %},{% endunless %}{%- endfor -%}
+      ] }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+    ]
+  </script>
+  <div class="somna-pdp-hero__inner somna-container">
+    <div class="somna-pdp-hero__gallery-wrap">
+    <div class="somna-pdp-hero__gallery">
+      {%- if images.size > 1 -%}
+        <ul class="somna-pdp-hero__thumbs" role="list">
+          {%- for m in images limit: 8 -%}
+            <li>
+              <button type="button" class="somna-pdp-hero__thumb" data-media="{{ forloop.index0 }}" data-src="{{ m | image_url: width: 1100 }}" data-srcset="{{ m | image_url: width: 600 }} 600w, {{ m | image_url: width: 900 }} 900w, {{ m | image_url: width: 1100 }} 1100w" aria-label="{{ m.alt | default: product.title | escape }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}">
+                {{ m | image_url: width: 200 | image_tag: loading: 'lazy', alt: '', width: 96, height: 104, widths: '100, 150, 200', sizes: '(min-width: 750px) 96px, 72px' }}
+              </button>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      <div class="somna-pdp-hero__main{% if true %} somna-edge-drip-top somna-pdp-hero__main--{{ 'over' | default: 'over' }}{% endif %}{% if true %} somna-pdp-hero__main--shape-{{ 'square-fit' }}{% endif %}">
+        {%- if first_image -%}
+          {{ first_image | image_url: width: 1100 | image_tag: data-main: '', loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 1300px) 570px, (min-width: 990px) 445px, (min-width: 750px) 45vw, 100vw', widths: '600, 900, 1100', alt: first_image.alt | default: product.title }}
+        {%- endif -%}
+      </div>
+
+      {%- if s_badge_text != blank -%}<p class="somna-pdp-hero__badge{% if true %} somna-shake--{{ 'pop' }}{% endif %}"><span>{{ s_badge_text }}</span></p>{%- endif -%}
+      {%- if hero_sticker != blank -%}<p class="somna-pdp-hero__sticker{% if true %} somna-shake--{{ 'pop' }}{% endif %}" style="--somna-shake-delay: 0.7s;">{{ hero_sticker }}</p>{%- endif -%}
+    </div>
+
+    <div class="somna-pdp-hero__side">
+      {%- assign quote = mf.pdp_quote.value -%}
+      {%- if quote == blank and true -%}
+        {%- comment -%} Figma quote card: fall back to a real Judge.me review (short, 5★, named, no import tag) {%- endcomment -%}
+        {%- assign jm = product.metafields.judgeme.review_widget_data.value -%}
+        {%- assign quote_skip = ' but ,loose,okay,fell off' | split: ',' -%}
+        {%- assign jm_pick = nil -%}
+        {%- for rv in jm.reviews -%}
+          {%- assign rv_body = rv.body | strip_html | strip -%}
+          {%- if rv.rating >= 5 and rv.is_anonymous_reviewer != true and rv_body.size <= 110 -%}
+            {%- comment -%} skip mixed reviews ("worked fine … but it came loose") via the skip-words setting {%- endcomment -%}
+            {%- assign rv_low = rv_body | downcase | append: ' ' | append: rv.title | downcase -%}
+            {%- assign rv_skip = false -%}
+            {%- for w in quote_skip -%}
+              {%- assign w2 = w | downcase -%}
+              {%- if w2 != blank and rv_low contains w2 -%}{%- assign rv_skip = true -%}{%- break -%}{%- endif -%}
+            {%- endfor -%}
+            {%- unless rv_body contains '(Review #' or rv_skip -%}
+              {%- assign jm_pick = rv -%}
+              {%- break -%}
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if jm_pick -%}
+          {%- assign jq_parts = jm_pick.reviewer_name | strip | split: ' ' -%}
+          {%- assign jq_name = jq_parts | first -%}
+          {%- if jq_parts.size > 1 -%}{%- assign jq_last = jq_parts | last | slice: 0 | upcase -%}{%- assign jq_name = jq_name | append: ' ' | append: jq_last | append: '.' -%}{%- endif -%}
+          <figure class="somna-pdp-hero__quote">
+            <span class="somna-pdp-hero__avatar somna-pdp-hero__avatar--initial" aria-hidden="true">{{ jq_name | slice: 0 }}</span>
+            <div>
+              <p class="somna-pdp-hero__stars" aria-label="{{ jm_pick.rating }} / 5">{% for i in (1..jm_pick.rating) %}★{% endfor %}</p>
+              <blockquote>“{{ jm_pick.body | strip_html | strip }}”</blockquote>
+              <figcaption><strong>{{ jq_name }}</strong>{% if jm_pick.verified_buyer %} <span>{{ s_verified_label }}</span>{% endif %}</figcaption>
+            </div>
+          </figure>
+        {%- endif -%}
+      {%- endif -%}
+      {%- if quote != blank -%}
+        <figure class="somna-pdp-hero__quote">
+          {%- if quote.avatar.value != blank -%}{{ quote.avatar.value | image_url: width: 160 | image_tag: loading: 'lazy', alt: '', width: 79, height: 79, class: 'somna-pdp-hero__avatar' }}{%- endif -%}
+          <div>
+            {%- assign stars = quote.rating.value | default: 5 -%}
+            <p class="somna-pdp-hero__stars" aria-label="{{ stars }} / 5">{% for i in (1..stars) %}★{% endfor %}</p>
+            <blockquote>“{{ quote.quote.value }}”</blockquote>
+            <figcaption><strong>{{ quote.author.value }}</strong>{% if quote.verified.value %} <span>{{ s_verified_label }}</span>{% endif %}</figcaption>
+          </div>
+        </figure>
+      {%- endif -%}
+
+
+      {{- left_extras -}}
+    </div>
+    </div>
+
+    <div class="somna-pdp-hero__panel{% if true %} somna-edge-drip-bottom{% endif %}">
+      {%- if rating != blank -%}
+        <p class="somna-pdp-hero__rating">
+          <span class="somna-pdp-hero__rating-stars" aria-hidden="true">★★★★★</span>
+          {{ s_rating_format | replace: '[rating]', rating | replace: '[count]', rating_count }}
+        </p>
+      {%- endif -%}
+      <h1 class="somna-pdp-hero__title"><span class="somna-pdp-hero__brand">{{ s_brand }}</span> {{ product.title }}</h1>
+      {%- if mf.pdp_tagline != blank -%}<p class="somna-pdp-hero__tagline">{{ mf.pdp_tagline.value | newline_to_br }}</p>{%- endif -%}
+
+      {%- assign features = mf.pdp_hero_features.value -%}
+      {%- if features != blank -%}
+        <ul class="somna-pdp-hero__features" role="list">
+          {%- for f in features -%}
+            <li><span class="somna-pdp-hero__feature-icon">{% render 'somna-pdp-icon', name: f.icon.value, variant: 'figma' %}</span>{{ f.title.value }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      <p class="somna-pdp-hero__price">
+        {%- assign price_parts = price | money | split: '.' -%}
+        <span class="somna-pdp-hero__price-now" data-price>{{ price_parts[0] }}{% if price_parts[1] %}<sup>{{ price_parts[1] }}</sup>{% endif %}</span>
+        <s data-compare{% if compare == 0 %} hidden{% endif %}>{{ compare | money_without_trailing_zeros }}</s>
+        {%- assign pct = 0 -%}
+        {%- if compare > 0 -%}{%- assign pct = compare | minus: price | times: 100 | divided_by: compare -%}{%- endif -%}
+        <span class="somna-pdp-hero__save" data-save{% if pct == 0 %} hidden{% endif %}>{{ s_save_label | replace: '[percent]', pct }}</span>
+        {%- if mf.pdp_night_label != blank and price_nights > 0 -%}
+          <span class="somna-pdp-hero__price-night" data-price-night>{{ price | times: 1.0 | divided_by: price_nights | round | money }}{{ mf.pdp_night_label.value }}</span>
+        {%- endif -%}
+      </p>
+      {%- if mf.pdp_savings_note != blank -%}<p class="somna-pdp-hero__savings">{{ mf.pdp_savings_note.value }}</p>{%- endif -%}
+
+      {%- comment -%} What's in the box: under the price for single-variant products; after the packs when there are packs (Sleep Bundle) {%- endcomment -%}
+      {%- capture box_markup -%}
+      {%- assign box_products = mf.pdp_box_products.value -%}
+      {%- assign box_notes = mf.pdp_box_notes.value -%}
+      {%- assign box_titles = mf.pdp_box_titles.value -%}
+      {%- assign box_colors = mf.pdp_box_colors.value -%}
+      {%- if box_products != blank -%}
+        <div class="somna-pdp-hero__box">
+          {%- if s_box_heading != blank -%}<h2 class="somna-pdp-hero__box-title">{{ s_box_heading }}</h2>{%- endif -%}
+          <ul class="somna-pdp-hero__box-list" role="list">
+            {%- for bp in box_products limit: 2 -%}
+              {%- assign bnote = box_notes[forloop.index0] -%}
+              {%- if bp != blank -%}
+                <li class="somna-pdp-hero__box-item">
+                  <a class="somna-pdp-hero__box-card" href="{{ bp.url }}">
+                    {%- if bp.featured_image -%}{{ bp.featured_image | image_url: width: 180, height: 180, crop: 'center' | image_tag: loading: 'lazy', alt: '', width: 86, height: 92, class: 'somna-pdp-hero__box-thumb' }}{%- endif -%}
+                    <span class="somna-pdp-hero__box-text">
+                      <span class="somna-pdp-hero__box-name">{{ box_titles[forloop.index0] | default: bp.title }}</span>
+                      {%- if bnote != blank -%}<span class="somna-pdp-hero__box-note">{{ bnote }}{% if box_colors == blank %} <span aria-hidden="true">→</span>{% endif %}</span>{%- endif -%}
+                      {%- if forloop.first and box_colors != blank -%}
+                        <span class="somna-pdp-hero__box-colors">
+                          {%- if s_box_colors_label != blank -%}<span>{{ s_box_colors_label }}</span>{%- endif -%}
+                          {%- for c in box_colors -%}<span class="somna-pdp-hero__box-color"><span class="somna-pdp-hero__dot" style="--somna-dot: {% render 'somna-swatch-color', name: c %};" aria-hidden="true"></span>{{ c }}</span>{%- endfor -%}
+                        </span>
+                      {%- endif -%}
+                    </span>
+                  </a>
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+          {%- if mf.pdp_gifts_bar != blank -%}<p class="somna-pdp-hero__gifts-bar">{{ mf.pdp_gifts_bar.value }}</p>{%- endif -%}
+        </div>
+      {%- endif -%}
+      {%- endcapture -%}
+      {%- if product.has_only_default_variant -%}{{ box_markup }}{%- endif -%}
+
+      {%- form 'product', product, class: 'somna-pdp-hero__form', data-form: '' -%}
+        <input type="hidden" name="id" value="{{ current.id }}" data-id>
+        <input type="hidden" name="selling_plan" value="{% if mode == 'sub' and alloc %}{{ alloc.selling_plan.id }}{% endif %}" data-plan-input>
+
+        {%- if color_option -%}
+          <fieldset class="somna-pdp-hero__colors">
+            <legend><span>{{ color_option.name }}</span> : <span data-color-name>{{ current_color }}</span></legend>
+            <div class="somna-pdp-hero__swatches">
+              {%- for val in color_option.values -%}
+                {%- capture sw -%}{%- if val.swatch.color -%}{{ val.swatch.color }}{%- else -%}{% render 'somna-swatch-color', name: val.name %}{%- endif -%}{%- endcapture -%}
+                <label class="somna-pdp-hero__swatch" style="--somna-dot: {{ sw | strip }};">
+                  <input type="radio" name="{{ sid }}-color" value="{{ val.name | escape }}" data-color{% if val.name == current_color %} checked{% endif %}>
+                  <span class="visually-hidden">{{ val.name }}</span>
+                </label>
+              {%- endfor -%}
+            </div>
+          </fieldset>
+        {%- endif -%}
+
+        <fieldset class="somna-buy__packs somna-pdp-hero__packs"{% if product.has_only_default_variant %} hidden{% endif %}>
+          <legend>{{ s_packs_label }}</legend>
+          <div class="somna-buy__pack-list">
+            {%- assign pack_n = 0 -%}
+            {%- for v in product.variants -%}
+              {%- if color_option and v.options[color_idx] != current_color -%}{%- continue -%}{%- endif -%}
+              {%- assign pack_n = pack_n | plus: 1 -%}
+              {%- liquid
+                assign v_name = v.title
+                if color_option
+                  assign v_name = v.options[size_idx]
+                endif
+                assign v_alloc = v.selling_plan_allocations | first
+                assign v_once = v.price | times: once_factor | divided_by: 100
+                if mode == 'sub' and v_alloc
+                  assign v_price = v_alloc.price
+                else
+                  assign v_price = v_once
+                endif
+                assign bags = v_name | split: ' ' | first | plus: 0
+                if bags < 1
+                  assign bags = 1
+                endif
+              -%}
+              <label class="somna-buy__pack{% unless v.available %} is-sold-out{% endunless %}">
+                {%- liquid
+                  assign pack_badge = ''
+                  if pack_n == 1
+                    assign pack_badge = s_badge_label
+                  elsif pack_n == 2
+                    assign pack_badge = s_badge_2_label
+                  elsif pack_n == 3
+                    assign pack_badge = s_badge_3_label
+                  endif
+                -%}
+                {%- if pack_badge != blank -%}<span class="somna-buy__pack-badge">{{ pack_badge }}</span>{%- endif -%}
+                <input type="radio" name="{{ sid }}-pack" value="{{ forloop.index0 }}" data-pack{% if color_option %} data-size="{{ v_name | escape }}"{% endif %}{% if v.id == current.id %} checked{% endif %}{% unless v.available %} disabled{% endunless %}>
+                <span class="somna-buy__pack-name">{{ v_name }}</span>
+                <span class="somna-buy__pack-price" data-pack-price>{{ v_price | money }}</span>
+                {%- assign v_compare = v.compare_at_price | default: 0 -%}
+                {%- if v_price < v.price and v.price > v_compare -%}{%- assign v_compare = v.price -%}{%- endif -%}
+                <s data-pack-compare>{% if v_compare > v_price %}{{ v_compare | money_without_trailing_zeros }}{% endif %}</s>
+                {%- if bags >= s_gift_min_bags and s_gift_label != blank -%}
+                  <span class="somna-pdp-hero__gift">{{ s_gift_label }}</span>
+                {%- elsif s_nights_per_bag > 0 -%}
+                  <span class="somna-buy__pack-night" data-pack-night>{{ v_price | times: 1.0 | divided_by: bags | divided_by: s_nights_per_bag | round | money }}{{ s_night_label }}</span>
+                {%- endif -%}
+              </label>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+
+        {%- unless product.has_only_default_variant -%}{{ box_markup }}{%- endunless -%}
+
+        <fieldset class="somna-buy__modes somna-pdp-hero__modes">
+          <legend class="visually-hidden">{{ 'Purchase option' }}</legend>
+          {%- if has_plans -%}
+            <div class="somna-pdp-hero__mode-box" data-mode-box="sub">
+              <label class="somna-buy__mode"><input type="radio" name="{{ sid }}-mode" value="sub" data-mode-input{% if mode == 'sub' %} checked{% endif %}> <span class="somna-buy__mode-label"><strong>{{ s_sub_label }}</strong><span data-sub-pct></span></span> <span class="somna-buy__mode-price" data-price-sub>{% if alloc %}{{ alloc.price | money }}{% endif %}</span></label>
+              {%- if s_sub_points != blank -%}
+                <ul class="somna-pdp-hero__sub-points" role="list">
+                  {%- assign points = s_sub_points | newline_to_br | split: '<br />' -%}
+                  {%- for t in points -%}{%- assign pt = t | strip | replace: '[price]', '<span data-sub-each></span>' | replace: '[interval]', '<span data-sub-interval></span>' -%}{%- if pt != blank -%}<li><span class="somna-check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span><span>{{ pt }}</span></li>{%- endif -%}{%- endfor -%}
+                </ul>
+              {%- endif -%}
+              {%- assign group = product.selling_plan_groups | first -%}
+              {%- if group.selling_plans.size > 1 -%}
+                <label class="visually-hidden" for="{{ sid }}-plan">{{ 'Delivery frequency' }}</label>
+                <select class="somna-pdp-hero__plan" id="{{ sid }}-plan" data-plan>
+                  {%- for plan in group.selling_plans -%}
+                    <option value="{{ plan.id }}"{% if alloc and plan.id == alloc.selling_plan.id %} selected{% endif %}>{{ plan.options.first.value | default: plan.name }}</option>
+                  {%- endfor -%}
+                </select>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+          <label class="somna-buy__mode somna-pdp-hero__once"><input type="radio" name="{{ sid }}-mode" value="once" data-mode-input{% if mode == 'once' %} checked{% endif %}> <span class="somna-buy__mode-label">{{ s_once_label }}<span data-once-pct></span></span> <span class="somna-buy__mode-price" data-price-once>{{ current_once | money }}</span></label>
+        </fieldset>
+
+        <button type="button" class="somna-buy__add somna-pdp-hero__add" data-add data-sq-atc{% unless current.available %} disabled{% endunless %}>
+          <span data-add-label>{% if current.available %}{{ s_add_label }} · {{ price | money }}{% else %}{{ 'Sold out' }}{% endif %}</span>
+        </button>
+        {%- if buy_now_label != blank -%}<button type="button" class="somna-buy__add somna-pdp-hero__add sq-pdp-buynow" data-sq-buynow{% unless current.available %} disabled{% endunless %}>{{ buy_now_label }}</button>{%- endif -%}
+        <p class="sq-atc-err" data-sq-atc-err role="alert" hidden></p>
+        <p class="somna-buy__status" role="status" data-status></p>
+      {%- endform -%}
+
+      <ul class="somna-pdp-hero__perks" role="list">
+        <li>{% render 'somna-pdp-icon', name: 'shipping' %}<span>$4.95 shipping</span></li>
+        <li>{% render 'somna-pdp-icon', name: 'delivery' %}<span>Arrives in 7–9 business days</span></li>
+        <li>{% render 'somna-pdp-icon', name: 'cancel-anytime' %}<span>Cancel anytime</span></li>
+      </ul>
+
+
+      {{- extras -}}
+    </div>
+  </div>
+</somna-pdp-buy>
+{%- endif -%}
