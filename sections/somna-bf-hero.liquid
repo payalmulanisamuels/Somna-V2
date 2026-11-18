@@ -128,13 +128,13 @@
   }
   .somna-bfh__media { position: absolute; inset: 0 0 0 auto; z-index: -1; width: 46%; }
   .somna-bfh__img { width: 100%; height: 100%; object-fit: cover; object-position: 78% 55%; }
-  .somna-bfh__img--mob, .somna-bfh__ticket--mob { display: none; }
+  .somna-bfh .somna-bfh__img--mob, .somna-bfh .somna-bfh__ticket--mob { display: none; }
   .somna-bfh__media::before {
     content: ''; position: absolute; inset: 0; z-index: 1;
     background: linear-gradient(to right, var(--bfh-bg) 0%, rgb(11 15 29 / 0.55) 22%, rgb(11 15 29 / 0.25) 60%, rgb(11 15 29 / 0.35) 100%);
   }
   .somna-bfh__inner { padding-block: calc(var(--bfh-pt) + var(--header-height, 66px) + 70px) var(--bfh-pb); }
-  .somna-bfh__copy { max-width: 900px; }
+  .somna-bfh__copy { max-width: min(900px, 56vw); }
   .somna-bfh__ticket {
     display: inline-flex; flex-direction: column; align-items: center; margin: 0 0 18px; padding: 12px 22px 9px;
     border: 3px dashed #000; border-radius: 4px; background: #fff; color: #000; rotate: -5deg;
@@ -179,8 +179,8 @@
     .somna-bfh__media { position: relative; inset: auto; z-index: 0; width: 100%; height: 460px; }
     .somna-bfh__media::before { background: linear-gradient(to bottom, rgb(11 15 29 / 0.15) 0%, rgb(11 15 29 / 0) 55%, var(--bfh-bg) 100%); }
     .somna-bfh__img--desk, .somna-bfh__ticket--desk, .somna-bfh__tagline, .somna-bfh__price, .somna-bfh__perks, .somna-bfh__quote, .somna-bfh__moon--desk { display: none; }
-    .somna-bfh__img--mob { display: block; object-position: 50% 62%; }
-    .somna-bfh__ticket--mob { display: inline-flex; position: absolute; top: 24px; left: 30px; z-index: 2; padding: 10px 18px 7px; }
+    .somna-bfh .somna-bfh__img--mob { display: block; object-position: 50% 62%; }
+    .somna-bfh .somna-bfh__ticket--mob { display: inline-flex; position: absolute; top: 24px; left: 30px; z-index: 2; padding: 10px 18px 7px; }
     .somna-bfh__ticket--mob span { font-size: 27px; }
     .somna-bfh__ticket--mob small { font-size: 11px; }
     .somna-bfh__inner { padding-block: 28px calc(var(--bfh-pb) * 0.6); }
