@@ -6,7 +6,7 @@
   Quiz additions: Buy now under Add to cart, the quiz's notes / How It Works / product link after the perks.
   Add to cart and Buy now run the quiz's own cart code (instant drawer preview), with the variant and plan picked here.
   Settings below are the product page template's hero settings (keep in step with templates/product.json "hero").
-  Params: product, sid (unique id for the radio names), buy_now_label, extras (HTML after the perks), left_extras (HTML under the quote)
+  Params: product, sid (unique id for the radio names), buy_now_label, extras (HTML after the perks), left_extras (HTML under the quote), left_top (HTML above the photos)
 {%- endcomment -%}
 {%- liquid
   assign s_brand = 'somna.'
@@ -142,6 +142,7 @@ Skip, pause or cancel anytime{%- endcapture -%}
   </script>
   <div class="somna-pdp-hero__inner somna-container">
     <div class="somna-pdp-hero__gallery-wrap">
+    {{- left_top -}}
     <div class="somna-pdp-hero__gallery">
       {%- if images.size > 1 -%}
         <ul class="somna-pdp-hero__thumbs" role="list">

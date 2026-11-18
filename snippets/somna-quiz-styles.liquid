@@ -343,7 +343,6 @@ padding: 10px 16px 40px; min-height: 100vh;
 .sq .sq-rv-card figcaption { font-size: 12.5px; font-weight: 700; color: var(--sq-lav); }
 /* Result in the product page layout ("Result: product page layout"): the quiz's match line, then the product page
    gallery + buy box (snippets/somna-quiz-pdp, styled by the product page's own styles), then Buy now and the quiz notes */
-.sq .sq-res-head { margin-bottom: 8px; }
 .sq .sq-res-pdp .somna-pdp-hero { padding-block: 8px 24px; background: transparent; }
 .sq .sq-res-pdp .somna-pdp-hero__inner { padding-inline: 0; }
 .sq .sq-res-pdp .sq-atc-err:not([hidden]) { margin-top: 8px; color: #FF9C8F; font-size: 14px; text-align: center; }
@@ -544,11 +543,31 @@ body { background: #AFBDF8; }
 .sq .sq-result { padding-top: 0; padding-bottom: 0; }
 .sq.sq--wide:has(.sq-res-pdp) { padding-bottom: 0; }
 .sq .sq-res-pdp .sq-res-why, .sq .sq-res-head .sq-res-why { margin-bottom: 0; }
-.sq .sq-res-head { margin-bottom: 0; }
-.sq .sq-res-head .sq-pill { margin-bottom: 8px; }
-.sq .sq-res-head .sq-res-h { margin-bottom: 6px; }
-.sq.sq--wide .sq-top { position: static; margin-bottom: 4px; background: transparent; }   /* result: Back scrolls away with the page (no lavender strip over the mint / navy bands) */
-.sq .sq-res-pdp .somna-pdp-hero { padding-block: 44px 32px; }   /* room for the "Up to 60% off" badge that sits over the photo's top edge */
+.sq.sq--wide .sq-top { position: static; padding-top: 6px; margin-bottom: 0; background: transparent; }   /* result: Back scrolls away with the page (no lavender strip over the mint / navy bands) */
+/* "buy box in one scroll" (18 Nov 2026): Back row, match line (above the photos, left column) and the buy panel
+   compacted so the panel starts right under the header and Add to cart + Buy now show on a laptop screen */
+.sq .sq-res-pdp .somna-pdp-hero { padding-block: 10px 32px; }
+.sq.sq--wide .sq-top-row { min-height: 24px; }
+.sq.sq--wide .sq-back { min-height: 28px; padding-block: 4px; }
+.sq .sq-res-pdp .sq-res-head { display: flex; flex-wrap: wrap; align-items: center; column-gap: 12px; row-gap: 4px; margin-bottom: 14px; }
+.sq .sq-res-pdp .sq-res-head .sq-pill, .sq .sq-res-pdp .sq-res-head .sq-res-h { margin: 0; }
+.sq .sq-res-pdp .sq-res-head .sq-res-why { flex-basis: 100%; }
+.sq .sq-res-pdp .somna-pdp-hero__gallery-wrap { flex-wrap: wrap; }
+.sq .sq-res-pdp .somna-pdp-hero__gallery-wrap > .sq-res-head { flex: 0 0 100%; }
+.sq .sq-res-pdp .somna-pdp-hero__badge { top: 10px; }   /* inside the photo, clear of the match line */
+@media screen and (min-width: 990px) {
+  .sq .sq-res-pdp .somna-pdp-hero__panel { padding-top: 12px; padding-bottom: 22px; }
+  .sq .sq-res-pdp .somna-pdp-hero__title { margin-top: 4px; }
+  .sq .sq-res-pdp .somna-pdp-hero__features { margin-top: 10px; padding-block: 8px; }
+  .sq .sq-res-pdp .somna-pdp-hero__feature-icon, .sq .sq-res-pdp .somna-pdp-hero__feature-icon svg { width: 48px; height: 48px; }
+  .sq .sq-res-pdp .somna-pdp-hero__price { margin-top: 10px; }
+  .sq .sq-res-pdp .somna-buy__packs { margin-top: 8px; }
+  .sq .sq-res-pdp .somna-buy__pack { padding-top: 16px; padding-bottom: 8px; }
+  .sq .sq-res-pdp .somna-buy__modes { margin-top: 10px; padding-block: 12px; }
+  .sq .sq-res-pdp .somna-pdp-hero__sub-points { line-height: 1.45; }
+  .sq .sq-res-pdp [data-sq-atc] { min-height: 60px; margin-top: 12px; }
+  .sq .sq-res-pdp .sq-pdp-buynow { min-height: 54px; margin-top: 10px; }
+}
 /* Buy now: mint "sticker" button (navy outline, lavender offset shadow), so it reads apart from the lavender Add to cart */
 .sq .sq-res-pdp .sq-pdp-buynow { margin-top: 14px; background: #F3FEEE; color: #0B0F1D; border: 2px solid #0B0F1D; box-shadow: 4px 4px 0 #AFBDF8; transition: transform .12s, box-shadow .12s, background-color .12s; }
 .sq .sq-res-pdp .sq-pdp-buynow:hover { background: #FFFFFF; color: #0B0F1D; transform: translate(-1px, -1px); box-shadow: 5px 5px 0 #AFBDF8; }

@@ -90,11 +90,14 @@
         <div class="sq-res" data-res="{{ rk }}" hidden {% if rb %}{{ rb.shopify_attributes }}{% endif %}>
           {%- if section.settings.result_pdp -%}
             {%- comment -%} Product page layout (gallery + buy panel of sections/somna-pdp-hero) with the quiz's match line on top {%- endcomment -%}
+            {%- comment -%} match line: top of the left column (above the photos), so the buy panel starts right under the header {%- endcomment -%}
+            {%- capture pdp_head -%}
             <div class="sq-res-head">
               <p class="sq-pill">✓ {{ section.settings.match_pill }}</p>
               <h2 class="sq-q sq-res-h" tabindex="-1">{{ section.settings.fix_prefix }} <em>SOMNA {{ rp.title }}</em></h2>
               <p class="sq-res-why" data-sq-why></p>
             </div>
+            {%- endcapture -%}
             {%- capture pdp_left -%}
               <ul class="sq-res-perks sq-res-perks--pdp">
                 {%- if rbs.emoji_1 != blank -%}<li>{{ rbs.emoji_1 }}</li>{%- endif -%}
@@ -116,7 +119,7 @@
             {%- endcapture -%}
             <div class="sq-res-pdp" data-sq-pdp>
               {%- capture pdp_sid -%}sq-{{ sid }}-{{ rk }}{%- endcapture -%}
-              {% render 'somna-quiz-pdp', product: rp, sid: pdp_sid, buy_now_label: section.settings.buy_now_label, extras: pdp_extras, left_extras: pdp_left %}
+              {% render 'somna-quiz-pdp', product: rp, sid: pdp_sid, buy_now_label: section.settings.buy_now_label, extras: pdp_extras, left_extras: pdp_left, left_top: pdp_head %}
             </div>
           {%- else -%}
           {%- comment -%} Match + product {%- endcomment -%}
