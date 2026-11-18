@@ -46,6 +46,21 @@
         "padding-block-end": 8
       }
     },
+    "somna_countdown": {
+      "type": "somna-countdown",
+      "settings": {
+        "end_at": "2026-11-23T23:59:00-08:00",
+        "label": "Pre-Black Friday sale ends in",
+        "date_text": "Mon 23 Nov, 11:59 PM PT",
+        "label_mobile": "Sale ends",
+        "date_mobile": "Mon 23 Nov",
+        "bg_color": "#141832",
+        "text_color": "#f3feee",
+        "accent_color": "#afbdf8",
+        "tile_color": "#262c52",
+        "muted_color": "#c3c9e8"
+      }
+    },
     "header_section": {
       "type": "header",
       "blocks": {
@@ -136,21 +151,6 @@
         "collection_inverse_logo": false,
         "text_color_transparent_collection": "",
         "transparent_header_tint": "linear-gradient(90deg, rgba(0, 0, 0, 0.16), rgba(102, 102, 102, 0.16) 100%)"
-      }
-    },
-    "somna_countdown": {
-      "type": "somna-countdown",
-      "settings": {
-        "end_at": "2026-12-02T23:59:00-08:00",
-        "label": "Black Friday sale ends in",
-        "date_text": "Wed 2 Dec, 11:59 PM PT",
-        "label_mobile": "Sale ends",
-        "date_mobile": "Wed 2 Dec",
-        "bg_color": "#141832",
-        "text_color": "#f3feee",
-        "accent_color": "#afbdf8",
-        "tile_color": "#262c52",
-        "muted_color": "#c3c9e8"
       }
     }
   },
