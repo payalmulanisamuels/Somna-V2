@@ -21,11 +21,11 @@
   <div class="somna-cd__inner">
     <span class="somna-cd__moons" aria-hidden="true">
       <svg viewBox="0 0 92 16" focusable="false">
-        <circle cx="8" cy="8" r="6.5" fill="currentColor"/>
-        <circle cx="27" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M27 1.5a6.5 6.5 0 0 1 0 13a4.2 6.5 0 0 1 0-13z" fill="currentColor"/>
-        <circle cx="46" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M46 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/>
-        <circle cx="65" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M65 1.5a6.5 6.5 0 0 1 0 13a3 6.5 0 0 0 0-13z" fill="currentColor"/>
-        <circle cx="84" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <g class="somna-cd__moon" data-moon><circle cx="8" cy="8" r="6.5" fill="currentColor"/></g>
+        <g class="somna-cd__moon" data-moon><circle cx="27" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M27 1.5a6.5 6.5 0 0 1 0 13a4.2 6.5 0 0 1 0-13z" fill="currentColor"/></g>
+        <g class="somna-cd__moon" data-moon><circle cx="46" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M46 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></g>
+        <g class="somna-cd__moon" data-moon><circle cx="65" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M65 1.5a6.5 6.5 0 0 1 0 13a3 6.5 0 0 0 0-13z" fill="currentColor"/></g>
+        <g class="somna-cd__moon" data-moon><circle cx="84" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/></g>
       </svg>
     </span>
     <p class="somna-cd__label">
@@ -107,6 +107,10 @@
           const v = String(parts[k]).padStart(2, '0');
           if (n.dataset.v !== v) { this.roll(n, v, this.started && !this.reduce); n.dataset.v = v; }
         }
+        // moons keep time with the clock: each second the next moon (left to right) lights up
+        if (!this.moons) this.moons = [...this.querySelectorAll('[data-moon]')];
+        const on = (59 - parts.s) % this.moons.length;
+        this.moons.forEach((m, i) => m.classList.toggle('is-on', i === on));
         this.started = true;
         const sr = this.querySelector('[data-cd-sr]');
         if (sr && parts.s === 0) sr.textContent = parts.d + ' days ' + parts.h + ' hours ' + parts.m + ' minutes left';
@@ -143,7 +147,18 @@
     padding: 8px 20px 6px;
   }
   .somna-cd__moons { display: inline-flex; color: var(--cd-accent, #afbdf8); }
-  .somna-cd__moons svg { width: 96px; height: 17px; }
+  .somna-cd__moons svg { width: 96px; height: 17px; overflow: visible; }
+  .somna-cd__moon {
+    opacity: 0.45;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.3, 1.5, 0.5, 1), filter 0.45s ease;
+  }
+  .somna-cd__moon.is-on {
+    opacity: 1;
+    transform: scale(1.22);
+    filter: drop-shadow(0 0 4px rgba(175, 189, 248, 0.9));
+  }
   .somna-cd__label {
     margin: 0;
     font: 800 1rem/1.2 var(--font-body--family, Inter, sans-serif);
@@ -232,6 +247,8 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .somna-cd__dg i { transition: none; }
+    .somna-cd__moon { transition: none; }
+    .somna-cd__moon.is-on { transform: none; filter: none; }
   }
 {% endstylesheet %}
 
