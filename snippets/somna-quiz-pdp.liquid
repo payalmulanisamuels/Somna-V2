@@ -324,12 +324,9 @@ Skip, pause or cancel anytime{%- endcapture -%}
               <label class="somna-buy__pack{% unless v.available %} is-sold-out{% endunless %}">
                 {%- liquid
                   assign pack_badge = ''
+                  # quiz result: only "Recommended" on the first pack (no "Most popular" / "Best value", 18 Nov 2026)
                   if pack_n == 1
                     assign pack_badge = s_badge_label
-                  elsif pack_n == 2
-                    assign pack_badge = s_badge_2_label
-                  elsif pack_n == 3
-                    assign pack_badge = s_badge_3_label
                   endif
                 -%}
                 {%- if pack_badge != blank -%}<span class="somna-buy__pack-badge">{{ pack_badge }}</span>{%- endif -%}
