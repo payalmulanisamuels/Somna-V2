@@ -18,12 +18,27 @@
       endfor
     endfor
   endif
-  capture review_raw
-    render 'somna-review-summary', products: s.review_products
-  endcapture
-  assign review_raw = review_raw | strip
-  assign rev_rating = review_raw | split: '|' | first
-  assign rev_count = review_raw | split: '|' | last
+  # real review numbers: total of the chosen products, average weighted by each product's count
+  assign rev_total = 0
+  assign rev_weighted = 0.0
+  for rp in s.review_products
+    capture one
+      render 'somna-review-summary', product: rp
+    endcapture
+    assign one = one | strip
+    if one != blank
+      assign one_count = one | split: '|' | last | plus: 0
+      assign one_rating = one | split: '|' | first | times: 1.0
+      assign rev_total = rev_total | plus: one_count
+      assign rev_weighted = one_rating | times: one_count | plus: rev_weighted
+    endif
+  endfor
+  assign review_raw = ''
+  if rev_total > 0
+    assign rev_rating = rev_weighted | divided_by: rev_total | round: 1
+    assign rev_count = rev_total
+    assign review_raw = 'yes'
+  endif
 -%}
 <div class="somna-bfh" style="--bfh-bg: {{ s.background_color }}; --bfh-pt: {{ s.padding_top }}px; --bfh-pb: {{ s.padding_bottom }}px;">
   <div class="somna-bfh__stars" aria-hidden="true"></div>
@@ -118,7 +133,7 @@
     content: ''; position: absolute; inset: 0; z-index: 1;
     background: linear-gradient(to right, var(--bfh-bg) 0%, rgb(11 15 29 / 0.55) 22%, rgb(11 15 29 / 0.25) 60%, rgb(11 15 29 / 0.35) 100%);
   }
-  .somna-bfh__inner { padding-block: calc(var(--bfh-pt) + var(--header-height, 66px)) var(--bfh-pb); }
+  .somna-bfh__inner { padding-block: calc(var(--bfh-pt) + var(--header-height, 66px) + 70px) var(--bfh-pb); }
   .somna-bfh__copy { max-width: 900px; }
   .somna-bfh__ticket {
     display: inline-flex; flex-direction: column; align-items: center; margin: 0 0 18px; padding: 12px 22px 9px;
@@ -148,8 +163,8 @@
   .somna-bfh__btn svg { width: 30px; height: 26px; }
   .somna-bfh__btn:hover { transform: translateY(-2px); box-shadow: 4px 8px 0 #f3feee; }
   .somna-bfh__moon--mob { display: none; }
-  .somna-moonline--stack { flex-direction: column; align-items: flex-start; gap: 10px; font-size: 1.25rem; }
-  .somna-moonline--stack .somna-moonline__moons svg { width: 210px; height: 24px; }
+  .somna-moonline.somna-moonline--stack { flex-direction: column; align-items: flex-start; gap: 10px; font-size: 1.25rem; }
+  .somna-moonline.somna-moonline--stack .somna-moonline__moons svg { width: 210px; height: 24px; }
   .somna-bfh__proof { display: flex; align-items: center; gap: 22px; margin-top: 30px; }
   .somna-bfh__proof p { margin: 0; line-height: 1.45; }
   .somna-bfh__reviews { font-size: 1.3125rem; font-weight: 700; }

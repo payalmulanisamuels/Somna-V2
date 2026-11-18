@@ -134,7 +134,7 @@
 </script>
 
 {% stylesheet %}
-  .somna-bfs { background: var(--bfs-bg); color: #f3feee; padding-block: var(--bfs-pt) var(--bfs-pb); }
+  .somna-bfs { display: block; background: var(--bfs-bg); color: #f3feee; padding-block: var(--bfs-pt) var(--bfs-pb); }
   .somna-bfs .somna-container { --somna-content-width: 1640px; }
   .somna-bfs__eyebrow { margin: 0; color: #c3c9e8; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
   .somna-bfs__heading { margin: 6px 0 28px; color: #f3feee; font-family: var(--font-accent--family); font-size: clamp(2rem, 3.6vw, 3.5rem); font-weight: 400; line-height: 1.2; text-transform: uppercase; }
@@ -159,7 +159,7 @@
   .somna-bfs__btn[aria-busy='true'] { opacity: 0.8; pointer-events: none; }
   .somna-bfs__btn[aria-disabled='true'] { opacity: 0.5; cursor: not-allowed; }
   .somna-bfs__err { margin-top: 6px !important; color: #b3261e; font-size: 0.8125rem; font-weight: 600; }
-  @media screen and (max-width: 1399px) {
+  @media screen and (max-width: 1599px) {
     .somna-bfs__card { flex-direction: column; }
     .somna-bfs__photo { width: 100%; }
     .somna-bfs__btn { align-self: stretch; text-align: center; }
