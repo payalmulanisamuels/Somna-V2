@@ -151,6 +151,9 @@
             </div>
           </div>
 
+          {%- comment -%} "Sound familiar? / The fix": the product page's problem section for this product {%- endcomment -%}
+          {%- if section.settings.show_problem -%}{% render 'somna-quiz-problem', product: rp, snore_direction: 'tilt' %}{%- endif -%}
+
           {%- comment -%} Reviews: the product quote + the "Story review" blocks for this product {%- endcomment -%}
           <section class="sq-res-sec sq-res-revs">
             <h3 class="sq-res-h3">{{ section.settings.reviews_heading }}</h3>
@@ -486,6 +489,7 @@
   }
 </script>
 {% render 'somna-quiz-styles', design: section.settings.design, extras: section.settings.result_extras %}
+{%- if section.settings.show_problem -%}{{ 'section-somna-pdp-story.css' | asset_url | stylesheet_tag }}{%- endif -%}
 {%- if section.settings.v2_cursor -%}{% render 'somna-cursor', force: true %}{%- endif -%}
 {% render 'somna-quiz-script', sid: sid %}
 
@@ -510,6 +514,13 @@
       "id": "v2_sections",
       "label": "Result: use the SOMNA V2 product page sections",
       "info": "Main benefit = How it works diagram, How to use = numbered steps, Results = product with the per-night sticker. Read from each product's own V2 content; falls back to the images below.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_problem",
+      "label": "Result: product page \"Sound familiar? / The fix\" section",
+      "info": "Under the buy box, from the matched product's own problem content (same as its product page).",
       "default": false
     },
     {

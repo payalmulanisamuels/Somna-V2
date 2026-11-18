@@ -257,7 +257,8 @@
         "ship_note": "$4.95 US shipping on every delivery",
         "retake_label": "",
         "end_redirect": false,
-        "show_atc": true
+        "show_atc": true,
+        "show_problem": true
       }
     }
   },
