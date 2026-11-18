@@ -9,7 +9,9 @@
 /* quiz page: the site header shows (black bar, same logo as every page, 18 Nov 2026); the footer stays hidden */
 .shopify-section-group-footer-group { display: none !important; }
 /* quiz page only: logo-only header (no announcement bar, menu, search, cart or menu drawer button); countdown bar kept */
-.shopify-section-group-header-group:not(.header-section):not(.section-somna-countdown) { display: none !important; }   /* the sale countdown bar still shows */
+.shopify-section-group-header-group:not(.header-section) { display: none !important; }
+/* the sale countdown bar shows only on the result step (the quiz section has .sq--wide there), not on the questions */
+body:has(.sq.sq--wide) .shopify-section-group-header-group.section-somna-countdown { display: block !important; }
 .header-section :is(header-menu, .header__drawer, search-button, header-actions, .header__column--center, .header__column--right) { display: none !important; }
 .header-section .header__columns { display: flex !important; justify-content: center !important; align-items: center; min-height: 56px; }   /* logo in the centre; bar keeps its height without the icons */
 .header-section .header__column--left { flex: 0 1 auto !important; width: auto !important; justify-content: center !important; margin: 0 auto !important; }
