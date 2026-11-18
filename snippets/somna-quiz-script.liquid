@@ -99,7 +99,22 @@
     sticky(ty === 'result');
     var h = sc.querySelector('.sq-res:not([hidden]) [tabindex="-1"]') || sc.querySelector('[tabindex="-1"]');
     if (focus && h) { try { h.focus({ preventScroll: true }); } catch (e) { h.focus(); } }
-    if (root.getBoundingClientRect().top < 0 || window.scrollY > root.offsetTop) { try { window.scrollTo({ top: root.offsetTop, behavior: reduce ? 'auto' : 'smooth' }); } catch (e) { window.scrollTo(0, root.offsetTop); } }
+    toTop();
+  }
+  // Back to the top of the page on every new screen. The theme scrolls inside .page-wrapper (not the window), and the
+  // site header now shows above the quiz, so scroll whichever box actually scrolls back to 0.
+  function scroller() {
+    for (var e = root.parentElement; e && e !== document.body; e = e.parentElement) {
+      var o = getComputedStyle(e).overflowY;
+      if ((o === 'auto' || o === 'scroll') && e.scrollHeight > e.clientHeight) return e;
+    }
+    return null;
+  }
+  function toTop() {
+    var sc = scroller(), how = reduce ? 'auto' : 'smooth';
+    if (window.scrollY > 0) window.scrollTo(0, 0);
+    if (sc) { if (sc.scrollTop > 0) { try { sc.scrollTo({ top: 0, behavior: how }); } catch (e) { sc.scrollTop = 0; } } }
+    else if (root.getBoundingClientRect().top < 0) { try { window.scrollTo({ top: root.offsetTop, behavior: how }); } catch (e) { window.scrollTo(0, root.offsetTop); } }
   }
   function go(n) { show(n, true); }
 
