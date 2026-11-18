@@ -342,11 +342,97 @@
     setTimeout(function () { stickyPrice(score().result); }, 0);
   });
 
+  // ---- result summary (SOMNA_Quiz_Result_Summary_Spec_18112026): title per "who", a paragraph built from the matched
+  // product + Q2–Q6, and a "Your answers" list. Copy is the spec's, word for word (soft wording, no outcome claims).
+  var SUM = {
+    // Sentence 1: [me / both, partner]
+    q2: { snoring: ["snoring is what you'd most like to change", "their snoring is what you'd most like to change"],
+      nose: ["a stuffy nose at night is what you'd most like to fix", "a stuffy nose at night is what they'd most like to fix"],
+      mouth: ["waking up with a dry mouth is what you'd most like to fix", "waking up with a dry mouth is what they'd most like to fix"],
+      tired: ["you wake up tired, even after a full night", "they wake up tired, even after a full night"],
+      both: ["it's a mix of nose and dry-mouth nights", "it's a mix of nose and dry-mouth nights for them"] },
+    q3: { blocked: ['your nose often feels blocked at night', 'their nose often feels blocked at night'],
+      stuffy: ['your nose gets stuffy with colds or allergies', 'their nose gets stuffy with colds or allergies'],
+      clear: ['your nose usually feels clear', 'their nose usually feels clear'] },
+    q4: { dry: ['your mouth feels dry when you wake up', 'their mouth feels dry when they wake up'],
+      drool: ['you sometimes wake with drooling or morning breath', 'they sometimes wake with drooling or morning breath'],
+      fine: ['your mouth feels fine in the morning', 'their mouth feels fine in the morning'] },
+    q5: { '1': ['your energy runs low most days', 'their energy runs low most days'],
+      '2': ['you hit an afternoon dip', 'they hit an afternoon dip'],
+      '3': ['mornings feel slow until coffee', 'their mornings feel slow until coffee'],
+      '4': ["your energy is good, but you'd like better sleep", "their energy is good, but they'd like better sleep"] },
+    // Sentence 2: product + Q2 → [me, partner] (Both of us: the "me" line ending "..., for you both.")
+    why: {
+      'strips:snoring': ["Snoring often starts when air can't move easily through the nose, so we matched you with SOMNA Nasal Strips, designed to gently hold your nose open all night.",
+        "Snoring often starts when air can't move easily through the nose, so we matched them with SOMNA Nasal Strips, designed to gently hold their nose open all night, so you can both sleep better."],
+      'strips:nose': ['Breathing feels easier when your nose feels clearer, so we matched you with SOMNA Nasal Strips, designed to gently hold your nose open all night.',
+        'Breathing feels easier when their nose feels clearer, so we matched them with SOMNA Nasal Strips, designed to gently hold their nose open all night, so you can both sleep better.'],
+      'strips:mouth': ['A dry mouth can follow when the nose feels tight at night, so we started with the nose: SOMNA Nasal Strips, designed to help air move more easily through your nose.',
+        'A dry mouth can follow when the nose feels tight at night, so we started with the nose: SOMNA Nasal Strips, designed to help air move more easily through their nose, so you can both sleep better.'],
+      'strips:tired': ['Your answers point most to the nose, so we matched you with SOMNA Nasal Strips, designed to help air move more easily through your nose all night.',
+        'Their answers point most to the nose, so we matched them with SOMNA Nasal Strips, designed to help air move more easily through their nose all night.'],
+      'tape:mouth': ['Waking up with a dry mouth is a common sign of mouth breathing at night, so we matched you with SOMNA Mouth Tape, designed to gently keep your lips closed so you breathe through your nose.',
+        'Waking up with a dry mouth is a common sign of mouth breathing at night, so we matched them with SOMNA Mouth Tape, designed to gently keep their lips closed so they breathe through their nose.'],
+      'tape:tired': ['Your answers point most to mouth breathing at night, so we matched you with SOMNA Mouth Tape, designed to gently keep your lips closed while you sleep.',
+        'Their answers point most to mouth breathing at night, so we matched them with SOMNA Mouth Tape, designed to gently keep their lips closed while they sleep.'],
+      'bundle:both': ["Since it's both nose and mouth, we matched you with the Sleep Bundle: Nasal Strips to help your nose, and Mouth Tape to help keep your lips closed.",
+        "Since it's both nose and mouth, we matched them with the Sleep Bundle: Nasal Strips to help their nose, and Mouth Tape to help keep their lips closed."]
+    },
+    // "Your answers" values
+    label: { q2: { snoring: 'Snoring', nose: 'Stuffy nose', mouth: 'Dry mouth or sore throat', tired: 'Waking up tired', both: 'Nose and dry mouth' },
+      q3: { blocked: 'Blocked most nights', stuffy: 'Stuffy with colds or allergies', clear: 'Clear' },
+      q4: { dry: 'Dry', drool: 'Drooling or morning breath', fine: 'Fine' },
+      q5: { '1': 'Low most days', '2': 'Afternoon dip', '3': 'Slow until coffee', '4': 'Good, wants better sleep' },
+      tried: { strips: 'cheap nasal strips', tape: 'mouth tape', pills: 'melatonin or sleep pills', earlier: 'sleeping earlier', spray: 'nasal spray', other: 'other', nothing: 'nothing yet' } }
+  };
+  // Sentence 3 (Q6): first row that applies, in the spec's order
+  function triedLine(t, k, partner) {
+    var has = function (x) { return t.indexOf(x) > -1; }, line = '';
+    if (has('strips') && k === 'strips') line = "Unlike the cheap strips you've tried, SOMNA Strips are built to stay on all night.";
+    else if (has('tape') && k === 'tape') line = 'If mouth tape felt harsh before, SOMNA Tape is soft on lips and peels off easily.';
+    else if (has('tape')) line = "This time we're starting with the nose, not just the mouth.";
+    else if (has('spray')) line = 'It sits on the outside of your nose, with nothing to spray.';
+    else if (has('pills')) line = "It's drug-free, with nothing to swallow.";
+    else if (has('nothing')) line = 'An easy first step: just one strip at bedtime.';
+    if (partner) line = line.replace("you've", "they've").replace('your nose', 'their nose');
+    return line;
+  }
+  function joinList(a) { return a.length < 3 ? a.join(' and ') : a.slice(0, -1).join(', ') + ', and ' + a[a.length - 1]; }
+  function renderSummary(s, r) {
+    var k = s.result, both = s.who === 'both', pi = s.partner ? 1 : 0;
+    var fix = $('[data-sq-fix]', r);
+    if (fix) fix.textContent = s.partner ? 'Their fix:' : (both ? 'Your fix, for you both:' : (cfg.fixPrefix || 'Your fix:'));
+    var pick = function (map, key) { var v = map[key]; return v ? v[pi] : ''; };
+    var said = [pick(SUM.q3, s.nose), pick(SUM.q4, s.mouth), pick(SUM.q5, s.energy)].filter(Boolean);
+    var parts = [];
+    var q2 = pick(SUM.q2, s.problem);
+    if (q2) parts.push('You mentioned ' + q2 + '.');
+    if (said.length) parts.push('You also said ' + joinList(said) + '.');
+    // product + Q2 row; a Q2 with no row for this product (e.g. Snoring → Tape never happens) falls back to the product's first row
+    var w = SUM.why[k + ':' + s.problem] || SUM.why[k + ':' + ({ strips: 'snoring', tape: 'mouth', bundle: 'both' })[k]];
+    if (w) { var w2 = w[pi]; if (both) w2 = w2.replace(/\.$/, ', for you both.'); parts.push(w2); }
+    var t3 = triedLine(s.tried || [], k, s.partner); if (t3) parts.push(t3);
+    var p = $('[data-sq-why]', r); if (p) p.textContent = parts.join(' ');
+    // "Your answers" / "Their answers"
+    var box = $('[data-sq-answers]', r); if (!box) return;
+    $('[data-sq-answers-h]', box).textContent = s.partner ? 'Their answers' : 'Your answers';
+    var tried = (s.tried || []).map(function (x) { return SUM.label.tried[x]; }).filter(Boolean).join(', ');
+    if (tried) tried = tried.charAt(0).toUpperCase() + tried.slice(1);
+    var rows = [['Main concern', SUM.label.q2[s.problem]], ['Nose at night', SUM.label.q3[s.nose]], ['Mouth on waking', SUM.label.q4[s.mouth]],
+      ['Daytime energy', SUM.label.q5[s.energy]], ['Tried before', tried]];
+    var list = $('[data-sq-answers-list]', box); list.textContent = '';
+    rows.forEach(function (row) {
+      if (!row[1]) return;
+      var li = el('li', 'sq-ans'); li.appendChild(el('span', 'sq-ans-k', row[0])); li.appendChild(el('span', 'sq-ans-v', row[1])); list.appendChild(li);
+    });
+    box.hidden = !list.children.length;
+  }
+
   function renderResult() {
     var s = score(), k = s.result, r = resEl(k);
     $$('.sq-res').forEach(function (e) { e.hidden = e !== r; });
     if (!r) return;
-    var why = (cfg.why || {})[s.problem]; $('[data-sq-why]', r).textContent = why ? why[s.partner ? 1 : 0] : '';
+    renderSummary(s, r);
     $$('img', r).forEach(function (im, n) { if (n < 2) im.loading = 'eager'; });
     if (!sel[k]) { var v0 = variantsOf(k)[0] || {}; sel[k] = { color: v0.color || '', bags: v0.bags || 1, mode: 'once' }; }
     if ($('[data-sq-buy-ui]', r)) renderBuy(k); else stickyPrice(k);

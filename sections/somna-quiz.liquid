@@ -106,8 +106,13 @@
             {%- capture pdp_head -%}
             <div class="sq-res-head">
               <p class="sq-pill">✓ {{ section.settings.match_pill }}</p>
-              <h2 class="sq-q sq-res-h" tabindex="-1">{{ section.settings.fix_prefix }} <em>SOMNA {{ rp.title }}</em></h2>
-              <p class="sq-res-why" data-sq-why></p>
+              <h2 class="sq-q sq-res-h" tabindex="-1"><span data-sq-fix>{{ section.settings.fix_prefix }}</span> <em>SOMNA {{ rp.title }}</em></h2>
+              {%- comment -%} summary paragraph + "Your answers" (filled by the script from the match and all answers) {%- endcomment -%}
+              <p class="sq-res-why sq-res-sum" data-sq-why></p>
+              <div class="sq-res-answers" data-sq-answers hidden>
+                <p class="sq-res-answers-h" data-sq-answers-h>Your answers</p>
+                <ul class="sq-ans-list" role="list" data-sq-answers-list></ul>
+              </div>
             </div>
             {%- endcapture -%}
             {%- capture pdp_left -%}
@@ -133,7 +138,7 @@
           <div class="sq-res-top">
             <div class="sq-res-intro">
               <p class="sq-pill">✓ {{ section.settings.match_pill }}</p>
-              <h2 class="sq-q sq-res-h" tabindex="-1">{{ section.settings.fix_prefix }} <em>SOMNA {{ rp.title }}</em></h2>
+              <h2 class="sq-q sq-res-h" tabindex="-1"><span data-sq-fix>{{ section.settings.fix_prefix }}</span> <em>SOMNA {{ rp.title }}</em></h2>
               <p class="sq-res-why" data-sq-why></p>
               <div class="sq-res-img{% if rimg_pick != blank %} sq-res-img--pack{% endif %}" data-sq-res-img>
                 {%- assign rimg = rimg_pick | default: rp.selected_or_first_available_variant.featured_image | default: rp.featured_image -%}
@@ -520,6 +525,7 @@
   {
     "moneyFormat": {{ shop.money_format | json }},
     "colorNames": {{ section.settings.color_names | json }},
+    "fixPrefix": {{ section.settings.fix_prefix | json }},
     "why": {
       "snoring": [{{ section.settings.why_snoring | json }}, {{ section.settings.why_snoring_partner | json }}],
       "nose": [{{ section.settings.why_nose | json }}, {{ section.settings.why_nose_partner | json }}],
