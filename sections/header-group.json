@@ -22,7 +22,7 @@
             "font": "var(--font-body--family)",
             "font_size": "0.875rem",
             "weight": "700",
-            "letter_spacing": "wide",
+            "letter_spacing": "normal",
             "case": "uppercase",
             "text_color": "#000000"
           },
