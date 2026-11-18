@@ -19,7 +19,7 @@ padding: 10px 16px 40px; min-height: 100vh;
 -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
 }
 .sq *, .sq *::before, .sq *::after { box-sizing: border-box; }
-.sq p, .sq h1, .sq h2, .sq h3, .sq ul, .sq ol, .sq figure, .sq blockquote { margin: 0; }
+:where(.sq) :is(p, h1, h2, h3, ul, ol, figure, blockquote) { margin: 0; }   /* low priority: a class rule (e.g. the product page section in the result) keeps its own spacing */
 .sq ul, .sq ol { padding: 0; list-style: none; }
 .sq button { font-family: inherit; }
 .sq [hidden] { display: none !important; }
