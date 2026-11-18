@@ -24,34 +24,6 @@
     <button type="button" class="sq-opt" data-s="3" data-t="3" data-key="both"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'both' %}</span><span>A bit of everything</span></button>
   </div>
   <p class="sq-tap">Tap an answer to continue</p>
-  {%- comment -%} Testimonial card under the answers. Content: theme editor → SOMNA quiz → "01 · Intro + Q1". Hidden while the quote is empty. {%- endcomment -%}
-  {%- if qs.intro_review_quote != blank -%}
-    <figure class="sq-review sq-review--intro sq-review--start">
-      {%- if qs.intro_review_image != blank -%}
-        {{ qs.intro_review_image | image_url: width: 160 | image_tag: width: 64, height: 64, loading: 'eager', alt: '', class: 'sq-review-img' }}
-      {%- elsif qs.intro_review_asset != blank -%}
-        <img class="sq-review-img" src="{{ qs.intro_review_asset | asset_img_url: '160x' }}" width="64" height="64" alt="" loading="eager">
-      {%- else -%}
-        {%- assign rv_words = qs.intro_review_name | strip | split: ' ' -%}
-        <span class="sq-review-img sq-review-ph" aria-hidden="true">{{ rv_words.first | slice: 0 }}{% if rv_words.size > 1 %}{{ rv_words.last | slice: 0 }}{% endif %}</span>
-      {%- endif -%}
-      <div class="sq-review-body">
-        {%- assign rv_rating = qs.intro_review_rating | default: 5 -%}
-        {%- liquid
-          assign rv_score = ''
-          if intro_product
-            capture rv_score
-              render 'somna-rating', product: intro_product, format: '[rating]/5 ([count])'
-            endcapture
-            assign rv_score = rv_score | strip
-          endif
-        -%}
-        <p class="sq-review-stars"><span role="img" aria-label="Rated {{ rv_rating }} out of 5">{% for st in (1..5) %}<span class="{% if st > rv_rating %}is-off{% endif %}" aria-hidden="true">★</span>{% endfor %}</span>{% if rv_score != blank %} <span class="sq-review-score">{{ rv_score }}</span>{% endif %}</p>
-        <blockquote>“{{ qs.intro_review_quote }}”</blockquote>
-        <figcaption>{% if qs.intro_review_name != blank %}<strong>{{ qs.intro_review_name }}</strong> {% endif %}{% if qs.intro_review_verified %}<span class="sq-verified">✓ Verified buyer</span>{% endif %}</figcaption>
-      </div>
-    </figure>
-  {%- endif -%}
 </div>
 
 <div class="sq-s" data-type="q" data-q="1" data-step="2">

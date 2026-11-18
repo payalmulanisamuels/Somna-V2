@@ -271,7 +271,8 @@
         "end_redirect": false,
         "show_atc": true,
         "show_problem": true,
-        "result_pdp": true
+        "result_pdp": true,
+        "intro_sub_extra": ""
       }
     }
   },

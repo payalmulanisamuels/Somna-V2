@@ -1,6 +1,6 @@
 {%- comment -%}
   SOMNA quiz result · the product page's top section (sections/somna-pdp-hero.liquid) for the matched product:
-  gallery (thumbnails, main photo, badge, sticker, quote card) and the buy panel (rating, title, tagline, icon row,
+  gallery (thumbnails, main photo, badge, sticker) and the buy panel (rating, title, tagline, icon row,
   price, packs, Subscribe & Save / One-time, Add to cart, perks). Same markup, classes and buy script
   (<somna-pdp-buy>) as the product page, so it looks and works the same; the theme stylesheet already has its styles.
   Quiz additions: Buy now under Add to cart, the quiz's notes / How It Works / product link after the perks.
@@ -166,53 +166,7 @@ Skip, pause or cancel anytime{%- endcapture -%}
     </div>
 
     <div class="somna-pdp-hero__side">
-      {%- assign quote = mf.pdp_quote.value -%}
-      {%- if quote == blank and true -%}
-        {%- comment -%} Figma quote card: fall back to a real Judge.me review (short, 5★, named, no import tag) {%- endcomment -%}
-        {%- assign jm = product.metafields.judgeme.review_widget_data.value -%}
-        {%- assign quote_skip = ' but ,loose,okay,fell off' | split: ',' -%}
-        {%- assign jm_pick = nil -%}
-        {%- for rv in jm.reviews -%}
-          {%- assign rv_body = rv.body | strip_html | strip -%}
-          {%- if rv.rating >= 5 and rv.is_anonymous_reviewer != true and rv_body.size <= 110 -%}
-            {%- comment -%} skip mixed reviews ("worked fine … but it came loose") via the skip-words setting {%- endcomment -%}
-            {%- assign rv_low = rv_body | downcase | append: ' ' | append: rv.title | downcase -%}
-            {%- assign rv_skip = false -%}
-            {%- for w in quote_skip -%}
-              {%- assign w2 = w | downcase -%}
-              {%- if w2 != blank and rv_low contains w2 -%}{%- assign rv_skip = true -%}{%- break -%}{%- endif -%}
-            {%- endfor -%}
-            {%- unless rv_body contains '(Review #' or rv_skip -%}
-              {%- assign jm_pick = rv -%}
-              {%- break -%}
-            {%- endunless -%}
-          {%- endif -%}
-        {%- endfor -%}
-        {%- if jm_pick -%}
-          {%- assign jq_parts = jm_pick.reviewer_name | strip | split: ' ' -%}
-          {%- assign jq_name = jq_parts | first -%}
-          {%- if jq_parts.size > 1 -%}{%- assign jq_last = jq_parts | last | slice: 0 | upcase -%}{%- assign jq_name = jq_name | append: ' ' | append: jq_last | append: '.' -%}{%- endif -%}
-          <figure class="somna-pdp-hero__quote">
-            <span class="somna-pdp-hero__avatar somna-pdp-hero__avatar--initial" aria-hidden="true">{{ jq_name | slice: 0 }}</span>
-            <div>
-              <p class="somna-pdp-hero__stars" aria-label="{{ jm_pick.rating }} / 5">{% for i in (1..jm_pick.rating) %}★{% endfor %}</p>
-              <blockquote>“{{ jm_pick.body | strip_html | strip }}”</blockquote>
-              <figcaption><strong>{{ jq_name }}</strong>{% if jm_pick.verified_buyer %} <span>{{ s_verified_label }}</span>{% endif %}</figcaption>
-            </div>
-          </figure>
-        {%- endif -%}
-      {%- endif -%}
-      {%- if quote != blank -%}
-        <figure class="somna-pdp-hero__quote">
-          {%- if quote.avatar.value != blank -%}{{ quote.avatar.value | image_url: width: 160 | image_tag: loading: 'lazy', alt: '', width: 79, height: 79, class: 'somna-pdp-hero__avatar' }}{%- endif -%}
-          <div>
-            {%- assign stars = quote.rating.value | default: 5 -%}
-            <p class="somna-pdp-hero__stars" aria-label="{{ stars }} / 5">{% for i in (1..stars) %}★{% endfor %}</p>
-            <blockquote>“{{ quote.quote.value }}”</blockquote>
-            <figcaption><strong>{{ quote.author.value }}</strong>{% if quote.verified.value %} <span>{{ s_verified_label }}</span>{% endif %}</figcaption>
-          </div>
-        </figure>
-      {%- endif -%}
+      {%- comment -%} (18 Nov 2026) no review quote card on the quiz result {%- endcomment -%}
 
 
       {%- comment -%} "Real Nights, On Camera": the product's own videos (custom.pdp_videos), as the product page hero (same cards and play script) {%- endcomment -%}

@@ -556,6 +556,9 @@ body { background: #AFBDF8; }
 .sq .sq-res-pdp .sq-res-head { display: flex; flex-wrap: wrap; align-items: center; column-gap: 12px; row-gap: 4px; margin-bottom: 4px; }
 .sq .sq-res-pdp .sq-res-head .sq-pill, .sq .sq-res-pdp .sq-res-head .sq-res-h { margin: 0; }
 .sq .sq-res-pdp .sq-res-head .sq-res-why { flex-basis: 100%; }
+.sq .sq-res-pdp .sq-res-head { justify-content: center; text-align: center; }   /* match line, summary and answers centred */
+.sq .sq-res-pdp .sq-res-head .sq-res-sum { margin-inline: auto; max-width: 1080px; }
+.sq .sq-res-pdp .sq-res-answers { justify-content: center; }
 /* result summary (spec 18 Nov 2026): paragraph + "Your answers" as compact chips, full width under the match line */
 .sq .sq-res-head .sq-res-sum { max-width: 1240px; margin-top: 4px; font-size: 15px; line-height: 1.45; color: var(--sq-mut); }
 .sq .sq-res-answers { flex-basis: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 6px; margin-top: 6px; }   /* "Your answers" sits on the chips row */
@@ -571,7 +574,7 @@ body { background: #AFBDF8; }
   .sq.sq--wide:has(.sq-res-pdp) .sq-wrap { position: relative; }
   .sq.sq--wide:has(.sq-res-pdp) .sq-top { position: absolute; top: 0; left: 0; z-index: 2; padding-top: 8px; }
   /* match line: full width, one row next to Back (pill, title, reason) */
-  .sq .sq-res-pdp .sq-res-head { padding: 6px 0 0 76px; column-gap: 14px; }
+  .sq .sq-res-pdp .sq-res-head { padding: 6px 76px 0; column-gap: 14px; }
   .sq .sq-res-pdp .sq-res-head .sq-res-sum { margin-top: 2px; }
   .sq .sq-res-pdp somna-pdp-buy.somna-pdp-hero { padding-top: 4px; }
 }
