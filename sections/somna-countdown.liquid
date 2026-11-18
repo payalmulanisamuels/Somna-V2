@@ -1,5 +1,5 @@
 {%- comment -%}
-  Somna V2 — sale countdown bar (header group, under the header). Flip-clock tiles (days / hrs / min / sec) counting
+  Somna V2 — sale countdown bar (header group, under the header). Clock tiles, digits roll up (option B), (days / hrs / min / sec) counting
   down to the real end time (setting, ISO 8601 with offset, e.g. 2026-12-02T23:59:00-08:00 = Wed 2 Dec, 11:59 PM PT).
   Desktop: moon phases · label · tiles · end date. Phones: two-line label (Sale ends / date) · tiles.
   The bar hides itself once the end time has passed (and stays hidden if the setting is empty or invalid).
@@ -52,7 +52,7 @@
         -%}
         {%- unless forloop.first -%}<span class="somna-cd__colon" aria-hidden="true">:</span>{%- endunless -%}
         <span class="somna-cd__unit">
-          <span class="somna-cd__tile"><span class="somna-cd__num" data-cd="{{ u_key }}">00</span></span>
+          <span class="somna-cd__tile"><span class="somna-cd__num" data-cd="{{ u_key }}"><span class="somna-cd__dg"><i>0</i></span><span class="somna-cd__dg"><i>0</i></span></span></span>
           <span class="somna-cd__unit-label">{{ u_label }}</span>
         </span>
       {%- endfor -%}
@@ -78,6 +78,24 @@
         this.setHeight();
         if ('ResizeObserver' in window) { this.ro = new ResizeObserver(this.setHeight); this.ro.observe(this); }
       }
+      // "Roll up" (approved option B): each digit that changes rolls up like a counter; unchanged digits stay still
+      roll(n, v, animate) {
+        let dgs = [...n.querySelectorAll('.somna-cd__dg')];
+        if (dgs.length !== v.length) {
+          n.innerHTML = [...v].map((ch) => '<span class="somna-cd__dg"><i>' + ch + '</i></span>').join('');
+          return;
+        }
+        dgs.forEach((dg, i) => {
+          const cur = dg.querySelector('i:not(.is-out)');
+          if (cur && cur.textContent === v[i]) return;
+          if (!animate || !cur) { dg.innerHTML = '<i>' + v[i] + '</i>'; return; }
+          const next = document.createElement('i');
+          next.className = 'is-in'; next.textContent = v[i];
+          dg.appendChild(next);
+          requestAnimationFrame(() => requestAnimationFrame(() => { next.className = ''; cur.className = 'is-out'; }));
+          setTimeout(() => cur.remove(), 520);
+        });
+      }
       disconnectedCallback() { clearInterval(this.timer); if (this.ro) this.ro.disconnect(); document.body.style.removeProperty('--somna-cd-height'); }
       tick() {
         let left = Math.max(0, Math.floor((this.end - Date.now()) / 1000));
@@ -87,10 +105,7 @@
         for (const k in parts) {
           const n = this.nums[k]; if (!n) continue;
           const v = String(parts[k]).padStart(2, '0');
-          if (n.textContent !== v) {
-            n.textContent = v;
-            if (!this.reduce && this.started) { n.classList.remove('is-flip'); void n.offsetWidth; n.classList.add('is-flip'); }
-          }
+          if (n.dataset.v !== v) { this.roll(n, v, this.started && !this.reduce); n.dataset.v = v; }
         }
         this.started = true;
         const sr = this.querySelector('[data-cd-sr]');
@@ -164,19 +179,24 @@
     background: rgba(11, 15, 29, 0.75);
   }
   .somna-cd__num {
-    display: block;
+    display: flex;
+    height: 100%;
     font: 800 2.125rem/1 var(--font-body--family, Inter, sans-serif);
     font-variant-numeric: tabular-nums;
-    letter-spacing: 0.02em;
     color: var(--cd-accent, #afbdf8);
-    transform-origin: 50% 50%;
   }
-  .somna-cd__num.is-flip { animation: somna-cd-flip 0.45s cubic-bezier(0.3, 0.7, 0.4, 1); }
-  @keyframes somna-cd-flip {
-    0% { transform: rotateX(-90deg); opacity: 0.2; }
-    60% { transform: rotateX(12deg); opacity: 1; }
-    100% { transform: rotateX(0); }
+  /* each digit rolls up on its own (only the digits that change) */
+  .somna-cd__dg { position: relative; width: 0.62em; height: 100%; overflow: hidden; }
+  .somna-cd__dg i {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-style: normal;
+    transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.3, 1), opacity 0.45s;
   }
+  .somna-cd__dg i.is-in { transform: translateY(100%); opacity: 0; }
+  .somna-cd__dg i.is-out { transform: translateY(-100%); opacity: 0; }
   .somna-cd__unit-label {
     font: 800 0.6875rem/1 var(--font-body--family, Inter, sans-serif);
     letter-spacing: 0.08em;
@@ -211,7 +231,7 @@
     .somna-cd__unit-label { font-size: 0.5625rem; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .somna-cd__num.is-flip { animation: none; }
+    .somna-cd__dg i { transition: none; }
   }
 {% endstylesheet %}
 
