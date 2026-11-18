@@ -556,17 +556,36 @@ body { background: #AFBDF8; }
 .sq .sq-res-pdp .somna-pdp-hero__gallery-wrap > .sq-res-head { flex: 0 0 100%; }
 .sq .sq-res-pdp .somna-pdp-hero__badge { top: 10px; }   /* inside the photo, clear of the match line */
 @media screen and (min-width: 990px) {
+  /* Back sits over the left column only, so the buy panel starts right under the header */
+  .sq.sq--wide:has(.sq-res-pdp) .sq-wrap { position: relative; }
+  .sq.sq--wide:has(.sq-res-pdp) .sq-top { position: absolute; top: 0; left: 0; right: 0; z-index: 2; pointer-events: none; }
+  .sq.sq--wide:has(.sq-res-pdp) .sq-top .sq-back { pointer-events: auto; }
+  .sq .sq-res-pdp .sq-res-head { padding-top: 30px; }
+  /* compact buy panel (same content) */
   .sq .sq-res-pdp .somna-pdp-hero__panel { padding-top: 12px; padding-bottom: 22px; }
-  .sq .sq-res-pdp .somna-pdp-hero__title { margin-top: 4px; }
-  .sq .sq-res-pdp .somna-pdp-hero__features { margin-top: 10px; padding-block: 8px; }
-  .sq .sq-res-pdp .somna-pdp-hero__feature-icon, .sq .sq-res-pdp .somna-pdp-hero__feature-icon svg { width: 48px; height: 48px; }
-  .sq .sq-res-pdp .somna-pdp-hero__price { margin-top: 10px; }
-  .sq .sq-res-pdp .somna-buy__packs { margin-top: 8px; }
-  .sq .sq-res-pdp .somna-buy__pack { padding-top: 16px; padding-bottom: 8px; }
-  .sq .sq-res-pdp .somna-buy__modes { margin-top: 10px; padding-block: 12px; }
-  .sq .sq-res-pdp .somna-pdp-hero__sub-points { line-height: 1.45; }
-  .sq .sq-res-pdp [data-sq-atc] { min-height: 60px; margin-top: 12px; }
-  .sq .sq-res-pdp .sq-pdp-buynow { min-height: 54px; margin-top: 10px; }
+  .sq .sq-res-pdp .somna-pdp-hero__title { margin-top: 4px; font-size: 40px; line-height: 1.15; }
+  .sq .sq-res-pdp .somna-pdp-hero__tagline { margin-top: 4px; }
+  .sq .sq-res-pdp .somna-pdp-hero__features { margin-top: 8px; padding-block: 4px; }
+  .sq .sq-res-pdp .somna-pdp-hero__feature-icon, .sq .sq-res-pdp .somna-pdp-hero__feature-icon svg { width: 40px; height: 40px; }
+  .sq .sq-res-pdp .somna-pdp-hero__price { margin-top: 8px; }
+  .sq .sq-res-pdp .somna-pdp-hero__savings { margin-top: 4px; font-size: 14px; line-height: 1.35; }
+  .sq .sq-res-pdp .somna-pdp-hero__colors { margin-top: 6px; }
+  .sq .sq-res-pdp .somna-pdp-hero__colors legend { font-size: 18px; }
+  .sq .sq-res-pdp .somna-pdp-hero__swatch { width: 40px; height: 40px; }
+  .sq .sq-res-pdp .somna-buy__packs { margin-top: 6px; }
+  .sq .sq-res-pdp .somna-buy__packs legend { margin-bottom: 6px; }
+  .sq .sq-res-pdp .somna-buy__pack { padding-top: 14px; padding-bottom: 6px; }
+  .sq .sq-res-pdp .somna-buy__modes { margin-top: 10px; padding-block: 10px; gap: 8px; }
+  .sq .sq-res-pdp .somna-pdp-hero__mode-box { gap: 6px; }
+  .sq .sq-res-pdp .somna-pdp-hero__sub-points { gap: 2px; font-size: 15px; line-height: 1.4; }
+  .sq .sq-res-pdp .somna-pdp-hero__plan { min-height: 34px; }
+  .sq .sq-res-pdp [data-sq-atc] { min-height: 58px; margin-top: 10px; }
+  .sq .sq-res-pdp .sq-pdp-buynow { min-height: 52px; margin-top: 10px; }
+  /* Sleep Bundle: "What's in the Box?" + free gifts line move just under the buttons */
+  .sq .sq-res-pdp .somna-pdp-hero__form { display: flex; flex-direction: column; }
+  .sq .sq-res-pdp .somna-pdp-hero__form > * { order: 1; }
+  .sq .sq-res-pdp .somna-pdp-hero__form > .somna-pdp-hero__box { order: 2; margin-top: 16px; }
+}
 }
 /* Buy now: mint "sticker" button (navy outline, lavender offset shadow), so it reads apart from the lavender Add to cart */
 .sq .sq-res-pdp .sq-pdp-buynow { margin-top: 14px; background: #F3FEEE; color: #0B0F1D; border: 2px solid #0B0F1D; box-shadow: 4px 4px 0 #AFBDF8; transition: transform .12s, box-shadow .12s, background-color .12s; }
