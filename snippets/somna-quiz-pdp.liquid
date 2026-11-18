@@ -23,9 +23,6 @@
   assign s_night_label = '/night'
   assign s_default_mode = 'once'
   assign s_sub_label = 'Subscribe & Save'
-  assign s_sub_points = '[price] [interval]
-3 free gifts on 2+ packs
-Skip, pause or cancel anytime'
   assign s_once_label = 'One-time purchase'
   assign s_add_label = 'Add to cart'
   assign s_badge_text = 'Up to 60% off'
@@ -34,6 +31,9 @@ Skip, pause or cancel anytime'
   assign s_box_heading = "What's in the Box?"
   assign s_box_colors_label = 'Strip colors in this set:'
 -%}
+{%- capture s_sub_points -%}[price] [interval]
+3 free gifts on 2+ packs
+Skip, pause or cancel anytime{%- endcapture -%}
 {%- if product != blank -%}
 {%- liquid
   assign mf = product.metafields.custom
