@@ -557,7 +557,7 @@ body { background: #AFBDF8; }
 .sq .sq-res-pdp .sq-res-head .sq-pill, .sq .sq-res-pdp .sq-res-head .sq-res-h { margin: 0; }
 .sq .sq-res-pdp .sq-res-head .sq-res-why { flex-basis: 100%; }
 /* result summary (spec 18 Nov 2026): paragraph + "Your answers" as compact chips, full width under the match line */
-.sq .sq-res-head .sq-res-sum { max-width: 1240px; margin-top: 4px; font-size: 15px; line-height: 1.5; color: var(--sq-mut); }
+.sq .sq-res-head .sq-res-sum { max-width: 1240px; margin-top: 4px; font-size: 15px; line-height: 1.45; color: var(--sq-mut); }
 .sq .sq-res-answers { flex-basis: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 6px; margin-top: 8px; }   /* "Your answers" sits on the chips row */
 .sq .sq-res-answers-h { margin-right: 2px; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--sq-ink); }
 .sq .sq-ans-list { display: contents; }   /* chips flow on the same row as "Your answers" */
@@ -590,9 +590,9 @@ body { background: #AFBDF8; }
   .sq .sq-res-pdp .somna-buy__packs { margin-top: 12px; }
   .sq .sq-res-pdp .somna-buy__packs legend { margin-bottom: 12px; }
   .sq .sq-res-pdp .somna-buy__pack { padding-top: 14px; padding-bottom: 6px; }
-  .sq .sq-res-pdp .somna-buy__modes { margin-top: 14px; padding-block: 12px; gap: 8px; }
+  .sq .sq-res-pdp .somna-buy__modes { margin-top: 14px; padding-block: 10px; gap: 8px; }
   .sq .sq-res-pdp .somna-pdp-hero__mode-box { gap: 6px; }
-  .sq .sq-res-pdp .somna-pdp-hero__sub-points { gap: 2px; font-size: 15px; line-height: 1.4; }
+  .sq .sq-res-pdp .somna-pdp-hero__sub-points { gap: 2px; font-size: 15px; line-height: 1.35; }
   .sq .sq-res-pdp .somna-pdp-hero__plan { min-height: 34px; }
   .sq .sq-res-pdp [data-sq-atc] { min-height: 58px; margin-top: 14px; }
   .sq .sq-res-pdp .sq-pdp-buynow { min-height: 52px; margin-top: 10px; }
@@ -613,9 +613,10 @@ body { background: #AFBDF8; }
   /* desktop: the icon row (Drug-free · 30 nights …) moves under the buttons, so the buy box fits the first screen */
   .sq .sq-res-pdp .somna-pdp-hero__panel { display: flex; flex-direction: column; }
   .sq .sq-res-pdp .somna-pdp-hero__panel > * { order: 1; }
-  .sq .sq-res-pdp .somna-pdp-hero__panel > .somna-pdp-hero__features { order: 2; margin-top: 22px; }
-  .sq .sq-res-pdp .somna-pdp-hero__panel > .somna-pdp-hero__perks { order: 3; margin-top: 18px; }
-  .sq .sq-res-pdp .somna-pdp-hero__panel > .sq-pdp-extras { order: 4; }
+  .sq .sq-res-pdp .somna-pdp-hero__panel > .somna-pdp-hero__savings { order: 2; margin-top: 16px; }   /* Sleep Bundle note */
+  .sq .sq-res-pdp .somna-pdp-hero__panel > .somna-pdp-hero__features { order: 3; margin-top: 22px; }
+  .sq .sq-res-pdp .somna-pdp-hero__panel > .somna-pdp-hero__perks { order: 4; margin-top: 18px; }
+  .sq .sq-res-pdp .somna-pdp-hero__panel > .sq-pdp-extras { order: 5; }
 }
 /* Sleep Bundle (every screen): "What's in the Box?" + free gifts line move just under the buttons */
 .sq .sq-res-pdp .somna-pdp-hero__form { display: flex; flex-direction: column; }
