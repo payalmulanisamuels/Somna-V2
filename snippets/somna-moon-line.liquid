@@ -39,6 +39,11 @@
     if (!customElements.get('somna-moon-line')) {
       customElements.define('somna-moon-line', class extends HTMLElement {
         connectedCallback() {
+          // a second moon line on the page connects before its own children are parsed: wait for the page
+          if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => this.init(), { once: true });
+          else this.init();
+        }
+        init() {
           const cd = document.querySelector('somna-countdown[data-end]');
           const end = cd ? Date.parse(cd.dataset.end) : NaN;
           if (!end || end <= Date.now()) return;
