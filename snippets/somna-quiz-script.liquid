@@ -344,6 +344,7 @@
 
   // ---- result summary (SOMNA_Quiz_Result_Summary_Spec_18112026): title per "who", a paragraph built from the matched
   // product + Q2–Q6, and a "Your answers" list. Copy is the spec's, word for word (soft wording, no outcome claims).
+  var SUM_FULL = false;
   var SUM = {
     // Sentence 1: [me / both, partner]
     q2: { snoring: ["snoring is what you'd most like to change", "their snoring is what you'd most like to change"],
@@ -406,8 +407,12 @@
     var said = [pick(SUM.q3, s.nose), pick(SUM.q4, s.mouth), pick(SUM.q5, s.energy)].filter(Boolean);
     var parts = [];
     var q2 = pick(SUM.q2, s.problem);
-    if (q2) parts.push('You mentioned ' + q2 + '.');
-    if (said.length) parts.push('You also said ' + joinList(said) + '.');
+    // Sentence 1 (their answers) is shown as the "Your answers" chips; the paragraph keeps to two lines with
+    // sentences 2 + 3 (18 Nov 2026). Set SUM_FULL = true to put sentence 1 back in the paragraph.
+    if (SUM_FULL) {
+      if (q2) parts.push('You mentioned ' + q2 + '.');
+      if (said.length) parts.push('You also said ' + joinList(said) + '.');
+    }
     // product + Q2 row; a Q2 with no row for this product (e.g. Snoring → Tape never happens) falls back to the product's first row
     var w = SUM.why[k + ':' + s.problem] || SUM.why[k + ':' + ({ strips: 'snoring', tape: 'mouth', bundle: 'both' })[k]];
     if (w) { var w2 = w[pi]; if (both) w2 = w2.replace(/\.$/, ', for you both.'); parts.push(w2); }
