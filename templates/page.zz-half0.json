@@ -1,0 +1,1843 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "bf_hero": {
+      "type": "somna-bf-hero",
+      "settings": {
+        "image": "shopify://shop_images/somna-v2-hero-pouches.png",
+        "image_mobile": "shopify://shop_images/somna-v2-hero-mobile.jpg",
+        "ticket": "Black Friday",
+        "ticket_sub": "Discount applied ✓",
+        "heading": "60% off.",
+        "subheading": "With Subscribe & Save",
+        "tagline": "Small change, softer nights. Strips for your nose and tape for your lips.",
+        "price_product": "nasal-strips",
+        "price_line": "From [price] a bag · One-time 50% off · $4.95 flat shipping in the US",
+        "price_line_mobile": "From [price] a bag · One-time 50% off\n$4.95 flat shipping in the US · 3 free gifts on 2+ packs",
+        "benefits": "Drug-free\n30-Night guarantee\n3 free gifts on 2+ packs",
+        "button_label": "Shop the sale",
+        "button_link": "shopify://pages/black-friday-sale",
+        "moon_text": "[nights] nights left · ends [date]",
+        "review_products": [
+          "nasal-strips",
+          "sleep-bundle",
+          "mouth-tape",
+          "the-colour-set",
+          "season-bundle"
+        ],
+        "reviews_line": "[stars] [rating] · [count] reviews",
+        "quote": "“Easy to put on and it stays on all night.” Sarah M. ✓ Verified buyer",
+        "guarantee_mobile": "30-Night Money-Back Guarantee",
+        "background_color": "#0b0f1d",
+        "padding_top": 72,
+        "padding_bottom": 96
+      }
+    },
+    "bf_shop": {
+      "type": "somna-bf-shop",
+      "settings": {
+        "eyebrow": "Black Friday · 60% off",
+        "heading": "Shop the Black Friday sale",
+        "products": [
+          "nasal-strips",
+          "sleep-bundle",
+          "mouth-tape",
+          "the-colour-set",
+          "season-bundle"
+        ],
+        "add_plan": "sub",
+        "price_prefix": "From",
+        "sub_note": "60% off · Subscribe & Save",
+        "once_note": "50% off · One-time",
+        "button_label": "Add to cart",
+        "background_color": "#0b0f1d",
+        "padding_top": 56,
+        "padding_bottom": 64
+      }
+    },
+    "wave_navy_mint": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#0b0f1d",
+        "bottom_color": "#f3feee",
+        "shape": "drip-1",
+        "overlap": false,
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "roll": 8,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "steps": {
+      "type": "somna-steps",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "title": "01 Wipe",
+            "text": "A quick wipe so it grips."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "title": "02 Stick",
+            "text": "Center it on your nose and smooth both sides."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "title": "03 Sleep",
+            "text": "Press once, lie back. It stays put till morning."
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3"
+      ],
+      "settings": {
+        "eyebrow": "1,000+ people already sleep better with Somna.",
+        "avatar_1": "shopify://shop_images/somna-v2-hero-reviewer-1.jpg",
+        "avatar_2": "shopify://shop_images/somna-v2-hero-reviewer-2.jpg",
+        "avatar_3": "shopify://shop_images/somna-v2-hero-reviewer-3.jpg",
+        "avatar_4": "shopify://shop_images/Precision_nasal_strip_design_correction-4.png",
+        "avatar_5": "shopify://shop_images/somna_selfie_strips_runner.png",
+        "avatars": "shopify://shop_images/somna-v2-steps-avatars.png",
+        "rating_text": "★★★★★ 4.6/5 Average Rating",
+        "image": "shopify://shop_images/somna-v2-steps-model.png",
+        "heading": "Three Steps. Zero Fuss.",
+        "text": "<p>From bathroom sink to lights out in under a minute.</p>",
+        "thumbs": "shopify://shop_images/somna-v2-steps-thumbs-v2.png",
+        "button_label": "Watch how it works",
+        "button_link": "shopify://pages/how-to-use",
+        "video": "shopify://files/videos/somna-how-to-use-tape-strip_890be868-ad48-4314-9f82-249d02539844.mp4",
+        "button_note": "✓ 30-Night Money-Back Guarantee",
+        "background_color": "#f3feee",
+        "text_color": "#000000",
+        "button_color": "#afbdf8",
+        "padding_top": 24,
+        "padding_bottom": 16,
+        "wave_color": "#000000",
+        "wave_shape": "drip-2"
+      }
+    },
+    "match": {
+      "type": "somna-match-cards",
+      "blocks": {
+        "card_strips": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-strips-pouch.png",
+            "title": "Nasal Strips",
+            "subtitle": "Sits on the outside of your nose.",
+            "points": "Nothing inside your nose\nEasy of adhesive\nBlue Red or Black",
+            "button_label": "Shop strips →",
+            "button_link": "shopify://products/nasal-strips"
+          }
+        },
+        "card_tape": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-tape-pouch.png",
+            "title": "Mouth Tape",
+            "subtitle": "Sits on the outside of your lips.",
+            "points": "Soft on lips\nPeels off easy\nMade to pair with strips",
+            "button_label": "Shop tape →",
+            "button_link": "shopify://products/mouth-tape"
+          }
+        }
+      },
+      "block_order": [
+        "card_strips",
+        "card_tape"
+      ],
+      "settings": {
+        "drip_edges": true,
+        "heading": "<p>Nose or mouth? <em>Meet your match.</em></p>",
+        "text": "<p>Most people start with one. <br>Plenty end up with both.</p>",
+        "video_link": "",
+        "video_new_tab": true,
+        "video_caption": "My new bedtime habit",
+        "card_height": 520,
+        "background_color": "#000000",
+        "text_color": "#f3feee",
+        "accent_color": "#98a3de",
+        "card_color": "#f3feee",
+        "card_text_color": "#0a1a4a",
+        "button_color": "#98a3de",
+        "padding_top": 24,
+        "padding_bottom": 24
+      }
+    },
+    "still_cant_pick": {
+      "type": "section",
+      "blocks": {
+        "panel": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 16,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "#f3feee",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "somna_edge": "torn",
+            "somna_edge_mobile": "drip-bottom",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 32,
+            "padding-block-end": 32,
+            "padding-inline-start": 24,
+            "padding-inline-end": 24
+          },
+          "blocks": {
+            "heading": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Still Can't Pick?</h2>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "center",
+                "type_preset": "custom",
+                "font": "var(--font-accent--family)",
+                "font_size": "2.5rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "balance",
+                "text_color": "#000000",
+                "accent_color": "#98a3de",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Take our 60-second quiz to find your match.</p>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "center",
+                "type_preset": "custom",
+                "font": "var(--font-body--family)",
+                "font_size": "1.125rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#000000",
+                "accent_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "button": {
+              "type": "button",
+              "settings": {
+                "label": "FIND MY MATCH →",
+                "link": "shopify://pages/quiz",
+                "open_in_new_tab": false,
+                "style_class": "button-custom",
+                "custom_button_background": "#98a3de",
+                "custom_button_text": "#000000",
+                "custom_button_border": "#98a3de",
+                "link_text_color": "",
+                "width": "custom",
+                "custom_width": 30,
+                "width_mobile": "custom",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "heading",
+            "text",
+            "button"
+          ]
+        }
+      },
+      "block_order": [
+        "panel"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 24,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "#000000",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 16,
+        "padding-block-end": 24
+      }
+    },
+    "routine": {
+      "type": "somna-routine",
+      "blocks": {
+        "prep": {
+          "type": "step",
+          "settings": {
+            "title": "Prep",
+            "text": "Start with clean, dry skin."
+          }
+        },
+        "apply": {
+          "type": "step",
+          "settings": {
+            "title": "Apply",
+            "text": "Place your nasal strip and mouth tape as shown in the guide."
+          }
+        },
+        "unwind": {
+          "type": "step",
+          "settings": {
+            "title": "Unwind",
+            "text": "Lights down. Breathe easier. Better sleep ahead."
+          }
+        }
+      },
+      "block_order": [
+        "prep",
+        "apply",
+        "unwind"
+      ],
+      "settings": {
+        "heading": "<h2>Your night routine, <em>stripped back.</em></h2>",
+        "background_color": "#000000",
+        "heading_color": "#f3feee",
+        "accent_color": "#afbdf8",
+        "panel_color": "#f3feee",
+        "number_color": "#afbdf8",
+        "padding_top": 16,
+        "padding_bottom": 16,
+        "wave_color": "#afbdf8",
+        "wave_shape": "drip-3"
+      }
+    },
+    "compare": {
+      "type": "somna-compare-tabs",
+      "blocks": {
+        "tab_strips": {
+          "type": "tab",
+          "settings": {
+            "name": "Nasal Strips",
+            "image": "shopify://shop_images/strip-1_2b080541-bb5f-4874-9f2a-eb53b3f94218.png",
+            "label": "somna.",
+            "column_2_image": "shopify://shop_images/somna-v2-compare-tape-roll.png",
+            "column_2_label": "Drugstore strips",
+            "column_3_image": "shopify://shop_images/image_9ea38f98-97ea-4733-b802-f3c218042972.png",
+            "column_3_label": "Medicated sprays",
+            "column_4_image": "shopify://shop_images/image_1.png",
+            "column_4_label": "Nasal dilators",
+            "highlight": true,
+            "only_on_match": false,
+            "eyebrow": "",
+            "heading": "",
+            "text": ""
+          }
+        },
+        "tab_tape": {
+          "type": "tab",
+          "settings": {
+            "name": "Mouth Tape",
+            "image": "shopify://shop_images/tap1.png",
+            "label": "somna.",
+            "column_2_image": "shopify://shop_images/somna-v2-compare-tape-roll.png",
+            "column_2_label": "Surgical tape",
+            "column_3_image": "shopify://shop_images/somna-v2-compare-chin-strap.png",
+            "column_3_label": "Chin straps",
+            "column_4_image": "shopify://shop_images/somna-v2-compare-mouth-guard.png",
+            "column_4_label": "Mouthguards",
+            "highlight": true,
+            "only_on_match": false,
+            "eyebrow": "",
+            "heading": "",
+            "text": ""
+          }
+        },
+        "row_1": {
+          "type": "row",
+          "settings": {
+            "tab": "2",
+            "label": "Drug-free",
+            "column_1": true,
+            "column_2": true,
+            "column_3": true,
+            "column_4": true,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
+          }
+        },
+        "row_2": {
+          "type": "row",
+          "settings": {
+            "tab": "2",
+            "label": "Nothing in your mouth",
+            "column_1": true,
+            "column_2": true,
+            "column_3": true,
+            "column_4": false,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
+          }
+        },
+        "row_3": {
+          "type": "row",
+          "settings": {
+            "tab": "2",
+            "label": "Nothing around your head",
+            "column_1": true,
+            "column_2": true,
+            "column_3": false,
+            "column_4": true,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
+          }
+        },
+        "row_4": {
+          "type": "row",
+          "settings": {
+            "tab": "2",
+            "label": "Made for lips",
+            "column_1": true,
+            "column_2": false,
+            "column_3": false,
+            "column_4": false,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
+          }
+        },
+        "row_5": {
+          "type": "row",
+          "settings": {
+            "tab": "2",
+            "label": "Pairs with Nasal Strips",
+            "column_1": true,
+            "column_2": false,
+            "column_3": false,
+            "column_4": false,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
+          }
+        },
+        "srow_1": {
+          "type": "row",
+          "settings": {
+            "tab": "1",
+            "label": "Drug-free",
+            "column_1": true,
+            "column_2": true,
+            "column_3": false,
+            "column_4": true,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
+          }
+        },
+        "srow_2": {
+          "type": "row",
+          "settings": {
+            "tab": "1",
+            "label": "Nothing inside your nose",
+            "column_1": true,
+            "column_2": true,
+            "column_3": true,
+            "column_4": false,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
+          }
+        },
+        "srow_3": {
+          "type": "row",
+          "settings": {
+            "tab": "1",
+            "label": "Structural strip design",
+            "column_1": true,
+            "column_2": false,
+            "column_3": false,
+            "column_4": false,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
+          }
+        },
+        "srow_4": {
+          "type": "row",
+          "settings": {
+            "tab": "1",
+            "label": "Pairs with Mouth Tape",
+            "column_1": true,
+            "column_2": false,
+            "column_3": false,
+            "column_4": false,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
+          }
+        },
+        "srow_5": {
+          "type": "row",
+          "settings": {
+            "tab": "1",
+            "label": "Three colors to match you",
+            "column_1": true,
+            "column_2": false,
+            "column_3": false,
+            "column_4": false,
+            "column_1_text": "",
+            "column_2_text": "",
+            "column_3_text": "",
+            "column_4_text": ""
+          }
+        }
+      },
+      "block_order": [
+        "tab_strips",
+        "tab_tape",
+        "row_1",
+        "row_2",
+        "row_3",
+        "row_4",
+        "row_5",
+        "srow_1",
+        "srow_2",
+        "srow_3",
+        "srow_4",
+        "srow_5"
+      ],
+      "settings": {
+        "drip_edges": true,
+        "eyebrow": "Made for your nights",
+        "heading": "Built for Bedtime. Not the First-Aid Kit.",
+        "text": "",
+        "match_product": false,
+        "tabs_label": "Compare products",
+        "caption": "how Somna compares",
+        "show_column_names": false,
+        "background_color": "#afbdf8",
+        "text_color": "#000000",
+        "panel_color": "#f3feee",
+        "highlight_color": "#cdd6ea",
+        "padding_top": 24,
+        "padding_bottom": 8,
+        "wave_color": "#000000",
+        "wave_shape": "drip-4"
+      }
+    },
+    "proof": {
+      "type": "somna-proof",
+      "blocks": {
+        "stat_1": {
+          "type": "stat",
+          "settings": {
+            "value": 92,
+            "label": "Found it easy to use"
+          }
+        },
+        "stat_2": {
+          "type": "stat",
+          "settings": {
+            "value": 89,
+            "label": "Comfortable all night"
+          }
+        },
+        "stat_3": {
+          "type": "stat",
+          "settings": {
+            "value": 94,
+            "label": "Would recommend Somna"
+          }
+        },
+        "jm_review_2": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "nasal-strips",
+            "review_id": "c17f44c3-cd15-4eb9-96cb-a7afd0ed41a2",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "right top",
+            "show_product": false
+          }
+        },
+        "jm_review_3": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "mouth-tape",
+            "review_id": "8ae1524e-8249-458b-8fd4-e07f4b5d05be",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "right top",
+            "show_product": false
+          }
+        },
+        "jm_review_4": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "the-colour-set",
+            "review_id": "3455499f-74e6-440f-ae9d-4cd706e1c9c9",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "center top",
+            "show_product": false
+          }
+        },
+        "jm_review_1": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "nasal-strips",
+            "review_id": "a261754a-9faa-4d75-89f0-28be0023b65e",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "center top",
+            "show_product": false
+          }
+        },
+        "jm_review_5": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "mouth-tape",
+            "review_id": "9ec38235-f248-4647-970c-0676fc446824",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "center",
+            "show_product": false
+          }
+        },
+        "jm_review_6": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "sleep-bundle",
+            "review_id": "91ca7179-9208-4fd0-a644-bcaf56edb28f",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "center",
+            "show_product": false
+          }
+        },
+        "jm_review_7": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "mouth-tape",
+            "review_id": "888c0da5-3411-4d1f-8c99-013411f729e8",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "center",
+            "show_product": false
+          }
+        },
+        "jm_review_8": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "mouth-tape",
+            "review_id": "6724fdcd-fe00-47da-b4e7-f16a6d5dc003",
+            "text_source": "body",
+            "max_words": 26,
+            "photo_focus": "center",
+            "show_product": false
+          }
+        },
+        "jm_review_9": {
+          "type": "judgeme_review",
+          "settings": {
+            "product": "mouth-tape",
+            "review_id": "d2fa9362-0fa1-4287-8e2e-5435a222b0e3",
+            "text_source": "title",
+            "max_words": 26,
+            "photo_focus": "center",
+            "show_product": false
+          }
+        }
+      },
+      "block_order": [
+        "stat_1",
+        "stat_2",
+        "stat_3",
+        "jm_review_2",
+        "jm_review_3",
+        "jm_review_4",
+        "jm_review_1",
+        "jm_review_5",
+        "jm_review_6",
+        "jm_review_7",
+        "jm_review_8",
+        "jm_review_9"
+      ],
+      "settings": {
+        "eyebrow": "Don't just take our word for it",
+        "heading": "<p>Real people. <em>Real nights.</em></p>",
+        "reviews_label": "Customer reviews",
+        "prev_label": "Previous reviews",
+        "next_label": "Next reviews",
+        "autoplay_seconds": 3,
+        "verified_label": "Verified buyer",
+        "background_color": "#000000",
+        "text_color": "#f3feee",
+        "accent_color": "#98a3de",
+        "ring_color": "#98a3de",
+        "card_color": "#f3feee",
+        "padding_top": 16,
+        "padding_bottom": 24,
+        "wave_color": "#f3feee",
+        "wave_shape": "drip-5"
+      }
+    },
+    "trust": {
+      "type": "section",
+      "blocks": {
+        "tiles": {
+          "type": "group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "center",
+            "vertical_alignment": "flex-start",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 36,
+            "width": "custom",
+            "custom_width": 50,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "somna_edge": "none",
+            "somna_edge_mobile": "same",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "t1": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "center",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 24,
+                "width": "custom",
+                "custom_width": 30,
+                "width_mobile": "custom",
+                "custom_width_mobile": 31,
+                "height": "fill",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "#000000",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 16,
+                "somna_edge": "drip-bottom",
+                "somna_edge_mobile": "same",
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 32,
+                "padding-block-end": 28,
+                "padding-inline-start": 16,
+                "padding-inline-end": 16
+              },
+              "blocks": {
+                "icon": {
+                  "type": "somna-icon",
+                  "settings": {
+                    "icon": "leaf",
+                    "drawing": "none",
+                    "draw_animation": true,
+                    "size": 72,
+                    "color": "#f3feee",
+                    "backdrop": "none",
+                    "backdrop_color": "#ffffff",
+                    "backdrop_size": 56,
+                    "icon_offset": 0
+                  },
+                  "blocks": {}
+                },
+                "label": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>No Drugs. No Sprays.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "center",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1.125rem",
+                    "line_height": "normal",
+                    "letter_spacing": "loose",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#f3feee",
+                    "accent_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "icon",
+                "label"
+              ]
+            },
+            "t2": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "center",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 24,
+                "width": "custom",
+                "custom_width": 30,
+                "width_mobile": "custom",
+                "custom_width_mobile": 31,
+                "height": "fill",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "#000000",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 16,
+                "somna_edge": "drip-bottom",
+                "somna_edge_mobile": "same",
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 32,
+                "padding-block-end": 28,
+                "padding-inline-start": 16,
+                "padding-inline-end": 16
+              },
+              "blocks": {
+                "icon": {
+                  "type": "somna-icon",
+                  "settings": {
+                    "icon": "none",
+                    "drawing": "none",
+                    "draw_animation": true,
+                    "image": "shopify://shop_images/somna-v2-icon-comfy.png",
+                    "size": 72,
+                    "color": "#f3feee",
+                    "backdrop": "none",
+                    "backdrop_color": "#ffffff",
+                    "backdrop_size": 56,
+                    "icon_offset": 0
+                  },
+                  "blocks": {}
+                },
+                "label": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Comfy enough to Forget</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "center",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1.125rem",
+                    "line_height": "normal",
+                    "letter_spacing": "loose",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#f3feee",
+                    "accent_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "icon",
+                "label"
+              ]
+            },
+            "t3": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "center",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 24,
+                "width": "custom",
+                "custom_width": 30,
+                "width_mobile": "custom",
+                "custom_width_mobile": 31,
+                "height": "fill",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "#000000",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 16,
+                "somna_edge": "drip-bottom",
+                "somna_edge_mobile": "same",
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 32,
+                "padding-block-end": 28,
+                "padding-inline-start": 16,
+                "padding-inline-end": 16
+              },
+              "blocks": {
+                "icon": {
+                  "type": "somna-icon",
+                  "settings": {
+                    "icon": "users",
+                    "drawing": "none",
+                    "draw_animation": true,
+                    "size": 72,
+                    "color": "#f3feee",
+                    "backdrop": "none",
+                    "backdrop_color": "#ffffff",
+                    "backdrop_size": 56,
+                    "icon_offset": 0
+                  },
+                  "blocks": {}
+                },
+                "label": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Loved by 1,000+ Sleepers</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "center",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1.125rem",
+                    "line_height": "normal",
+                    "letter_spacing": "loose",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#f3feee",
+                    "accent_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "icon",
+                "label"
+              ]
+            }
+          },
+          "block_order": [
+            "t1",
+            "t2",
+            "t3"
+          ]
+        }
+      },
+      "block_order": [
+        "tiles"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 24,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "#f3feee",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 24,
+        "padding-block-end": 16
+      }
+    },
+    "ugc": {
+      "type": "somna-media-strip",
+      "blocks": {
+        "card_6": {
+          "type": "card",
+          "settings": {
+            "enabled": true,
+            "video": "shopify://files/videos/SOMNA_Nasal_Testimonial_V5_4x5.mp4",
+            "video_url": "",
+            "caption": "",
+            "title": "",
+            "name": "",
+            "text": "",
+            "product": "",
+            "product_link": "",
+            "duration": "",
+            "video_link": ""
+          }
+        },
+        "card_1": {
+          "type": "card",
+          "settings": {
+            "enabled": true,
+            "video": "shopify://files/videos/SOMNA_Nasal_Testimonial_V8_4x5.mp4",
+            "video_url": "",
+            "caption": "",
+            "title": "",
+            "name": "",
+            "text": "",
+            "product": "",
+            "product_link": "",
+            "duration": "",
+            "video_link": ""
+          }
+        },
+        "card_2": {
+          "type": "card",
+          "settings": {
+            "enabled": true,
+            "video": "shopify://files/videos/SOMNA_Nasal_Testimonial_V6_4x5.mp4",
+            "video_url": "",
+            "caption": "",
+            "title": "",
+            "name": "",
+            "text": "",
+            "product": "",
+            "product_link": "",
+            "duration": "",
+            "video_link": ""
+          }
+        },
+        "card_4": {
+          "type": "card",
+          "settings": {
+            "enabled": true,
+            "video": "shopify://files/videos/SOMNA_Nasal_Testimonial_V7_4x5.mp4",
+            "video_url": "",
+            "caption": "",
+            "title": "",
+            "name": "",
+            "text": "",
+            "product": "",
+            "product_link": "",
+            "duration": "",
+            "video_link": ""
+          }
+        },
+        "card_3": {
+          "type": "card",
+          "settings": {
+            "enabled": true,
+            "video": "shopify://files/videos/0706(4)-1.mp4",
+            "video_url": "",
+            "caption": "",
+            "title": "",
+            "name": "",
+            "text": "",
+            "product": "",
+            "product_link": "",
+            "duration": "",
+            "video_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "card_6",
+        "card_1",
+        "card_2",
+        "card_4",
+        "card_3"
+      ],
+      "settings": {
+        "enabled": true,
+        "eyebrow": "On camera",
+        "heading": "Hear it from them",
+        "subtitle": "",
+        "heading_align": "center",
+        "heading_color": "",
+        "heading_size": 50,
+        "heading_size_mobile": 26,
+        "heading_gap": 20,
+        "background_color": "#f3feee",
+        "text_color": "#000000",
+        "max_width": 1160,
+        "padding_top": 16,
+        "padding_bottom": 24,
+        "padding_top_mobile": 8,
+        "padding_bottom_mobile": 8,
+        "card_sizing": "fixed",
+        "card_width": 208,
+        "per_view_desktop": 6,
+        "per_view_tablet": 3,
+        "per_view_mobile": 2,
+        "card_ratio": "0.605",
+        "card_radius": 15,
+        "gap": 26,
+        "gap_mobile": 20,
+        "image_fit": "cover",
+        "card_bg": "#000000",
+        "overlay_opacity": 0,
+        "caption_color": "#0a1a4a",
+        "play_size": 44,
+        "play_bg": "#000000",
+        "play_fg": "#ffffff",
+        "allow_sound": true,
+        "start_muted": true,
+        "native_controls": false,
+        "autoplay": false,
+        "video_loop": false,
+        "preload": "none",
+        "one_at_a_time": true,
+        "pause_offscreen": true,
+        "play_label": "Play video",
+        "pause_label": "Pause video",
+        "unmute_label": "Turn sound on",
+        "mute_label": "Turn sound off",
+        "carousel": true,
+        "drag": true,
+        "show_arrows": false,
+        "show_dots": false,
+        "slides_to_scroll": 1,
+        "carousel_loop": false,
+        "arrow_color": "#ffffff",
+        "arrow_bg": "#000000",
+        "dot_color": "#c9cfc4",
+        "dot_active_color": "#000000",
+        "prev_label": "Previous videos",
+        "next_label": "Next videos",
+        "dots_label": "Choose video",
+        "wave_color": "#000000",
+        "wave_shape": "drip-6"
+      }
+    },
+    "gifts": {
+      "type": "section",
+      "blocks": {
+        "copy": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "custom",
+            "custom_width": 45,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "somna_edge": "none",
+            "somna_edge_mobile": "same",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "eyebrow": {
+              "type": "text",
+              "settings": {
+                "text": "<p>On Orders of 2+ Bags</p>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "loose",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#f3feee",
+                "accent_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "heading": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Your <em>first order</em> comes with <em>3 gifts.</em></h2>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-accent--family)",
+                "font_size": "3.5rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "uppercase",
+                "wrap": "balance",
+                "text_color": "#f3feee",
+                "accent_color": "#98a3de",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Emailed to you the day your order is delivered.</p>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#f3feee",
+                "accent_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "eyebrow",
+            "heading",
+            "text"
+          ]
+        },
+        "offer": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 32,
+            "width": "custom",
+            "custom_width": 34,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "somna_edge": "none",
+            "somna_edge_mobile": "same",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "icons": {
+              "type": "group",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": false,
+                "horizontal_alignment": "space-between",
+                "vertical_alignment": "flex-start",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 16,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "somna_edge": "none",
+                "somna_edge_mobile": "same",
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "g1": {
+                  "type": "group",
+                  "settings": {
+                    "content_direction": "column",
+                    "vertical_on_mobile": true,
+                    "horizontal_alignment": "flex-start",
+                    "vertical_alignment": "center",
+                    "align_baseline": false,
+                    "horizontal_alignment_flex_direction_column": "center",
+                    "vertical_alignment_flex_direction_column": "center",
+                    "gap": 16,
+                    "width": "custom",
+                    "custom_width": 30,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "height": "fit",
+                    "custom_height": 100,
+                    "background_media": "none",
+                    "background_color": "",
+                    "video_position": "cover",
+                    "background_image_position": "cover",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0,
+                    "somna_edge": "none",
+                    "somna_edge_mobile": "same",
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "placeholder": "",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {
+                    "icon": {
+                      "type": "somna-icon",
+                      "settings": {
+                        "icon": "none",
+                        "drawing": "sleep_guide_1",
+                        "draw_animation": true,
+                        "image": "shopify://shop_images/somna-v2-mask-sleep-guide-1.png",
+                        "size": 60,
+                        "color": "#0b2347",
+                        "backdrop": "image",
+                        "backdrop_image": "shopify://shop_images/somna-v2-mask-gift-box.png",
+                        "backdrop_color": "#f3feee",
+                        "backdrop_size": 126,
+                        "icon_offset": 16
+                      },
+                      "blocks": {}
+                    },
+                    "label": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>Sleep Guide 1</p>",
+                        "width": "100%",
+                        "max_width": "none",
+                        "alignment": "center",
+                        "type_preset": "custom",
+                        "font": "var(--font-body--family)",
+                        "font_size": "1rem",
+                        "line_height": "normal",
+                        "letter_spacing": "loose",
+                        "case": "none",
+                        "wrap": "pretty",
+                        "text_color": "#f3feee",
+                        "accent_color": "",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "icon",
+                    "label"
+                  ]
+                },
+                "g2": {
+                  "type": "group",
+                  "settings": {
+                    "content_direction": "column",
+                    "vertical_on_mobile": true,
+                    "horizontal_alignment": "flex-start",
+                    "vertical_alignment": "center",
+                    "align_baseline": false,
+                    "horizontal_alignment_flex_direction_column": "center",
+                    "vertical_alignment_flex_direction_column": "center",
+                    "gap": 16,
+                    "width": "custom",
+                    "custom_width": 30,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "height": "fit",
+                    "custom_height": 100,
+                    "background_media": "none",
+                    "background_color": "",
+                    "video_position": "cover",
+                    "background_image_position": "cover",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0,
+                    "somna_edge": "none",
+                    "somna_edge_mobile": "same",
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "placeholder": "",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {
+                    "icon": {
+                      "type": "somna-icon",
+                      "settings": {
+                        "icon": "none",
+                        "drawing": "sleep_guide_2",
+                        "draw_animation": true,
+                        "image": "shopify://shop_images/somna-v2-mask-sleep-guide-2.png",
+                        "size": 60,
+                        "color": "#0b2347",
+                        "backdrop": "image",
+                        "backdrop_image": "shopify://shop_images/somna-v2-mask-gift-box.png",
+                        "backdrop_color": "#f3feee",
+                        "backdrop_size": 126,
+                        "icon_offset": 16
+                      },
+                      "blocks": {}
+                    },
+                    "label": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>Sleep Guide 2</p>",
+                        "width": "100%",
+                        "max_width": "none",
+                        "alignment": "center",
+                        "type_preset": "custom",
+                        "font": "var(--font-body--family)",
+                        "font_size": "1rem",
+                        "line_height": "normal",
+                        "letter_spacing": "loose",
+                        "case": "none",
+                        "wrap": "pretty",
+                        "text_color": "#f3feee",
+                        "accent_color": "",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "icon",
+                    "label"
+                  ]
+                },
+                "g3": {
+                  "type": "group",
+                  "settings": {
+                    "content_direction": "column",
+                    "vertical_on_mobile": true,
+                    "horizontal_alignment": "flex-start",
+                    "vertical_alignment": "center",
+                    "align_baseline": false,
+                    "horizontal_alignment_flex_direction_column": "center",
+                    "vertical_alignment_flex_direction_column": "center",
+                    "gap": 16,
+                    "width": "custom",
+                    "custom_width": 30,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "height": "fit",
+                    "custom_height": 100,
+                    "background_media": "none",
+                    "background_color": "",
+                    "video_position": "cover",
+                    "background_image_position": "cover",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0,
+                    "somna_edge": "none",
+                    "somna_edge_mobile": "same",
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "placeholder": "",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {
+                    "icon": {
+                      "type": "somna-icon",
+                      "settings": {
+                        "icon": "none",
+                        "drawing": "sleep_tracker",
+                        "draw_animation": true,
+                        "image": "shopify://shop_images/somna-v2-mask-tracker.png",
+                        "size": 60,
+                        "color": "#0b2347",
+                        "backdrop": "image",
+                        "backdrop_image": "shopify://shop_images/somna-v2-mask-gift-box.png",
+                        "backdrop_color": "#f3feee",
+                        "backdrop_size": 126,
+                        "icon_offset": 16
+                      },
+                      "blocks": {}
+                    },
+                    "label": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>30 Night sleep tracker</p>",
+                        "width": "100%",
+                        "max_width": "none",
+                        "alignment": "center",
+                        "type_preset": "custom",
+                        "font": "var(--font-body--family)",
+                        "font_size": "1rem",
+                        "line_height": "normal",
+                        "letter_spacing": "loose",
+                        "case": "none",
+                        "wrap": "pretty",
+                        "text_color": "#f3feee",
+                        "accent_color": "",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "icon",
+                    "label"
+                  ]
+                }
+              },
+              "block_order": [
+                "g1",
+                "g2",
+                "g3"
+              ]
+            },
+            "button": {
+              "type": "button",
+              "settings": {
+                "label": "CLAIM MY 3 GIFTS →",
+                "link": "shopify://products/sleep-bundle",
+                "open_in_new_tab": false,
+                "style_class": "button-custom",
+                "custom_button_background": "#98a3de",
+                "custom_button_text": "#000000",
+                "custom_button_border": "#98a3de",
+                "link_text_color": "",
+                "width": "custom",
+                "custom_width": 100,
+                "width_mobile": "custom",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "icons",
+            "button"
+          ]
+        }
+      },
+      "block_order": [
+        "copy",
+        "offer"
+      ],
+      "settings": {
+        "content_direction": "row",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 40,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "#000000",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 24,
+        "padding-block-end": 24
+      }
+    },
+    "wave_black_lav_2": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#000000",
+        "bottom_color": "#afbdf8",
+        "shape": "drip-7",
+        "overlap": false,
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "roll": 8,
+        "height": 140,
+        "height_mobile": 48
+      }
+    }
+  },
+  "order": [
+    "bf_hero",
+    "bf_shop",
+    "wave_navy_mint",
+    "steps",
+    "match",
+    "still_cant_pick",
+    "routine",
+    "compare",
+    "proof",
+    "trust",
+    "ugc",
+    "gifts",
+    "wave_black_lav_2"
+  ]
+}

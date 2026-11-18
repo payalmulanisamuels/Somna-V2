@@ -1,0 +1,38 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "bf_shop": {
+      "type": "somna-bf-shop",
+      "settings": {
+        "eyebrow": "Black Friday · 60% off",
+        "heading": "Shop the Black Friday sale",
+        "products": [
+          "nasal-strips",
+          "sleep-bundle",
+          "mouth-tape",
+          "the-colour-set",
+          "season-bundle"
+        ],
+        "add_plan": "sub",
+        "price_prefix": "From",
+        "sub_note": "60% off · Subscribe & Save",
+        "once_note": "50% off · One-time",
+        "button_label": "Add to cart",
+        "background_color": "#0b0f1d",
+        "padding_top": 56,
+        "padding_bottom": 64
+      }
+    }
+  },
+  "order": [
+    "bf_shop"
+  ]
+}
