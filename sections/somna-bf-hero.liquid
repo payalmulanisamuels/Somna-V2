@@ -112,13 +112,13 @@
     background: radial-gradient(ellipse 60% 70% at 20% 40%, rgb(70 78 140 / 0.35), transparent 70%);
   }
   .somna-bfh__media { position: absolute; inset: 0 0 0 auto; z-index: -1; width: 46%; }
-  .somna-bfh__img { width: 100%; height: 100%; object-fit: cover; object-position: 20% 50%; }
+  .somna-bfh__img { width: 100%; height: 100%; object-fit: cover; object-position: 78% 55%; }
   .somna-bfh__img--mob, .somna-bfh__ticket--mob { display: none; }
   .somna-bfh__media::before {
     content: ''; position: absolute; inset: 0; z-index: 1;
     background: linear-gradient(to right, var(--bfh-bg) 0%, rgb(11 15 29 / 0.55) 22%, rgb(11 15 29 / 0.25) 60%, rgb(11 15 29 / 0.35) 100%);
   }
-  .somna-bfh__inner { padding-block: var(--bfh-pt) var(--bfh-pb); }
+  .somna-bfh__inner { padding-block: calc(var(--bfh-pt) + var(--header-height, 66px)) var(--bfh-pb); }
   .somna-bfh__copy { max-width: 900px; }
   .somna-bfh__ticket {
     display: inline-flex; flex-direction: column; align-items: center; margin: 0 0 18px; padding: 12px 22px 9px;
@@ -129,9 +129,9 @@
   .somna-bfh__ticket small { font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
   .somna-bfh__title {
     display: flex; flex-direction: column; margin: 0; color: #afbdf8;
-    font-family: var(--font-accent--family); font-size: clamp(5rem, 10.5vw, 10rem); font-weight: 400; line-height: 1.05; text-transform: uppercase;
+    font-family: var(--font-accent--family); font-size: clamp(4rem, 7.4vw, 8.75rem); font-weight: 400; line-height: 1.05; text-transform: uppercase; white-space: nowrap;
   }
-  .somna-bfh__title span { margin-top: 6px; color: #f3feee; font-size: clamp(2rem, 3.6vw, 3.25rem); line-height: 1.2; }
+  .somna-bfh__title span { margin-top: 6px; color: #f3feee; font-size: clamp(1.75rem, 3vw, 3rem); line-height: 1.2; white-space: normal; }
   .somna-bfh__tagline { margin: 22px 0 0; color: #afbdf8; font-size: clamp(1.25rem, 1.9vw, 1.75rem); font-weight: 500; line-height: 1.35; }
   .somna-bfh__price { margin: 16px 0 0; font-size: clamp(1.125rem, 1.6vw, 1.5rem); line-height: 1.4; }
   .somna-bfh__price b, .somna-bfh__price-mob b { color: #afbdf8; font-weight: 700; }
@@ -169,6 +169,7 @@
     .somna-bfh__ticket--mob span { font-size: 27px; }
     .somna-bfh__ticket--mob small { font-size: 11px; }
     .somna-bfh__inner { padding-block: 28px calc(var(--bfh-pb) * 0.6); }
+    .somna-bfh__media { margin-top: 0; }
     .somna-bfh__copy { max-width: none; }
     .somna-bfh__title { font-size: clamp(4.25rem, 22vw, 6.5rem); }
     .somna-bfh__title span { font-size: clamp(1.5rem, 8vw, 2.125rem); }
