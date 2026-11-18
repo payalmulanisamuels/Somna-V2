@@ -324,10 +324,7 @@ Skip, pause or cancel anytime{%- endcapture -%}
               <label class="somna-buy__pack{% unless v.available %} is-sold-out{% endunless %}">
                 {%- liquid
                   assign pack_badge = ''
-                  # quiz result: only "Recommended" on the first pack (no "Most popular" / "Best value", 18 Nov 2026)
-                  if pack_n == 1
-                    assign pack_badge = s_badge_label
-                  endif
+                  # quiz result: no pack tags (no "Recommended" / "Most popular" / "Best value", 18 Nov 2026)
                 -%}
                 {%- if pack_badge != blank -%}<span class="somna-buy__pack-badge">{{ pack_badge }}</span>{%- endif -%}
                 <input type="radio" name="{{ sid }}-pack" value="{{ forloop.index0 }}" data-pack{% if color_option %} data-size="{{ v_name | escape }}"{% endif %}{% if v.id == current.id %} checked{% endif %}{% unless v.available %} disabled{% endunless %}>
