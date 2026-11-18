@@ -86,7 +86,7 @@
         if (this.planSelect) this.planSelect.disabled = this.mode !== 'sub';
         const add = q('[data-add]');
         add.disabled = !v.available;
-        q('[data-add-label]').textContent = v.available ? `${this.labels.add} · ${this.money(price)}` : this.labels.soldOut;
+        q('[data-add-label]').textContent = v.available ? this.labels.add : this.labels.soldOut;
       }
       // colour swatches: point every pack at the variant with that colour and its size, then show that colour's photo
       setColor(color) {

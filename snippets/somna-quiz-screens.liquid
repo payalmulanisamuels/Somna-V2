@@ -5,60 +5,48 @@
   data-self / data-partner hold the "you" and "they" wording; Q1 "My partner" switches to the partner version.
 {%- endcomment -%}
 
-{%- comment -%} 01 · Intro + Q1 {%- endcomment -%}
-<div class="sq-s is-on" data-type="q" data-q="1" data-step="1">
-  <h1 class="sq-intro-h" tabindex="-1">{{ qs.intro_heading }}</h1>
+{%- comment -%}
+  Start (suggested flow, 18 Nov 2026): one question per screen, a tap moves on.
+  Screen 1 = the problem (data-q="2", scores and picks the Sleep Bundle on "A bit of everything"),
+  screen 2 = who it's for (data-q="1", switches the later wording to they/their). data-q keeps the scoring keys,
+  data-step is the number shown ("Question 1 of 6") and drives the progress bar.
+{%- endcomment -%}
+<div class="sq-s is-on" data-type="q" data-q="2" data-step="1">
   {%- if qs.intro_sub != blank -%}
-    <p class="sq-intro-meta"><span class="sq-intro-meta-i" aria-hidden="true">⏱</span><span>{{ qs.intro_sub }}{% if qs.intro_sub_extra != blank %} <strong>{{ qs.intro_sub_extra }}</strong>{% endif %}</span></p>
+    <p class="sq-intro-meta sq-intro-meta--c"><span class="sq-intro-meta-i" aria-hidden="true">⏱</span><span>{{ qs.intro_sub }}{% if qs.intro_sub_extra != blank %} <strong>{{ qs.intro_sub_extra }}</strong>{% endif %}</span></p>
   {%- endif -%}
-  {%- comment -%} Testimonial card (old-quiz design). Content: theme editor → SOMNA quiz → "01 · Intro + Q1". Hidden while the quote is empty. {%- endcomment -%}
-  {%- if qs.intro_review_quote != blank -%}
-    <figure class="sq-review sq-review--intro">
-      {%- if qs.intro_review_image != blank -%}
-        {{ qs.intro_review_image | image_url: width: 160 | image_tag: width: 64, height: 64, loading: 'eager', alt: '', class: 'sq-review-img' }}
-      {%- elsif qs.intro_review_asset != blank -%}
-        <img class="sq-review-img" src="{{ qs.intro_review_asset | asset_img_url: '160x' }}" width="64" height="64" alt="" loading="eager">
-      {%- else -%}
-        {%- comment -%} Placeholder avatar until the real reviewer photo is added: their initials {%- endcomment -%}
-        {%- assign rv_words = qs.intro_review_name | strip | split: ' ' -%}
-        <span class="sq-review-img sq-review-ph" aria-hidden="true">{{ rv_words.first | slice: 0 }}{% if rv_words.size > 1 %}{{ rv_words.last | slice: 0 }}{% endif %}</span>
-      {%- endif -%}
-      <div class="sq-review-body">
-        <blockquote>“{{ qs.intro_review_quote }}”</blockquote>
-        <figcaption>{% if qs.intro_review_name != blank %}<strong>{{ qs.intro_review_name }}</strong> {% endif %}{% if qs.intro_review_verified %}<span class="sq-verified">✓ Verified buyer</span>{% endif %}</figcaption>
-      </div>
-    </figure>
-  {%- endif -%}
-  <h2 class="sq-q sq-q--sm" id="sq-{{ sid }}-q1">{{ qs.q1_heading | default: "First, who's this for?" }}</h2>
+  <h1 class="sq-q sq-q--start" id="sq-{{ sid }}-q2" tabindex="-1">What's <em>wrecking</em> your sleep?</h1>
+  <p class="sq-sub sq-sub--q">Pick the one that sounds most like your nights.</p>
+  <div class="sq-opts" role="group" aria-labelledby="sq-{{ sid }}-q2">
+    <button type="button" class="sq-opt" data-s="3" data-key="snoring"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'zzz' %}</span><span>Snoring (mine or my partner's)</span></button>
+    <button type="button" class="sq-opt" data-s="3" data-key="nose"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'nose' %}</span><span>Stuffy or blocked nose</span></button>
+    <button type="button" class="sq-opt" data-t="3" data-key="mouth"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'mouth' %}</span><span>Dry mouth or sore throat</span></button>
+    <button type="button" class="sq-opt" data-s="3" data-t="3" data-key="both"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'both' %}</span><span>A bit of everything</span></button>
+  </div>
+  <p class="sq-tap">Tap an answer to continue</p>
+</div>
+
+<div class="sq-s" data-type="q" data-q="1" data-step="2">
+  <h2 class="sq-q sq-q--start" id="sq-{{ sid }}-q1" tabindex="-1">Who's this <em>for?</em></h2>
+  <p class="sq-sub sq-sub--q">So we match the right fix.</p>
   <div class="sq-opts" role="group" aria-labelledby="sq-{{ sid }}-q1">
     <button type="button" class="sq-opt" data-tag="self" data-val="Me"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'person' %}</span><span>Me</span></button>
     <button type="button" class="sq-opt" data-s="2" data-tag="partner" data-val="My partner"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'partner' %}</span><span>My partner (their snoring keeps me up)</span></button>
     <button type="button" class="sq-opt" data-tag="both" data-val="Both of us"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'both' %}</span><span>Both of us</span></button>
   </div>
+  <p class="sq-tap">Tap an answer to continue</p>
 </div>
 
-{%- comment -%} 02 · Q2 (icon tiles; E always leads to the Sleep Bundle) {%- endcomment -%}
-<div class="sq-s" data-type="q" data-q="2" data-step="2">
-  <h2 class="sq-q" id="sq-{{ sid }}-q2" tabindex="-1">What's the <em>biggest</em> problem at night?</h2>
-  <div class="sq-tiles" role="group" aria-labelledby="sq-{{ sid }}-q2">
-    <button type="button" class="sq-opt sq-tile" data-s="3" data-key="snoring"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'zzz' %}</span><span>Snoring</span></button>
-    <button type="button" class="sq-opt sq-tile" data-s="3" data-key="nose"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'wind' %}</span><span>Blocked or stuffy nose</span></button>
-    <button type="button" class="sq-opt sq-tile" data-t="3" data-key="mouth"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'drop' %}</span><span>Dry mouth or sore throat</span></button>
-    <button type="button" class="sq-opt sq-tile" data-s="1" data-t="1" data-key="tired"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'battery-low' %}</span><span>Waking up tired after 7–8 hrs</span></button>
-    <button type="button" class="sq-opt sq-tile sq-tile--wide" data-s="3" data-t="3" data-key="both"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'combo' %}</span><span>Both: snoring or a blocked nose <strong>and</strong> a dry mouth</span></button>
-  </div>
-  {%- if qs.q2_note != blank -%}<div class="sq-note"><p class="sq-note-h">Did you know</p><p>{{ qs.q2_note }}</p></div>{%- endif -%}
-</div>
-
-{%- comment -%} 03 · Q3 {%- endcomment -%}
+{%- comment -%} 03 · Q3 (nose check) {%- endcomment -%}
 <div class="sq-s" data-type="q" data-q="3" data-step="3">
   <h2 class="sq-q" id="sq-{{ sid }}-q3" tabindex="-1" data-self="How's your nose when you &lt;em&gt;lie down&lt;/em&gt;?" data-partner="How's their nose when they &lt;em&gt;lie down&lt;/em&gt;?" data-html>How's your nose when you <em>lie down</em>?</h2>
+  <p class="sq-sub sq-sub--q">Lying down can make a narrow nose feel tighter. That's often when snoring starts.</p>
   <div class="sq-opts" role="group" aria-labelledby="sq-{{ sid }}-q3">
     <button type="button" class="sq-opt" data-s="3" data-key="blocked"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'wind' %}</span><span>Blocked most nights</span></button>
     <button type="button" class="sq-opt" data-s="1" data-key="stuffy"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'wind' %}</span><span>Stuffy only with a cold or allergies</span></button>
     <button type="button" class="sq-opt" data-key="clear"><span class="sq-ico">{% render 'somna-quiz-icon', name: 'wind' %}</span><span>Clear, no problems</span></button>
   </div>
-  {%- if qs.q3_note != blank -%}<div class="sq-note"><p class="sq-note-h">Why we ask</p><p>{{ qs.q3_note }}</p></div>{%- endif -%}
+  <p class="sq-tap">Tap an answer to continue</p>
 </div>
 
 {%- comment -%} 04 · Q4 (last scoring question) {%- endcomment -%}

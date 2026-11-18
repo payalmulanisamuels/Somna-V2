@@ -24,11 +24,6 @@
 
 <section class="sq{% if section.settings.design == 'v2' %} sq--v2{% elsif section.settings.design == 'light' %} sq--light{% endif %}{% if section.settings.result_extras %} sq--extras{% endif %}" id="sq-{{ sid }}" data-sq aria-label="Sleep quiz">
   <div class="sq-wrap">
-    <a class="sq-logo" href="{{ routes.root_url }}" aria-label="SOMNA home">
-      {%- if settings.logo != blank -%}
-        {{ settings.logo | image_url: width: 400 | image_tag: widths: '200, 300, 400', sizes: '160px', alt: '', class: 'sq-logo-img', loading: 'eager' }}
-      {%- else -%}som<span>na.</span>{%- endif -%}
-    </a>
 
     <div class="sq-top" data-sq-top>
       <div class="sq-prog" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="12" data-sq-prog>
@@ -184,10 +179,15 @@
           {%- endif -%}
 
           {%- comment -%} "Sound familiar? / The fix": the product page's problem section for this product {%- endcomment -%}
-          {%- if section.settings.show_problem -%}{% render 'somna-quiz-problem', product: rp, snore_direction: 'tilt' %}{%- endif -%}
+          {%- assign band_prev = '#afbdf8' -%}
+          {%- if section.settings.show_problem -%}
+            {%- render 'somna-quiz-wave', top: band_prev, bottom: '#0b0f1d', shape: 'drip-1' -%}{%- assign band_prev = '#0b0f1d' -%}
+            {% render 'somna-quiz-problem', product: rp, snore_direction: 'tilt' %}
+          {%- endif -%}
 
           {%- comment -%} Reviews: the product quote + the "Story review" blocks for this product {%- endcomment -%}
-          <section class="sq-res-sec sq-res-revs">
+          {%- render 'somna-quiz-wave', top: band_prev, bottom: '#f3feee', shape: 'drip-2' -%}{%- assign band_prev = '#f3feee' -%}
+          <section class="sq-res-sec sq-res-revs sq-band sq-band--mint">
             <h3 class="sq-res-h3">{{ section.settings.reviews_heading }}</h3>
             <div class="sq-rv-track{% if section.settings.result_extras %} sq-rv-track--photos{% endif %}" data-sq-rv tabindex="0" role="region" aria-label="Customer reviews">
               {%- if section.settings.result_extras -%}
@@ -222,7 +222,8 @@
 
           {%- comment -%} Main benefit {%- endcomment -%}
           {%- if rbs.benefit_heading != blank -%}
-            <section class="sq-res-sec sq-res-split">
+            {%- render 'somna-quiz-wave', top: band_prev, bottom: '#afbdf8', shape: 'drip-3' -%}{%- assign band_prev = '#afbdf8' -%}
+            <section class="sq-res-sec sq-res-split sq-band sq-band--lav">
               <div>
                 <h3 class="sq-res-h3 sq-res-h3--lg">{{ rbs.benefit_heading }}</h3>
                 {%- if rbs.benefit_text != blank -%}<p class="sq-res-p">{{ rbs.benefit_text }}</p>{%- endif -%}
@@ -295,7 +296,9 @@
 
           {%- comment -%} How to use {%- endcomment -%}
           {%- if rbs.howto_heading != blank -%}
-            <section class="sq-res-sec sq-res-split sq-res-split--rev">
+            {%- if band_prev == '#f3feee' -%}{%- assign band_bg = '#afbdf8' -%}{%- else -%}{%- assign band_bg = '#f3feee' -%}{%- endif -%}
+            {%- render 'somna-quiz-wave', top: band_prev, bottom: band_bg, shape: 'drip-5' -%}{%- assign band_prev = band_bg -%}
+            <section class="sq-res-sec sq-res-split sq-res-split--rev sq-band{% if band_bg == '#f3feee' %} sq-band--mint{% else %} sq-band--lav{% endif %}">
               <div>
                 <h3 class="sq-res-h3">{{ rbs.howto_heading }}</h3>
                 {%- if rbs.howto_text != blank -%}<p class="sq-res-p">{{ rbs.howto_text }}</p>{%- endif -%}
@@ -337,7 +340,9 @@
 
           {%- comment -%} Results + guarantee {%- endcomment -%}
           {%- if rbs.results_heading != blank -%}
-            <section class="sq-res-sec sq-res-split">
+            {%- if band_prev == '#f3feee' -%}{%- assign band_bg = '#afbdf8' -%}{%- else -%}{%- assign band_bg = '#f3feee' -%}{%- endif -%}
+            {%- render 'somna-quiz-wave', top: band_prev, bottom: band_bg, shape: 'drip-6' -%}{%- assign band_prev = band_bg -%}
+            <section class="sq-res-sec sq-res-split sq-band{% if band_bg == '#f3feee' %} sq-band--mint{% else %} sq-band--lav{% endif %}">
               <div>
                 <h3 class="sq-res-h3">{{ rbs.results_heading }}</h3>
                 {%- if rbs.results_text != blank -%}<p class="sq-res-p">{{ rbs.results_text }}</p>{%- endif -%}
@@ -386,18 +391,22 @@
           {%- endif -%}
 
           {%- comment -%} FAQ {%- endcomment -%}
-          <section class="sq-res-sec sq-res-faq">
-            <h3 class="sq-res-h3">{{ section.settings.faq_heading }}</h3>
+          {%- if band_prev == '#f3feee' -%}{%- assign band_bg = '#afbdf8' -%}{%- else -%}{%- assign band_bg = '#f3feee' -%}{%- endif -%}
+          {%- render 'somna-quiz-wave', top: band_prev, bottom: band_bg, shape: 'soft-1' -%}
+          <section class="sq-res-sec sq-res-faq sq-band{% if band_bg == '#f3feee' %} sq-band--mint{% else %} sq-band--lav{% endif %}">
+            <h3 class="sq-faq-h">{{ section.settings.faq_heading }}</h3>
+            <div class="sq-faq-list">
             {%- for n in (1..6) -%}
               {%- liquid
                 assign fq = 'faq_' | append: n | append: '_q'
                 assign fa = 'faq_' | append: n | append: '_a'
               -%}
               {%- if rbs[fq] != blank -%}
-                <details class="sq-acc"{% if forloop.first %} open{% endif %}><summary>{{ rbs[fq] }}</summary><p>{{ rbs[fa] }}</p></details>
+                <details class="sq-acc"><summary>{{ rbs[fq] }}</summary><p>{{ rbs[fa] }}</p></details>
               {%- endif -%}
             {%- endfor -%}
             <p class="sq-res-links">{% if section.settings.retake_label != blank %}<button type="button" class="sq-linkbtn" data-sq-retake>↻ {{ section.settings.retake_label }}</button> · {% endif %}<a href="{{ routes.all_products_collection_url }}">{{ section.settings.all_products_label }}</a></p>
+            </div>
           </section>
         </div>
         {%- endif -%}
@@ -406,7 +415,7 @@
       {%- comment -%} Sticky Add to Cart (shows once the main button scrolls out of view) {%- endcomment -%}
       <div class="sq-sticky" data-sq-sticky hidden>
         {%- if section.settings.show_atc or section.settings.buy_now_label == blank -%}
-        <button type="button" class="sq-cta" data-sq-sticky-atc><span aria-hidden="true">🛒</span> {{ section.settings.atc_label }} · <span data-sq-sticky-price></span></button>
+        <button type="button" class="sq-cta" data-sq-sticky-atc><span aria-hidden="true">🛒</span> {{ section.settings.atc_label }}<span data-sq-sticky-price hidden></span></button>
         {%- else -%}
         <button type="button" class="sq-cta" data-sq-buynow data-sq-sticky-buy>{{ section.settings.buy_now_label }} · <span data-sq-sticky-price></span></button>
         {%- endif -%}

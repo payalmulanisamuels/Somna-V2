@@ -1,0 +1,5 @@
+{%- comment -%}
+  SOMNA quiz result: full-width product page wave (snippets/somna-wave) between two coloured bands.
+  Params: top, bottom (colours), shape (Figma drip shape). Nothing when both colours match.
+{%- endcomment -%}
+{%- if top != bottom -%}<div class="sq-wave">{% render 'somna-wave', top: top, bottom: bottom, shape: shape %}</div>{%- endif -%}

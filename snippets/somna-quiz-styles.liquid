@@ -6,8 +6,8 @@
 {%- endcomment -%}
 <style>
 @font-face { font-family: 'Boldonse'; src: url('{{ 'boldonse-latin-400.woff2' | asset_url }}') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-/* quiz page only: hide theme header (incl. announcement bar) and footer; page background matches the quiz */
-.shopify-section-group-header-group, .shopify-section-group-footer-group { display: none !important; }
+/* quiz page: the site header shows (black bar, same logo as every page, 18 Nov 2026); the footer stays hidden */
+.shopify-section-group-footer-group { display: none !important; }
 body { background: #0d0d1c; }
 .sq {
 --sq-bg: #0d0d1c; --sq-card: #16162b; --sq-card2: #1d1d36; --sq-line: #2a2a45; --sq-track: #23233e;
@@ -341,8 +341,6 @@ padding: 10px 16px 40px; min-height: 100vh;
 .sq .sq-res-head { margin-bottom: 8px; }
 .sq .sq-res-pdp .somna-pdp-hero { padding-block: 8px 24px; background: transparent; }
 .sq .sq-res-pdp .somna-pdp-hero__inner { padding-inline: 0; }
-.sq .sq-res-pdp .sq-pdp-buynow { margin-top: 10px; background: transparent; color: var(--somna-mint, #f3feee); border: 2px solid var(--somna-mint, #f3feee); box-shadow: none; }
-.sq .sq-res-pdp .sq-pdp-buynow:hover { background: var(--somna-mint, #f3feee); color: #0b0f1d; }
 .sq .sq-res-pdp .sq-atc-err:not([hidden]) { margin-top: 8px; color: #FF9C8F; font-size: 14px; text-align: center; }
 .sq .sq-res-pdp .sq-pdp-extras { margin-top: 18px; color: #f3feee; }
 .sq .sq-res-pdp .sq-pdp-extras .sq-buy-note { color: #f3feee; text-align: center; font-size: 13px; }
@@ -528,6 +526,54 @@ body { background: #AFBDF8; }
 .sq--light .sq-cta { border-radius: 18px; background: #0B0F1D; color: #F3FEEE; box-shadow: 0 6px 18px rgba(11,15,29,.25); }
 .sq--light .sq-cta:hover { background: #232A45; color: #F3FEEE; }
 .sq--light .sq-cta:disabled { box-shadow: none; }
+
+/* ---------- 18 Nov 2026 feedback: site header + one logo, start screens, product page bands, waves and FAQ ---------- */
+.sq { overflow-x: clip; padding-top: 0; }
+.sq .sq-top { top: var(--header-height, 0px); padding-top: 10px; }
+/* start screens (suggested flow): info pill, heading, one-line sub, answers, "Tap an answer to continue" */
+.sq .sq-intro-meta--c { justify-content: center; text-align: center; margin-bottom: 18px; }
+.sq .sq-q.sq-q--start { margin-bottom: 6px; }
+.sq .sq-sub--q { font-size: 14px; margin-bottom: 16px; color: var(--sq-mut); }
+.sq .sq-tap { margin-top: 12px; font-size: 13px; text-align: center; color: var(--sq-mut); }
+/* result: no extra space above the match line and the product photo */
+.sq .sq-result { padding-top: 0; padding-bottom: 0; }
+.sq.sq--wide:has(.sq-res-pdp) { padding-bottom: 0; }
+.sq .sq-res-pdp .sq-res-why, .sq .sq-res-head .sq-res-why { margin-bottom: 0; }
+.sq .sq-res-head { margin-bottom: 0; }
+.sq .sq-res-head .sq-pill { margin-bottom: 8px; }
+.sq .sq-res-pdp .somna-pdp-hero { padding-block: 12px 32px; }
+/* Buy now: mint "sticker" button (navy outline, lavender offset shadow), so it reads apart from the lavender Add to cart */
+.sq .sq-res-pdp .sq-pdp-buynow { margin-top: 14px; background: #F3FEEE; color: #0B0F1D; border: 2px solid #0B0F1D; box-shadow: 4px 4px 0 #AFBDF8; transition: transform .12s, box-shadow .12s, background-color .12s; }
+.sq .sq-res-pdp .sq-pdp-buynow:hover { background: #FFFFFF; color: #0B0F1D; transform: translate(-1px, -1px); box-shadow: 5px 5px 0 #AFBDF8; }
+.sq .sq-res-pdp .sq-pdp-buynow:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #AFBDF8; }
+/* "Real Nights, On Camera" under the quote, as the product page */
+.sq .sq-res-pdp .sq-pdp-videos { margin-top: 20px; }
+/* product page colour bands (full width) with its waves between them */
+.sq .sq-wave { margin-inline: calc(50% - 50vw); }
+.sq .sq-problem, .sq .sq-problem + .sq-res-sec { margin-top: 0; }
+.sq .sq-res-sec.sq-band { position: relative; margin-top: 0; padding-block: 36px 44px; background: var(--band); box-shadow: 0 0 0 100vmax var(--band); clip-path: inset(0 -100vmax); }
+.sq .sq-band--mint { --band: #F3FEEE; --sq-card: #FFFFFF; --sq-bg: #F3FEEE; }
+.sq .sq-band--lav { --band: #AFBDF8; }
+/* FAQ like the product page: big Boldonse heading left, rows with lavender lines right */
+.sq .sq-res-sec.sq-res-faq { max-width: none; padding-bottom: 120px; }
+.sq .sq-faq-h { margin-bottom: 20px; font: 400 30px/1.4 'Boldonse', var(--sq-sans); color: #000; text-transform: none; letter-spacing: 0; }
+.sq .sq-faq-h em { display: block; font-style: normal; color: inherit; }
+.sq .sq-res-faq .sq-acc { border-bottom: 0; border-top: .8px solid #AFBDF8; }
+.sq .sq-res-faq .sq-acc:first-child { border-top: 0; }
+.sq .sq-res-faq .sq-acc summary, .sq .sq-res-faq .sq-acc summary:hover, .sq .sq-res-faq .sq-acc[open] summary { padding: 16px 0; font: 400 17px/1.5 var(--sq-sans); letter-spacing: .04em; color: #000; }
+.sq .sq-res-faq .sq-acc summary::after { content: ""; width: 14px; height: 14px; margin-top: 6px; background: linear-gradient(#000, #000) center / 14px 1.6px no-repeat, linear-gradient(#000, #000) center / 1.6px 14px no-repeat; transition: transform .2s; }
+.sq .sq-res-faq .sq-acc[open] summary::after { content: ""; transform: rotate(45deg); }
+.sq .sq-res-faq .sq-acc p { padding: 0 0 16px; font-size: 14px; line-height: 1.6; color: #000; }
+.sq .sq-res-faq .sq-res-links { text-align: left; color: #3D52D5; }
+.sq .sq-res-faq .sq-res-links a { color: #3D52D5; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+@media screen and (min-width: 750px) {
+  .sq .sq-res-sec.sq-band { padding-block: 56px 64px; }
+  .sq .sq-res-sec.sq-res-faq { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 56px; align-items: start; padding: 48px 4% 140px; }
+  .sq .sq-faq-h { font-size: 40px; margin: 0; }
+  .sq .sq-res-faq .sq-acc summary, .sq .sq-res-faq .sq-acc summary:hover, .sq .sq-res-faq .sq-acc[open] summary { font-size: 20px; }
+  .sq .sq-tap { font-size: 14px; }
+  .sq .sq-sub--q { font-size: 16px; }
+}
 /* Buy now next to Add to cart: outlined, so the two buttons read differently */
 .sq--light .sq-cta.sq-buynow { background: transparent; color: #0B0F1D; border: 2px solid #0B0F1D; box-shadow: none; }
 .sq--light .sq-cta.sq-buynow:hover { background: #0B0F1D; color: #F3FEEE; }

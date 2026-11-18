@@ -215,6 +215,42 @@ Skip, pause or cancel anytime{%- endcapture -%}
       {%- endif -%}
 
 
+      {%- comment -%} "Real Nights, On Camera": the product's own videos (custom.pdp_videos), as the product page hero (same cards and play script) {%- endcomment -%}
+      {%- assign product_videos = mf.pdp_videos.value -%}
+      {%- if product_videos.size > 0 -%}
+        {%- liquid
+          assign min_ar = 10
+          for vid in product_videos limit: 3
+            if vid.aspect_ratio and vid.aspect_ratio < min_ar
+              assign min_ar = vid.aspect_ratio
+            endif
+          endfor
+        -%}
+        <div class="somna-pdp-hero__videos sq-pdp-videos">
+          <h2 class="somna-pdp-hero__videos-title">Real Nights, On Camera</h2>
+          <ul class="somna-pdp-hero__video-list{% if min_ar < 10 %} somna-pdp-hero__video-list--equal{% endif %}" role="list"{% if min_ar < 10 %} style="--somna-video-ar: {{ min_ar }};"{% endif %}>
+            {%- for vid in product_videos limit: 3 -%}
+              {%- liquid
+                assign mp4 = vid.sources | where: 'mime_type', 'video/mp4' | sort: 'height'
+                assign src = mp4.first.url
+                for m in mp4
+                  if m.height <= 720
+                    assign src = m.url
+                  endif
+                endfor
+              -%}
+              <li class="somna-pdp-hero__video">
+                {%- if src != blank -%}
+                  <button type="button" class="somna-pdp-hero__play" data-video="{{ src }}" aria-label="Play video{% if vid.alt != blank %}: {{ vid.alt | escape }}{% endif %}">
+                    {%- if vid.preview_image -%}{{ vid.preview_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: '', width: 181, height: 299 }}{%- endif -%}
+                    <span class="somna-pdp-hero__play-icon">{% render 'somna-pdp-icon', name: 'play' %}</span>
+                  </button>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
       {{- left_extras -}}
     </div>
     </div>
@@ -387,7 +423,7 @@ Skip, pause or cancel anytime{%- endcapture -%}
         </fieldset>
 
         <button type="button" class="somna-buy__add somna-pdp-hero__add" data-add data-sq-atc{% unless current.available %} disabled{% endunless %}>
-          <span data-add-label>{% if current.available %}{{ s_add_label }} · {{ price | money }}{% else %}{{ 'Sold out' }}{% endif %}</span>
+          <span data-add-label>{% if current.available %}{{ s_add_label }}{% else %}{{ 'Sold out' }}{% endif %}</span>
         </button>
         {%- if buy_now_label != blank -%}<button type="button" class="somna-buy__add somna-pdp-hero__add sq-pdp-buynow" data-sq-buynow{% unless current.available %} disabled{% endunless %}>{{ buy_now_label }}</button>{%- endif -%}
         <p class="sq-atc-err" data-sq-atc-err role="alert" hidden></p>

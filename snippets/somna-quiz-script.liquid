@@ -60,7 +60,7 @@
   };
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 
-  // Q1 "My partner" switches you/your to they/their. "Me" and "Both of us" keep the self wording.
+  // "Who's this for?" = My partner switches you/your to they/their. "Me" and "Both of us" keep the self wording.
   function applyWording() {
     var partner = score().partner;
     $$('[data-self][data-partner]').forEach(function (e) {
@@ -69,7 +69,7 @@
     });
   }
 
-  function screenKey(sc) { var t = sc.getAttribute('data-type'); return t === 'q' ? 'q' + sc.dataset.q : (t === 'multi' ? 'multi' + sc.dataset.q : t); }
+  function screenKey(sc) { var t = sc.getAttribute('data-type'); return t === 'q' ? 'q' + (sc.dataset.step || sc.dataset.q) : (t === 'multi' ? 'multi' + sc.dataset.q : t); }
 
   function show(n, focus) {
     clearTimeout(timer); busy = false; i = n; run++;
