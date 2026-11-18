@@ -73,11 +73,15 @@
         this.reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
         this.tick();
         if (!this.hidden) this.timer = setInterval(() => this.tick(), 1000);
+        // the bar's height, for pages whose first section sits under a transparent header (homepage hero)
+        this.setHeight = () => document.body.style.setProperty('--somna-cd-height', (this.hidden ? 0 : this.offsetHeight) + 'px');
+        this.setHeight();
+        if ('ResizeObserver' in window) { this.ro = new ResizeObserver(this.setHeight); this.ro.observe(this); }
       }
-      disconnectedCallback() { clearInterval(this.timer); }
+      disconnectedCallback() { clearInterval(this.timer); if (this.ro) this.ro.disconnect(); document.body.style.removeProperty('--somna-cd-height'); }
       tick() {
         let left = Math.max(0, Math.floor((this.end - Date.now()) / 1000));
-        if (left <= 0) { this.hidden = true; clearInterval(this.timer); return; }
+        if (left <= 0) { this.hidden = true; clearInterval(this.timer); if (this.setHeight) this.setHeight(); return; }
         this.hidden = false;
         const parts = { d: Math.floor(left / 86400), h: Math.floor(left / 3600) % 24, m: Math.floor(left / 60) % 60, s: left % 60 };
         for (const k in parts) {
@@ -105,6 +109,15 @@
     border-bottom: 1px solid rgba(175, 189, 248, 0.18);
   }
   .somna-cd[hidden] { display: none; }
+  /* transparent header (homepage): the first section is pulled up under the whole header group, so its content must
+     also clear this bar, not only the header (Horizon only offsets by the header when a section follows it) */
+  #header-group:has(#header-component[transparent]):has(.somna-cd:not([hidden])) ~ .content-for-layout > .shopify-section:first-child .section:not(.disable-section-top-offset).spacing-style,
+  #header-group:has(#header-component[transparent]):has(.somna-cd:not([hidden])) ~ .content-for-layout > .shopify-section:first-child .section:not(.disable-section-top-offset) .spacing-style {
+    --section-top-offset: calc(var(--header-height, 0px) + var(--somna-cd-height, 0px));
+  }
+  #header-group:has(#header-component[transparent]):has(.somna-cd:not([hidden])) ~ .content-for-layout > .shopify-section:first-child .section:not(.disable-section-top-offset) .spacing-style .spacing-style {
+    --section-top-offset: 0px;
+  }
   .somna-cd__inner {
     display: flex;
     align-items: center;
