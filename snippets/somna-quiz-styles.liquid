@@ -10,7 +10,9 @@
 .shopify-section-group-footer-group { display: none !important; }
 /* quiz page only: logo-only header (no announcement bar, menu, search, cart or menu drawer button) */
 .shopify-section-group-header-group:not(.header-section) { display: none !important; }
-.header-section :is(header-menu, .header__drawer, search-button, header-actions, .header__column--center) { display: none !important; }
+.header-section :is(header-menu, .header__drawer, search-button, header-actions, .header__column--center, .header__column--right) { display: none !important; }
+.header-section .header__columns { display: flex !important; justify-content: center !important; }   /* logo in the centre */
+.header-section .header__column--left { flex: 0 1 auto !important; width: auto !important; justify-content: center !important; margin: 0 auto !important; }
 body { background: #0d0d1c; }
 .sq {
 --sq-bg: #0d0d1c; --sq-card: #16162b; --sq-card2: #1d1d36; --sq-line: #2a2a45; --sq-track: #23233e;
