@@ -102,7 +102,7 @@
         <div class="sq-res" data-res="{{ rk }}" hidden {% if rb %}{{ rb.shopify_attributes }}{% endif %}>
           {%- if section.settings.result_pdp -%}
             {%- comment -%} Product page layout (gallery + buy panel of sections/somna-pdp-hero) with the quiz's match line on top {%- endcomment -%}
-            {%- comment -%} match line: top of the left column (above the photos), so the buy panel starts right under the header {%- endcomment -%}
+            {%- comment -%} match line: full width above the photos and the buy panel {%- endcomment -%}
             {%- capture pdp_head -%}
             <div class="sq-res-head">
               <p class="sq-pill">✓ {{ section.settings.match_pill }}</p>
@@ -119,19 +119,14 @@
             {%- endcapture -%}
             {%- capture pdp_extras -%}
               <div class="sq-pdp-extras">
-                {%- if section.settings.atc_note != blank -%}<p class="sq-buy-note">↻ {{ section.settings.atc_note }}</p>{%- endif -%}
+                {%- comment -%} (18 Nov 2026) the note line and How It Works box are gone here; How It Works text now leads the how-to section {%- endcomment -%}
                 {%- if section.settings.view_product_label != blank -%}<p class="sq-buy-view"><a href="{{ rp.url }}">{{ section.settings.view_product_label }} <span class="sq-buy-view-arr" aria-hidden="true">→</span></a></p>{%- endif -%}
-                {%- if rbs.how_it_works != blank -%}
-                  <details class="sq-acc sq-acc--box" open>
-                    <summary>{{ section.settings.how_it_works_heading }}</summary>
-                    <p>{{ rbs.how_it_works }}</p>
-                  </details>
-                {%- endif -%}
               </div>
             {%- endcapture -%}
             <div class="sq-res-pdp" data-sq-pdp>
+              {{- pdp_head -}}
               {%- capture pdp_sid -%}sq-{{ sid }}-{{ rk }}{%- endcapture -%}
-              {% render 'somna-quiz-pdp', product: rp, sid: pdp_sid, buy_now_label: section.settings.buy_now_label, extras: pdp_extras, left_extras: pdp_left, left_top: pdp_head %}
+              {% render 'somna-quiz-pdp', product: rp, sid: pdp_sid, buy_now_label: section.settings.buy_now_label, extras: pdp_extras, left_extras: pdp_left %}
             </div>
           {%- else -%}
           {%- comment -%} Match + product {%- endcomment -%}
@@ -316,7 +311,14 @@
             <section class="sq-res-sec sq-res-split sq-res-split--rev sq-band{% if band_bg == '#f3feee' %} sq-band--mint{% else %} sq-band--lav{% endif %}">
               <div>
                 <h3 class="sq-res-h3">{{ rbs.howto_heading }}</h3>
-                {%- if rbs.howto_text != blank -%}<p class="sq-res-p">{{ rbs.howto_text }}</p>{%- endif -%}
+                {%- liquid
+                  # product page layout: the result's How It Works text (no longer under the buy box) is this section's text
+                  assign howto_p = rbs.howto_text
+                  if section.settings.result_pdp and rbs.how_it_works != blank
+                    assign howto_p = rbs.how_it_works
+                  endif
+                -%}
+                {%- if howto_p != blank -%}<p class="sq-res-p">{{ howto_p }}</p>{%- endif -%}
               </div>
               {%- liquid
                 assign steps = blank

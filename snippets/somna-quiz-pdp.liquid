@@ -6,7 +6,7 @@
   Quiz additions: Buy now under Add to cart, the quiz's notes / How It Works / product link after the perks.
   Add to cart and Buy now run the quiz's own cart code (instant drawer preview), with the variant and plan picked here.
   Settings below are the product page template's hero settings (keep in step with templates/product.json "hero").
-  Params: product, sid (unique id for the radio names), buy_now_label, extras (HTML after the perks), left_extras (HTML under the quote), left_top (HTML above the photos)
+  Params: product, sid (unique id for the radio names), buy_now_label, extras (HTML after the perks), left_extras (HTML under the quote)
 {%- endcomment -%}
 {%- liquid
   assign s_brand = 'somna.'
@@ -142,7 +142,6 @@ Skip, pause or cancel anytime{%- endcapture -%}
   </script>
   <div class="somna-pdp-hero__inner somna-container">
     <div class="somna-pdp-hero__gallery-wrap">
-    {{- left_top -}}
     <div class="somna-pdp-hero__gallery">
       {%- if images.size > 1 -%}
         <ul class="somna-pdp-hero__thumbs" role="list">
@@ -431,7 +430,8 @@ Skip, pause or cancel anytime{%- endcapture -%}
         <p class="somna-buy__status" role="status" data-status></p>
       {%- endform -%}
 
-      <ul class="somna-pdp-hero__perks" role="list">
+      <ul class="somna-pdp-hero__perks sq-pdp-perks" role="list">
+        <li>{% render 'somna-pdp-icon', name: 'guarantee' %}<span>30-Night Money-Back Guarantee</span></li>
         <li>{% render 'somna-pdp-icon', name: 'shipping' %}<span>$4.95 shipping</span></li>
         <li>{% render 'somna-pdp-icon', name: 'delivery' %}<span>Arrives in 7–9 business days</span></li>
         <li>{% render 'somna-pdp-icon', name: 'cancel-anytime' %}<span>Cancel anytime</span></li>
