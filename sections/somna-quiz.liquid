@@ -36,7 +36,19 @@
     </div>
     <p class="sq-sr" aria-live="polite" data-sq-live></p>
 
-    {% render 'somna-quiz-screens', qs: section.settings, sid: sid, blocks: section.blocks %}
+    {%- liquid
+      case section.settings.intro_review_product
+        when 'tape'
+          assign intro_p = p_tape
+        when 'bundle'
+          assign intro_p = p_bundle
+        when 'none'
+          assign intro_p = nil
+        else
+          assign intro_p = p_strips
+      endcase
+    -%}
+    {% render 'somna-quiz-screens', qs: section.settings, sid: sid, blocks: section.blocks, intro_product: intro_p %}
 
     {%- comment -%} 8 · Matching (2 seconds, ticks off their own answers, then straight to the result) {%- endcomment -%}
     <div class="sq-s sq-center" data-type="analyze">
@@ -641,6 +653,14 @@
       "max": 5,
       "step": 1,
       "default": 5
+    },
+    {
+      "type": "select",
+      "id": "intro_review_product",
+      "label": "Product rating shown next to the stars",
+      "info": "Average rating and review count from Judge.me, e.g. 4.7/5 (183)",
+      "options": [{ "value": "strips", "label": "Nasal Strips" }, { "value": "tape", "label": "Mouth Tape" }, { "value": "bundle", "label": "Sleep Bundle" }, { "value": "none", "label": "Don't show" }],
+      "default": "strips"
     },
     {
       "type": "image_picker",
