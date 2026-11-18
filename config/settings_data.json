@@ -222,7 +222,7 @@
           "teaser_label": "Unwrap 10% off",
           "klaviyo_company_id": "Tr7JSM",
           "klaviyo_list_id": "XyWydk",
-          "excluded_paths": "/pages/nasal-strips\n/pages/mouth-tape\n/policies"
+          "excluded_paths": "/pages/nasal-strips\n/pages/mouth-tape\n/policies\n/products/"
         }
       }
     },

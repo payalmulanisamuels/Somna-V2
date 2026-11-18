@@ -1,0 +1,67 @@
+{%- doc -%}
+  Somna V2 — "moon countdown" line: seven moons from full to new, then "14 nights left · ends Wed 2 Dec, 11:59 PM PT".
+  The end time and date come from the sale countdown bar (sections/somna-countdown.liquid, header group), so the date
+  is set in one place. Hidden when there is no countdown bar or the sale has ended.
+  @param {string} [text] - "[nights] nights left · ends [date]" ([nights] / [date] are filled in)
+  @param {string} [date] - 'long' (desktop date "Wed 2 Dec, 11:59 PM PT", default) or 'short' ("Wed 2 Dec")
+  @param {string} [class] - extra class on the wrapper
+{%- enddoc -%}
+{%- liquid
+  assign t = text | default: '[nights] nights left · ends [date]'
+  assign d = date | default: 'long'
+-%}
+<somna-moon-line class="somna-moonline {{ class }}" data-text="{{ t | escape }}" data-date="{{ d }}" hidden>
+  <span class="somna-moonline__moons" aria-hidden="true">
+    {%- comment -%} full → new, as in the mockup {%- endcomment -%}
+    <svg viewBox="0 0 136 16" focusable="false">
+      <defs><clipPath id="smm-c"><circle cx="8" cy="8" r="7"/></clipPath></defs>
+      {%- for i in (0..6) -%}
+        {%- assign x = i | times: 20 -%}
+        <g transform="translate({{ x }} 0)">
+          <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+          {%- case i -%}
+            {%- when 0 -%}<circle cx="8" cy="8" r="7" fill="currentColor"/>
+            {%- when 1 -%}<path d="M8 1a7 7 0 1 1 0 14 4.6 7 0 0 1 0-14z" fill="currentColor"/>
+            {%- when 2 -%}<path d="M8 1a7 7 0 0 1 0 14z" fill="currentColor"/>
+            {%- when 3 -%}<path d="M8 1a7 7 0 0 1 0 14 3 7 0 0 0 0-14z" fill="currentColor"/>
+            {%- when 4 -%}<path d="M8 1a7 7 0 0 1 0 14 5.4 7 0 0 0 0-14z" fill="currentColor"/>
+          {%- endcase -%}
+        </g>
+      {%- endfor -%}
+    </svg>
+  </span>
+  <span class="somna-moonline__text" data-moon-text></span>
+</somna-moon-line>
+
+{%- unless somna_moon_line_loaded -%}
+  {%- assign somna_moon_line_loaded = true -%}
+  <script>
+    if (!customElements.get('somna-moon-line')) {
+      customElements.define('somna-moon-line', class extends HTMLElement {
+        connectedCallback() {
+          const cd = document.querySelector('somna-countdown[data-end]');
+          const end = cd ? Date.parse(cd.dataset.end) : NaN;
+          if (!end || end <= Date.now()) return;
+          const long = cd.querySelector('.somna-cd__date')?.textContent.trim() || '';
+          const short = cd.querySelector('.somna-cd__label-mob span')?.textContent.trim() || long.split(',')[0];
+          const date = this.dataset.date === 'short' ? short : long;
+          const nights = Math.max(1, Math.ceil((end - Date.now()) / 86400000));
+          let t = this.dataset.text.replace('[nights]', nights).replace('[date]', date);
+          if (nights === 1) t = t.replace('nights left', 'night left');
+          this.querySelector('[data-moon-text]').textContent = t;
+          this.hidden = false;
+        }
+      });
+    }
+  </script>
+  <style>
+    .somna-moonline { display: inline-flex; align-items: center; gap: 12px; color: #f3feee; font-size: 15px; font-weight: 600; line-height: 1.3; }
+    .somna-moonline[hidden] { display: none; }
+    .somna-moonline__moons { flex: none; color: #f3feee; }
+    .somna-moonline__moons svg { display: block; width: 136px; height: 16px; }
+    @media screen and (max-width: 749px) {
+      .somna-moonline { gap: 10px; font-size: 14px; }
+      .somna-moonline__moons svg { width: 116px; height: 14px; }
+    }
+  </style>
+{%- endunless -%}
