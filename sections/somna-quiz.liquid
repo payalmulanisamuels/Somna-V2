@@ -310,9 +310,9 @@
             {%- render 'somna-quiz-wave', top: band_prev, bottom: band_bg, shape: 'drip-5' -%}{%- assign band_prev = band_bg -%}
             <section class="sq-res-sec sq-res-split sq-res-split--rev sq-band{% if band_bg == '#f3feee' %} sq-band--mint{% else %} sq-band--lav{% endif %}">
               <div>
-                <h3 class="sq-res-h3">{{ rbs.howto_heading }}</h3>
+                {%- comment -%} product page layout: heading "How It Works" + the result's How It Works text (no longer under the buy box) {%- endcomment -%}
+                <h3 class="sq-res-h3">{% if section.settings.result_pdp and rbs.how_it_works != blank %}{{ section.settings.how_it_works_heading | default: 'How It Works' }}{% else %}{{ rbs.howto_heading }}{% endif %}</h3>
                 {%- liquid
-                  # product page layout: the result's How It Works text (no longer under the buy box) is this section's text
                   assign howto_p = rbs.howto_text
                   if section.settings.result_pdp and rbs.how_it_works != blank
                     assign howto_p = rbs.how_it_works
