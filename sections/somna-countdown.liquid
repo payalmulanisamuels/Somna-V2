@@ -13,6 +13,7 @@
   class="somna-cd"
   id="{{ cd_id }}"
   data-end="{{ s.end_at | escape }}"
+  data-moon-cycle="{{ s.moon_cycle | default: 10 }}"
   hidden
   style="--cd-bg: {{ s.bg_color }}; --cd-text: {{ s.text_color }}; --cd-accent: {{ s.accent_color }}; --cd-tile: {{ s.tile_color }}; --cd-muted: {{ s.muted_color }};"
   role="timer"
@@ -20,8 +21,8 @@
 >
   <div class="somna-cd__inner">
     <span class="somna-cd__moons" aria-hidden="true">
-      {%- comment -%} five realistic moons (shaded sphere + craters) that wax from new to full over each minute, one every
-        12 seconds (approved option E2); drawn by the script below {%- endcomment -%}
+      {%- comment -%} five realistic moons (shaded sphere + craters) that wax from new to full in turn, all five every
+        10 seconds by default (setting; approved option E2); drawn by the script below {%- endcomment -%}
       <svg viewBox="0 -2 92 20" focusable="false" data-moons></svg>
     </span>
     <p class="somna-cd__label">
@@ -113,8 +114,9 @@
       drawMoons() {
         if (!this.phs || !this.moonsBox || this.moonsBox.offsetParent === null) return;   // hidden (phones): skip
         const leftF = Math.max(0, (this.end - Date.now()) / 1000);
-        let prog = 1 - (leftF % 60) / 60;                     // 0 → 1 over the current minute
-        if (this.reduce) prog = Math.ceil(prog * 60) / 60;
+        const cyc = Math.max(5, parseInt(this.dataset.moonCycle, 10) || 10);   // seconds for all five moons to fill
+        let prog = 1 - (leftF % cyc) / cyc;                   // 0 → 1 over the current cycle
+        if (this.reduce) prog = Math.ceil(prog * cyc) / cyc;
         this.phs.forEach((ph, i) => ph.setAttribute('d', this.phase(this.X[i], Math.min(1, Math.max(0, prog * 5 - i)))));
         const full = Math.floor(prog * 5 + 1e-6);
         if (this.lastFull !== undefined && full > this.lastFull && !this.reduce) {
@@ -300,6 +302,7 @@
       "default": "2026-12-02T23:59:00-08:00"
     },
     { "type": "text", "id": "label", "label": "Label (desktop)", "default": "Black Friday sale ends in" },
+    { "type": "range", "id": "moon_cycle", "label": "Moons: seconds to fill all five", "min": 5, "max": 60, "step": 5, "unit": "s", "default": 10 },
     { "type": "text", "id": "date_text", "label": "End date shown (desktop)", "default": "Wed 2 Dec, 11:59 PM PT" },
     { "type": "text", "id": "label_mobile", "label": "Label (phones)", "default": "Sale ends" },
     { "type": "text", "id": "date_mobile", "label": "End date shown (phones)", "default": "Wed 2 Dec" },
