@@ -119,7 +119,7 @@
         "gift_min_bags": 2,
         "nights_per_bag": 30,
         "night_label": "/night",
-        "default_mode": "sub",
+        "default_mode": "once",
         "sub_label": "Subscribe & Save",
         "sub_points": "[price] [interval]\n3 free gifts on 2+ packs\nSkip, pause or cancel anytime",
         "once_label": "One-time purchase",
