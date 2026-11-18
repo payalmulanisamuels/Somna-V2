@@ -426,6 +426,7 @@ padding: 10px 16px 40px; min-height: 100vh;
 /* result page on wide screens: match + image (left) and buy box (right), then two-column sections */
 @media screen and (min-width: 1000px) {
 .sq.sq--wide .sq-wrap { max-width: 1100px; }
+.sq.sq--wide:has(.sq-res-pdp) .sq-wrap { max-width: 1360px; }   /* product page layout: the product page width, so its packs sit 3 in a row */
 .sq .sq-res-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 48px; align-items: start; }
 .sq .sq-res-top .sq-buy { margin-top: 0; position: sticky; top: 16px; }
 .sq .sq-res-sec { margin-top: 64px; }
