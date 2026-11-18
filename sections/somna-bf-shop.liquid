@@ -1,0 +1,209 @@
+{%- comment -%}
+  Somna V2 — "Shop the Black Friday sale" card row for the homepage (mockup "SOMNA_BF_Homepage" 9, in place of
+  "Still thinking about it?"). One small card per product: photo, real rating + count, name, "From" price with the
+  regular price struck through, offer note and an Add to cart button (adds the first available size straight to the
+  cart and opens the cart drawer; without JavaScript it opens the product page). Desktop: one row. Phones: swipe.
+{%- endcomment -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  capture once_off
+    render 'somna-sale', get: 'once_off'
+  endcapture
+  assign once_off = once_off | strip | plus: 0
+  assign once_factor = 100 | minus: once_off
+-%}
+<somna-bf-shop class="somna-bfs" style="--bfs-bg: {{ s.background_color }}; --bfs-pt: {{ s.padding_top }}px; --bfs-pb: {{ s.padding_bottom }}px;"
+  data-adding="{{ s.adding_label | escape }}" data-added="{{ s.added_label | escape }}" data-error="{{ s.error_label | escape }}">
+  <div class="somna-container">
+    {%- if s.eyebrow != blank -%}<p class="somna-bfs__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
+    {%- if s.heading != blank -%}<h2 class="somna-bfs__heading">{{ s.heading }}</h2>{%- endif -%}
+    <ul class="somna-bfs__list" role="list">
+      {%- for p in s.products -%}
+        {%- liquid
+          assign v = p.selected_or_first_available_variant
+          assign sub = nil
+          assign sub_plan = ''
+          for a in v.selling_plan_allocations
+            if sub == nil or a.price < sub
+              assign sub = a.price
+              assign sub_plan = a.selling_plan.id
+            endif
+          endfor
+          assign use_sub = false
+          if s.add_plan == 'sub' and sub
+            assign use_sub = true
+          endif
+          if use_sub
+            assign show = sub
+          else
+            assign show = v.price | times: once_factor | divided_by: 100
+          endif
+          assign regular = v.compare_at_price | default: 0
+          if v.price > regular
+            assign regular = v.price
+          endif
+          capture rv
+            render 'somna-review-summary', product: p
+          endcapture
+          assign rv = rv | strip
+          assign img = p.metafields.custom.pdp_gallery.value | first | default: p.featured_image
+        -%}
+        <li class="somna-bfs__card">
+          <a class="somna-bfs__photo" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
+            {%- if img -%}{{ img | image_url: width: 400, height: 400, crop: 'center' | image_tag: loading: 'lazy', alt: '', width: 200, height: 200, widths: '200, 300, 400', sizes: '(min-width: 750px) 160px, 40vw' }}{%- endif -%}
+          </a>
+          <div class="somna-bfs__body">
+            {%- if rv != blank -%}
+              <p class="somna-bfs__rating"><span aria-hidden="true">★★★★★</span> {{ rv | split: '|' | first }}/5 <span class="somna-bfs__count">({{ rv | split: '|' | last }})</span></p>
+            {%- endif -%}
+            <h3 class="somna-bfs__name"><a href="{{ p.url }}">{{ p.title }}</a></h3>
+            <p class="somna-bfs__price">{{ s.price_prefix }} {{ show | money }} {% if regular > show %}<s>{{ regular | money }}</s>{% endif %}</p>
+            {%- if use_sub and s.sub_note != blank -%}<p class="somna-bfs__note">{{ s.sub_note }}</p>{%- elsif s.once_note != blank -%}<p class="somna-bfs__note">{{ s.once_note }}</p>{%- endif -%}
+            <a class="somna-bfs__btn" role="button" href="{{ p.url }}?variant={{ v.id }}{% if use_sub %}&plan=sub{% else %}&plan=once{% endif %}" data-variant="{{ v.id }}"{% if use_sub %} data-plan-id="{{ sub_plan }}"{% endif %}{% unless v.available %} aria-disabled="true"{% endunless %}>{% if v.available %}{{ s.button_label }}{% else %}{{ s.sold_out_label }}{% endif %}</a>
+            <p class="somna-bfs__err" role="alert" hidden></p>
+          </div>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</somna-bf-shop>
+
+<script>
+  if (!customElements.get('somna-bf-shop')) {
+    customElements.define('somna-bf-shop', class extends HTMLElement {
+      connectedCallback() {
+        this.addEventListener('click', (e) => {
+          const btn = e.target.closest('.somna-bfs__btn');
+          if (!btn || btn.getAttribute('aria-disabled') === 'true') return;
+          e.preventDefault();
+          this.add(btn);
+        });
+        window.addEventListener('pageshow', (e) => {
+          if (e.persisted) this.querySelectorAll('.somna-bfs__btn[aria-busy]').forEach((b) => { if (b.dataset.label) b.innerHTML = b.dataset.label; b.removeAttribute('aria-busy'); });
+        });
+      }
+      // same flow as the quiz and sale cards: /cart/add.js, refill + open the cart drawer, theme cart event for the cart icon
+      add(btn) {
+        if (btn.getAttribute('aria-busy') === 'true') return;
+        const root = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
+        const err = btn.parentElement.querySelector('.somna-bfs__err');
+        const id = Number(btn.dataset.variant);
+        const body = { id, quantity: 1 };
+        if (btn.dataset.planId) body.selling_plan = Number(btn.dataset.planId);
+        const ids = [...document.querySelectorAll('cart-items-component')].map((c) => c.dataset.sectionId).filter(Boolean);
+        if (ids.length) body.sections = ids.join(',');
+        const drawer = document.querySelector('cart-drawer-component');
+        const td = drawer && drawer.closest('theme-drawer');
+        const wasEmpty = !!(drawer && drawer.querySelector('[data-cart-drawer-empty], .cart-drawer--empty'));
+        btn.dataset.label = btn.dataset.label || btn.innerHTML;
+        btn.setAttribute('aria-busy', 'true');
+        btn.textContent = this.dataset.adding;
+        if (err) err.hidden = true;
+        let deferred = null, Ev = null;
+        const addReq = fetch(root + 'cart/add.js', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body)
+        }).then((r) => r.json());
+        const renderer = import('@theme/section-renderer').catch(() => null);
+        import('@shopify/events').catch(() => null).then((m) => {
+          Ev = m && m.CartLinesUpdateEvent;
+          deferred = Ev ? Ev.createPromise() : null;
+          if (deferred) btn.dispatchEvent(new Ev({ action: 'add', context: 'product', lines: [{ merchandiseId: String(id), quantity: 1 }], promise: deferred.promise }));
+          return addReq;
+        }).then((added) => {
+          if (added.status) throw new Error(added.description || added.message || this.dataset.error);
+          const html = added.sections && ids[0] && added.sections[ids[0]];
+          const shown = renderer.then((rs) => {
+            if (rs && rs.morphSection && html) return rs.morphSection(ids[0], html, { mode: 'hydration', injectStylesheet: wasEmpty });
+          }).catch(() => {}).then(() => {
+            if (td && typeof td.open === 'function') { if (!td.isOpen) td.open(); } else window.location.href = root + 'cart';
+          });
+          btn.textContent = this.dataset.added;
+          setTimeout(() => { btn.innerHTML = btn.dataset.label; btn.removeAttribute('aria-busy'); }, 1800);
+          return shown.then(() => fetch(root + 'cart.js')).then((r) => r.json()).then((cart) => {
+            if (deferred) deferred.resolve({ cart: Ev.createCartFromAjaxResponse(cart), detail: { items: cart.items, source: 'somna-bf-shop', itemCount: 1, productId: String(added.product_id || ''), sections: added.sections, didError: false } });
+          });
+        }).catch((e) => {
+          if (deferred) deferred.reject(e);
+          btn.innerHTML = btn.dataset.label; btn.removeAttribute('aria-busy');
+          if (err) { err.textContent = (e && e.message) || this.dataset.error; err.hidden = false; }
+        });
+      }
+    });
+  }
+</script>
+
+{% stylesheet %}
+  .somna-bfs { background: var(--bfs-bg); color: #f3feee; padding-block: var(--bfs-pt) var(--bfs-pb); }
+  .somna-bfs .somna-container { --somna-content-width: 1640px; }
+  .somna-bfs__eyebrow { margin: 0; color: #c3c9e8; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+  .somna-bfs__heading { margin: 6px 0 28px; color: #f3feee; font-family: var(--font-accent--family); font-size: clamp(2rem, 3.6vw, 3.5rem); font-weight: 400; line-height: 1.2; text-transform: uppercase; }
+  .somna-bfs__list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px; margin: 0; padding: 0; list-style: none; }
+  .somna-bfs__card { display: flex; gap: 14px; padding: 14px; border-radius: 16px; background: #f3feee; color: #0b0f1d; }
+  .somna-bfs__photo { flex: none; width: 43%; aspect-ratio: 1; overflow: hidden; border-radius: 10px; background: #0b0f1d; }
+  .somna-bfs__photo img { width: 100%; height: 100%; object-fit: cover; }
+  .somna-bfs__body { display: flex; flex: 1; min-width: 0; flex-direction: column; }
+  .somna-bfs__body p { margin: 0; }
+  .somna-bfs__rating { color: #6b6b6b; font-size: 0.9375rem; line-height: 1.35; }
+  .somna-bfs__rating > span:first-child { color: #f5c84c; letter-spacing: 0.04em; }
+  .somna-bfs__name { margin: 4px 0 2px; font-size: 1.375rem; font-weight: 700; line-height: 1.2; }
+  .somna-bfs__name a { color: inherit; text-decoration: none; }
+  .somna-bfs__price { font-size: 1.0625rem; line-height: 1.35; }
+  .somna-bfs__price s { display: block; color: #8a8a8a; }
+  .somna-bfs__note { margin-top: 6px !important; color: #3b438a; font-size: 0.9375rem; font-weight: 700; line-height: 1.3; }
+  .somna-bfs__btn {
+    align-self: flex-end; margin-top: auto; padding: 11px 20px; border-radius: 10px; background: #0b0f1d; color: #f3feee;
+    font-size: 0.9375rem; font-weight: 800; letter-spacing: 0.03em; text-decoration: none; text-transform: uppercase; white-space: nowrap;
+  }
+  .somna-bfs__body .somna-bfs__btn { margin-top: 14px; }
+  .somna-bfs__btn[aria-busy='true'] { opacity: 0.8; pointer-events: none; }
+  .somna-bfs__btn[aria-disabled='true'] { opacity: 0.5; cursor: not-allowed; }
+  .somna-bfs__err { margin-top: 6px !important; color: #b3261e; font-size: 0.8125rem; font-weight: 600; }
+  @media screen and (max-width: 1399px) {
+    .somna-bfs__card { flex-direction: column; }
+    .somna-bfs__photo { width: 100%; }
+    .somna-bfs__btn { align-self: stretch; text-align: center; }
+  }
+  @media screen and (max-width: 989px) {
+    .somna-bfs__list { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-inline: -16px; padding-inline: 16px; }
+    .somna-bfs__list::-webkit-scrollbar { display: none; }
+    .somna-bfs__card { flex: 0 0 min(480px, 80%); flex-direction: row; scroll-snap-align: start; }
+    .somna-bfs__photo { width: 42%; }
+    .somna-bfs__btn { align-self: stretch; }
+  }
+  @media screen and (max-width: 749px) {
+    .somna-bfs { padding-block: calc(var(--bfs-pt) * 0.7) calc(var(--bfs-pb) * 0.7); }
+    .somna-bfs__eyebrow { display: none; }
+    .somna-bfs__heading { margin: 0 0 18px; font-size: 1.875rem; }
+    .somna-bfs__card { flex: 0 0 80%; gap: 12px; padding: 14px; }
+    .somna-bfs__name { font-size: 1.25rem; }
+    .somna-bfs__rating, .somna-bfs__price, .somna-bfs__note { font-size: 0.875rem; }
+    .somna-bfs__price s { display: inline; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna Black Friday shop row",
+  "tag": "section",
+  "class": "section-somna-bf-shop",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Black Friday · 60% off" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop the Black Friday sale" },
+    { "type": "product_list", "id": "products", "label": "Products", "limit": 8 },
+    { "type": "select", "id": "add_plan", "label": "Button adds", "options": [{ "value": "sub", "label": "Subscribe & Save" }, { "value": "once", "label": "One-time" }], "default": "sub", "info": "The card's price and note follow this." },
+    { "type": "text", "id": "price_prefix", "label": "Price prefix", "default": "From" },
+    { "type": "text", "id": "sub_note", "label": "Note (Subscribe & Save)", "default": "60% off · Subscribe & Save" },
+    { "type": "text", "id": "once_note", "label": "Note (one-time)", "default": "50% off · One-time" },
+    { "type": "text", "id": "button_label", "label": "Button", "default": "Add to cart" },
+    { "type": "text", "id": "sold_out_label", "label": "Sold out", "default": "Sold out" },
+    { "type": "text", "id": "adding_label", "label": "Button while adding", "default": "Adding…" },
+    { "type": "text", "id": "added_label", "label": "Button when added", "default": "Added ✓" },
+    { "type": "text", "id": "error_label", "label": "Add to cart error", "default": "Could not add to cart. Please try again." },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#0b0f1d" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 }
+  ],
+  "presets": [{ "name": "Somna Black Friday shop row" }]
+}
+{% endschema %}

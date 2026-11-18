@@ -962,7 +962,8 @@
         "reflection_opacity": 75,
         "padding-block-start": 56,
         "padding-block-end": 72
-      }
+      },
+      "disabled": true
     },
     "recently_viewed": {
       "type": "somna-recently-viewed",
@@ -983,7 +984,8 @@
         "padding_top": 36,
         "padding_bottom": 48,
         "layout": "compact"
-      }
+      },
+      "disabled": true
     },
     "wave_navy_mint": {
       "type": "somna-wave",
@@ -4305,11 +4307,67 @@
         "height": 140,
         "height_mobile": 48
       }
+    },
+    "bf_hero": {
+      "type": "somna-bf-hero",
+      "settings": {
+        "image": "shopify://shop_images/somna-v2-hero-pouches.png",
+        "image_mobile": "shopify://shop_images/somna-v2-hero-mobile.jpg",
+        "ticket": "Black Friday",
+        "ticket_sub": "Discount applied ✓",
+        "heading": "60% off.",
+        "subheading": "With Subscribe & Save",
+        "tagline": "Small change, softer nights. Strips for your nose and tape for your lips.",
+        "price_product": "nasal-strips",
+        "price_line": "From [price] a bag · One-time 50% off · $4.95 flat shipping in the US",
+        "price_line_mobile": "From [price] a bag · One-time 50% off\n$4.95 flat shipping in the US · 3 free gifts on 2+ packs",
+        "benefits": "Drug-free\n30-Night guarantee\n3 free gifts on 2+ packs",
+        "button_label": "Shop the sale",
+        "button_link": "shopify://pages/black-friday-sale",
+        "moon_text": "[nights] nights left · ends [date]",
+        "review_products": [
+          "nasal-strips",
+          "sleep-bundle",
+          "mouth-tape",
+          "the-colour-set",
+          "season-bundle"
+        ],
+        "reviews_line": "[stars] [rating] · [count] reviews",
+        "quote": "“Easy to put on and it stays on all night.” Sarah M. ✓ Verified buyer",
+        "guarantee_mobile": "30-Night Money-Back Guarantee",
+        "background_color": "#0b0f1d",
+        "padding_top": 72,
+        "padding_bottom": 96
+      }
+    },
+    "bf_shop": {
+      "type": "somna-bf-shop",
+      "settings": {
+        "eyebrow": "Black Friday · 60% off",
+        "heading": "Shop the Black Friday sale",
+        "products": [
+          "nasal-strips",
+          "sleep-bundle",
+          "mouth-tape",
+          "the-colour-set",
+          "season-bundle"
+        ],
+        "add_plan": "sub",
+        "price_prefix": "From",
+        "sub_note": "60% off · Subscribe & Save",
+        "once_note": "50% off · One-time",
+        "button_label": "Add to cart",
+        "background_color": "#0b0f1d",
+        "padding_top": 56,
+        "padding_bottom": 64
+      }
     }
   },
   "order": [
+    "bf_hero",
     "hero_jVaWmY",
     "recently_viewed",
+    "bf_shop",
     "wave_navy_mint",
     "steps",
     "match",
