@@ -1,0 +1,116 @@
+{%- comment -%}
+  SOMNA quiz result · "Sound familiar? / The fix" — the product page's problem section (sections/somna-pdp-story.liquid,
+  layout "problem") for the matched product, same markup and stylesheet, so it always looks and reads like the product page.
+  Content comes from the product's custom.pdp_problem entry (eyebrow, heading, text, labels, images, bullets, snore spot).
+  Renders nothing when the product has no problem content.
+  Params: product (required), snore_direction ('right' | 'tilt' | 'up', default 'tilt')
+{%- endcomment -%}
+{%- liquid
+  assign c = product.metafields.custom.pdp_problem.value
+  assign snore_direction = snore_direction | default: 'tilt'
+-%}
+{%- if c != blank -%}
+{%- liquid
+  assign features = c.features.value
+  assign image = c.image.value
+  assign style = c.style.value | default: 'Default'
+  assign split = false
+  if style == 'Side by side'
+    assign split = true
+  endif
+  assign accent_first = false
+  assign accent_pos = c.accent_line.value | default: 'first' | downcase
+  if accent_pos == 'first'
+    assign accent_first = true
+  endif
+-%}
+<div
+  class="somna-pdp-story somna-pdp-story--problem{% if split %} somna-pdp-story--split{% endif %} sq-problem"
+  style="--somna-story-bg: #0b0f1d; --somna-story-fg: #f3feee; --somna-story-heading: #f3feee; --somna-story-accent: #afbdf8; --somna-story-card: #f3feee; --somna-story-card-fg: #000000; --somna-story-button: #afbdf8;"
+>
+  <div class="somna-pdp-story__inner somna-container">
+    <div class="somna-pdp-story__copy">
+      {%- if c.eyebrow != blank -%}<p class="somna-pdp-story__eyebrow">{{ c.eyebrow.value }}</p>{%- endif -%}
+      <h2 class="somna-pdp-story__heading">
+        <span{% if accent_first %} class="is-accent"{% endif %}>{{ c.heading.value }}</span>
+        {%- if c.heading_accent != blank %} <span{% unless accent_first %} class="is-accent"{% endunless %}>{{ c.heading_accent.value }}</span>{% endif -%}
+      </h2>
+      {%- if c.text != blank -%}<p class="somna-pdp-story__text">{{ c.text.value | newline_to_br }}</p>{%- endif -%}
+      {%- assign pills = c.pills.value -%}
+      {%- if pills != blank -%}
+        <ul class="somna-pdp-story__pills" role="list">{%- for p in pills -%}<li>{{ p }}</li>{%- endfor -%}</ul>
+      {%- endif -%}
+    </div>
+
+
+    {%- capture snore_html -%}
+      {%- if image and c.snore_spot != blank -%}
+        {%- assign spot = c.snore_spot.value | remove: '%' | split: ',' -%}
+        <span class="somna-snore somna-snore--{{ snore_direction | default: 'right' }}" style="left: {{ spot[0] | strip }}%; top: {{ spot[1] | strip }}%;" aria-hidden="true">
+          <svg class="somna-snore__waves" viewBox="0 0 46 46" focusable="false"><path d="M8 30a8 8 0 0 0 6-10"/><path d="M14 36a16 16 0 0 0 10-20"/><path d="M20 42a24 24 0 0 0 14-30"/></svg>
+          <span class="somna-snore__z">z</span><span class="somna-snore__z">z</span><span class="somna-snore__z">Z</span>
+        </span>
+      {%- endif -%}
+    {%- endcapture -%}
+
+        {%- if split -%}
+          {%- comment -%} two panels side by side: the problem (label + bullets bottom-left) and the fix (bottom-right) {%- endcomment -%}
+          {%- assign image_after = c.image_after.value -%}
+          {%- assign features_after = c.features_after.value -%}
+          <div class="somna-pdp-story__split">
+            <div class="somna-pdp-story__panel">
+              {%- if image -%}{{ image | image_url: width: 1300 | image_tag: loading: 'lazy', widths: '500, 700, 1000, 1300', sizes: '(min-width: 990px) 636px, 100vw', class: 'somna-pdp-story__panel-image' }}{%- endif -%}
+              {{- snore_html -}}
+              {%- if c.label != blank -%}<p class="somna-pdp-story__panel-tag">{{ c.label.value }}</p>{%- endif -%}
+              {%- if features != blank -%}
+                <ul class="somna-pdp-story__panel-list" role="list">
+                  {%- for f in features -%}<li>{% render 'somna-pdp-icon', name: f.icon.value %}<span>{{ f.title.value }}</span></li>{%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </div>
+            {%- if image_after or features_after != blank or c.label_after != blank -%}
+              <div class="somna-pdp-story__panel somna-pdp-story__panel--after">
+                {%- if image_after -%}{{ image_after | image_url: width: 1300 | image_tag: loading: 'lazy', widths: '500, 700, 1000, 1300', sizes: '(min-width: 990px) 636px, 100vw', class: 'somna-pdp-story__panel-image' }}{%- endif -%}
+                {%- if c.label_after != blank -%}<p class="somna-pdp-story__panel-tag">{{ c.label_after.value }}</p>{%- endif -%}
+                {%- if features_after != blank -%}
+                  <ul class="somna-pdp-story__panel-list" role="list">
+                    {%- for f in features_after -%}<li>{% render 'somna-pdp-icon', name: f.icon.value %}<span>{{ f.title.value }}</span></li>{%- endfor -%}
+                  </ul>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- else -%}
+        <div class="somna-pdp-story__media">
+          {%- assign image_after = c.image_after.value -%}
+          {%- if c.label != blank -%}
+            <p class="somna-pdp-story__tag{% if image and image_after %} has-after{% endif %}">
+              <span class="somna-pdp-story__tag-before">{{ c.label.value }}</span>
+              {%- if image and image_after and c.label_after != blank -%}<span class="somna-pdp-story__tag-after" aria-hidden="true">{{ c.label_after.value }}</span>{%- endif -%}
+            </p>
+          {%- endif -%}
+          <div class="somna-pdp-story__frame{% if image and image_after %} has-after{% endif %}">
+            {%- if image -%}{{ image | image_url: width: 1500 | image_tag: loading: 'lazy', widths: '600, 900, 1200, 1500', sizes: '(min-width: 990px) 753px, 100vw', class: 'somna-pdp-story__before' }}{%- endif -%}
+            {%- if image and image_after -%}{{ image_after | image_url: width: 1500 | image_tag: loading: 'lazy', widths: '600, 900, 1200, 1500', sizes: '(min-width: 990px) 753px, 100vw', class: 'somna-pdp-story__after' }}{%- endif -%}
+            {{- snore_html -}}
+            {%- if features != blank -%}
+              <ul class="somna-pdp-story__bullets" role="list">
+                {%- for f in features -%}
+                  <li>{% render 'somna-pdp-icon', name: f.icon.value %}<span>{{ f.title.value }}</span></li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+            {%- assign features_after = c.features_after.value -%}
+            {%- if image and image_after and features_after != blank -%}
+              <ul class="somna-pdp-story__bullets somna-pdp-story__bullets--after" role="list">
+                {%- for f in features_after -%}
+                  <li>{% render 'somna-pdp-icon', name: f.icon.value %}<span>{{ f.title.value }}</span></li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </div>
+        </div>
+        {%- endif -%}
+  </div>
+</div>
+{%- endif -%}

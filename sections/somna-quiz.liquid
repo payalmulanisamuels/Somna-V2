@@ -24,11 +24,6 @@
 
 <section class="sq{% if section.settings.design == 'v2' %} sq--v2{% elsif section.settings.design == 'light' %} sq--light{% endif %}{% if section.settings.result_extras %} sq--extras{% endif %}" id="sq-{{ sid }}" data-sq aria-label="Sleep quiz">
   <div class="sq-wrap">
-    <a class="sq-logo" href="{{ routes.root_url }}" aria-label="SOMNA home">
-      {%- if settings.logo != blank -%}
-        {{ settings.logo | image_url: width: 400 | image_tag: widths: '200, 300, 400', sizes: '160px', alt: '', class: 'sq-logo-img', loading: 'eager' }}
-      {%- else -%}som<span>na.</span>{%- endif -%}
-    </a>
 
     <div class="sq-top" data-sq-top>
       <div class="sq-prog" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="12" data-sq-prog>
@@ -41,7 +36,19 @@
     </div>
     <p class="sq-sr" aria-live="polite" data-sq-live></p>
 
-    {% render 'somna-quiz-screens', qs: section.settings, sid: sid, blocks: section.blocks %}
+    {%- liquid
+      case section.settings.intro_review_product
+        when 'tape'
+          assign intro_p = p_tape
+        when 'bundle'
+          assign intro_p = p_bundle
+        when 'none'
+          assign intro_p = nil
+        else
+          assign intro_p = p_strips
+      endcase
+    -%}
+    {% render 'somna-quiz-screens', qs: section.settings, sid: sid, blocks: section.blocks, intro_product: intro_p %}
 
     {%- comment -%} 8 · Matching (2 seconds, ticks off their own answers, then straight to the result) {%- endcomment -%}
     <div class="sq-s sq-center" data-type="analyze">
@@ -93,11 +100,45 @@
         -%}
         {%- if rp != blank -%}
         <div class="sq-res" data-res="{{ rk }}" hidden {% if rb %}{{ rb.shopify_attributes }}{% endif %}>
+          {%- if section.settings.result_pdp -%}
+            {%- comment -%} Product page layout (gallery + buy panel of sections/somna-pdp-hero) with the quiz's match line on top {%- endcomment -%}
+            {%- comment -%} match line: full width above the photos and the buy panel {%- endcomment -%}
+            {%- capture pdp_head -%}
+            <div class="sq-res-head">
+              <p class="sq-pill">✓ {{ section.settings.match_pill }}</p>
+              <h2 class="sq-q sq-res-h" tabindex="-1"><span data-sq-fix>{{ section.settings.fix_prefix }}</span> <em>SOMNA {{ rp.title }}</em></h2>
+              {%- comment -%} summary paragraph + "Your answers" (filled by the script from the match and all answers) {%- endcomment -%}
+              <p class="sq-res-why sq-res-sum" data-sq-why></p>
+              <div class="sq-res-answers" data-sq-answers hidden>
+                <p class="sq-res-answers-h" data-sq-answers-h>Your answers</p>
+                <ul class="sq-ans-list" role="list" data-sq-answers-list></ul>
+              </div>
+            </div>
+            {%- endcapture -%}
+            {%- capture pdp_left -%}
+              <ul class="sq-res-perks sq-res-perks--pdp">
+                {%- if rbs.emoji_1 != blank -%}<li>{{ rbs.emoji_1 }}</li>{%- endif -%}
+                {%- if rbs.emoji_2 != blank -%}<li>{{ rbs.emoji_2 }}</li>{%- endif -%}
+                {%- if rbs.emoji_3 != blank -%}<li>{{ rbs.emoji_3 }}</li>{%- endif -%}
+              </ul>
+            {%- endcapture -%}
+            {%- capture pdp_extras -%}
+              <div class="sq-pdp-extras">
+                {%- comment -%} (18 Nov 2026) the note line and How It Works box are gone here; How It Works text now leads the how-to section {%- endcomment -%}
+                {%- if section.settings.view_product_label != blank -%}<p class="sq-buy-view"><a href="{{ rp.url }}">{{ section.settings.view_product_label }} <span class="sq-buy-view-arr" aria-hidden="true">→</span></a></p>{%- endif -%}
+              </div>
+            {%- endcapture -%}
+            <div class="sq-res-pdp" data-sq-pdp>
+              {{- pdp_head -}}
+              {%- capture pdp_sid -%}sq-{{ sid }}-{{ rk }}{%- endcapture -%}
+              {% render 'somna-quiz-pdp', product: rp, sid: pdp_sid, buy_now_label: section.settings.buy_now_label, extras: pdp_extras, left_extras: pdp_left %}
+            </div>
+          {%- else -%}
           {%- comment -%} Match + product {%- endcomment -%}
           <div class="sq-res-top">
             <div class="sq-res-intro">
               <p class="sq-pill">✓ {{ section.settings.match_pill }}</p>
-              <h2 class="sq-q sq-res-h" tabindex="-1">{{ section.settings.fix_prefix }} <em>SOMNA {{ rp.title }}</em></h2>
+              <h2 class="sq-q sq-res-h" tabindex="-1"><span data-sq-fix>{{ section.settings.fix_prefix }}</span> <em>SOMNA {{ rp.title }}</em></h2>
               <p class="sq-res-why" data-sq-why></p>
               <div class="sq-res-img{% if rimg_pick != blank %} sq-res-img--pack{% endif %}" data-sq-res-img>
                 {%- assign rimg = rimg_pick | default: rp.selected_or_first_available_variant.featured_image | default: rp.featured_image -%}
@@ -150,9 +191,18 @@
               {%- endif -%}
             </div>
           </div>
+          {%- endif -%}
+
+          {%- comment -%} "Sound familiar? / The fix": the product page's problem section for this product {%- endcomment -%}
+          {%- assign band_prev = '#afbdf8' -%}
+          {%- if section.settings.show_problem -%}
+            {%- render 'somna-quiz-wave', top: band_prev, bottom: '#0b0f1d', shape: 'drip-1' -%}{%- assign band_prev = '#0b0f1d' -%}
+            {% render 'somna-quiz-problem', product: rp, snore_direction: 'tilt' %}
+          {%- endif -%}
 
           {%- comment -%} Reviews: the product quote + the "Story review" blocks for this product {%- endcomment -%}
-          <section class="sq-res-sec sq-res-revs">
+          {%- render 'somna-quiz-wave', top: band_prev, bottom: '#f3feee', shape: 'drip-2' -%}{%- assign band_prev = '#f3feee' -%}
+          <section class="sq-res-sec sq-res-revs sq-band sq-band--mint">
             <h3 class="sq-res-h3">{{ section.settings.reviews_heading }}</h3>
             <div class="sq-rv-track{% if section.settings.result_extras %} sq-rv-track--photos{% endif %}" data-sq-rv tabindex="0" role="region" aria-label="Customer reviews">
               {%- if section.settings.result_extras -%}
@@ -187,7 +237,8 @@
 
           {%- comment -%} Main benefit {%- endcomment -%}
           {%- if rbs.benefit_heading != blank -%}
-            <section class="sq-res-sec sq-res-split">
+            {%- render 'somna-quiz-wave', top: band_prev, bottom: '#afbdf8', shape: 'drip-3' -%}{%- assign band_prev = '#afbdf8' -%}
+            <section class="sq-res-sec sq-res-split sq-band sq-band--lav">
               <div>
                 <h3 class="sq-res-h3 sq-res-h3--lg">{{ rbs.benefit_heading }}</h3>
                 {%- if rbs.benefit_text != blank -%}<p class="sq-res-p">{{ rbs.benefit_text }}</p>{%- endif -%}
@@ -260,10 +311,19 @@
 
           {%- comment -%} How to use {%- endcomment -%}
           {%- if rbs.howto_heading != blank -%}
-            <section class="sq-res-sec sq-res-split sq-res-split--rev">
+            {%- if band_prev == '#f3feee' -%}{%- assign band_bg = '#afbdf8' -%}{%- else -%}{%- assign band_bg = '#f3feee' -%}{%- endif -%}
+            {%- render 'somna-quiz-wave', top: band_prev, bottom: band_bg, shape: 'drip-5' -%}{%- assign band_prev = band_bg -%}
+            <section class="sq-res-sec sq-res-split sq-res-split--rev sq-band{% if band_bg == '#f3feee' %} sq-band--mint{% else %} sq-band--lav{% endif %}">
               <div>
-                <h3 class="sq-res-h3">{{ rbs.howto_heading }}</h3>
-                {%- if rbs.howto_text != blank -%}<p class="sq-res-p">{{ rbs.howto_text }}</p>{%- endif -%}
+                {%- comment -%} product page layout: heading "How It Works" + the result's How It Works text (no longer under the buy box) {%- endcomment -%}
+                <h3 class="sq-res-h3">{% if section.settings.result_pdp and rbs.how_it_works != blank %}{{ section.settings.how_it_works_heading | default: 'How It Works' }}{% else %}{{ rbs.howto_heading }}{% endif %}</h3>
+                {%- liquid
+                  assign howto_p = rbs.howto_text
+                  if section.settings.result_pdp and rbs.how_it_works != blank
+                    assign howto_p = rbs.how_it_works
+                  endif
+                -%}
+                {%- if howto_p != blank -%}<p class="sq-res-p">{{ howto_p }}</p>{%- endif -%}
               </div>
               {%- liquid
                 assign steps = blank
@@ -302,7 +362,9 @@
 
           {%- comment -%} Results + guarantee {%- endcomment -%}
           {%- if rbs.results_heading != blank -%}
-            <section class="sq-res-sec sq-res-split">
+            {%- if band_prev == '#f3feee' -%}{%- assign band_bg = '#afbdf8' -%}{%- else -%}{%- assign band_bg = '#f3feee' -%}{%- endif -%}
+            {%- render 'somna-quiz-wave', top: band_prev, bottom: band_bg, shape: 'drip-6' -%}{%- assign band_prev = band_bg -%}
+            <section class="sq-res-sec sq-res-split sq-band{% if band_bg == '#f3feee' %} sq-band--mint{% else %} sq-band--lav{% endif %}">
               <div>
                 <h3 class="sq-res-h3">{{ rbs.results_heading }}</h3>
                 {%- if rbs.results_text != blank -%}<p class="sq-res-p">{{ rbs.results_text }}</p>{%- endif -%}
@@ -351,18 +413,22 @@
           {%- endif -%}
 
           {%- comment -%} FAQ {%- endcomment -%}
-          <section class="sq-res-sec sq-res-faq">
-            <h3 class="sq-res-h3">{{ section.settings.faq_heading }}</h3>
+          {%- if band_prev == '#f3feee' -%}{%- assign band_bg = '#afbdf8' -%}{%- else -%}{%- assign band_bg = '#f3feee' -%}{%- endif -%}
+          {%- render 'somna-quiz-wave', top: band_prev, bottom: band_bg, shape: 'soft-1' -%}
+          <section class="sq-res-sec sq-res-faq sq-band{% if band_bg == '#f3feee' %} sq-band--mint{% else %} sq-band--lav{% endif %}">
+            <h3 class="sq-faq-h">{{ section.settings.faq_heading }}</h3>
+            <div class="sq-faq-list">
             {%- for n in (1..6) -%}
               {%- liquid
                 assign fq = 'faq_' | append: n | append: '_q'
                 assign fa = 'faq_' | append: n | append: '_a'
               -%}
               {%- if rbs[fq] != blank -%}
-                <details class="sq-acc"{% if forloop.first %} open{% endif %}><summary>{{ rbs[fq] }}</summary><p>{{ rbs[fa] }}</p></details>
+                <details class="sq-acc"><summary>{{ rbs[fq] }}</summary><p>{{ rbs[fa] }}</p></details>
               {%- endif -%}
             {%- endfor -%}
             <p class="sq-res-links">{% if section.settings.retake_label != blank %}<button type="button" class="sq-linkbtn" data-sq-retake>↻ {{ section.settings.retake_label }}</button> · {% endif %}<a href="{{ routes.all_products_collection_url }}">{{ section.settings.all_products_label }}</a></p>
+            </div>
           </section>
         </div>
         {%- endif -%}
@@ -371,7 +437,7 @@
       {%- comment -%} Sticky Add to Cart (shows once the main button scrolls out of view) {%- endcomment -%}
       <div class="sq-sticky" data-sq-sticky hidden>
         {%- if section.settings.show_atc or section.settings.buy_now_label == blank -%}
-        <button type="button" class="sq-cta" data-sq-sticky-atc><span aria-hidden="true">🛒</span> {{ section.settings.atc_label }} · <span data-sq-sticky-price></span></button>
+        <button type="button" class="sq-cta" data-sq-sticky-atc><span aria-hidden="true">🛒</span> {{ section.settings.atc_label }}<span data-sq-sticky-price hidden></span></button>
         {%- else -%}
         <button type="button" class="sq-cta" data-sq-buynow data-sq-sticky-buy>{{ section.settings.buy_now_label }} · <span data-sq-sticky-price></span></button>
         {%- endif -%}
@@ -459,6 +525,7 @@
   {
     "moneyFormat": {{ shop.money_format | json }},
     "colorNames": {{ section.settings.color_names | json }},
+    "fixPrefix": {{ section.settings.fix_prefix | json }},
     "why": {
       "snoring": [{{ section.settings.why_snoring | json }}, {{ section.settings.why_snoring_partner | json }}],
       "nose": [{{ section.settings.why_nose | json }}, {{ section.settings.why_nose_partner | json }}],
@@ -486,6 +553,8 @@
   }
 </script>
 {% render 'somna-quiz-styles', design: section.settings.design, extras: section.settings.result_extras %}
+{%- if section.settings.show_problem -%}{{ 'section-somna-pdp-story.css' | asset_url | stylesheet_tag }}{%- endif -%}
+{%- if section.settings.result_pdp -%}{% render 'somna-quiz-pdp-script' %}{%- endif -%}
 {%- if section.settings.v2_cursor -%}{% render 'somna-cursor', force: true %}{%- endif -%}
 {% render 'somna-quiz-script', sid: sid %}
 
@@ -510,6 +579,20 @@
       "id": "v2_sections",
       "label": "Result: use the SOMNA V2 product page sections",
       "info": "Main benefit = How it works diagram, How to use = numbered steps, Results = product with the per-night sticker. Read from each product's own V2 content; falls back to the images below.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "result_pdp",
+      "label": "Result: product page layout (gallery + buy box)",
+      "info": "The matched product's gallery and buy box exactly as on its product page (same packs, prices, Subscribe & Save, Add to cart), plus Buy now and the quiz's notes.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_problem",
+      "label": "Result: product page \"Sound familiar? / The fix\" section",
+      "info": "Under the buy box, from the matched product's own problem content (same as its product page).",
       "default": false
     },
     {
@@ -569,6 +652,23 @@
       "id": "intro_review_name",
       "label": "First name + initial",
       "default": "Marcus D."
+    },
+    {
+      "type": "range",
+      "id": "intro_review_rating",
+      "label": "Star rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "select",
+      "id": "intro_review_product",
+      "label": "Product rating shown next to the stars",
+      "info": "Average rating and review count from Judge.me, e.g. 4.7/5 (183)",
+      "options": [{ "value": "strips", "label": "Nasal Strips" }, { "value": "tape", "label": "Mouth Tape" }, { "value": "bundle", "label": "Sleep Bundle" }, { "value": "none", "label": "Don't show" }],
+      "default": "strips"
     },
     {
       "type": "image_picker",
