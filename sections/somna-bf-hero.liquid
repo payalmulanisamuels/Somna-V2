@@ -127,7 +127,7 @@
     background: radial-gradient(ellipse 60% 70% at 20% 40%, rgb(70 78 140 / 0.35), transparent 70%);
   }
   /* photo inside the page container: its right edge lines up with the content (header width, 1360px), fading out at both sides */
-  .somna-bfh__media { position: absolute; inset: calc(var(--header-group-height, 0px) + var(--header-height, 66px)) max(0px, calc((100% - var(--somna-content-width)) / 2)) 0 auto; z-index: -1; width: calc(min(100%, var(--somna-content-width)) * 0.64); }
+  .somna-bfh__media { position: absolute; inset: calc(var(--header-group-height, 0px) + var(--header-height, 66px)) max(var(--page-margin, 16px), calc((100% - var(--somna-content-width)) / 2)) 0 auto; z-index: -1; width: calc(min(100% - var(--page-margin, 16px) * 2, var(--somna-content-width)) * 0.64); }
   @media screen and (min-width: 1200px) {
     .somna-bfh__media { -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 34%, #000 86%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 12%, #000 85%, transparent 100%); -webkit-mask-composite: source-in; mask-image: linear-gradient(to right, transparent 0%, #000 34%, #000 86%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 12%, #000 85%, transparent 100%); mask-composite: intersect; }
     .somna-bfh__media::before { background: linear-gradient(to right, rgb(11 15 29 / 0.35) 0%, rgb(11 15 29 / 0.1) 40%, rgb(11 15 29 / 0.2) 100%); }
