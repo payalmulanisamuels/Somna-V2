@@ -228,14 +228,17 @@
           assign ph_list = ''
           assign ph_keys = ''
           assign ph_count = 0
-          assign ph_sources = product | sort
+          assign ph_handles = product.handle
           if s.photos_fill
-            assign ph_sources = ph_sources | concat: collections.all.products
+            assign ph_all = collections.all.products | map: 'handle' | join: ','
+            assign ph_handles = ph_handles | append: ',' | append: ph_all
           endif
+          assign ph_handles = ph_handles | split: ','
         -%}
-        {%- for ph_src in ph_sources limit: 50 -%}
+        {%- for ph_handle in ph_handles limit: 20 -%}
           {%- if ph_count >= 30 -%}{%- break -%}{%- endif -%}
-          {%- if forloop.index > 1 and ph_src.id == product.id -%}{%- continue -%}{%- endif -%}
+          {%- if forloop.index > 1 and ph_handle == product.handle -%}{%- continue -%}{%- endif -%}
+          {%- assign ph_src = all_products[ph_handle] -%}
           {%- for ph_rv in ph_src.metafields.judgeme.review_widget_data.value.photo_gallery -%}
             {%- for pic in ph_rv.pictures_urls -%}
               {%- if ph_count >= 30 -%}{%- break -%}{%- endif -%}
