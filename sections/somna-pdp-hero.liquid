@@ -3625,9 +3625,10 @@
   .somna-pdp-hero__trust-sep { display: inline-block; width: 1.5px; height: 1em; margin: 0 10px; background: currentColor; vertical-align: -2px; }
   /* desktop: compact buy box (about 20% smaller than the base theme sizes) */
   @media screen and (min-width: 990px) {
-    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge { padding: 10px 20px 8px; }
-    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge span { font-size: clamp(26px, 2.3vw, 32px); }
-    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge small { font-size: 12px; }
+    /* sticker: small, on the main photo's top-left corner (the photo starts after the thumbnail column) */
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge { top: -14px; left: 114px; padding: 7px 14px 5px; border-width: 2.5px; box-shadow: 0 0 0 3px #fff, 4px 5px 0 3px rgb(0 0 0 / 0.85); }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge span { font-size: clamp(20px, 1.6vw, 24px); }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge small { font-size: 10px; }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__title { font-size: clamp(2rem, 2.6vw, 2.625rem); }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__rating { margin-bottom: 6px; font-size: 1rem; }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__features { gap: 6px 18px; margin-top: 14px; font-size: 1rem; }
@@ -3654,6 +3655,9 @@
     .somna-pdp-hero--bf .somna-pdp-hero__trust .somna-seal small { font-size: 9px; }
     .somna-pdp-hero--bf .somna-pdp-hero__trust-1 { font-size: 0.9375rem; }
     .somna-pdp-hero--bf .somna-pdp-hero__trust-2 { font-size: 0.875rem; }
+  }
+  @media screen and (min-width: 1300px) {
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge { left: 80px; }
   }
   @media screen and (max-width: 989px) {
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge { top: 14px; left: 14px; padding: 9px 18px 7px; }
