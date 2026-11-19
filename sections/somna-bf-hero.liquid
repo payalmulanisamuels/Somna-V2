@@ -126,15 +126,19 @@
     content: ''; position: absolute; inset: 0; z-index: -2;
     background: radial-gradient(ellipse 60% 70% at 20% 40%, rgb(70 78 140 / 0.35), transparent 70%);
   }
-  .somna-bfh__media { position: absolute; inset: 0 0 0 auto; z-index: -1; width: 46%; }
-  .somna-bfh__img { width: 100%; height: 100%; object-fit: cover; object-position: 78% 55%; }
+  /* photo inside the page container: its right edge lines up with the content (1160px), fading out at both sides */
+  .somna-bfh__media { position: absolute; inset: 0 max(0px, calc((100% - 1160px) / 2)) 0 auto; z-index: -1; width: calc(min(100%, 1160px) * 0.56); }
+  @media screen and (min-width: 1200px) {
+    .somna-bfh__media { -webkit-mask-image: linear-gradient(to right, #000 80%, transparent 100%); mask-image: linear-gradient(to right, #000 80%, transparent 100%); }
+  }
+  .somna-bfh__img { width: 100%; height: 100%; object-fit: cover; object-position: 60% 55%; }
   .somna-bfh .somna-bfh__img--mob, .somna-bfh .somna-bfh__ticket--mob { display: none; }
   .somna-bfh__media::before {
     content: ''; position: absolute; inset: 0; z-index: 1;
     background: linear-gradient(to right, var(--bfh-bg) 0%, rgb(11 15 29 / 0.55) 22%, rgb(11 15 29 / 0.25) 60%, rgb(11 15 29 / 0.35) 100%);
   }
   .somna-bfh__inner { padding-block: calc(var(--bfh-pt) * 0.25 + var(--header-group-height, 0px) + var(--header-height, 66px) + 28px) calc(var(--bfh-pb) * 0.75); }
-  .somna-bfh__copy { max-width: min(900px, 56vw); }
+  .somna-bfh__copy { max-width: min(640px, 56vw); }
   .somna-bfh__ticket {
     display: inline-flex; flex-direction: column; align-items: center; margin: 0 0 clamp(18px, 1.8vw, 26px); padding: 8px 16px 6px;
     border: 3px dashed #000; border-radius: 4px; background: #fff; color: #000; rotate: -5deg;
@@ -147,7 +151,7 @@
     font-family: var(--font-accent--family); font-size: clamp(3rem, 4.6vw, 4.25rem); font-weight: 400; line-height: 1; text-transform: uppercase; white-space: nowrap;
   }
   .somna-bfh__title span { margin-top: clamp(16px, 2.1vw, 30px); color: #f3feee; font-size: clamp(1.25rem, 1.6vw, 1.5rem); line-height: 1.2; white-space: normal; }
-  .somna-bfh__tagline { margin: 14px 0 0; color: #afbdf8; font-size: clamp(0.9375rem, 1.1vw, 1rem); font-weight: 500; line-height: 1.45; }
+  .somna-bfh__tagline { margin: 14px 0 0; color: #afbdf8; font-size: clamp(1.0625rem, 1.3vw, 1.25rem); font-weight: 500; line-height: 1.45; }
   .somna-bfh__price { margin: 8px 0 0; font-size: clamp(0.875rem, 1vw, 0.9375rem); line-height: 1.5; }
   .somna-bfh__price b, .somna-bfh__price-mob b { color: #afbdf8; font-weight: 700; }
   .somna-bfh__price-mob { display: none; }
