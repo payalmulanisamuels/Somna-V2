@@ -167,6 +167,7 @@
 
     <div class="somna-pdp-hero__side">
       {%- assign quote = mf.pdp_quote.value -%}
+      {%- unless s.below_media == 'photos' -%}
       {%- if quote == blank and s.quote_from_judgeme -%}
         {%- comment -%} Figma quote card: fall back to a real Judge.me review (short, 5★, named, no import tag) {%- endcomment -%}
         {%- assign jm = product.metafields.judgeme.review_widget_data.value -%}
@@ -214,20 +215,26 @@
         </figure>
       {%- endif -%}
 
+      {%- endunless -%}
+
       {%- comment -%}
         "Real Nights, On Camera": the product's own videos (custom.pdp_videos) when set, otherwise the section's
         video blocks. The video's own preview frame is the poster.
       {%- endcomment -%}
       {%- if s.below_media == 'photos' -%}
         {%- comment -%}
-          Customer photos (instead of the videos): this product's Judge.me photo reviews first, then the store's other
-          photo reviews (as on the homepage) so the 3 + 3 grid fills. The same picture never twice. Past 6, the 6th tile
-          reads "+N" and every photo opens in the shared popup (snippets/somna-photo-lightbox.liquid).
+          Customer reviews card (instead of the quote card and the videos): a "Customer photos" strip, then the latest
+          Judge.me reviews that have photos (stars, date, name, text, their photos). Strips / tape pages use only their
+          own reviews; other products (the bundles) add the "fill from" products' reviews. Photos open in the shared
+          popup (snippets/somna-photo-lightbox.liquid).
         {%- endcomment -%}
         {%- liquid
           assign ph_list = ''
           assign ph_keys = ''
           assign ph_count = 0
+          assign rv_count = 0
+          assign rv_html = ''
+          assign rv_limit = s.photos_reviews | default: 3
           # own photos first; pages of products NOT in "Fill from" (the bundles) add those products' photos
           assign ph_fill = s.photos_fill_from | map: 'handle'
           assign ph_handles = product.handle
@@ -240,12 +247,11 @@
           assign ph_skip = s.photos_skip | split: ','
         -%}
         {%- for ph_handle in ph_handles limit: 20 -%}
-          {%- if ph_count >= 30 -%}{%- break -%}{%- endif -%}
           {%- if forloop.index > 1 and ph_handle == product.handle -%}{%- continue -%}{%- endif -%}
           {%- assign ph_src = all_products[ph_handle] -%}
           {%- for ph_rv in ph_src.metafields.judgeme.review_widget_data.value.photo_gallery -%}
+            {%- assign rv_pics = '' -%}
             {%- for pic in ph_rv.pictures_urls -%}
-              {%- if ph_count >= 30 -%}{%- break -%}{%- endif -%}
               {%- assign pic_src = pic.original | default: pic.huge | split: '&width=' | first -%}
               {%- assign pic_file = pic_src | split: '?' | first | split: '/' | last -%}
               {%- assign pic_head = pic_file | split: '-' | first -%}
@@ -256,36 +262,73 @@
                 {%- if skip_parts.size == 2 and skip_parts[0] == ph_handle and pic_file contains skip_parts[1] -%}{%- assign pic_skip = true -%}{%- endif -%}
               {%- endfor -%}
               {%- if pic_skip -%}{%- continue -%}{%- endif -%}
-              {%- unless ph_keys contains pic_key -%}
-                {%- assign ph_first = ph_rv.reviewer_name | split: ' ' | first | replace: '|', '' | replace: '^', '' -%}
-                {%- assign ph_list = ph_list | append: pic_src | append: '|' | append: ph_first | append: '^' -%}
+              {%- assign rv_pics = rv_pics | append: pic_src | append: '^' -%}
+              {%- unless ph_keys contains pic_key or ph_count >= 30 -%}
+                {%- assign ph_list = ph_list | append: pic_src | append: '^' -%}
                 {%- assign ph_keys = ph_keys | append: pic_key | append: '^' -%}
                 {%- assign ph_count = ph_count | plus: 1 -%}
               {%- endunless -%}
             {%- endfor -%}
+            {%- if rv_pics != '' and rv_count < rv_limit -%}
+              {%- liquid
+                assign rv_count = rv_count | plus: 1
+                assign rv_parts = ph_rv.reviewer_name | strip | split: ' '
+                assign rv_name = rv_parts | first
+                if rv_parts.size > 1
+                  assign rv_last = rv_parts | last | slice: 0 | upcase
+                  assign rv_name = rv_name | append: ' ' | append: rv_last | append: '.'
+                endif
+                assign rv_stars = ph_rv.rating | plus: 0
+                assign rv_pic_list = rv_pics | split: '^'
+              -%}
+              {%- capture rv_item -%}
+                <li class="somna-pdp-hero__rv-item">
+                  <div class="somna-pdp-hero__rv-top">
+                    <span class="somna-pdp-hero__rv-stars" role="img" aria-label="{{ rv_stars }} out of 5 stars">{% for i in (1..5) %}<span{% if i > rv_stars %} class="is-empty"{% endif %}>★</span>{% endfor %}</span>
+                    <time datetime="{{ ph_rv.created_at | date: '%Y-%m-%d' }}">{{ ph_rv.created_at | date: '%B %-d, %Y' }}</time>
+                  </div>
+                  <p class="somna-pdp-hero__rv-name">{{ rv_name | escape }}{% if ph_rv.verified_buyer %} <span>✓ {{ s.verified_label | default: 'Verified buyer' }}</span>{% endif %}</p>
+                  <p class="somna-pdp-hero__rv-body">{{ ph_rv.body_html | strip_html | strip | escape }}</p>
+                  <ul class="somna-pdp-hero__rv-pics" role="list" data-photo-popup>
+                    {%- for rp in rv_pic_list limit: 5 -%}
+                      <li><img src="{{ rp }}&width=200" alt="{{ 'Photo from ' | append: rv_name | append: '’s review' | escape }}" width="64" height="64" loading="lazy" decoding="async" tabindex="0" role="button"></li>
+                    {%- endfor -%}
+                  </ul>
+                </li>
+              {%- endcapture -%}
+              {%- assign rv_html = rv_html | append: rv_item -%}
+            {%- endif -%}
           {%- endfor -%}
         {%- endfor -%}
         {%- assign ph_entries = ph_list | split: '^' -%}
         {%- if ph_entries.size > 0 -%}
           <div class="somna-pdp-hero__videos somna-pdp-hero__photos">
             {%- if s.photos_heading != blank -%}<h2 class="somna-pdp-hero__videos-title">{{ s.photos_heading }}</h2>{%- endif -%}
-            <ul class="somna-pdp-hero__photo-grid" role="list" data-photo-popup>
-              {%- assign ph_more = ph_entries.size | minus: 5 -%}
-              {%- for entry in ph_entries -%}
-                {%- assign pic_src = entry | split: '|' | first -%}
-                {%- assign ph_first = entry | split: '|' | last -%}
-                <li{% if forloop.index > 6 %} hidden{% endif %}>
-                  <img src="{{ pic_src }}&width=400" srcset="{{ pic_src }}&width=300 300w, {{ pic_src }}&width=400 400w, {{ pic_src }}&width=600 600w" sizes="(min-width: 990px) 220px, 33vw" alt="{{ 'Photo from ' | append: ph_first | append: '’s review' | escape }}" width="300" height="300" loading="lazy" decoding="async" tabindex="0" role="button">
-                  {%- if forloop.index == 6 and ph_entries.size > 6 -%}
-                    <span class="somna-pdp-hero__photo-more" aria-hidden="true"><b>+{{ ph_more }}</b><span>{{ s.photos_more_label }}</span></span>
-                  {%- elsif ph_first != blank -%}
-                    <span class="somna-pdp-hero__photo-name" aria-hidden="true">{{ ph_first }}</span>
-                  {%- endif -%}
-                </li>
-              {%- endfor -%}
-            </ul>
+            <div class="somna-pdp-hero__rv">
+              <p class="somna-pdp-hero__rv-label">{{ s.photos_label | default: 'Customer photos' }}</p>
+              <ul class="somna-pdp-hero__rv-strip" role="list" data-photo-popup>
+                {%- assign more_mob = ph_entries.size | minus: 4 -%}
+                {%- assign more_desk = ph_entries.size | minus: 6 -%}
+                {%- for pic_src in ph_entries -%}
+                  <li{% if forloop.index > 7 %} hidden{% endif %}>
+                    <img src="{{ pic_src }}&width=240" alt="{{ 'Customer photo ' | append: forloop.index | escape }}" width="80" height="80" loading="lazy" decoding="async" tabindex="0" role="button">
+                    {%- if forloop.index == 5 and ph_entries.size > 5 -%}<span class="somna-pdp-hero__rv-more somna-pdp-hero__rv-more--mob" aria-hidden="true">+{{ more_mob }}</span>{%- endif -%}
+                    {%- if forloop.index == 7 and ph_entries.size > 7 -%}<span class="somna-pdp-hero__rv-more somna-pdp-hero__rv-more--desk" aria-hidden="true">+{{ more_desk }}</span>{%- endif -%}
+                  </li>
+                {%- endfor -%}
+              </ul>
+              {%- if rv_html != '' -%}<ul class="somna-pdp-hero__rv-list" role="list">{{ rv_html }}</ul>{%- endif -%}
+              {%- if s.photos_all_label != blank -%}<a class="somna-pdp-hero__rv-all" href="#reviews" data-rv-jump>{{ s.photos_all_label }}</a>{%- endif -%}
+            </div>
           </div>
           {%- render 'somna-photo-lightbox' -%}
+          <script>
+            document.addEventListener('click', function (e) {
+              var a = e.target.closest && e.target.closest('[data-rv-jump]');
+              var to = a && document.querySelector('.somna-reviews');
+              if (to) { e.preventDefault(); to.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+            });
+          </script>
         {%- endif -%}
       {%- else -%}
       {%- assign product_videos = mf.pdp_videos.value -%}
@@ -3469,23 +3512,37 @@
     }
   }
 
-  /* customer photos grid (setting "Under the photos": Customer photos) — 3 + 3 square tiles */
-  .somna-pdp-hero__photo-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
-  .somna-pdp-hero__photo-grid li { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 14px; background: #0b0f1d; }
-  .somna-pdp-hero__photo-grid li[hidden] { display: none; }
-  .somna-pdp-hero__photo-grid img { display: block; width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; transition: transform 0.35s ease; }
-  .somna-pdp-hero__photo-grid li:hover img { transform: scale(1.04); }
-  .somna-pdp-hero__photo-grid img:focus-visible { outline: 3px solid #0b0f1d; outline-offset: -3px; }
-  .somna-pdp-hero__photo-name { position: absolute; left: 8px; bottom: 8px; padding: 3px 9px; border-radius: 999px; background: rgb(11 15 29 / 0.72); color: #fff; font-size: 0.75rem; font-weight: 600; pointer-events: none; }
-  .somna-pdp-hero__photo-more { position: absolute; inset: 0; display: grid; place-content: center; gap: 2px; background: rgb(11 15 29 / 0.62); color: #fff; text-align: center; pointer-events: none; }
-  .somna-pdp-hero__photo-more b { font-family: var(--font-accent--family); font-size: 1.875rem; font-weight: 400; line-height: 1.2; }
-  .somna-pdp-hero__photo-more span { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  /* customer reviews card (setting "Under the photos": Customer photos) — photos strip + latest photo reviews */
+  .somna-pdp-hero__rv { padding: 18px 20px 6px; border-radius: 16px; background: #f3feee; color: #0b0f1d; box-shadow: 0 4px 14px rgb(11 15 29 / 0.08); }
+  .somna-pdp-hero__rv-label { margin: 0 0 10px; color: #3b438a; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+  .somna-pdp-hero__rv-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .somna-pdp-hero__rv-strip li, .somna-pdp-hero__rv-pics li { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 8px; background: #0b0f1d; }
+  .somna-pdp-hero__rv-strip li[hidden] { display: none; }
+  .somna-pdp-hero__rv-strip img, .somna-pdp-hero__rv-pics img { display: block; width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; transition: transform 0.3s ease; }
+  .somna-pdp-hero__rv-strip li:hover img, .somna-pdp-hero__rv-pics li:hover img { transform: scale(1.06); }
+  .somna-pdp-hero__rv img:focus-visible { outline: 3px solid #3b438a; outline-offset: -3px; }
+  .somna-pdp-hero__rv-more { position: absolute; inset: 0; display: grid; place-items: center; background: rgb(11 15 29 / 0.6); color: #fff; font-family: var(--font-accent--family); font-size: 1.125rem; pointer-events: none; }
+  .somna-pdp-hero__rv-more--mob { display: none; }
+  .somna-pdp-hero__rv-list { margin: 16px 0 0; padding: 0; border-top: 1px solid rgb(11 15 29 / 0.12); list-style: none; }
+  .somna-pdp-hero__rv-item { padding: 16px 0; border-bottom: 1px solid rgb(11 15 29 / 0.12); }
+  .somna-pdp-hero__rv-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .somna-pdp-hero__rv-stars { color: #f5c84c; font-size: 1.0625rem; letter-spacing: 0.08em; line-height: 1; }
+  .somna-pdp-hero__rv-stars .is-empty { color: rgb(11 15 29 / 0.18); }
+  .somna-pdp-hero__rv-top time { color: #6b6f86; font-size: 0.8125rem; white-space: nowrap; }
+  .somna-pdp-hero__rv-name { margin: 8px 0 4px; font-size: 0.9375rem; font-weight: 700; line-height: 1.3; }
+  .somna-pdp-hero__rv-name span { margin-left: 6px; color: #3b438a; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+  .somna-pdp-hero__rv-body { margin: 0; color: #2b2f45; font-size: 0.875rem; line-height: 1.55; }
+  .somna-pdp-hero__rv-pics { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+  .somna-pdp-hero__rv-pics li { width: 64px; }
+  .somna-pdp-hero__rv-all { display: block; padding: 12px 0 10px; color: #0b0f1d; font-size: 0.875rem; font-weight: 700; text-align: center; text-decoration: underline; text-underline-offset: 3px; }
   @media screen and (max-width: 749px) {
-    .somna-pdp-hero__photo-grid { gap: 8px; }
-    .somna-pdp-hero__photo-grid li { border-radius: 10px; }
-    .somna-pdp-hero__photo-name { left: 5px; bottom: 5px; padding: 2px 7px; font-size: 0.625rem; }
-    .somna-pdp-hero__photo-more b { font-size: 1.375rem; }
-    .somna-pdp-hero__photo-more span { font-size: 0.625rem; }
+    .somna-pdp-hero__rv { padding: 14px 14px 4px; border-radius: 14px; }
+    .somna-pdp-hero__rv-strip { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+    .somna-pdp-hero__rv-strip li:nth-child(n + 6) { display: none; }
+    .somna-pdp-hero__rv-more--mob { display: grid; }
+    .somna-pdp-hero__rv-more--desk { display: none; }
+    .somna-pdp-hero__rv-item { padding: 14px 0; }
+    .somna-pdp-hero__rv-pics li { width: 56px; }
   }
 
   /* ===== Black Friday layout (setting "Use the Black Friday layout") ===== */
@@ -3688,11 +3745,13 @@
     { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified Buyer" },
     { "type": "select", "id": "main_shape", "label": "Main photo box", "options": [{ "value": "natural", "label": "Photo's own shape" }, { "value": "square-fit", "label": "Square, whole photo on navy" }, { "value": "square-fill", "label": "Square, photo fills (sides trimmed)" }], "default": "natural", "info": "Square keeps the main photo as tall as the square gallery photos." },
     { "type": "select", "id": "main_drip", "label": "Main photo and drip edge", "options": [{ "value": "over", "label": "Drip over the photo's top" }, { "value": "below", "label": "Photo below the drip (whole photo)" }, { "value": "below-crop", "label": "Photo below the drip, bottom trimmed" }, { "value": "fit", "label": "Photo below the drip, a bit smaller" }, { "value": "none", "label": "No drip on the photo" }], "default": "over" },
-    { "type": "select", "id": "below_media", "label": "Under the photos", "options": [{ "value": "videos", "label": "Videos (Real Nights, On Camera)" }, { "value": "photos", "label": "Customer photos (3 + 3 grid)" }], "default": "videos" },
-    { "type": "text", "id": "photos_heading", "label": "Customer photos heading", "default": "Real Nights, Real Photos" },
+    { "type": "select", "id": "below_media", "label": "Under the photos", "options": [{ "value": "videos", "label": "Videos (Real Nights, On Camera)" }, { "value": "photos", "label": "Customer reviews with photos" }], "default": "videos" },
+    { "type": "text", "id": "photos_heading", "label": "Customer photos heading", "default": "Real Nights, Real Reviews" },
     { "type": "product_list", "id": "photos_fill_from", "label": "Customer photos: fill bundle pages from", "info": "Pages of these products show only their own photos. Every other product (the bundles) shows its own photos first, then these products' photos.", "limit": 6 },
     { "type": "text", "id": "photos_skip", "label": "Customer photos: leave out", "info": "product-handle:file-word, comma separated — e.g. mouth-tape:nasalstrip hides strip photos posted in mouth tape reviews." },
-    { "type": "text", "id": "photos_more_label", "label": "Customer photos: +N tile label", "default": "more photos" },
+    { "type": "text", "id": "photos_label", "label": "Customer photos: strip label", "default": "Customer photos" },
+    { "type": "range", "id": "photos_reviews", "label": "Customer photos: reviews shown", "min": 1, "max": 5, "step": 1, "default": 3 },
+    { "type": "text", "id": "photos_all_label", "label": "Customer photos: link to all reviews", "default": "See all reviews ↓" },
     { "type": "select", "id": "video_shape", "label": "Video cards", "options": [{ "value": "natural", "label": "Each video's own shape" }, { "value": "equal", "label": "Same width (narrowest shape)" }], "default": "natural" },
     { "type": "text", "id": "videos_heading", "label": "Videos heading", "default": "Real Nights, On Camera" },
     { "type": "text", "id": "play_label", "label": "Play label (screen readers)", "default": "Play video" },
