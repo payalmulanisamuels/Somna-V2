@@ -232,7 +232,8 @@
           assign ph_fill = s.photos_fill_from | map: 'handle'
           assign ph_handles = product.handle
           unless ph_fill contains product.handle
-            assign ph_handles = ph_handles | append: ',' | append: ph_fill | join: ','
+            assign ph_fill_str = ph_fill | join: ','
+            assign ph_handles = ph_handles | append: ',' | append: ph_fill_str
           endunless
           assign ph_handles = ph_handles | split: ','
           # "Leave out": entries "product-handle:word" drop that product's photos whose file name contains the word
