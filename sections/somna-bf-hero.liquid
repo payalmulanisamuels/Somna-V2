@@ -136,40 +136,40 @@
   .somna-bfh__inner { padding-block: calc(var(--bfh-pt) + var(--header-height, 66px) + 40px) var(--bfh-pb); }
   .somna-bfh__copy { max-width: min(900px, 56vw); }
   .somna-bfh__ticket {
-    display: inline-flex; flex-direction: column; align-items: center; margin: 0 0 clamp(18px, 2.5vw, 26px); padding: 12px 22px 9px;
+    display: inline-flex; flex-direction: column; align-items: center; margin: 0 0 clamp(16px, 1.5vw, 22px); padding: 10px 20px 8px;
     border: 3px dashed #000; border-radius: 4px; background: #fff; color: #000; rotate: -5deg;
     box-shadow: 0 0 0 4px #fff, 6px 7px 0 4px rgb(0 0 0 / 0.85);
   }
-  .somna-bfh__ticket span { font-family: var(--font-accent--family); font-size: clamp(20px, 1.8vw, 28px); line-height: 1.1; text-transform: uppercase; white-space: nowrap; }
+  .somna-bfh__ticket span { font-family: var(--font-accent--family); font-size: clamp(18px, 1.5vw, 22px); line-height: 1.1; text-transform: uppercase; white-space: nowrap; }
   .somna-bfh__ticket small { font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
   .somna-bfh__title {
     display: flex; flex-direction: column; margin: 0; color: #afbdf8;
-    font-family: var(--font-accent--family); font-size: clamp(3.5rem, 5.6vw, 6.5rem); font-weight: 400; line-height: 1.05; text-transform: uppercase; white-space: nowrap;
+    font-family: var(--font-accent--family); font-size: clamp(3.5rem, 5.6vw, 5.125rem); font-weight: 400; line-height: 1; text-transform: uppercase; white-space: nowrap;
   }
-  .somna-bfh__title span { margin-top: 6px; color: #f3feee; font-size: clamp(1.5rem, 2.3vw, 2.375rem); line-height: 1.2; white-space: normal; }
-  .somna-bfh__tagline { margin: 18px 0 0; color: #afbdf8; font-size: clamp(1.0625rem, 1.3vw, 1.375rem); font-weight: 500; line-height: 1.35; }
-  .somna-bfh__price { margin: 12px 0 0; font-size: clamp(1rem, 1.15vw, 1.1875rem); line-height: 1.4; }
+  .somna-bfh__title span { margin-top: clamp(12px, 1.4vw, 20px); color: #f3feee; font-size: clamp(1.375rem, 1.9vw, 1.75rem); line-height: 1.2; white-space: normal; }
+  .somna-bfh__tagline { margin: 16px 0 0; color: #afbdf8; font-size: clamp(1rem, 1.25vw, 1.125rem); font-weight: 500; line-height: 1.45; }
+  .somna-bfh__price { margin: 10px 0 0; font-size: clamp(0.9375rem, 1.07vw, 1rem); line-height: 1.5; }
   .somna-bfh__price b, .somna-bfh__price-mob b { color: #afbdf8; font-weight: 700; }
   .somna-bfh__price-mob { display: none; }
-  .somna-bfh__perks { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 18px 0 0; padding: 0; list-style: none; color: rgb(243 254 238 / 0.85); font-size: clamp(0.9375rem, 1.05vw, 1.0625rem); }
+  .somna-bfh__perks { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 14px 0 0; padding: 0; list-style: none; color: rgb(243 254 238 / 0.85); font-size: clamp(0.875rem, 1.05vw, 0.9375rem); }
   .somna-bfh__perks li { display: inline-flex; align-items: center; gap: 8px; }
-  .somna-bfh__perks svg { flex: none; width: 18px; height: 18px; }
-  .somna-bfh__cta { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 30px; margin-top: 24px; }
+  .somna-bfh__perks svg { flex: none; width: 16px; height: 16px; }
+  .somna-bfh__cta { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 28px; margin-top: 26px; }
   .somna-bfh__btn {
-    display: inline-flex; align-items: center; gap: 12px; padding: 18px 32px; border-radius: 16px; background: #afbdf8; color: #000;
-    box-shadow: 4px 6px 0 #f3feee; font-family: var(--font-accent--family); font-size: clamp(1.375rem, 1.6vw, 1.75rem); line-height: 1; text-decoration: none; text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 10px; padding: 16px 28px; border-radius: 14px; background: #afbdf8; color: #000;
+    box-shadow: 4px 6px 0 #f3feee; font-family: var(--font-accent--family); font-size: clamp(1.25rem, 1.6vw, 1.5rem); line-height: 1; text-decoration: none; text-transform: uppercase;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
-  .somna-bfh__btn svg { width: 24px; height: 21px; }
+  .somna-bfh__btn svg { width: 22px; height: 19px; }
   .somna-bfh__btn:hover { transform: translateY(-2px); box-shadow: 4px 8px 0 #f3feee; }
   .somna-bfh__moon--mob { display: none; }
-  .somna-moonline.somna-moonline--stack { flex-direction: column; align-items: flex-start; gap: 8px; font-size: clamp(0.9375rem, 1.05vw, 1.0625rem); }
-  .somna-moonline.somna-moonline--stack .somna-moonline__moons svg { width: clamp(150px, 11vw, 176px); height: auto; aspect-ratio: 136 / 16; }
-  .somna-bfh__proof { display: flex; align-items: center; gap: 18px; margin-top: 24px; }
+  .somna-moonline.somna-moonline--stack { flex-direction: column; align-items: flex-start; gap: 8px; font-size: clamp(0.875rem, 1vw, 0.9375rem); }
+  .somna-moonline.somna-moonline--stack .somna-moonline__moons svg { width: clamp(130px, 10vw, 144px); height: auto; aspect-ratio: 136 / 16; }
+  .somna-bfh__proof { display: flex; align-items: center; gap: 16px; margin-top: 22px; }
   .somna-bfh__proof p { margin: 0; line-height: 1.45; }
-  .somna-bfh__reviews { font-size: clamp(1rem, 1.1vw, 1.125rem); font-weight: 700; }
+  .somna-bfh__reviews { font-size: clamp(0.9375rem, 1vw, 1rem); font-weight: 700; }
   .somna-bfh__stars-txt { color: #f5c84c; letter-spacing: 0.06em; }
-  .somna-bfh__quote { margin-top: 2px !important; font-size: clamp(0.9375rem, 1.05vw, 1.0625rem); font-style: italic; }
+  .somna-bfh__quote { margin-top: 2px !important; font-size: clamp(0.875rem, 1vw, 0.9375rem); font-style: italic; }
   .somna-bfh__guarantee { display: none; }
   @media screen and (max-width: 1199px) {
     .somna-bfh__media { width: 42%; }
@@ -186,8 +186,8 @@
     .somna-bfh__ticket--mob small { font-size: 11px; }
     .somna-bfh__inner { padding-block: 28px calc(var(--bfh-pb) * 0.6); }
     .somna-bfh__copy { max-width: none; }
-    .somna-bfh__title { font-size: clamp(2.375rem, 12.5vw, 4.5rem); }
-    .somna-bfh__title span { font-size: clamp(1.3125rem, 6.4vw, 2.125rem); }
+    .somna-bfh__title { font-size: clamp(2.375rem, 12.5vw, 4.5rem); line-height: 1.05; }
+    .somna-bfh__title span { margin-top: 6px; font-size: clamp(1.3125rem, 6.4vw, 2.125rem); }
     .somna-bfh__price-mob { display: block; margin: 14px 0 0; font-size: clamp(0.9375rem, 4.2vw, 1.1875rem); line-height: 1.55; }
     .somna-bfh__cta { flex-direction: column-reverse; align-items: stretch; gap: 18px; margin-top: 18px; }
     .somna-bfh__moon--mob { display: block; padding: 12px 18px; border-radius: 14px; background: #1d2244; }
