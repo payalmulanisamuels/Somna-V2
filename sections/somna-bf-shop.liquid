@@ -135,8 +135,8 @@
 
 {% stylesheet %}
   .somna-bfs { display: block; overflow-x: clip; background: var(--bfs-bg); color: #f3feee; padding-block: var(--bfs-pt) var(--bfs-pb); }
-  .somna-bfs__eyebrow { margin: 0; color: #c3c9e8; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
-  .somna-bfs__heading { margin: 6px 0 28px; color: #f3feee; font-family: var(--font-accent--family); font-size: clamp(2rem, 3.6vw, 3.5rem); font-weight: 400; line-height: 1.2; text-transform: uppercase; }
+  .somna-bfs__eyebrow { margin: 0; color: #c3c9e8; font-size: clamp(0.875rem, 1vw, 1rem); font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+  .somna-bfs__heading { margin: 6px 0 28px; color: #f3feee; font-family: var(--font-accent--family); font-size: clamp(1.75rem, 2.6vw, 2.5rem); font-weight: 400; line-height: 1.15; text-transform: uppercase; }
   .somna-bfs__list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px; margin: 0; padding: 0; list-style: none; }
   .somna-bfs__card { display: flex; flex-direction: column; gap: 14px; padding: 14px; border-radius: 16px; background: #f3feee; color: #0b0f1d; }
   .somna-bfs__photo { flex: none; width: 100%; aspect-ratio: 1; overflow: hidden; border-radius: 10px; background: #0b0f1d; }
@@ -167,7 +167,7 @@
   @media screen and (max-width: 749px) {
     .somna-bfs { padding-block: calc(var(--bfs-pt) * 0.7) calc(var(--bfs-pb) * 0.7); }
     .somna-bfs__eyebrow { display: none; }
-    .somna-bfs__heading { margin: 0 0 18px; font-size: 1.875rem; }
+    .somna-bfs__heading { margin: 0 0 18px; font-size: 1.625rem; }
     .somna-bfs__card { flex: 0 0 min(480px, 80%); flex-direction: row; gap: 12px; padding: 14px; }
     .somna-bfs__photo { width: 42%; height: auto; align-self: flex-start; }
     .somna-bfs__name { font-size: 1.25rem; }
@@ -175,7 +175,7 @@
     .somna-bfs__price s { display: inline; }
   }
   @media screen and (max-width: 360px) {
-    .somna-bfs__heading { font-size: 1.625rem; }
+    .somna-bfs__heading { font-size: 1.5rem; }
     .somna-bfs__card { flex: 0 0 85%; flex-direction: column; }
     .somna-bfs__photo { width: 100%; }
   }
