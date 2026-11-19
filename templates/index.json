@@ -3335,7 +3335,7 @@
       "settings": {
         "image": "shopify://shop_images/somna-v2-hero-pouches.png",
         "image_mobile": "shopify://shop_images/somna-v2-hero-mobile.jpg",
-        "ticket": "Black Friday",
+        "ticket": "Pre-Black Friday",
         "ticket_sub": "Discount applied ✓",
         "heading": "60% off.",
         "subheading": "With Subscribe & Save",
@@ -3362,32 +3362,31 @@
         "padding_bottom": 96
       }
     },
-    "bf_shop": {
-      "type": "somna-bf-shop",
+    "recently_viewed": {
+      "type": "somna-recently-viewed",
       "settings": {
-        "eyebrow": "Black Friday · 60% off",
-        "heading": "Shop the Black Friday sale",
-        "products": [
-          "nasal-strips",
-          "sleep-bundle",
-          "mouth-tape",
-          "the-colour-set",
-          "season-bundle"
-        ],
-        "add_plan": "sub",
+        "mode": "show",
+        "threshold": 3,
+        "max_products": 8,
+        "eyebrow": "Recently viewed",
+        "heading": "Still thinking about it?",
         "price_prefix": "From",
-        "sub_note": "60% off · Subscribe & Save",
-        "once_note": "50% off · One-time",
-        "button_label": "Add to cart",
+        "subscribe_label": "Subscribe & Save",
+        "button_label": "Shop now",
+        "prev_label": "Previous products",
+        "next_label": "Next products",
         "background_color": "#0b0f1d",
-        "padding_top": 56,
-        "padding_bottom": 64
+        "card_color": "#f3feee",
+        "button_color": "#afbdf8",
+        "padding_top": 36,
+        "padding_bottom": 48,
+        "layout": "compact"
       }
     }
   },
   "order": [
     "bf_hero",
-    "bf_shop",
+    "recently_viewed",
     "wave_navy_mint",
     "steps",
     "match",
