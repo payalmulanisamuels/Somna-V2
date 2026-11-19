@@ -14,7 +14,8 @@
 -%}
 {%- unless on_quiz or s.text == blank -%}
   <a class="somna-quizbar{% if s.phones_only %} somna-quizbar--phones{% endif %}" href="{{ s.link | default: '/pages/quiz' }}" style="--qb-bg: {{ s.bg_color }}; --qb-text: {{ s.text_color }};">
-    <span class="somna-quizbar__text">{{ s.text }}</span>
+    {%- assign qb_parts = s.text | split: '? ' -%}
+    <span class="somna-quizbar__text">{% if qb_parts.size > 1 %}<span class="somna-quizbar__pre">{{ qb_parts[0] }}? </span>{{ qb_parts | slice: 1, 9 | join: '? ' }}{% else %}{{ s.text }}{% endif %}</span>
     <span class="somna-quizbar__cta">{{ s.link_label }} <span aria-hidden="true">→</span></span>
   </a>
 {%- endunless -%}
@@ -29,7 +30,7 @@
   .somna-quizbar:hover .somna-quizbar__cta { text-decoration: underline; text-underline-offset: 3px; }
   @media screen and (min-width: 750px) { .somna-quizbar--phones { display: none; } }
   @media screen and (max-width: 749px) {
-    .somna-quizbar { padding: 9px 16px; font-size: 14px; }
+    .somna-quizbar { padding: 9px 16px; font-size: 13px; }
     .somna-quizbar__text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   }
   /* announcement bar: italic part = desktop-only words */
@@ -40,6 +41,12 @@
   @media screen and (max-width: 749px) {
     .announcement-bar em { display: none; }
     .announcement-bar .announcement-bar__text { font-size: 0.6875rem; letter-spacing: 0.02em; white-space: nowrap; }
+  }
+  @media screen and (max-width: 400px) {
+    .announcement-bar .announcement-bar__text { white-space: normal; text-wrap: balance; }
+  }
+  @media screen and (max-width: 360px) {
+    .somna-quizbar__pre { display: none; }
   }
 {% endstylesheet %}
 

@@ -3,7 +3,7 @@
   The end time and date come from the sale countdown bar (sections/somna-countdown.liquid, header group), so the date
   is set in one place. Hidden when there is no countdown bar or the sale has ended.
   @param {string} [text] - "[nights] nights left · ends [date]" ([nights] / [date] are filled in)
-  @param {string} [date] - 'long' (desktop date "Wed 2 Dec, 11:59 PM PT", default) or 'short' ("Wed 2 Dec")
+  @param {string} [date] - 'long' (desktop date "Wed 2 Dec, 11:59 PM PT", default), 'short' ("Wed 2 Dec") or 'auto' (short on phones)
   @param {string} [class] - extra class on the wrapper
 {%- enddoc -%}
 {%- liquid
@@ -49,7 +49,8 @@
           if (!end || end <= Date.now()) return;
           const long = cd.querySelector('.somna-cd__date')?.textContent.trim() || '';
           const short = cd.querySelector('.somna-cd__label-mob span')?.textContent.trim() || long.split(',')[0];
-          const date = this.dataset.date === 'short' ? short : long;
+          const mode = this.dataset.date === 'auto' ? (matchMedia('(max-width: 749px)').matches ? 'short' : 'long') : this.dataset.date;
+          const date = mode === 'short' ? short : long;
           const nights = Math.max(1, Math.ceil((end - Date.now()) / 86400000));
           let t = this.dataset.text.replace('[nights]', nights).replace('[date]', date);
           if (nights === 1) t = t.replace('nights left', 'night left');

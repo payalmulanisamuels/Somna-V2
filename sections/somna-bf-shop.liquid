@@ -134,12 +134,12 @@
 </script>
 
 {% stylesheet %}
-  .somna-bfs { display: block; background: var(--bfs-bg); color: #f3feee; padding-block: var(--bfs-pt) var(--bfs-pb); }
+  .somna-bfs { display: block; overflow-x: clip; background: var(--bfs-bg); color: #f3feee; padding-block: var(--bfs-pt) var(--bfs-pb); }
   .somna-bfs__eyebrow { margin: 0; color: #c3c9e8; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
   .somna-bfs__heading { margin: 6px 0 28px; color: #f3feee; font-family: var(--font-accent--family); font-size: clamp(2rem, 3.6vw, 3.5rem); font-weight: 400; line-height: 1.2; text-transform: uppercase; }
   .somna-bfs__list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px; margin: 0; padding: 0; list-style: none; }
-  .somna-bfs__card { display: flex; gap: 14px; padding: 14px; border-radius: 16px; background: #f3feee; color: #0b0f1d; }
-  .somna-bfs__photo { flex: none; width: 43%; aspect-ratio: 1; overflow: hidden; border-radius: 10px; background: #0b0f1d; }
+  .somna-bfs__card { display: flex; flex-direction: column; gap: 14px; padding: 14px; border-radius: 16px; background: #f3feee; color: #0b0f1d; }
+  .somna-bfs__photo { flex: none; width: 100%; aspect-ratio: 1; overflow: hidden; border-radius: 10px; background: #0b0f1d; }
   .somna-bfs__photo img { width: 100%; height: 100%; object-fit: cover; }
   .somna-bfs__body { display: flex; flex: 1; min-width: 0; flex-direction: column; }
   .somna-bfs__body p { margin: 0; }
@@ -151,33 +151,33 @@
   .somna-bfs__price s { display: block; color: #8a8a8a; }
   .somna-bfs__note { margin-top: 6px !important; color: #3b438a; font-size: 0.9375rem; font-weight: 700; line-height: 1.3; }
   .somna-bfs__btn {
-    align-self: flex-end; margin-top: auto; padding: 11px 20px; border-radius: 10px; background: #0b0f1d; color: #f3feee;
+    align-self: stretch; margin-top: auto; padding: 11px 20px; text-align: center; border-radius: 10px; background: #0b0f1d; color: #f3feee;
     font-size: 0.9375rem; font-weight: 800; letter-spacing: 0.03em; text-decoration: none; text-transform: uppercase; white-space: nowrap;
   }
   .somna-bfs__body .somna-bfs__btn { margin-top: 14px; }
   .somna-bfs__btn[aria-busy='true'] { opacity: 0.8; pointer-events: none; }
   .somna-bfs__btn[aria-disabled='true'] { opacity: 0.5; cursor: not-allowed; }
   .somna-bfs__err { margin-top: 6px !important; color: #b3261e; font-size: 0.8125rem; font-weight: 600; }
-  @media screen and (max-width: 1599px) {
-    .somna-bfs__card { flex-direction: column; }
-    .somna-bfs__photo { width: 100%; }
-    .somna-bfs__btn { align-self: stretch; text-align: center; }
-  }
-  @media screen and (max-width: 989px) {
+  /* up to 1199: one swipeable row */
+  @media screen and (max-width: 1199px) {
     .somna-bfs__list { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-inline: -16px; padding-inline: 16px; }
     .somna-bfs__list::-webkit-scrollbar { display: none; }
-    .somna-bfs__card { flex: 0 0 min(480px, 80%); flex-direction: row; scroll-snap-align: start; }
-    .somna-bfs__photo { width: 42%; }
-    .somna-bfs__btn { align-self: stretch; }
+    .somna-bfs__card { flex: 0 0 min(300px, 40%); scroll-snap-align: start; }
   }
   @media screen and (max-width: 749px) {
     .somna-bfs { padding-block: calc(var(--bfs-pt) * 0.7) calc(var(--bfs-pb) * 0.7); }
     .somna-bfs__eyebrow { display: none; }
     .somna-bfs__heading { margin: 0 0 18px; font-size: 1.875rem; }
-    .somna-bfs__card { flex: 0 0 80%; gap: 12px; padding: 14px; }
+    .somna-bfs__card { flex: 0 0 min(480px, 80%); flex-direction: row; gap: 12px; padding: 14px; }
+    .somna-bfs__photo { width: 42%; height: auto; align-self: flex-start; }
     .somna-bfs__name { font-size: 1.25rem; }
     .somna-bfs__rating, .somna-bfs__price, .somna-bfs__note { font-size: 0.875rem; }
     .somna-bfs__price s { display: inline; }
+  }
+  @media screen and (max-width: 360px) {
+    .somna-bfs__heading { font-size: 1.625rem; }
+    .somna-bfs__card { flex: 0 0 85%; flex-direction: column; }
+    .somna-bfs__photo { width: 100%; }
   }
 {% endstylesheet %}
 
