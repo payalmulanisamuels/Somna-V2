@@ -1,0 +1,81 @@
+{%- comment -%}
+  Shared customer photo popup (reviews section, product page photo grid): tap a summary photo to see it large, with previous / next arrows, swipe and
+  arrow keys. Nothing loads up front: the popup is built on the first tap and the large photo is
+  fetched only then (plus its neighbours). Demo without the setting: add ?rv_popup=1 to the URL.
+{%- endcomment -%}
+<script>
+  (function () {
+    if (window.__somnaRvLb) return;
+    window.__somnaRvLb = true;
+    var demo = /[?&]rv_popup=1/.test(location.search);
+    var SEL = demo ? '.somna-reviews__gallery img, [data-photo-popup] img' : '[data-photo-popup] img';
+    var dlg, img, count, list = [], at = 0, sx = null;
+    function big(src) {
+      try {
+        var u = new URL(src, location.href);
+        u.searchParams.delete('height'); u.searchParams.delete('crop');
+        u.searchParams.set('width', '1400');
+        return u.toString();
+      } catch (e) { return src; }
+    }
+    function build() {
+      dlg = document.createElement('dialog');
+      dlg.className = 'somna-rv-lb';
+      dlg.setAttribute('aria-label', 'Customer photos');
+      dlg.innerHTML =
+        '<button type="button" class="somna-rv-lb__close" aria-label="Close" data-lb="close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
+        '<button type="button" class="somna-rv-lb__nav somna-rv-lb__nav--prev" aria-label="Previous photo" data-lb="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>' +
+        '<figure class="somna-rv-lb__fig"><img alt="" decoding="async"><figcaption class="somna-rv-lb__count" aria-live="polite"></figcaption></figure>' +
+        '<button type="button" class="somna-rv-lb__nav somna-rv-lb__nav--next" aria-label="Next photo" data-lb="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>';
+      document.body.appendChild(dlg);
+      img = dlg.querySelector('img');
+      count = dlg.querySelector('.somna-rv-lb__count');
+      dlg.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-lb]');
+        if (b) { b.dataset.lb === 'close' ? dlg.close() : go(+b.dataset.lb); return; }
+        if (e.target === dlg) dlg.close();
+      });
+      dlg.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft') go(-1);
+        if (e.key === 'ArrowRight') go(1);
+      });
+      dlg.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+      dlg.addEventListener('touchend', function (e) {
+        if (sx === null) return;
+        var dx = e.changedTouches[0].clientX - sx; sx = null;
+        if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+      }, { passive: true });
+      dlg.addEventListener('close', function () { document.documentElement.classList.remove('somna-rv-lb-open'); });
+    }
+    function show(i) {
+      at = (i + list.length) % list.length;
+      var el = list[at];
+      img.classList.remove('is-in');
+      img.onload = function () { img.classList.add('is-in'); };
+      img.src = big(el.currentSrc || el.src);
+      img.alt = el.alt || '';
+      if (img.complete) img.classList.add('is-in');
+      count.textContent = (at + 1) + ' / ' + list.length;
+      dlg.classList.toggle('is-single', list.length < 2);
+      [at + 1, at - 1].forEach(function (n) { var x = list[(n + list.length) % list.length]; (new Image()).src = big(x.currentSrc || x.src); });
+    }
+    function go(d) { if (list.length > 1) show(at + d); }
+    function open(el) {
+      if (!dlg) build();
+      list = Array.prototype.slice.call((el.closest('[data-photo-popup]') || el.closest('.somna-reviews__gallery')).querySelectorAll('img'));
+      show(list.indexOf(el));
+      document.documentElement.classList.add('somna-rv-lb-open');
+      dlg.showModal();
+    }
+    document.addEventListener('click', function (e) {
+      var el = e.target.closest && e.target.closest(SEL);
+      if (el) open(el);
+    });
+    document.addEventListener('keydown', function (e) {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches(SEL)) { e.preventDefault(); open(e.target); }
+    });
+    if (demo) document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll(SEL).forEach(function (el) { el.tabIndex = 0; el.setAttribute('role', 'button'); el.closest('ul').setAttribute('data-photo-popup', ''); });
+    });
+  })();
+</script>

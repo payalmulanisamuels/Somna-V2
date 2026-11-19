@@ -218,6 +218,63 @@
         "Real Nights, On Camera": the product's own videos (custom.pdp_videos) when set, otherwise the section's
         video blocks. The video's own preview frame is the poster.
       {%- endcomment -%}
+      {%- if s.below_media == 'photos' -%}
+        {%- comment -%}
+          Customer photos (instead of the videos): this product's Judge.me photo reviews first, then the store's other
+          photo reviews (as on the homepage) so the 3 + 3 grid fills. The same picture never twice. Past 6, the 6th tile
+          reads "+N" and every photo opens in the shared popup (snippets/somna-photo-lightbox.liquid).
+        {%- endcomment -%}
+        {%- liquid
+          assign ph_list = ''
+          assign ph_keys = ''
+          assign ph_count = 0
+          assign ph_sources = product | sort
+          if s.photos_fill
+            assign ph_sources = ph_sources | concat: collections.all.products
+          endif
+        -%}
+        {%- for ph_src in ph_sources limit: 50 -%}
+          {%- if ph_count >= 30 -%}{%- break -%}{%- endif -%}
+          {%- if forloop.index > 1 and ph_src.id == product.id -%}{%- continue -%}{%- endif -%}
+          {%- for ph_rv in ph_src.metafields.judgeme.review_widget_data.value.photo_gallery -%}
+            {%- for pic in ph_rv.pictures_urls -%}
+              {%- if ph_count >= 30 -%}{%- break -%}{%- endif -%}
+              {%- assign pic_src = pic.original | default: pic.huge | split: '&width=' | first -%}
+              {%- assign pic_file = pic_src | split: '?' | first | split: '/' | last -%}
+              {%- assign pic_head = pic_file | split: '-' | first -%}
+              {%- assign pic_key = pic_file | remove_first: pic_head -%}
+              {%- unless ph_keys contains pic_key -%}
+                {%- assign ph_first = ph_rv.reviewer_name | split: ' ' | first | replace: '|', '' | replace: '^', '' -%}
+                {%- assign ph_list = ph_list | append: pic_src | append: '|' | append: ph_first | append: '^' -%}
+                {%- assign ph_keys = ph_keys | append: pic_key | append: '^' -%}
+                {%- assign ph_count = ph_count | plus: 1 -%}
+              {%- endunless -%}
+            {%- endfor -%}
+          {%- endfor -%}
+        {%- endfor -%}
+        {%- assign ph_entries = ph_list | split: '^' -%}
+        {%- if ph_entries.size > 0 -%}
+          <div class="somna-pdp-hero__videos somna-pdp-hero__photos">
+            {%- if s.photos_heading != blank -%}<h2 class="somna-pdp-hero__videos-title">{{ s.photos_heading }}</h2>{%- endif -%}
+            <ul class="somna-pdp-hero__photo-grid" role="list" data-photo-popup>
+              {%- assign ph_more = ph_entries.size | minus: 5 -%}
+              {%- for entry in ph_entries -%}
+                {%- assign pic_src = entry | split: '|' | first -%}
+                {%- assign ph_first = entry | split: '|' | last -%}
+                <li{% if forloop.index > 6 %} hidden{% endif %}>
+                  <img src="{{ pic_src }}&width=400" srcset="{{ pic_src }}&width=300 300w, {{ pic_src }}&width=400 400w, {{ pic_src }}&width=600 600w" sizes="(min-width: 990px) 220px, 33vw" alt="{{ 'Photo from ' | append: ph_first | append: '’s review' | escape }}" width="300" height="300" loading="lazy" decoding="async" tabindex="0" role="button">
+                  {%- if forloop.index == 6 and ph_entries.size > 6 -%}
+                    <span class="somna-pdp-hero__photo-more" aria-hidden="true"><b>+{{ ph_more }}</b><span>{{ s.photos_more_label }}</span></span>
+                  {%- elsif ph_first != blank -%}
+                    <span class="somna-pdp-hero__photo-name" aria-hidden="true">{{ ph_first }}</span>
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+          {%- render 'somna-photo-lightbox' -%}
+        {%- endif -%}
+      {%- else -%}
       {%- assign product_videos = mf.pdp_videos.value -%}
       {%- if product_videos.size > 0 or video_blocks.size > 0 -%}
         <div class="somna-pdp-hero__videos">
@@ -297,6 +354,7 @@
             {%- endif -%}
           </ul>
         </div>
+      {%- endif -%}
       {%- endif -%}
     </div>
     </div>
@@ -3398,6 +3456,25 @@
     }
   }
 
+  /* customer photos grid (setting "Under the photos": Customer photos) — 3 + 3 square tiles */
+  .somna-pdp-hero__photo-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+  .somna-pdp-hero__photo-grid li { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 14px; background: #0b0f1d; }
+  .somna-pdp-hero__photo-grid li[hidden] { display: none; }
+  .somna-pdp-hero__photo-grid img { display: block; width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; transition: transform 0.35s ease; }
+  .somna-pdp-hero__photo-grid li:hover img { transform: scale(1.04); }
+  .somna-pdp-hero__photo-grid img:focus-visible { outline: 3px solid #0b0f1d; outline-offset: -3px; }
+  .somna-pdp-hero__photo-name { position: absolute; left: 8px; bottom: 8px; padding: 3px 9px; border-radius: 999px; background: rgb(11 15 29 / 0.72); color: #fff; font-size: 0.75rem; font-weight: 600; pointer-events: none; }
+  .somna-pdp-hero__photo-more { position: absolute; inset: 0; display: grid; place-content: center; gap: 2px; background: rgb(11 15 29 / 0.62); color: #fff; text-align: center; pointer-events: none; }
+  .somna-pdp-hero__photo-more b { font-family: var(--font-accent--family); font-size: 1.875rem; font-weight: 400; line-height: 1.2; }
+  .somna-pdp-hero__photo-more span { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  @media screen and (max-width: 749px) {
+    .somna-pdp-hero__photo-grid { gap: 8px; }
+    .somna-pdp-hero__photo-grid li { border-radius: 10px; }
+    .somna-pdp-hero__photo-name { left: 5px; bottom: 5px; padding: 2px 7px; font-size: 0.625rem; }
+    .somna-pdp-hero__photo-more b { font-size: 1.375rem; }
+    .somna-pdp-hero__photo-more span { font-size: 0.625rem; }
+  }
+
   /* ===== Black Friday layout (setting "Use the Black Friday layout") ===== */
   .somna-pdp-hero--bf .somna-pdp-hero__brand,
   .somna-pdp-hero--bf .somna-pdp-hero__tagline,
@@ -3598,6 +3675,10 @@
     { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified Buyer" },
     { "type": "select", "id": "main_shape", "label": "Main photo box", "options": [{ "value": "natural", "label": "Photo's own shape" }, { "value": "square-fit", "label": "Square, whole photo on navy" }, { "value": "square-fill", "label": "Square, photo fills (sides trimmed)" }], "default": "natural", "info": "Square keeps the main photo as tall as the square gallery photos." },
     { "type": "select", "id": "main_drip", "label": "Main photo and drip edge", "options": [{ "value": "over", "label": "Drip over the photo's top" }, { "value": "below", "label": "Photo below the drip (whole photo)" }, { "value": "below-crop", "label": "Photo below the drip, bottom trimmed" }, { "value": "fit", "label": "Photo below the drip, a bit smaller" }, { "value": "none", "label": "No drip on the photo" }], "default": "over" },
+    { "type": "select", "id": "below_media", "label": "Under the photos", "options": [{ "value": "videos", "label": "Videos (Real Nights, On Camera)" }, { "value": "photos", "label": "Customer photos (3 + 3 grid)" }], "default": "videos" },
+    { "type": "text", "id": "photos_heading", "label": "Customer photos heading", "default": "Real Nights, Real Photos" },
+    { "type": "checkbox", "id": "photos_fill", "label": "Fill the photo grid with other products' photo reviews", "info": "This product's photos come first; others fill the grid to 6 and show behind the +N tile.", "default": true },
+    { "type": "text", "id": "photos_more_label", "label": "Customer photos: +N tile label", "default": "more photos" },
     { "type": "select", "id": "video_shape", "label": "Video cards", "options": [{ "value": "natural", "label": "Each video's own shape" }, { "value": "equal", "label": "Same width (narrowest shape)" }], "default": "natural" },
     { "type": "text", "id": "videos_heading", "label": "Videos heading", "default": "Real Nights, On Camera" },
     { "type": "text", "id": "play_label", "label": "Play label (screen readers)", "default": "Play video" },
