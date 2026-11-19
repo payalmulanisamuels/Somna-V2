@@ -283,17 +283,18 @@
               -%}
               {%- capture rv_item -%}
                 <li class="somna-pdp-hero__rv-item">
-                  <div class="somna-pdp-hero__rv-top">
-                    <span class="somna-pdp-hero__rv-stars" role="img" aria-label="{{ rv_stars }} out of 5 stars">{% for i in (1..5) %}<span{% if i > rv_stars %} class="is-empty"{% endif %}>★</span>{% endfor %}</span>
-                    <time datetime="{{ ph_rv.created_at | date: '%Y-%m-%d' }}">{{ ph_rv.created_at | date: '%B %-d, %Y' }}</time>
-                  </div>
-                  <p class="somna-pdp-hero__rv-name">{{ rv_name | escape }}{% if ph_rv.verified_buyer %} <span>✓ {{ s.verified_label | default: 'Verified buyer' }}</span>{% endif %}</p>
-                  <p class="somna-pdp-hero__rv-body">{{ ph_rv.body_html | strip_html | strip | escape }}</p>
                   <ul class="somna-pdp-hero__rv-pics" role="list" data-photo-popup>
                     {%- for rp in rv_pic_list limit: 5 -%}
-                      <li><img src="{{ rp }}&width=200" alt="{{ 'Photo from ' | append: rv_name | append: '’s review' | escape }}" width="64" height="64" loading="lazy" decoding="async" tabindex="0" role="button"></li>
+                      <li{% if forloop.index > 1 %} hidden{% endif %}><img src="{{ rp }}&width=160" alt="{{ 'Photo from ' | append: rv_name | append: '’s review' | escape }}" width="56" height="56" loading="lazy" decoding="async" tabindex="0" role="button">{% if forloop.index == 1 and rv_pic_list.size > 1 %}<span class="somna-pdp-hero__rv-more" aria-hidden="true">+{{ rv_pic_list.size | minus: 1 }}</span>{% endif %}</li>
                     {%- endfor -%}
                   </ul>
+                  <div class="somna-pdp-hero__rv-text">
+                    <div class="somna-pdp-hero__rv-top">
+                      <p class="somna-pdp-hero__rv-name"><span class="somna-pdp-hero__rv-stars" role="img" aria-label="{{ rv_stars }} out of 5 stars">{% for i in (1..5) %}<span{% if i > rv_stars %} class="is-empty"{% endif %}>★</span>{% endfor %}</span> {{ rv_name | escape }}{% if ph_rv.verified_buyer %} <small>✓ {{ s.verified_label | default: 'Verified buyer' }}</small>{% endif %}</p>
+                      <time datetime="{{ ph_rv.created_at | date: '%Y-%m-%d' }}">{{ ph_rv.created_at | date: '%b %-d, %Y' }}</time>
+                    </div>
+                    <p class="somna-pdp-hero__rv-body">{{ ph_rv.body_html | strip_html | strip | escape }}</p>
+                  </div>
                 </li>
               {%- endcapture -%}
               {%- assign rv_html = rv_html | append: rv_item -%}
@@ -3512,33 +3513,44 @@
     }
   }
 
-  /* customer reviews card (setting "Under the photos": Customer photos) — photos strip + latest photo reviews */
-  .somna-pdp-hero__rv { padding: 18px 20px 6px; border-radius: 16px; background: #f3feee; color: #0b0f1d; box-shadow: 0 4px 14px rgb(11 15 29 / 0.08); }
-  .somna-pdp-hero__rv-label { margin: 0 0 10px; color: #3b438a; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
-  .somna-pdp-hero__rv-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+  /* customer reviews card (setting "Under the photos": Customer photos) — compact: photo strip + short review rows */
+  .somna-pdp-hero__rv { padding: 12px 14px 2px; border-radius: 14px; background: #f3feee; color: #0b0f1d; box-shadow: 0 4px 14px rgb(11 15 29 / 0.08); }
+  .somna-pdp-hero__rv-label { margin: 0 0 8px; color: #3b438a; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+  .somna-pdp-hero__rv-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 60px)); gap: 6px; margin: 0; padding: 0; list-style: none; }
   .somna-pdp-hero__rv-strip li, .somna-pdp-hero__rv-pics li { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 8px; background: #0b0f1d; }
-  .somna-pdp-hero__rv-strip li[hidden] { display: none; }
+  .somna-pdp-hero__rv-strip li[hidden], .somna-pdp-hero__rv-pics li[hidden] { display: none; }
   .somna-pdp-hero__rv-strip img, .somna-pdp-hero__rv-pics img { display: block; width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; transition: transform 0.3s ease; }
   .somna-pdp-hero__rv-strip li:hover img, .somna-pdp-hero__rv-pics li:hover img { transform: scale(1.06); }
   .somna-pdp-hero__rv img:focus-visible { outline: 3px solid #3b438a; outline-offset: -3px; }
-  .somna-pdp-hero__rv-more { position: absolute; inset: 0; display: grid; place-items: center; background: rgb(11 15 29 / 0.6); color: #fff; font-family: var(--font-accent--family); font-size: 1.125rem; pointer-events: none; }
+  .somna-pdp-hero__rv-more { position: absolute; inset: 0; display: grid; place-items: center; background: rgb(11 15 29 / 0.6); color: #fff; font-family: var(--font-accent--family); font-size: 1rem; pointer-events: none; }
   .somna-pdp-hero__rv-more--mob { display: none; }
-  .somna-pdp-hero__rv-list { margin: 16px 0 0; padding: 0; border-top: 1px solid rgb(11 15 29 / 0.12); list-style: none; }
-  .somna-pdp-hero__rv-item { padding: 16px 0; border-bottom: 1px solid rgb(11 15 29 / 0.12); }
-  .somna-pdp-hero__rv-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .somna-pdp-hero__rv-stars { color: #f5c84c; font-size: 1.0625rem; letter-spacing: 0.08em; line-height: 1; }
+  .somna-pdp-hero__rv-list { margin: 10px 0 0; padding: 0; border-top: 1px solid rgb(11 15 29 / 0.12); list-style: none; }
+  .somna-pdp-hero__rv-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid rgb(11 15 29 / 0.12); }
+  .somna-pdp-hero__rv-pics { flex: none; width: 52px; margin: 0; padding: 0; list-style: none; }
+  .somna-pdp-hero__rv-text { flex: 1; min-width: 0; }
+  .somna-pdp-hero__rv-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .somna-pdp-hero__rv-name { margin: 0; overflow: hidden; font-size: 0.8125rem; font-weight: 700; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
+  .somna-pdp-hero__rv-stars { margin-right: 4px; color: #f5c84c; font-size: 0.8125rem; letter-spacing: 0.04em; }
   .somna-pdp-hero__rv-stars .is-empty { color: rgb(11 15 29 / 0.18); }
-  .somna-pdp-hero__rv-top time { color: #6b6f86; font-size: 0.8125rem; white-space: nowrap; }
-  .somna-pdp-hero__rv-name { margin: 8px 0 4px; font-size: 0.9375rem; font-weight: 700; line-height: 1.3; }
-  .somna-pdp-hero__rv-name span { margin-left: 6px; color: #3b438a; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
-  .somna-pdp-hero__rv-body { margin: 0; color: #2b2f45; font-size: 0.875rem; line-height: 1.55; }
-  .somna-pdp-hero__rv-pics { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
-  .somna-pdp-hero__rv-pics li { width: 64px; }
+  .somna-pdp-hero__rv-name small { margin-left: 4px; color: #3b438a; font-size: 0.6875rem; font-weight: 600; }
+  .somna-pdp-hero__rv-top time { flex: none; color: #6b6f86; font-size: 0.6875rem; }
+  .somna-pdp-hero__rv-body { display: -webkit-box; margin: 3px 0 0; overflow: hidden; color: #2b2f45; font-size: 0.8125rem; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+  .somna-pdp-hero__rv-all { display: block; padding: 8px 0; color: #0b0f1d; font-size: 0.8125rem; font-weight: 700; text-align: center; text-decoration: underline; text-underline-offset: 3px; }
+  @media screen and (max-width: 749px) {
+    .somna-pdp-hero__rv { padding: 12px 12px 2px; }
+    .somna-pdp-hero__rv-strip { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .somna-pdp-hero__rv-strip li:nth-child(n + 6) { display: none; }
+    .somna-pdp-hero__rv-more--mob { display: grid; }
+    .somna-pdp-hero__rv-more--desk { display: none; }
+    .somna-pdp-hero__rv-item { gap: 10px; }
+    .somna-pdp-hero__rv-pics { width: 46px; }
+    .somna-pdp-hero__rv-name small { display: none; }
+  }
+
   /* the reviews card makes the left column tall: keep the buy panel at its own height instead of stretching its rows apart */
   @media screen and (min-width: 750px) {
     .somna-pdp-hero:has(.somna-pdp-hero__photos) .somna-pdp-hero__panel { align-self: start; }
   }
-  .somna-pdp-hero__rv-all { display: block; padding: 12px 0 10px; color: #0b0f1d; font-size: 0.875rem; font-weight: 700; text-align: center; text-decoration: underline; text-underline-offset: 3px; }
   @media screen and (max-width: 749px) {
     .somna-pdp-hero__rv { padding: 14px 14px 4px; border-radius: 14px; }
     .somna-pdp-hero__rv-strip { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
@@ -3754,7 +3766,7 @@
     { "type": "product_list", "id": "photos_fill_from", "label": "Customer photos: fill bundle pages from", "info": "Pages of these products show only their own photos. Every other product (the bundles) shows its own photos first, then these products' photos.", "limit": 6 },
     { "type": "text", "id": "photos_skip", "label": "Customer photos: leave out", "info": "product-handle:file-word, comma separated — e.g. mouth-tape:nasalstrip hides strip photos posted in mouth tape reviews." },
     { "type": "text", "id": "photos_label", "label": "Customer photos: strip label", "default": "Customer photos" },
-    { "type": "range", "id": "photos_reviews", "label": "Customer photos: reviews shown", "min": 1, "max": 5, "step": 1, "default": 3 },
+    { "type": "range", "id": "photos_reviews", "label": "Customer photos: reviews shown", "min": 1, "max": 5, "step": 1, "default": 2 },
     { "type": "text", "id": "photos_all_label", "label": "Customer photos: link to all reviews", "default": "See all reviews ↓" },
     { "type": "select", "id": "video_shape", "label": "Video cards", "options": [{ "value": "natural", "label": "Each video's own shape" }, { "value": "equal", "label": "Same width (narrowest shape)" }], "default": "natural" },
     { "type": "text", "id": "videos_heading", "label": "Videos heading", "default": "Real Nights, On Camera" },
