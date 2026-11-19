@@ -127,18 +127,19 @@
     background: radial-gradient(ellipse 60% 70% at 20% 40%, rgb(70 78 140 / 0.35), transparent 70%);
   }
   /* photo inside the page container: its right edge lines up with the content (1160px), fading out at both sides */
-  .somna-bfh__media { position: absolute; inset: 0 max(0px, calc((100% - 1160px) / 2)) 0 auto; z-index: -1; width: calc(min(100%, 1160px) * 0.56); }
+  .somna-bfh__media { position: absolute; inset: 0 max(0px, calc((100% - 1160px) / 2)) 0 auto; z-index: -1; width: calc(min(100%, 1160px) * 0.64); }
   @media screen and (min-width: 1200px) {
-    .somna-bfh__media { -webkit-mask-image: linear-gradient(to right, #000 80%, transparent 100%); mask-image: linear-gradient(to right, #000 80%, transparent 100%); }
+    .somna-bfh__media { -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 30%, #000 82%, transparent 100%); mask-image: linear-gradient(to right, transparent 0%, #000 30%, #000 82%, transparent 100%); }
+    .somna-bfh__media::before { background: linear-gradient(to right, rgb(11 15 29 / 0.35) 0%, rgb(11 15 29 / 0.1) 40%, rgb(11 15 29 / 0.2) 100%); }
   }
-  .somna-bfh__img { width: 100%; height: 100%; object-fit: cover; object-position: 60% 55%; }
+  .somna-bfh__img { width: 100%; height: 100%; object-fit: cover; object-position: 72% 55%; }
   .somna-bfh .somna-bfh__img--mob, .somna-bfh .somna-bfh__ticket--mob { display: none; }
   .somna-bfh__media::before {
     content: ''; position: absolute; inset: 0; z-index: 1;
     background: linear-gradient(to right, var(--bfh-bg) 0%, rgb(11 15 29 / 0.55) 22%, rgb(11 15 29 / 0.25) 60%, rgb(11 15 29 / 0.35) 100%);
   }
   .somna-bfh__inner { padding-block: calc(var(--bfh-pt) * 0.25 + var(--header-group-height, 0px) + var(--header-height, 66px) + 28px) calc(var(--bfh-pb) * 0.75); }
-  .somna-bfh__copy { max-width: min(640px, 56vw); }
+  .somna-bfh__copy { position: relative; max-width: min(720px, 60vw); }
   .somna-bfh__ticket {
     display: inline-flex; flex-direction: column; align-items: center; margin: 0 0 clamp(18px, 1.8vw, 26px); padding: 8px 16px 6px;
     border: 3px dashed #000; border-radius: 4px; background: #fff; color: #000; rotate: -5deg;
