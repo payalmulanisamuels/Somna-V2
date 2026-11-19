@@ -127,7 +127,12 @@
         "main_shape": "square-fit",
         "bf_layout": true,
         "badge_sub": "Applied ✓",
-        "below_media": "photos"
+        "below_media": "photos",
+        "photos_fill_from": [
+          "nasal-strips",
+          "mouth-tape"
+        ],
+        "photos_skip": "mouth-tape:nasalstrip"
       }
     },
     "recently_viewed": {

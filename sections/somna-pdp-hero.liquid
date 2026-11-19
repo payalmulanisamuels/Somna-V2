@@ -228,12 +228,15 @@
           assign ph_list = ''
           assign ph_keys = ''
           assign ph_count = 0
+          # own photos first; pages of products NOT in "Fill from" (the bundles) add those products' photos
+          assign ph_fill = s.photos_fill_from | map: 'handle'
           assign ph_handles = product.handle
-          if s.photos_fill
-            assign ph_all = collections.all.products | map: 'handle' | join: ','
-            assign ph_handles = ph_handles | append: ',' | append: ph_all
-          endif
+          unless ph_fill contains product.handle
+            assign ph_handles = ph_handles | append: ',' | append: ph_fill | join: ','
+          endunless
           assign ph_handles = ph_handles | split: ','
+          # "Leave out": entries "product-handle:word" drop that product's photos whose file name contains the word
+          assign ph_skip = s.photos_skip | split: ','
         -%}
         {%- for ph_handle in ph_handles limit: 20 -%}
           {%- if ph_count >= 30 -%}{%- break -%}{%- endif -%}
@@ -246,6 +249,12 @@
               {%- assign pic_file = pic_src | split: '?' | first | split: '/' | last -%}
               {%- assign pic_head = pic_file | split: '-' | first -%}
               {%- assign pic_key = pic_file | remove_first: pic_head -%}
+              {%- assign pic_skip = false -%}
+              {%- for skip_entry in ph_skip -%}
+                {%- assign skip_parts = skip_entry | strip | split: ':' -%}
+                {%- if skip_parts.size == 2 and skip_parts[0] == ph_handle and pic_file contains skip_parts[1] -%}{%- assign pic_skip = true -%}{%- endif -%}
+              {%- endfor -%}
+              {%- if pic_skip -%}{%- continue -%}{%- endif -%}
               {%- unless ph_keys contains pic_key -%}
                 {%- assign ph_first = ph_rv.reviewer_name | split: ' ' | first | replace: '|', '' | replace: '^', '' -%}
                 {%- assign ph_list = ph_list | append: pic_src | append: '|' | append: ph_first | append: '^' -%}
@@ -3680,7 +3689,8 @@
     { "type": "select", "id": "main_drip", "label": "Main photo and drip edge", "options": [{ "value": "over", "label": "Drip over the photo's top" }, { "value": "below", "label": "Photo below the drip (whole photo)" }, { "value": "below-crop", "label": "Photo below the drip, bottom trimmed" }, { "value": "fit", "label": "Photo below the drip, a bit smaller" }, { "value": "none", "label": "No drip on the photo" }], "default": "over" },
     { "type": "select", "id": "below_media", "label": "Under the photos", "options": [{ "value": "videos", "label": "Videos (Real Nights, On Camera)" }, { "value": "photos", "label": "Customer photos (3 + 3 grid)" }], "default": "videos" },
     { "type": "text", "id": "photos_heading", "label": "Customer photos heading", "default": "Real Nights, Real Photos" },
-    { "type": "checkbox", "id": "photos_fill", "label": "Fill the photo grid with other products' photo reviews", "info": "This product's photos come first; others fill the grid to 6 and show behind the +N tile.", "default": true },
+    { "type": "product_list", "id": "photos_fill_from", "label": "Customer photos: fill bundle pages from", "info": "Pages of these products show only their own photos. Every other product (the bundles) shows its own photos first, then these products' photos.", "limit": 6 },
+    { "type": "text", "id": "photos_skip", "label": "Customer photos: leave out", "info": "product-handle:file-word, comma separated — e.g. mouth-tape:nasalstrip hides strip photos posted in mouth tape reviews." },
     { "type": "text", "id": "photos_more_label", "label": "Customer photos: +N tile label", "default": "more photos" },
     { "type": "select", "id": "video_shape", "label": "Video cards", "options": [{ "value": "natural", "label": "Each video's own shape" }, { "value": "equal", "label": "Same width (narrowest shape)" }], "default": "natural" },
     { "type": "text", "id": "videos_heading", "label": "Videos heading", "default": "Real Nights, On Camera" },
