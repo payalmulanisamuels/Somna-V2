@@ -1,0 +1,243 @@
+{%- comment -%}
+  Somna V2 — Black Friday homepage hero (mockup "SOMNA_BF_Homepage", 1–8): starry night band with the pouches photo,
+  "Black Friday · discount applied" ticket, "60% OFF." (no "Up to"), "With Subscribe & Save", a live price line,
+  benefits, Shop button with the moon countdown (date from the sale countdown bar) and the 30-night seal with real
+  review numbers. Desktop: copy on the left, photo on the right. Phones: photo on top, copy below.
+{%- endcomment -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  assign p = s.price_product
+  assign sub = nil
+  if p != blank
+    for v in p.variants
+      for a in v.selling_plan_allocations
+        if sub == nil or a.price < sub
+          assign sub = a.price
+        endif
+      endfor
+    endfor
+  endif
+  # real review numbers: total of the chosen products, average weighted by each product's count
+  assign rev_total = 0
+  assign rev_weighted = 0.0
+  for rp in s.review_products
+    capture one
+      render 'somna-review-summary', product: rp
+    endcapture
+    assign one = one | strip
+    if one != blank
+      assign one_count = one | split: '|' | last | plus: 0
+      assign one_rating = one | split: '|' | first | times: 1.0
+      assign rev_total = rev_total | plus: one_count
+      assign rev_weighted = one_rating | times: one_count | plus: rev_weighted
+    endif
+  endfor
+  assign review_raw = ''
+  if rev_total > 0
+    assign rev_rating = rev_weighted | divided_by: rev_total | round: 1
+    assign rev_count = rev_total
+    assign review_raw = 'yes'
+  endif
+-%}
+<div class="somna-bfh" style="--bfh-bg: {{ s.background_color }}; --bfh-pt: {{ s.padding_top }}px; --bfh-pb: {{ s.padding_bottom }}px;">
+  <div class="somna-bfh__stars" aria-hidden="true"></div>
+  <div class="somna-bfh__media">
+    {%- if s.image != blank -%}
+      {{ s.image | image_url: width: 1800 | image_tag: class: 'somna-bfh__img somna-bfh__img--desk', loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 750px) 50vw, 100vw', widths: '800, 1200, 1800', alt: s.image.alt | default: '' }}
+    {%- endif -%}
+    {%- assign mob = s.image_mobile | default: s.image -%}
+    {%- if mob != blank -%}
+      {{ mob | image_url: width: 900 | image_tag: class: 'somna-bfh__img somna-bfh__img--mob', loading: 'eager', sizes: '100vw', widths: '450, 700, 900', alt: mob.alt | default: '' }}
+    {%- endif -%}
+    {%- if s.ticket != blank -%}
+      <p class="somna-bfh__ticket somna-bfh__ticket--mob"><span>{{ s.ticket }}</span>{% if s.ticket_sub != blank %}<small>{{ s.ticket_sub }}</small>{% endif %}</p>
+    {%- endif -%}
+  </div>
+
+  <div class="somna-bfh__inner somna-container">
+    <div class="somna-bfh__copy">
+      {%- if s.ticket != blank -%}
+        <p class="somna-bfh__ticket somna-bfh__ticket--desk"><span>{{ s.ticket }}</span>{% if s.ticket_sub != blank %}<small>{{ s.ticket_sub }}</small>{% endif %}</p>
+      {%- endif -%}
+      <h1 class="somna-bfh__title">{{ s.heading }}<span>{{ s.subheading }}</span></h1>
+      {%- if s.tagline != blank -%}<p class="somna-bfh__tagline">{{ s.tagline }}</p>{%- endif -%}
+      {%- capture sub_html -%}<b>{% if sub %}{{ sub | money }}{% endif %}</b>{%- endcapture -%}
+      {%- if s.price_line != blank -%}
+        <p class="somna-bfh__price">{{ s.price_line | replace: '[price]', sub_html }}</p>
+      {%- endif -%}
+      {%- if s.price_line_mobile != blank -%}
+        <p class="somna-bfh__price-mob">{{ s.price_line_mobile | replace: '[price]', sub_html | newline_to_br }}</p>
+      {%- endif -%}
+      {%- assign perks = s.benefits | newline_to_br | split: '<br />' -%}
+      {%- if s.benefits != blank -%}
+        <ul class="somna-bfh__perks" role="list">
+          {%- for t in perks -%}
+            {%- assign t = t | strip -%}
+            {%- if t == blank -%}{%- continue -%}{%- endif -%}
+            {%- assign low = t | downcase -%}
+            <li>
+              {%- if low contains 'gift' -%}
+                <svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="2.5" y="7" width="15" height="4" rx="1"/><path d="M4 11v6.5h12V11M10 7v10.5M10 7c-1.2-2.8-4.8-3.3-4.8-1.2C5.2 7 8 7 10 7zm0 0c1.2-2.8 4.8-3.3 4.8-1.2C14.8 7 12 7 10 7z"/></svg>
+              {%- else -%}
+                <svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7"/><path d="M6 10h8M10 6v8M7.2 7.2l5.6 5.6M12.8 7.2l-5.6 5.6"/></svg>
+              {%- endif -%}
+              {{ t }}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      <div class="somna-bfh__cta">
+        {%- if s.button_label != blank -%}
+          <a class="somna-bfh__btn" href="{{ s.button_link | default: '/pages/black-friday-sale' }}">{{ s.button_label }} <svg viewBox="0 0 33 28" aria-hidden="true" fill="none"><path d="M6.875 14H26.13M16.5 22.17L26.13 14 16.5 5.83" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></a>
+        {%- endif -%}
+        {%- if s.moon_text != blank -%}
+          <div class="somna-bfh__moon somna-bfh__moon--desk">{% render 'somna-moon-line', text: s.moon_text, date: 'long', class: 'somna-moonline--stack' %}</div>
+          <div class="somna-bfh__moon somna-bfh__moon--mob">{% render 'somna-moon-line', text: s.moon_text, date: 'short' %}</div>
+        {%- endif -%}
+      </div>
+
+      <div class="somna-bfh__proof">
+        {% render 'somna-night-seal' %}
+        <div>
+          {%- if review_raw != blank and s.reviews_line != blank -%}
+            <p class="somna-bfh__reviews">{{ s.reviews_line | replace: '[stars]', '<span class="somna-bfh__stars-txt" aria-hidden="true">★★★★★</span>' | replace: '[rating]', rev_rating | replace: '[count]', rev_count }}</p>
+          {%- endif -%}
+          {%- if s.quote != blank -%}<p class="somna-bfh__quote">{{ s.quote }}</p>{%- endif -%}
+          {%- if s.guarantee_mobile != blank -%}<p class="somna-bfh__guarantee">{{ s.guarantee_mobile }}</p>{%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .somna-bfh { --somna-content-width: 1360px; position: relative; isolation: isolate; overflow: hidden; background: var(--bfh-bg); color: #f3feee; }
+  .somna-bfh__stars {
+    position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0.8;
+    background-image:
+      radial-gradient(1.2px 1.2px at 12% 18%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 34% 8%, #fff 50%, transparent 52%),
+      radial-gradient(1.4px 1.4px at 48% 31%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 6% 72%, #fff 50%, transparent 52%),
+      radial-gradient(1.2px 1.2px at 28% 88%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 52% 62%, #fff 50%, transparent 52%),
+      radial-gradient(1.3px 1.3px at 41% 52%, #fff 50%, transparent 52%), radial-gradient(1px 1px at 19% 45%, #fff 50%, transparent 52%);
+  }
+  .somna-bfh::before {
+    content: ''; position: absolute; inset: 0; z-index: -2;
+    background: radial-gradient(ellipse 60% 70% at 20% 40%, rgb(70 78 140 / 0.35), transparent 70%);
+  }
+  /* photo inside the page container: its right edge lines up with the content (header width, 1360px), fading out at both sides */
+  .somna-bfh__media { position: absolute; inset: calc(var(--header-group-height, 0px) + var(--header-height, 66px)) max(var(--page-margin, 16px), calc((100% - var(--somna-content-width)) / 2)) 0 auto; z-index: -1; width: calc(min(100% - var(--page-margin, 16px) * 2, var(--somna-content-width)) * 0.64); }
+  @media screen and (min-width: 1200px) {
+    .somna-bfh__media { -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 34%, #000 86%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 12%, #000 85%, transparent 100%); -webkit-mask-composite: source-in; mask-image: linear-gradient(to right, transparent 0%, #000 34%, #000 86%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 12%, #000 85%, transparent 100%); mask-composite: intersect; }
+    .somna-bfh__media::before { background: linear-gradient(to right, rgb(11 15 29 / 0.35) 0%, rgb(11 15 29 / 0.1) 40%, rgb(11 15 29 / 0.2) 100%); }
+  }
+  .somna-bfh__img { width: 100%; height: 100%; object-fit: cover; object-position: 88% 55%; }
+  .somna-bfh .somna-bfh__img--mob, .somna-bfh .somna-bfh__ticket--mob { display: none; }
+  .somna-bfh__media::before {
+    content: ''; position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(to right, var(--bfh-bg) 0%, rgb(11 15 29 / 0.55) 22%, rgb(11 15 29 / 0.25) 60%, rgb(11 15 29 / 0.35) 100%);
+  }
+  .somna-bfh__inner { padding-block: calc(var(--bfh-pt) * 0.25 + var(--header-group-height, 0px) + var(--header-height, 66px) + 28px) calc(var(--bfh-pb) * 0.75); }
+  .somna-bfh__copy { position: relative; max-width: min(760px, 60vw); }
+  .somna-bfh__ticket {
+    display: inline-flex; flex-direction: column; align-items: center; margin: 0 0 clamp(18px, 1.8vw, 26px); padding: 8px 16px 6px;
+    border: 3px dashed #000; border-radius: 4px; background: #fff; color: #000; rotate: -5deg;
+    box-shadow: 0 0 0 4px #fff, 6px 7px 0 4px rgb(0 0 0 / 0.85);
+  }
+  .somna-bfh__ticket span { font-family: var(--font-accent--family); font-size: clamp(16px, 1.25vw, 18px); line-height: 1.1; text-transform: uppercase; white-space: nowrap; }
+  .somna-bfh__ticket small { font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
+  .somna-bfh__title {
+    display: flex; flex-direction: column; margin: 0; color: #afbdf8;
+    font-family: var(--font-accent--family); font-size: clamp(3rem, 4.6vw, 4.25rem); font-weight: 400; line-height: 1; text-transform: uppercase; white-space: nowrap;
+  }
+  .somna-bfh__title span { margin-top: clamp(16px, 2.1vw, 30px); color: #f3feee; font-size: clamp(1.25rem, 1.6vw, 1.5rem); line-height: 1.2; white-space: normal; }
+  .somna-bfh__tagline { max-width: 22em; margin: 16px 0 0; color: #afbdf8; font-size: clamp(1.25rem, 2vw, 1.875rem); font-weight: 500; line-height: 1.3; letter-spacing: 0.01em; text-transform: uppercase; text-wrap: balance; }
+  .somna-bfh__price { margin: 8px 0 0; font-size: clamp(0.875rem, 1vw, 0.9375rem); line-height: 1.5; }
+  .somna-bfh__price b, .somna-bfh__price-mob b { color: #afbdf8; font-weight: 700; }
+  .somna-bfh__price-mob { display: none; }
+  .somna-bfh__perks { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 12px 0 0; padding: 0; list-style: none; color: rgb(243 254 238 / 0.85); font-size: clamp(0.8125rem, 0.95vw, 0.875rem); }
+  .somna-bfh__perks li { display: inline-flex; align-items: center; gap: 8px; }
+  .somna-bfh__perks svg { flex: none; width: 14px; height: 14px; }
+  .somna-bfh__cta { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; margin-top: 22px; }
+  .somna-bfh__btn {
+    display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; border-radius: 12px; background: #afbdf8; color: #000;
+    box-shadow: 4px 6px 0 #f3feee; font-family: var(--font-accent--family); font-size: clamp(1.125rem, 1.35vw, 1.25rem); line-height: 1; text-decoration: none; text-transform: uppercase;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .somna-bfh__btn svg { width: 18px; height: 16px; }
+  .somna-bfh__btn:hover { transform: translateY(-2px); box-shadow: 4px 8px 0 #f3feee; }
+  .somna-bfh__moon--mob { display: none; }
+  .somna-moonline.somna-moonline--stack { flex-direction: column; align-items: flex-start; gap: 6px; font-size: clamp(0.8125rem, 0.9vw, 0.875rem); }
+  .somna-moonline.somna-moonline--stack .somna-moonline__moons svg { width: clamp(112px, 8.4vw, 124px); height: auto; aspect-ratio: 136 / 16; }
+  .somna-bfh__proof { display: flex; align-items: center; gap: 14px; margin-top: 18px; }
+  .somna-bfh__proof p { margin: 0; line-height: 1.45; }
+  .somna-bfh__reviews { font-size: clamp(0.875rem, 0.95vw, 0.9375rem); font-weight: 700; }
+  .somna-bfh__stars-txt { color: #f5c84c; letter-spacing: 0.06em; }
+  .somna-bfh__quote { margin-top: 2px !important; font-size: clamp(0.8125rem, 0.9vw, 0.875rem); font-style: italic; }
+  .somna-bfh__guarantee { display: none; }
+  @media screen and (max-width: 1199px) {
+    .somna-bfh__media { width: 42%; }
+    .somna-bfh__copy { max-width: 62%; }
+  }
+  /* tablets and phones: stacked (photo on top, copy below) */
+  @media screen and (max-width: 989px) {
+    .somna-bfh__media { position: relative; inset: auto; z-index: 0; width: 100%; height: clamp(260px, 70vw, 480px); margin-top: calc(var(--header-group-height, 0px) + var(--header-height, 60px)); }
+    .somna-bfh__media::before { background: linear-gradient(to bottom, rgb(11 15 29 / 0.15) 0%, rgb(11 15 29 / 0) 55%, var(--bfh-bg) 100%); }
+    .somna-bfh__img--desk, .somna-bfh__ticket--desk, .somna-bfh__tagline, .somna-bfh__price, .somna-bfh__perks, .somna-bfh__quote, .somna-bfh__moon--desk { display: none; }
+    .somna-bfh .somna-bfh__img--mob { display: block; object-position: 50% 62%; }
+    .somna-bfh .somna-bfh__ticket--mob { display: inline-flex; position: absolute; top: 18px; left: clamp(16px, 5vw, 24px); z-index: 2; padding: 10px 18px 7px; }
+    .somna-bfh__ticket--mob span { font-size: clamp(22px, 7.2vw, 27px); }
+    .somna-bfh__ticket--mob small { font-size: 11px; }
+    .somna-bfh__inner { padding-block: 28px calc(var(--bfh-pb) * 0.6); }
+    .somna-bfh__copy { max-width: none; }
+    .somna-bfh__title { font-size: clamp(2.375rem, 12.5vw, 4.5rem); line-height: 1.05; }
+    .somna-bfh__title span { margin-top: 6px; font-size: clamp(1.3125rem, 6.4vw, 2.125rem); }
+    .somna-bfh__price-mob { display: block; margin: 14px 0 0; font-size: clamp(0.9375rem, 4.2vw, 1.1875rem); line-height: 1.55; }
+    .somna-bfh__cta { flex-direction: column-reverse; align-items: stretch; gap: 18px; margin-top: 18px; }
+    .somna-bfh__moon--mob { display: block; padding: 12px 18px; border-radius: 14px; background: #1d2244; }
+    .somna-bfh__moon--mob:not(:has(somna-moon-line:not([hidden]))) { display: none; }
+    .somna-bfh__btn svg { width: 30px; height: 26px; }
+    .somna-bfh__btn { justify-content: center; padding: 20px 16px; border-radius: 18px; font-size: clamp(1.25rem, 5.9vw, 1.75rem); white-space: nowrap; }
+    .somna-bfh__proof { gap: 16px; margin-top: 22px; }
+    .somna-bfh__reviews { font-size: clamp(0.9375rem, 4.2vw, 1.125rem); }
+    .somna-bfh__guarantee { display: block; font-size: clamp(0.9375rem, 4.2vw, 1.125rem); }
+  }
+  @media screen and (max-width: 480px) {
+    .somna-bfh__moon--mob { padding: 10px 12px; }
+    .somna-bfh__moon--mob .somna-moonline { gap: 8px; font-size: 0.8125rem; }
+    .somna-bfh__moon--mob .somna-moonline__moons svg { width: 96px; height: 11px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna Black Friday hero",
+  "tag": "section",
+  "class": "section-somna-bf-hero",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Photo (desktop, right side)" },
+    { "type": "image_picker", "id": "image_mobile", "label": "Photo (phones, on top)" },
+    { "type": "text", "id": "ticket", "label": "Ticket sticker", "default": "Black Friday" },
+    { "type": "text", "id": "ticket_sub", "label": "Ticket sticker second line", "default": "Discount applied ✓" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "60% off." },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "With Subscribe & Save" },
+    { "type": "text", "id": "tagline", "label": "Tagline (desktop)", "default": "Small change, softer nights. Strips for your nose and tape for your lips." },
+    { "type": "product", "id": "price_product", "label": "Price from this product", "info": "[price] = its lowest Subscribe & Save price." },
+    { "type": "text", "id": "price_line", "label": "Price line (desktop)", "default": "From [price] a bag · One-time 50% off · $4.95 flat shipping in the US" },
+    { "type": "textarea", "id": "price_line_mobile", "label": "Price lines (phones)", "default": "From [price] a bag · One-time 50% off\n$4.95 flat shipping in the US · 3 free gifts on 2+ packs" },
+    { "type": "textarea", "id": "benefits", "label": "Benefits (desktop)", "info": "One per line. A line with \"gift\" gets the gift icon.", "default": "Drug-free\n30-Night guarantee\n3 free gifts on 2+ packs" },
+    { "type": "text", "id": "button_label", "label": "Button", "default": "Shop the sale" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "text", "id": "moon_text", "label": "Moon countdown", "info": "[nights] and [date] come from the sale countdown bar. Hidden when the sale has ended.", "default": "[nights] nights left · ends [date]" },
+    { "type": "product_list", "id": "review_products", "label": "Review numbers from these products", "info": "[rating] = average, [count] = total reviews." },
+    { "type": "text", "id": "reviews_line", "label": "Reviews line", "default": "[stars] [rating] · [count] reviews" },
+    { "type": "text", "id": "quote", "label": "Quote (desktop)", "default": "“Easy to put on and it stays on all night.” Sarah M. ✓ Verified buyer" },
+    { "type": "text", "id": "guarantee_mobile", "label": "Guarantee line (phones)", "default": "30-Night Money-Back Guarantee" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#0b0f1d" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 96 }
+  ],
+  "presets": [{ "name": "Somna Black Friday hero" }]
+}
+{% endschema %}

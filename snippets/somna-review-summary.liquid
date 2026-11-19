@@ -1,0 +1,49 @@
+{%- doc -%}
+  Somna V2 — real review numbers for one or more products: Judge.me summary, else Shopify's reviews.rating /
+  rating_count fields, else the product's "rating (count)" text field (custom.review_rating_review_count, as the
+  product page uses). Prints "rating|count"; with several products the average is weighted by review count.
+  Prints nothing without reviews.
+  @param {object} [product] - one product
+  @param {object[]} [products] - several products (used when given)
+{%- enddoc -%}
+{%- liquid
+  assign total = 0
+  assign weighted = 0.0
+  assign n = 1
+  if products != blank
+    assign n = products.size
+  endif
+  for i in (1..n)
+    if products != blank
+      assign idx = i | minus: 1
+      assign p = products[idx]
+    else
+      assign p = product
+    endif
+    if p == blank
+      continue
+    endif
+    assign c = 0
+    assign r = 0.0
+    assign jm = p.metafields.judgeme.review_widget_data.value
+    assign raw = p.metafields.custom.custom_review_rating_review_count.value | strip_html | strip
+    if jm and jm.number_of_reviews > 0
+      assign c = jm.number_of_reviews | plus: 0
+      assign r = jm.average_rating | times: 1.0
+    elsif p.metafields.reviews.rating_count != blank
+      assign c = p.metafields.reviews.rating_count.value | plus: 0
+      assign r = p.metafields.reviews.rating.value.rating | times: 1.0
+    elsif raw != blank and raw contains '('
+      assign r = raw | split: ' ' | first | times: 1.0
+      assign c = raw | split: '(' | last | split: ')' | first | remove: ',' | plus: 0
+    endif
+    if c > 0
+      assign total = total | plus: c
+      assign weighted = r | times: c | plus: weighted
+    endif
+  endfor
+  if total > 0
+    assign avg = weighted | divided_by: total | round: 1
+    echo avg | append: '|' | append: total
+  endif
+-%}

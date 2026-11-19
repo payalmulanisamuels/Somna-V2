@@ -107,7 +107,7 @@
 -%}
 
 <somna-pdp-buy
-  class="somna-pdp-hero{% if gallery_below %} somna-pdp-hero--gallery-below{% endif %}"
+  class="somna-pdp-hero{% if gallery_below %} somna-pdp-hero--gallery-below{% endif %}{% if s.bf_layout %} somna-pdp-hero--bf{% endif %}"
   data-interval="{{ product.selling_plan_groups.first.selling_plans.first.options.first.value | escape }}"
   data-currency="{{ cart.currency.iso_code }}"
   data-locale="{{ request.locale.iso_code }}"
@@ -123,7 +123,7 @@
     [
     {%- for v in product.variants -%}
       { "id": {{ v.id }}, "title": {{ v.title | json }}, "options": {{ v.options | json }}, "image": {% if v.featured_media %}{{ v.featured_media | image_url: width: 1100 | json }}{% else %}null{% endif %}, "available": {{ v.available | json }}, "price": {{ v.price | times: once_factor | divided_by: 100 }}, "compare": {% assign v_cmp = v.compare_at_price | default: 0 %}{% if v.price > v_cmp %}{{ v.price }}{% else %}{{ v_cmp }}{% endif %}, "plans": [
-        {%- for a in v.selling_plan_allocations -%}{ "id": {{ a.selling_plan.id }}, "price": {{ a.price }} }{% unless forloop.last %},{% endunless %}{%- endfor -%}
+        {%- for a in v.selling_plan_allocations -%}{ "id": {{ a.selling_plan.id }}, "price": {{ a.price }}, "renew": {% if a.price_adjustments.size > 1 %}{{ a.price_adjustments[1].price }}{% else %}{{ a.price }}{% endif %} }{% unless forloop.last %},{% endunless %}{%- endfor -%}
       ] }{% unless forloop.last %},{% endunless %}
     {%- endfor -%}
     ]
@@ -154,12 +154,20 @@
         {%- endif -%}
       </div>
 
-      {%- if s.badge_text != blank -%}<p class="somna-pdp-hero__badge{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}"><span>{{ s.badge_text }}</span></p>{%- endif -%}
+      {%- if s.bf_layout and images.size > 1 -%}
+        <div class="somna-pdp-hero__dots" role="group" aria-label="{{ product.title | escape }}">
+          {%- for m in images limit: 8 -%}
+            <button type="button" data-media="{{ forloop.index0 }}" data-src="{{ m | image_url: width: 1100 }}" data-srcset="{{ m | image_url: width: 600 }} 600w, {{ m | image_url: width: 900 }} 900w, {{ m | image_url: width: 1100 }} 1100w" aria-label="{{ forloop.index }} / {{ images.size | at_most: 8 }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}"></button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+      {%- if s.badge_text != blank -%}<p class="somna-pdp-hero__badge{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}"><span>{{ s.badge_text }}</span>{% if s.bf_layout and s.badge_sub != blank %}<small>{{ s.badge_sub }}</small>{% endif %}</p>{%- endif -%}
       {%- if hero_sticker != blank -%}<p class="somna-pdp-hero__sticker{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}" style="--somna-shake-delay: 0.7s;">{{ hero_sticker }}</p>{%- endif -%}
     </div>
 
     <div class="somna-pdp-hero__side">
       {%- assign quote = mf.pdp_quote.value -%}
+      {%- unless s.below_media == 'photos' -%}
       {%- if quote == blank and s.quote_from_judgeme -%}
         {%- comment -%} Figma quote card: fall back to a real Judge.me review (short, 5★, named, no import tag) {%- endcomment -%}
         {%- assign jm = product.metafields.judgeme.review_widget_data.value -%}
@@ -207,10 +215,123 @@
         </figure>
       {%- endif -%}
 
+      {%- endunless -%}
+
       {%- comment -%}
         "Real Nights, On Camera": the product's own videos (custom.pdp_videos) when set, otherwise the section's
         video blocks. The video's own preview frame is the poster.
       {%- endcomment -%}
+      {%- if s.below_media == 'photos' -%}
+        {%- comment -%}
+          Customer reviews card (instead of the quote card and the videos): a "Customer photos" strip, then the latest
+          Judge.me reviews that have photos (stars, date, name, text, their photos). Strips / tape pages use only their
+          own reviews; other products (the bundles) add the "fill from" products' reviews. Photos open in the shared
+          popup (snippets/somna-photo-lightbox.liquid).
+        {%- endcomment -%}
+        {%- liquid
+          assign ph_list = ''
+          assign ph_keys = ''
+          assign ph_count = 0
+          assign rv_count = 0
+          assign rv_html = ''
+          assign rv_limit = s.photos_reviews | default: 3
+          # own photos first; pages of products NOT in "Fill from" (the bundles) add those products' photos
+          assign ph_fill = s.photos_fill_from | map: 'handle'
+          assign ph_handles = product.handle
+          unless ph_fill contains product.handle
+            assign ph_fill_str = ph_fill | join: ','
+            assign ph_handles = ph_handles | append: ',' | append: ph_fill_str
+          endunless
+          assign ph_handles = ph_handles | split: ','
+          # "Leave out": entries "product-handle:word" drop that product's photos whose file name contains the word
+          assign ph_skip = s.photos_skip | split: ','
+        -%}
+        {%- for ph_handle in ph_handles limit: 20 -%}
+          {%- if forloop.index > 1 and ph_handle == product.handle -%}{%- continue -%}{%- endif -%}
+          {%- assign ph_src = all_products[ph_handle] -%}
+          {%- for ph_rv in ph_src.metafields.judgeme.review_widget_data.value.photo_gallery -%}
+            {%- assign rv_pics = '' -%}
+            {%- for pic in ph_rv.pictures_urls -%}
+              {%- assign pic_src = pic.original | default: pic.huge | split: '&width=' | first -%}
+              {%- assign pic_file = pic_src | split: '?' | first | split: '/' | last -%}
+              {%- assign pic_head = pic_file | split: '-' | first -%}
+              {%- assign pic_key = pic_file | remove_first: pic_head -%}
+              {%- assign pic_skip = false -%}
+              {%- for skip_entry in ph_skip -%}
+                {%- assign skip_parts = skip_entry | strip | split: ':' -%}
+                {%- if skip_parts.size == 2 and skip_parts[0] == ph_handle and pic_file contains skip_parts[1] -%}{%- assign pic_skip = true -%}{%- endif -%}
+              {%- endfor -%}
+              {%- if pic_skip -%}{%- continue -%}{%- endif -%}
+              {%- assign rv_pics = rv_pics | append: pic_src | append: '^' -%}
+              {%- unless ph_keys contains pic_key or ph_count >= 30 -%}
+                {%- assign ph_list = ph_list | append: pic_src | append: '^' -%}
+                {%- assign ph_keys = ph_keys | append: pic_key | append: '^' -%}
+                {%- assign ph_count = ph_count | plus: 1 -%}
+              {%- endunless -%}
+            {%- endfor -%}
+            {%- if rv_pics != '' and rv_count < rv_limit -%}
+              {%- liquid
+                assign rv_count = rv_count | plus: 1
+                assign rv_parts = ph_rv.reviewer_name | strip | split: ' '
+                assign rv_name = rv_parts | first
+                if rv_parts.size > 1
+                  assign rv_last = rv_parts | last | slice: 0 | upcase
+                  assign rv_name = rv_name | append: ' ' | append: rv_last | append: '.'
+                endif
+                assign rv_stars = ph_rv.rating | plus: 0
+                assign rv_pic_list = rv_pics | split: '^'
+              -%}
+              {%- capture rv_item -%}
+                <li class="somna-pdp-hero__rv-item">
+                  <ul class="somna-pdp-hero__rv-pics" role="list" data-photo-popup>
+                    {%- for rp in rv_pic_list limit: 5 -%}
+                      <li{% if forloop.index > 1 %} hidden{% endif %}><img src="{{ rp }}&width=160" alt="{{ 'Photo from ' | append: rv_name | append: '’s review' | escape }}" width="56" height="56" loading="lazy" decoding="async" tabindex="0" role="button">{% if forloop.index == 1 and rv_pic_list.size > 1 %}<span class="somna-pdp-hero__rv-more" aria-hidden="true">+{{ rv_pic_list.size | minus: 1 }}</span>{% endif %}</li>
+                    {%- endfor -%}
+                  </ul>
+                  <div class="somna-pdp-hero__rv-text">
+                    <div class="somna-pdp-hero__rv-top">
+                      <p class="somna-pdp-hero__rv-name"><span class="somna-pdp-hero__rv-stars" role="img" aria-label="{{ rv_stars }} out of 5 stars">{% for i in (1..5) %}<span{% if i > rv_stars %} class="is-empty"{% endif %}>★</span>{% endfor %}</span> {{ rv_name | escape }}{% if ph_rv.verified_buyer %} <small>✓ {{ s.verified_label | default: 'Verified buyer' }}</small>{% endif %}</p>
+                      <time datetime="{{ ph_rv.created_at | date: '%Y-%m-%d' }}">{{ ph_rv.created_at | date: '%b %-d, %Y' }}</time>
+                    </div>
+                    <p class="somna-pdp-hero__rv-body">{{ ph_rv.body_html | strip_html | strip | escape }}</p>
+                  </div>
+                </li>
+              {%- endcapture -%}
+              {%- assign rv_html = rv_html | append: rv_item -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endfor -%}
+        {%- assign ph_entries = ph_list | split: '^' -%}
+        {%- if ph_entries.size > 0 -%}
+          <div class="somna-pdp-hero__videos somna-pdp-hero__photos">
+            {%- if s.photos_heading != blank -%}<h2 class="somna-pdp-hero__videos-title">{{ s.photos_heading }}</h2>{%- endif -%}
+            <div class="somna-pdp-hero__rv">
+              <p class="somna-pdp-hero__rv-label">{{ s.photos_label | default: 'Customer photos' }}</p>
+              <ul class="somna-pdp-hero__rv-strip" role="list" data-photo-popup>
+                {%- assign more_mob = ph_entries.size | minus: 4 -%}
+                {%- assign more_desk = ph_entries.size | minus: 6 -%}
+                {%- for pic_src in ph_entries -%}
+                  <li{% if forloop.index > 7 %} hidden{% endif %}>
+                    <img src="{{ pic_src }}&width=240" alt="{{ 'Customer photo ' | append: forloop.index | escape }}" width="80" height="80" loading="lazy" decoding="async" tabindex="0" role="button">
+                    {%- if forloop.index == 5 and ph_entries.size > 5 -%}<span class="somna-pdp-hero__rv-more somna-pdp-hero__rv-more--mob" aria-hidden="true">+{{ more_mob }}</span>{%- endif -%}
+                    {%- if forloop.index == 7 and ph_entries.size > 7 -%}<span class="somna-pdp-hero__rv-more somna-pdp-hero__rv-more--desk" aria-hidden="true">+{{ more_desk }}</span>{%- endif -%}
+                  </li>
+                {%- endfor -%}
+              </ul>
+              {%- if rv_html != '' -%}<ul class="somna-pdp-hero__rv-list" role="list">{{ rv_html }}</ul>{%- endif -%}
+              {%- if s.photos_all_label != blank -%}<a class="somna-pdp-hero__rv-all" href="#reviews" data-rv-jump>{{ s.photos_all_label }}</a>{%- endif -%}
+            </div>
+          </div>
+          {%- render 'somna-photo-lightbox' -%}
+          <script>
+            document.addEventListener('click', function (e) {
+              var a = e.target.closest && e.target.closest('[data-rv-jump]');
+              var to = a && document.querySelector('.somna-reviews');
+              if (to) { e.preventDefault(); to.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+            });
+          </script>
+        {%- endif -%}
+      {%- else -%}
       {%- assign product_videos = mf.pdp_videos.value -%}
       {%- if product_videos.size > 0 or video_blocks.size > 0 -%}
         <div class="somna-pdp-hero__videos">
@@ -291,17 +412,28 @@
           </ul>
         </div>
       {%- endif -%}
+      {%- endif -%}
     </div>
     </div>
 
     <div class="somna-pdp-hero__panel{% if s.drip_edges %} somna-edge-drip-bottom{% endif %}">
-      {%- if rating != blank -%}
-        <p class="somna-pdp-hero__rating">
-          <span class="somna-pdp-hero__rating-stars" aria-hidden="true">★★★★★</span>
-          {{ s.rating_format | replace: '[rating]', rating | replace: '[count]', rating_count }}
-        </p>
+      {%- capture rating_html -%}
+        {%- if rating != blank -%}
+          <p class="somna-pdp-hero__rating">
+            <span class="somna-pdp-hero__rating-stars" aria-hidden="true">★★★★★</span>
+            {{ s.rating_format | replace: '[rating]', rating | replace: '[count]', rating_count }}
+          </p>
+        {%- endif -%}
+      {%- endcapture -%}
+      {%- if s.bf_layout -%}
+        <div class="somna-pdp-hero__head">
+          <h1 class="somna-pdp-hero__title"><span class="somna-pdp-hero__brand">{{ s.brand }}</span> {{ product.title }}</h1>
+          {{ rating_html }}
+        </div>
+      {%- else -%}
+        {{ rating_html }}
+        <h1 class="somna-pdp-hero__title"><span class="somna-pdp-hero__brand">{{ s.brand }}</span> {{ product.title }}</h1>
       {%- endif -%}
-      <h1 class="somna-pdp-hero__title"><span class="somna-pdp-hero__brand">{{ s.brand }}</span> {{ product.title }}</h1>
       {%- if mf.pdp_tagline != blank -%}<p class="somna-pdp-hero__tagline">{{ mf.pdp_tagline.value | newline_to_br }}</p>{%- endif -%}
 
       {%- assign features = mf.pdp_hero_features.value -%}
@@ -311,6 +443,11 @@
             <li><span class="somna-pdp-hero__feature-icon">{% render 'somna-pdp-icon', name: f.icon.value, variant: 'figma' %}</span>{{ f.title.value }}</li>
           {%- endfor -%}
         </ul>
+      {%- endif -%}
+
+      {%- if s.bf_layout -%}
+        {%- if s.offer_line != blank -%}<p class="somna-pdp-hero__offer">{{ s.offer_line }}</p>{%- endif -%}
+        {%- if s.offer_pill != blank -%}<p class="somna-pdp-hero__nocode"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg>{{ s.offer_pill }}</p>{%- endif -%}
       {%- endif -%}
 
       <p class="somna-pdp-hero__price">
@@ -325,6 +462,7 @@
         {%- endif -%}
       </p>
       {%- if mf.pdp_savings_note != blank -%}<p class="somna-pdp-hero__savings">{{ mf.pdp_savings_note.value }}</p>{%- endif -%}
+      {%- if s.bf_layout and s.ship_line != blank -%}<p class="somna-pdp-hero__ship">{{ s.ship_line }}</p>{%- endif -%}
 
       {%- comment -%} What's in the box: under the price for single-variant products; after the packs when there are packs (Sleep Bundle) {%- endcomment -%}
       {%- capture box_markup -%}
@@ -434,6 +572,16 @@
           </div>
         </fieldset>
 
+        {%- if s.bf_layout and s.gift_todo != blank and product.has_only_default_variant == false -%}
+          <div class="somna-pdp-hero__giftbar" data-gift-bar data-todo="{{ s.gift_todo | escape }}" data-done="{{ s.gift_done | escape }}">
+            <svg class="somna-pdp-hero__giftbar-icon" viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="2.5" y="7" width="15" height="4" rx="1"/><path d="M4 11v6.5h12V11M10 7v10.5M10 7c-1.2-2.8-4.8-3.3-4.8-1.2C5.2 7 8 7 10 7zm0 0c1.2-2.8 4.8-3.3 4.8-1.2C14.8 7 12 7 10 7z"/></svg>
+            <div class="somna-pdp-hero__giftbar-body">
+              <p data-gift-text>{{ s.gift_todo | replace: '[n]', '1' | replace: '[bags]', 'bag' }}</p>
+              <span class="somna-pdp-hero__giftbar-track" aria-hidden="true"><span></span></span>
+            </div>
+          </div>
+        {%- endif -%}
+
         {%- unless product.has_only_default_variant -%}{{ box_markup }}{%- endunless -%}
 
         <fieldset class="somna-buy__modes somna-pdp-hero__modes">
@@ -441,7 +589,19 @@
           {%- if has_plans -%}
             <div class="somna-pdp-hero__mode-box" data-mode-box="sub">
               <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="sub" data-mode-input{% if mode == 'sub' %} checked{% endif %}> <span class="somna-buy__mode-label"><strong>{{ s.sub_label }}</strong><span data-sub-pct></span></span> <span class="somna-buy__mode-price" data-price-sub>{% if alloc %}{{ alloc.price | money }}{% endif %}</span></label>
-              {%- if s.sub_points != blank -%}
+              {%- if s.bf_layout and s.sub_line != blank -%}
+                {%- liquid
+                  assign renew = 0
+                  if alloc
+                    assign renew = alloc.price
+                    if alloc.price_adjustments.size > 1
+                      assign renew = alloc.price_adjustments[1].price
+                    endif
+                  endif
+                -%}
+                {%- capture renew_html -%}<span data-sub-renew>{% if renew > 0 %}{{ renew | money }}{% endif %}</span>{%- endcapture -%}
+                <p class="somna-pdp-hero__sub-line">{{ s.sub_line | replace: '[renewal]', renew_html | replace: '[price]', '<span data-sub-each></span>' }}</p>
+              {%- elsif s.sub_points != blank -%}
                 <ul class="somna-pdp-hero__sub-points" role="list">
                   {%- assign points = s.sub_points | newline_to_br | split: '<br />' -%}
                   {%- for t in points -%}{%- assign pt = t | strip | replace: '[price]', '<span data-sub-each></span>' | replace: '[interval]', '<span data-sub-interval></span>' -%}{%- if pt != blank -%}<li><span class="somna-check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span><span>{{ pt }}</span></li>{%- endif -%}{%- endfor -%}
@@ -461,13 +621,27 @@
           <label class="somna-buy__mode somna-pdp-hero__once"><input type="radio" name="{{ section.id }}-mode" value="once" data-mode-input{% if mode == 'once' %} checked{% endif %}> <span class="somna-buy__mode-label">{{ s.once_label }}<span data-once-pct></span></span> <span class="somna-buy__mode-price" data-price-once>{{ current_once | money }}</span></label>
         </fieldset>
 
+        {%- if s.bf_layout and s.moon_text != blank -%}
+          <div class="somna-pdp-hero__moon">{% render 'somna-moon-line', text: s.moon_text, date: 'auto' %}</div>
+        {%- endif -%}
+
         <button type="submit" name="add" class="somna-buy__add somna-pdp-hero__add" data-add{% unless current.available %} disabled{% endunless %}>
           <span data-add-label>{% if current.available %}{{ s.add_label }} · {{ price | money }}{% else %}{{ s.sold_out_label }}{% endif %}</span>
         </button>
         <p class="somna-buy__status" role="status" data-status></p>
       {%- endform -%}
 
-      {%- if perk_blocks.size > 0 -%}
+      {%- if s.bf_layout and s.trust_1 != blank -%}
+        <div class="somna-pdp-hero__trust">
+          {% render 'somna-night-seal' %}
+          <div>
+            <p class="somna-pdp-hero__trust-1">{{ s.trust_1 | replace: '[stars]', '<span class="somna-pdp-hero__trust-stars" aria-hidden="true">★★★★★</span>' | replace: '[rating]', rating | replace: '[count]', rating_count | replace: ' | ', ' <span class="somna-pdp-hero__trust-sep" aria-hidden="true"></span> ' }}</p>
+            {%- if s.trust_2 != blank -%}<p class="somna-pdp-hero__trust-2">{{ s.trust_2 }}</p>{%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- if perk_blocks.size > 0 and s.bf_layout == false -%}
         <ul class="somna-pdp-hero__perks" role="list">
           {%- for block in perk_blocks -%}
             <li {{ block.shopify_attributes }}>{% render 'somna-pdp-icon', name: block.settings.icon %}<span>{{ block.settings.text }}</span></li>
@@ -593,6 +767,8 @@
         this.addEventListener('change', this.onChange);
         this.addEventListener('click', this.onClick);
         this.form.addEventListener('submit', this.onSubmit);
+        const mainPhoto = this.querySelector('.somna-pdp-hero__main');
+        if (mainPhoto && this.querySelector('.somna-pdp-hero__dots')) { mainPhoto.addEventListener('touchstart', this.swipeStart, { passive: true }); mainPhoto.addEventListener('touchend', this.swipeEnd); }
         this.update();
       }
       disconnectedCallback() {
@@ -641,12 +817,20 @@
         const subPrice = v.plans.length ? this.priceOf(v, 'sub') : 0;
         const subEl = q('[data-price-sub]'); if (subEl) subEl.textContent = subPrice ? this.money(subPrice) : '';
         const subPct = subPrice ? this.pct(subPrice, v) : 0;
-        const subPctEl = q('[data-sub-pct]'); if (subPctEl) subPctEl.textContent = subPct ? this.labels.pct.replace('[percent]', subPct) : '';
+        const subPctEl = q('[data-sub-pct]'); if (subPctEl) subPctEl.textContent = subPct ? (this.classList.contains('somna-pdp-hero--bf') ? this.labels.save : this.labels.pct).replace('[percent]', subPct) : '';
         this.querySelectorAll('[data-sub-each]').forEach((el) => { el.textContent = subPrice ? this.money(subPrice) : ''; });
         const subPlan = v.plans.length ? (this.plan(v) || v.plans[0]) : null;
         const opt = this.planSelect && subPlan ? [...this.planSelect.options].find((o) => Number(o.value) === subPlan.id) : null;
         const intervalText = opt ? opt.textContent : (subPlan ? this.dataset.interval || '' : '');
         this.querySelectorAll('[data-sub-interval]').forEach((el) => { el.textContent = intervalText.trim().replace(/^Deliver(y)?\s+/i, ''); });
+        this.querySelectorAll('[data-sub-renew]').forEach((el) => { el.textContent = subPlan ? this.money(subPlan.renew || subPlan.price) : ''; });
+        const gb = q('[data-gift-bar]');
+        if (gb) {
+          const have = this.bags(v), need = Math.max(0, this.giftMin - have);
+          gb.classList.toggle('is-done', !need);
+          gb.style.setProperty('--gift-p', Math.min(1, have / this.giftMin));
+          gb.querySelector('[data-gift-text]').textContent = need ? gb.dataset.todo.replace('[n]', need).replace('[bags]', need === 1 ? 'bag' : 'bags') : gb.dataset.done;
+        }
         q('[data-price-once]').textContent = this.money(v.price);
         const oncePct = this.pct(v.price, v);
         q('[data-once-pct]').textContent = oncePct ? this.labels.pct.replace('[percent]', oncePct) : '';
@@ -681,12 +865,23 @@
         else if (t.matches('[data-mode-input]')) { this.mode = t.value; this.update(); }
         else if (t.matches('[data-plan]')) { this.mode = 'sub'; this.update(); }
       };
+      swipeStart = (e) => { this.sx = e.touches[0].clientX; this.sy = e.touches[0].clientY; };
+      swipeEnd = (e) => {
+        const dots = [...this.querySelectorAll('.somna-pdp-hero__dots [data-media]')];
+        if (!dots.length || this.sx == null) return;
+        const dx = e.changedTouches[0].clientX - this.sx, dy = e.changedTouches[0].clientY - this.sy;
+        this.sx = null;
+        if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+        const i = Math.max(0, dots.findIndex((d) => d.getAttribute('aria-current') === 'true'));
+        const next = dots[(i + (dx < 0 ? 1 : -1) + dots.length) % dots.length];
+        next.click();
+      };
       onClick = (e) => {
         const thumb = e.target.closest('[data-media]');
         if (thumb) {
           const img = this.querySelector('[data-main]');
           if (img) { img.srcset = thumb.dataset.srcset; img.src = thumb.dataset.src; img.alt = thumb.getAttribute('aria-label') || ''; }
-          this.querySelectorAll('[data-media]').forEach((b) => b.setAttribute('aria-current', String(b === thumb)));
+          this.querySelectorAll('[data-media]').forEach((b) => b.setAttribute('aria-current', String(b.dataset.media === thumb.dataset.media)));
           return;
         }
         const play = e.target.closest('[data-video]');
@@ -3319,6 +3514,236 @@
       transition: none;
     }
   }
+
+  /* customer reviews card (setting "Under the photos": Customer photos) — compact: photo strip + short review rows */
+  .somna-pdp-hero__rv { padding: 12px 14px 2px; border-radius: 14px; background: #f3feee; color: #0b0f1d; box-shadow: 0 4px 14px rgb(11 15 29 / 0.08); }
+  .somna-pdp-hero__rv-label { margin: 0 0 8px; color: #3b438a; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+  .somna-pdp-hero__rv-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 60px)); gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .somna-pdp-hero__rv-strip li, .somna-pdp-hero__rv-pics li { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 8px; background: #0b0f1d; }
+  .somna-pdp-hero__rv-strip li[hidden], .somna-pdp-hero__rv-pics li[hidden] { display: none; }
+  .somna-pdp-hero__rv-strip img, .somna-pdp-hero__rv-pics img { display: block; width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; transition: transform 0.3s ease; }
+  .somna-pdp-hero__rv-strip li:hover img, .somna-pdp-hero__rv-pics li:hover img { transform: scale(1.06); }
+  .somna-pdp-hero__rv img:focus-visible { outline: 3px solid #3b438a; outline-offset: -3px; }
+  .somna-pdp-hero__rv-more { position: absolute; inset: 0; display: grid; place-items: center; background: rgb(11 15 29 / 0.6); color: #fff; font-family: var(--font-accent--family); font-size: 1rem; pointer-events: none; }
+  .somna-pdp-hero__rv-more--mob { display: none; }
+  .somna-pdp-hero__rv-list { margin: 10px 0 0; padding: 0; border-top: 1px solid rgb(11 15 29 / 0.12); list-style: none; }
+  .somna-pdp-hero__rv-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid rgb(11 15 29 / 0.12); }
+  .somna-pdp-hero__rv-pics { flex: none; width: 52px; margin: 0; padding: 0; list-style: none; }
+  .somna-pdp-hero__rv-text { flex: 1; min-width: 0; }
+  .somna-pdp-hero__rv-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .somna-pdp-hero__rv-name { margin: 0; overflow: hidden; font-size: 0.8125rem; font-weight: 700; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
+  .somna-pdp-hero__rv-stars { margin-right: 4px; color: #f5c84c; font-size: 0.8125rem; letter-spacing: 0.04em; }
+  .somna-pdp-hero__rv-stars .is-empty { color: rgb(11 15 29 / 0.18); }
+  .somna-pdp-hero__rv-name small { margin-left: 4px; color: #3b438a; font-size: 0.6875rem; font-weight: 600; }
+  .somna-pdp-hero__rv-top time { flex: none; color: #6b6f86; font-size: 0.6875rem; }
+  .somna-pdp-hero__rv-body { display: -webkit-box; margin: 3px 0 0; overflow: hidden; color: #2b2f45; font-size: 0.8125rem; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+  .somna-pdp-hero__rv-all { display: block; padding: 8px 0; color: #0b0f1d; font-size: 0.8125rem; font-weight: 700; text-align: center; text-decoration: underline; text-underline-offset: 3px; }
+  @media screen and (max-width: 749px) {
+    .somna-pdp-hero__rv { padding: 12px 12px 2px; }
+    .somna-pdp-hero__rv-strip { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .somna-pdp-hero__rv-strip li:nth-child(n + 6) { display: none; }
+    .somna-pdp-hero__rv-more--mob { display: grid; }
+    .somna-pdp-hero__rv-more--desk { display: none; }
+    .somna-pdp-hero__rv-item { gap: 10px; }
+    .somna-pdp-hero__rv-pics { width: 46px; }
+    .somna-pdp-hero__rv-name small { display: none; }
+  }
+
+  /* the reviews card makes the left column tall: keep the buy panel at its own height instead of stretching its rows apart */
+  @media screen and (min-width: 750px) {
+    .somna-pdp-hero:has(.somna-pdp-hero__photos) .somna-pdp-hero__panel { align-self: start; }
+  }
+  @media screen and (max-width: 749px) {
+    .somna-pdp-hero__rv { padding: 14px 14px 4px; border-radius: 14px; }
+    .somna-pdp-hero__rv-strip { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+    .somna-pdp-hero__rv-strip li:nth-child(n + 6) { display: none; }
+    .somna-pdp-hero__rv-more--mob { display: grid; }
+    .somna-pdp-hero__rv-more--desk { display: none; }
+    .somna-pdp-hero__rv-item { padding: 14px 0; }
+    .somna-pdp-hero__rv-pics li { width: 56px; }
+  }
+
+  /* ===== Black Friday layout (setting "Use the Black Friday layout") ===== */
+  .somna-pdp-hero--bf .somna-pdp-hero__brand,
+  .somna-pdp-hero--bf .somna-pdp-hero__tagline,
+  .somna-pdp-hero--bf .somna-pdp-hero__savings,
+  .somna-pdp-hero--bf .somna-buy__pack-night,
+  .somna-pdp-hero--bf .somna-pdp-hero__plan { display: none; }
+  /* ticket sticker on the photo */
+  .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge {
+    top: 22px; left: 128px; z-index: 3; display: flex; flex-direction: column; align-items: center;
+    width: auto; aspect-ratio: auto; padding: 12px 26px 10px; border: 3px dashed #000; border-radius: 4px;
+    background: #fff; color: #000; box-shadow: 0 0 0 4px #fff, 6px 7px 0 4px rgb(0 0 0 / 0.85); rotate: -5deg;
+  }
+  .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge span { max-width: none; font-size: clamp(30px, 3.125vw, 40px); line-height: 1.1; white-space: nowrap; }
+  .somna-pdp-hero--bf .somna-pdp-hero__badge small { margin-top: 2px; font-size: clamp(12px, 1.17vw, 15px); font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
+  /* title with the rating on its right */
+  .somna-pdp-hero--bf .somna-pdp-hero__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 6px 20px; margin-top: 14px; }
+  .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__title { flex: 0 1 auto; width: auto; margin: 0; font-size: clamp(2.25rem, 3.4vw, 3.5rem); line-height: 1.15; }
+  .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__rating { margin: 0 0 8px; color: #f3feee; font-size: 1.125rem; font-weight: 400; white-space: nowrap; }
+  .somna-pdp-hero--bf .somna-pdp-hero__rating-stars { color: #f5c84c; }
+  /* benefits as small chips */
+  .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__features { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 18px 0 0; padding: 0; border: 0; font-size: 1.125rem; }
+  .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__features li { gap: 6px; justify-content: flex-start; padding: 0; border: 0; color: #f3feee; font-family: inherit; }
+  .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__feature-icon { width: 16px; height: 16px; background: none; color: #f3feee; }
+  .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__feature-icon svg { width: 16px; height: 16px; }
+  /* offer line + no-code pill */
+  .somna-pdp-hero__offer {
+    width: fit-content; max-width: 100%; margin: 26px 0 0; padding: 8px 20px 6px; border-radius: 10px; background: #f3feee; color: #0b0f1d;
+    box-shadow: 6px 6px 0 #afbdf8; rotate: -1deg;
+    font-family: var(--font-accent--family); font-size: clamp(1rem, 1.6vw, 1.4375rem); line-height: 1.3; text-transform: uppercase;
+  }
+  .somna-pdp-hero__nocode {
+    display: inline-flex; align-items: center; gap: 8px; width: fit-content; margin: 14px 0 0; padding: 5px 16px;
+    border: 1.5px solid #afbdf8; border-radius: 999px; color: #afbdf8; font-size: 1.125rem; font-weight: 700; line-height: 1.3;
+  }
+  .somna-pdp-hero__nocode svg { width: 15px; height: 15px; }
+  .somna-pdp-hero--bf .somna-pdp-hero__price { margin-top: 22px; }
+  .somna-pdp-hero__ship { margin: 10px 0 0; color: #f3feee; font-size: 1.1875rem; font-weight: 500; line-height: 1.4; }
+  /* gift unlock bar */
+  .somna-pdp-hero__giftbar { display: flex; align-items: flex-start; gap: 14px; margin: 16px 0 6px; color: #f3feee; }
+  .somna-pdp-hero__giftbar-icon { flex: none; width: 22px; height: 22px; margin-top: 1px; color: #afbdf8; }
+  .somna-pdp-hero__giftbar-body { flex: 1; }
+  .somna-pdp-hero__giftbar p { margin: 0 0 8px; font-size: 1.125rem; font-weight: 700; line-height: 1.3; }
+  .somna-pdp-hero__giftbar-track { display: block; height: 7px; border-radius: 999px; background: rgb(175 189 248 / 0.22); overflow: hidden; }
+  .somna-pdp-hero__giftbar-track span { display: block; width: calc(var(--gift-p, 0.5) * 100%); height: 100%; border-radius: inherit; background: #afbdf8; transition: width 0.35s ease; }
+  .somna-pdp-hero__giftbar.is-done p { color: #afbdf8; }
+  /* subscribe box: SAVE chip + one line */
+  .somna-pdp-hero--bf [data-sub-pct]:not(:empty) {
+    display: inline-block; margin-left: 10px; padding: 3px 9px; border-radius: 6px; background: #1d2244; color: #afbdf8;
+    font-size: 0.8125rem; font-weight: 800; letter-spacing: 0.04em; line-height: 1.3; text-transform: uppercase; vertical-align: 2px;
+  }
+  .somna-pdp-hero__sub-line { margin: 0 0 0 30px; color: #333; font-size: 0.9375rem; line-height: 1.45; }
+  /* moon countdown above the button */
+  .somna-pdp-hero__moon:has(somna-moon-line:not([hidden])) { margin: 16px 0 0; padding: 12px 20px; border-radius: 14px; background: #1d2244; }
+  .somna-pdp-hero--bf .somna-pdp-hero__moon .somna-moonline { font-size: clamp(1rem, 1.25vw, 1.125rem); }
+  .somna-pdp-hero--bf .somna-pdp-hero__add { margin-top: 16px; box-shadow: 4px 6px 0 #f3feee; }
+  /* reviews + guarantee under the button */
+  .somna-pdp-hero__trust { display: flex; align-items: center; gap: 18px; margin: 22px 0 0; padding-inline: 18px; color: #f3feee; }
+  .somna-pdp-hero__trust p { margin: 0; line-height: 1.45; }
+  .somna-pdp-hero__trust-1 { font-size: clamp(0.9375rem, 1.33vw, 1.0625rem); font-weight: 700; }
+  .somna-pdp-hero__trust-2 { margin-top: 2px !important; color: rgb(243 254 238 / 0.85); font-size: clamp(0.875rem, 1.25vw, 1rem); }
+  .somna-pdp-hero__trust-stars { color: #f5c84c; letter-spacing: 0.06em; }
+  .somna-pdp-hero__trust-sep { display: inline-block; width: 1.5px; height: 1em; margin: 0 10px; background: currentColor; vertical-align: -2px; }
+  /* desktop: compact buy box (about 20% smaller than the base theme sizes) */
+  @media screen and (min-width: 990px) {
+    /* sticker: small, on the main photo's top-left corner (the photo starts after the thumbnail column) */
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge { top: -14px; left: 114px; padding: 7px 14px 5px; border-width: 2.5px; box-shadow: 0 0 0 3px #fff, 4px 5px 0 3px rgb(0 0 0 / 0.85); }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge span { font-size: clamp(20px, 1.6vw, 24px); }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge small { font-size: 10px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__title { font-size: clamp(2rem, 2.6vw, 2.625rem); }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__rating { margin-bottom: 6px; font-size: 1rem; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__features { gap: 6px 18px; margin-top: 14px; font-size: 1rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__offer { margin-top: 20px; padding: 6px 16px 4px; font-size: clamp(0.9375rem, 1.2vw, 1.1875rem); box-shadow: 5px 5px 0 #afbdf8; }
+    .somna-pdp-hero--bf .somna-pdp-hero__nocode { margin-top: 12px; padding: 4px 14px; font-size: 0.9375rem; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__price { gap: 10px; margin-top: 16px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__price-now { font-size: 1.75rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__price s { font-size: 1.125rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__save { padding: 7px 11px; font-size: 0.9375rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__ship { margin-top: 8px; font-size: 0.9375rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__packs .somna-buy__pack-name { font-size: 0.8125rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__packs .somna-buy__pack-price { font-size: 1.3125rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__packs :is(.somna-buy__pack s, .somna-buy__pack-night) { font-size: 0.8125rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__giftbar { gap: 12px; margin: 14px 0 6px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__giftbar p { margin-bottom: 6px; font-size: 0.9375rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__modes .somna-buy__mode { font-size: 1rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__sub-line { font-size: 0.875rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__moon:has(somna-moon-line:not([hidden])) { margin-top: 14px; padding: 10px 16px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__moon .somna-moonline { font-size: 0.9375rem; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__add { min-height: 62px; margin-top: 14px; font-size: 1.375rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__trust { gap: 14px; margin-top: 18px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__trust .somna-seal { width: 62px; height: 62px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__trust .somna-seal b { font-size: 24px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__trust .somna-seal small { font-size: 9px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__trust-1 { font-size: 0.9375rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__trust-2 { font-size: 0.875rem; }
+  }
+  @media screen and (min-width: 1300px) {
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge { left: 80px; }
+  }
+  @media screen and (max-width: 989px) {
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge { top: 14px; left: 14px; padding: 9px 18px 7px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge span { font-size: 30px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__badge small { font-size: 12px; }
+  }
+  @media screen and (max-width: 749px) {
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__title { font-size: 2.25rem; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__rating { font-size: 1rem; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__features { gap: 6px 16px; margin-top: 12px; font-size: 1rem; }
+    .somna-pdp-hero__offer { margin-top: 20px; padding: 6px 16px 4px; font-size: 1.1875rem; box-shadow: 4px 4px 0 #afbdf8; }
+    .somna-pdp-hero__nocode { margin-top: 10px; padding: 4px 13px; font-size: 1rem; }
+    .somna-pdp-hero__ship { font-size: 1rem; }
+    .somna-pdp-hero__giftbar p { font-size: 1rem; }
+    .somna-pdp-hero__sub-line { margin-left: 26px; font-size: 0.875rem; }
+    .somna-pdp-hero__moon:has(somna-moon-line:not([hidden])) { padding: 10px 14px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__moon .somna-moonline { font-size: 0.9375rem; }
+    .somna-pdp-hero__trust { gap: 14px; margin-top: 16px; padding-inline: 4px; }
+    .somna-pdp-hero__trust-1 { font-size: 1rem; }
+    .somna-pdp-hero__trust-2 { font-size: 0.9375rem; }
+    .somna-pdp-hero__trust-sep { display: block; width: 0; height: 0; margin: 0; }
+  }
+
+  .somna-pdp-hero__dots { display: none; }
+  @media screen and (max-width: 749px) {
+    /* phones: short photo with dots, buy panel overlapping it, denser type so the buy box fits the first screens */
+    .somna-pdp-hero--bf .somna-pdp-hero__thumbs { display: none; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__main { width: 100%; height: 230px; aspect-ratio: auto; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__main img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+    .somna-pdp-hero--bf .somna-pdp-hero__dots {
+      position: absolute; right: 14px; bottom: 34px; z-index: 3; display: flex; gap: 6px; padding: 5px 8px; border-radius: 999px; background: rgb(243 254 238 / 0.9);
+    }
+    .somna-pdp-hero--bf .somna-pdp-hero__dots button { width: 10px; height: 10px; padding: 0; border: 1.5px solid #0b0f1d; border-radius: 50%; background: transparent; cursor: pointer; }
+    .somna-pdp-hero--bf .somna-pdp-hero__dots button[aria-current='true'] { background: #0b0f1d; }
+    .somna-pdp-hero--bf .somna-pdp-hero__sticker { display: none; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge { top: 16px; left: 16px; padding: 7px 14px 5px; rotate: -6deg; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge span { font-size: 24px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__badge small { font-size: 10px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__panel { position: relative; z-index: 2; margin-top: -26px; border-radius: 24px 24px 0 0; }
+    .somna-pdp-hero--bf .somna-pdp-hero__head { margin-top: 2px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__title { font-size: 2rem; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__rating { margin-bottom: 4px; font-size: 0.875rem; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__features { gap: 4px 14px; margin-top: 8px; font-size: 0.875rem; }
+    .somna-pdp-hero__offer { margin-top: 14px; padding: 5px 12px 3px; font-size: 0.9375rem; box-shadow: 3px 3px 0 #afbdf8; white-space: nowrap; }
+    .somna-pdp-hero__nocode { gap: 6px; margin-top: 8px; padding: 3px 11px; font-size: 0.8125rem; }
+    .somna-pdp-hero__nocode svg { width: 12px; height: 12px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__price { margin-top: 12px; }
+    .somna-pdp-hero__ship { margin-top: 4px; font-size: 0.875rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__packs legend { display: none; }
+    .somna-pdp-hero--bf .somna-pdp-hero__packs { margin-top: 18px; }
+    .somna-pdp-hero__giftbar { gap: 10px; margin: 10px 0 4px; }
+    .somna-pdp-hero__giftbar-icon { width: 18px; height: 18px; }
+    .somna-pdp-hero__giftbar p { margin-bottom: 6px; font-size: 0.875rem; }
+    .somna-pdp-hero__giftbar-track { height: 5px; }
+    .somna-pdp-hero__sub-line { font-size: 0.8125rem; }
+    .somna-pdp-hero__moon:has(somna-moon-line:not([hidden])) { margin-top: 10px; padding: 8px 12px; border-radius: 12px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__moon .somna-moonline { gap: 8px; font-size: 0.8125rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__moon .somna-moonline__moons svg { width: 100px; height: 12px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__add { margin-top: 10px; }
+    .somna-pdp-hero__trust { gap: 12px; margin-top: 12px; }
+    .somna-pdp-hero__trust .somna-seal { width: 56px; height: 56px; }
+    .somna-pdp-hero__trust .somna-seal b { font-size: 21px; }
+    .somna-pdp-hero__trust .somna-seal small { font-size: 8px; }
+    .somna-pdp-hero__trust-1 { font-size: 0.875rem; }
+    .somna-pdp-hero__trust-2 { font-size: 0.8125rem; }
+  }
+  @media screen and (min-width: 750px) and (max-width: 1299px) {
+    .somna-pdp-hero__moon:has(somna-moon-line:not([hidden])) { padding-inline: 16px; }
+    .somna-pdp-hero--bf .somna-pdp-hero__moon .somna-moonline { gap: 10px; font-size: 0.9375rem; }
+    .somna-pdp-hero--bf .somna-pdp-hero__moon .somna-moonline__moons svg { width: 96px; height: 11px; }
+  }
+  @media screen and (max-width: 1199px) {
+    .somna-pdp-hero--bf [data-sub-pct]:not(:empty) { margin-left: 6px; padding: 2px 6px; font-size: 0.6875rem; white-space: nowrap; }
+  }
+  @media screen and (max-width: 480px) {
+    .somna-pdp-hero--bf .somna-pdp-hero__moon .somna-moonline__moons svg { width: 84px; height: 10px; }
+  }
+  @media screen and (max-width: 360px) {
+    .somna-pdp-hero__offer { font-size: 0.875rem; white-space: normal; }
+    .somna-pdp-hero__sub-line { font-size: 0.75rem; }
+    .somna-pdp-hero__giftbar p { font-size: 0.8125rem; }
+    .somna-pdp-hero__trust-1 { font-size: 0.8125rem; }
+    .somna-pdp-hero__trust-2 { font-size: 0.75rem; }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -3333,6 +3758,7 @@
     { "type": "checkbox", "id": "drip_edges", "label": "Drippy edges", "default": true },
     { "type": "header", "content": "Gallery" },
     { "type": "text", "id": "badge_text", "label": "Round badge", "default": "Up to 60% off" },
+    { "type": "text", "id": "badge_sub", "label": "Ticket sticker second line (Black Friday layout)", "default": "Applied ✓" },
     { "type": "text", "id": "sticker_text", "label": "Sticker on the image", "info": "A product's PDP – Image sticker replaces it.", "default": "Bestseller" },
     { "type": "select", "id": "badge_motion", "label": "Badge and sticker animation", "info": "A short shake every few seconds. Off for visitors who prefer reduced motion.", "options": [{ "value": "none", "label": "None" }, { "value": "wiggle", "label": "Wiggle" }, { "value": "swing", "label": "Tilt-swing" }, { "value": "pop", "label": "Pop-jiggle" }], "default": "pop" },
     { "type": "select", "id": "rating_source", "label": "Rating line from", "options": [{ "value": "metafield", "label": "Product rating metafield" }, { "value": "judgeme", "label": "Judge.me (same numbers as the Reviews section)" }], "default": "judgeme", "info": "Judge.me falls back to the metafield when the product has no reviews." },
@@ -3341,10 +3767,28 @@
     { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified Buyer" },
     { "type": "select", "id": "main_shape", "label": "Main photo box", "options": [{ "value": "natural", "label": "Photo's own shape" }, { "value": "square-fit", "label": "Square, whole photo on navy" }, { "value": "square-fill", "label": "Square, photo fills (sides trimmed)" }], "default": "natural", "info": "Square keeps the main photo as tall as the square gallery photos." },
     { "type": "select", "id": "main_drip", "label": "Main photo and drip edge", "options": [{ "value": "over", "label": "Drip over the photo's top" }, { "value": "below", "label": "Photo below the drip (whole photo)" }, { "value": "below-crop", "label": "Photo below the drip, bottom trimmed" }, { "value": "fit", "label": "Photo below the drip, a bit smaller" }, { "value": "none", "label": "No drip on the photo" }], "default": "over" },
+    { "type": "select", "id": "below_media", "label": "Under the photos", "options": [{ "value": "videos", "label": "Videos (Real Nights, On Camera)" }, { "value": "photos", "label": "Customer reviews with photos" }], "default": "videos" },
+    { "type": "text", "id": "photos_heading", "label": "Customer photos heading", "default": "Real Nights, Real Reviews" },
+    { "type": "product_list", "id": "photos_fill_from", "label": "Customer photos: fill bundle pages from", "info": "Pages of these products show only their own photos. Every other product (the bundles) shows its own photos first, then these products' photos.", "limit": 6 },
+    { "type": "text", "id": "photos_skip", "label": "Customer photos: leave out", "info": "product-handle:file-word, comma separated — e.g. mouth-tape:nasalstrip hides strip photos posted in mouth tape reviews." },
+    { "type": "text", "id": "photos_label", "label": "Customer photos: strip label", "default": "Customer photos" },
+    { "type": "range", "id": "photos_reviews", "label": "Customer photos: reviews shown", "min": 1, "max": 5, "step": 1, "default": 2 },
+    { "type": "text", "id": "photos_all_label", "label": "Customer photos: link to all reviews", "default": "See all reviews ↓" },
     { "type": "select", "id": "video_shape", "label": "Video cards", "options": [{ "value": "natural", "label": "Each video's own shape" }, { "value": "equal", "label": "Same width (narrowest shape)" }], "default": "natural" },
     { "type": "text", "id": "videos_heading", "label": "Videos heading", "default": "Real Nights, On Camera" },
     { "type": "text", "id": "play_label", "label": "Play label (screen readers)", "default": "Play video" },
     { "type": "select", "id": "gallery_layout", "label": "Gallery layout", "options": [{ "value": "side", "label": "Thumbnails beside a portrait photo" }, { "value": "below", "label": "Thumbnails below a landscape photo" }, { "value": "auto", "label": "Automatic (by first photo)" }], "default": "side" },
+    { "type": "header", "content": "Black Friday layout" },
+    { "type": "checkbox", "id": "bf_layout", "label": "Use the Black Friday layout", "info": "Ticket sticker, benefit chips, offer line, gift unlock bar, moon countdown (date from the sale countdown bar) and reviews + guarantee under the button.", "default": false },
+    { "type": "text", "id": "offer_line", "label": "Offer line", "default": "60% off with Subscribe & Save" },
+    { "type": "text", "id": "offer_pill", "label": "No-code note", "default": "Sale price applied · no code" },
+    { "type": "text", "id": "ship_line", "label": "Shipping and gifts line", "default": "$4.95 flat shipping in the US · 3 free gifts on 2+ packs" },
+    { "type": "text", "id": "gift_todo", "label": "Gift bar: not unlocked yet", "info": "[n] = bags still needed, [bags] = bag / bags.", "default": "Add [n] more [bags] to unlock 3 free gifts" },
+    { "type": "text", "id": "gift_done", "label": "Gift bar: unlocked", "default": "3 free gifts unlocked ✓" },
+    { "type": "text", "id": "sub_line", "label": "Subscribe & Save line", "info": "[renewal] = price of each order after the first, [price] = first order price.", "default": "Every month · then [renewal]/month · skip, pause or cancel anytime" },
+    { "type": "text", "id": "moon_text", "label": "Moon countdown", "info": "[nights] and [date] come from the sale countdown bar. Hidden when the sale has ended.", "default": "[nights] nights left · ends [date]" },
+    { "type": "text", "id": "trust_1", "label": "Under the button: first line", "info": "[stars], [rating] and [count] come from the product's reviews.", "default": "[stars] [rating] · [count] reviews | 30-Night Money-Back Guarantee" },
+    { "type": "text", "id": "trust_2", "label": "Under the button: second line", "default": "$4.95 shipping · 7–9 business days · cancel anytime" },
     { "type": "header", "content": "Buy panel" },
     { "type": "text", "id": "rating_format", "label": "Rating text", "info": "[rating] and [count] come from the product's review metafield.", "default": "[rating]/5 · [count] reviews" },
     { "type": "text", "id": "brand", "label": "Brand before the title", "default": "somna." },

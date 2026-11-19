@@ -1,0 +1,20 @@
+{%- doc -%}
+  Somna V2 — round "30 NIGHTS" guarantee seal (lavender disc, dark text), used beside the reviews + guarantee lines.
+  @param {string} [number] - default 30
+  @param {string} [label] - default Nights
+{%- enddoc -%}
+<span class="somna-seal" aria-hidden="true"><b>{{ number | default: '30' }}</b><small>{{ label | default: 'Nights' }}</small></span>
+<style>
+  .somna-seal {
+    display: inline-grid; flex: none; place-content: center; width: 74px; height: 74px;
+    border-radius: 50%; background: #afbdf8; color: #0b0f1d; text-align: center; line-height: 1;
+    box-shadow: 3px 4px 0 rgb(0 0 0 / 0.35); rotate: -6deg;
+  }
+  .somna-seal b { font-family: var(--font-accent--family, inherit); font-size: 28px; font-weight: 400; }
+  .somna-seal small { margin-top: 2px; font-size: 10px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
+  @media screen and (max-width: 749px) {
+    .somna-seal { width: 66px; height: 66px; }
+    .somna-seal b { font-size: 25px; }
+    .somna-seal small { font-size: 9px; }
+  }
+</style>

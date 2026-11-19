@@ -97,13 +97,13 @@
       ],
       "settings": {
         "drip_edges": true,
-        "badge_text": "Up to 60% off",
+        "badge_text": "60% off",
         "sticker_text": "Bestseller",
         "rating_source": "judgeme",
         "verified_label": "Verified Buyer",
         "videos_heading": "Real Nights, On Camera",
         "gallery_layout": "side",
-        "rating_format": "[rating]/5 · [count] reviews",
+        "rating_format": "[rating] · [count]",
         "brand": "somna.",
         "save_label": "Save [percent]%",
         "percent_suffix": " · [percent]% off",
@@ -112,9 +112,9 @@
         "badge_position": 1,
         "badge_label": "Recommended",
         "badge_2_position": 2,
-        "badge_2_label": "Most popular",
+        "badge_2_label": "",
         "badge_3_position": 3,
-        "badge_3_label": "Best value",
+        "badge_3_label": "",
         "gift_label": "+3 free gifts",
         "gift_min_bags": 2,
         "nights_per_bag": 30,
@@ -132,7 +132,9 @@
         "padding_bottom": 24,
         "wave_color": "#0b0f1d",
         "wave_shape": "drip-1",
-        "main_drip": "below"
+        "main_drip": "below",
+        "bf_layout": true,
+        "badge_sub": "Applied ✓"
       }
     },
     "recently_viewed": {
