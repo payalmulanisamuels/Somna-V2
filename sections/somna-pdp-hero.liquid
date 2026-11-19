@@ -3534,6 +3534,10 @@
   .somna-pdp-hero__rv-body { margin: 0; color: #2b2f45; font-size: 0.875rem; line-height: 1.55; }
   .somna-pdp-hero__rv-pics { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
   .somna-pdp-hero__rv-pics li { width: 64px; }
+  /* the reviews card makes the left column tall: keep the buy panel at its own height instead of stretching its rows apart */
+  @media screen and (min-width: 750px) {
+    .somna-pdp-hero:has(.somna-pdp-hero__photos) .somna-pdp-hero__panel { align-self: start; }
+  }
   .somna-pdp-hero__rv-all { display: block; padding: 12px 0 10px; color: #0b0f1d; font-size: 0.875rem; font-weight: 700; text-align: center; text-decoration: underline; text-underline-offset: 3px; }
   @media screen and (max-width: 749px) {
     .somna-pdp-hero__rv { padding: 14px 14px 4px; border-radius: 14px; }
