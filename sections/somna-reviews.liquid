@@ -107,6 +107,7 @@
 {%- endif -%}
 
 <somna-reviews
+  {% if template.name == 'product' %}id="reviews"{% endif %}
   class="somna-reviews"
   style="
     --somna-rv-bg: {{ s.background_color }};
