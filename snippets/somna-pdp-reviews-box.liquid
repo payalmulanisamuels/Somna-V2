@@ -1,0 +1,125 @@
+{%- doc -%}
+  Somna V2 — customer reviews box: a "Customer photos" strip (+N, popup) and the latest Judge.me reviews with photos
+  (stars, date, name, verified, 2-line text, photo). Used under the photos on the product page (sections/somna-pdp-hero)
+  and on the quiz result (snippets/somna-quiz-pdp). Styles live in sections/somna-pdp-hero.liquid.
+  @param {product} product - the product whose reviews come first
+  @param {string} [heading] - heading above the box
+  @param {string} [label] - strip label (default "Customer photos")
+  @param {number} [reviews] - reviews listed (default 2)
+  @param {string} [fill] - comma-separated product handles; products NOT in this list (the bundles) add these products' photos
+  @param {string} [skip] - "product-handle:file-word" entries, comma-separated: leave out that product's photos whose file name has the word
+  @param {string} [all_label] - link text to all reviews (blank hides it)
+  @param {string} [all_href] - link target (default: scroll to the reviews section on the page)
+  @param {string} [verified_label] - default "Verified buyer"
+{%- enddoc -%}
+{%- comment -%}
+  Customer reviews card (instead of the quote card and the videos): a "Customer photos" strip, then the latest
+  Judge.me reviews that have photos (stars, date, name, text, their photos). Strips / tape pages use only their
+  own reviews; other products (the bundles) add the "fill from" products' reviews. Photos open in the shared
+  popup (snippets/somna-photo-lightbox.liquid).
+{%- endcomment -%}
+{%- liquid
+  assign ph_list = ''
+  assign ph_keys = ''
+  assign ph_count = 0
+  assign rv_count = 0
+  assign rv_html = ''
+  assign rv_limit = reviews | default: 2
+  # own photos first; pages of products NOT in "Fill from" (the bundles) add those products' photos
+  assign ph_fill = fill | default: '' | split: ','
+  assign ph_handles = product.handle
+  unless ph_fill contains product.handle
+    assign ph_fill_str = ph_fill | join: ','
+    if ph_fill_str != blank
+      assign ph_handles = ph_handles | append: ',' | append: ph_fill_str
+    endif
+  endunless
+  assign ph_handles = ph_handles | split: ','
+  # "Leave out": entries "product-handle:word" drop that product's photos whose file name contains the word
+  assign ph_skip = skip | default: '' | split: ','
+-%}
+{%- for ph_handle in ph_handles limit: 20 -%}
+  {%- if forloop.index > 1 and ph_handle == product.handle -%}{%- continue -%}{%- endif -%}
+  {%- assign ph_src = all_products[ph_handle] -%}
+  {%- for ph_rv in ph_src.metafields.judgeme.review_widget_data.value.photo_gallery -%}
+    {%- assign rv_pics = '' -%}
+    {%- for pic in ph_rv.pictures_urls -%}
+      {%- assign pic_src = pic.original | default: pic.huge | split: '&width=' | first -%}
+      {%- assign pic_file = pic_src | split: '?' | first | split: '/' | last -%}
+      {%- assign pic_head = pic_file | split: '-' | first -%}
+      {%- assign pic_key = pic_file | remove_first: pic_head -%}
+      {%- assign pic_skip = false -%}
+      {%- for skip_entry in ph_skip -%}
+        {%- assign skip_parts = skip_entry | strip | split: ':' -%}
+        {%- if skip_parts.size == 2 and skip_parts[0] == ph_handle and pic_file contains skip_parts[1] -%}{%- assign pic_skip = true -%}{%- endif -%}
+      {%- endfor -%}
+      {%- if pic_skip -%}{%- continue -%}{%- endif -%}
+      {%- assign rv_pics = rv_pics | append: pic_src | append: '^' -%}
+      {%- unless ph_keys contains pic_key or ph_count >= 30 -%}
+        {%- assign ph_list = ph_list | append: pic_src | append: '^' -%}
+        {%- assign ph_keys = ph_keys | append: pic_key | append: '^' -%}
+        {%- assign ph_count = ph_count | plus: 1 -%}
+      {%- endunless -%}
+    {%- endfor -%}
+    {%- if rv_pics != '' and rv_count < rv_limit -%}
+      {%- liquid
+        assign rv_count = rv_count | plus: 1
+        assign rv_parts = ph_rv.reviewer_name | strip | split: ' '
+        assign rv_name = rv_parts | first
+        if rv_parts.size > 1
+          assign rv_last = rv_parts | last | slice: 0 | upcase
+          assign rv_name = rv_name | append: ' ' | append: rv_last | append: '.'
+        endif
+        assign rv_stars = ph_rv.rating | plus: 0
+        assign rv_pic_list = rv_pics | split: '^'
+      -%}
+      {%- capture rv_item -%}
+        <li class="somna-pdp-hero__rv-item">
+          <ul class="somna-pdp-hero__rv-pics" role="list" data-photo-popup>
+            {%- for rp in rv_pic_list limit: 5 -%}
+              <li{% if forloop.index > 1 %} hidden{% endif %}><img src="{{ rp }}&width=160" alt="{{ 'Photo from ' | append: rv_name | append: '’s review' | escape }}" width="56" height="56" loading="lazy" decoding="async" tabindex="0" role="button">{% if forloop.index == 1 and rv_pic_list.size > 1 %}<span class="somna-pdp-hero__rv-more" aria-hidden="true">+{{ rv_pic_list.size | minus: 1 }}</span>{% endif %}</li>
+            {%- endfor -%}
+          </ul>
+          <div class="somna-pdp-hero__rv-text">
+            <div class="somna-pdp-hero__rv-top">
+              <p class="somna-pdp-hero__rv-name"><span class="somna-pdp-hero__rv-stars" role="img" aria-label="{{ rv_stars }} out of 5 stars">{% for i in (1..5) %}<span{% if i > rv_stars %} class="is-empty"{% endif %}>★</span>{% endfor %}</span> {{ rv_name | escape }}{% if ph_rv.verified_buyer %} <small>✓ {{ verified_label | default: 'Verified buyer' }}</small>{% endif %}</p>
+              <time datetime="{{ ph_rv.created_at | date: '%Y-%m-%d' }}">{{ ph_rv.created_at | date: '%b %-d, %Y' }}</time>
+            </div>
+            <p class="somna-pdp-hero__rv-body">{{ ph_rv.body_html | strip_html | strip | escape }}</p>
+          </div>
+        </li>
+      {%- endcapture -%}
+      {%- assign rv_html = rv_html | append: rv_item -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}
+{%- assign ph_entries = ph_list | split: '^' -%}
+{%- if ph_entries.size > 0 -%}
+  <div class="somna-pdp-hero__videos somna-pdp-hero__photos">
+    {%- if heading != blank -%}<h2 class="somna-pdp-hero__videos-title">{{ heading }}</h2>{%- endif -%}
+    <div class="somna-pdp-hero__rv">
+      <p class="somna-pdp-hero__rv-label">{{ label | default: 'Customer photos' }}</p>
+      <ul class="somna-pdp-hero__rv-strip" role="list" data-photo-popup>
+        {%- assign more_mob = ph_entries.size | minus: 4 -%}
+        {%- assign more_desk = ph_entries.size | minus: 6 -%}
+        {%- for pic_src in ph_entries -%}
+          <li{% if forloop.index > 7 %} hidden{% endif %}>
+            <img src="{{ pic_src }}&width=240" alt="{{ 'Customer photo ' | append: forloop.index | escape }}" width="80" height="80" loading="lazy" decoding="async" tabindex="0" role="button">
+            {%- if forloop.index == 5 and ph_entries.size > 5 -%}<span class="somna-pdp-hero__rv-more somna-pdp-hero__rv-more--mob" aria-hidden="true">+{{ more_mob }}</span>{%- endif -%}
+            {%- if forloop.index == 7 and ph_entries.size > 7 -%}<span class="somna-pdp-hero__rv-more somna-pdp-hero__rv-more--desk" aria-hidden="true">+{{ more_desk }}</span>{%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+      {%- if rv_html != '' -%}<ul class="somna-pdp-hero__rv-list" role="list">{{ rv_html }}</ul>{%- endif -%}
+      {%- if all_label != blank -%}<a class="somna-pdp-hero__rv-all" href="{{ all_href | default: '#reviews' }}"{% if all_href == blank %} data-rv-jump{% endif %}>{{ all_label }}</a>{%- endif -%}
+    </div>
+  </div>
+  {%- render 'somna-photo-lightbox' -%}
+  <script>
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('[data-rv-jump]');
+      var to = a && document.querySelector('.somna-reviews');
+      if (to) { e.preventDefault(); to.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  </script>
+{%- endif -%}
