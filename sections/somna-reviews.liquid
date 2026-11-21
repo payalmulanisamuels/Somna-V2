@@ -351,6 +351,8 @@
 {%- render 'somna-photo-lightbox' -%}
 
 {% stylesheet %}
+  /* product pages: #reviews (from the quiz result's "See all reviews") lands below the sticky header */
+  #reviews.somna-reviews { scroll-margin-top: 90px; }
   .somna-reviews {
     display: block;
     background: var(--somna-rv-bg, #000);

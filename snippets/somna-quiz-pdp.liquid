@@ -170,7 +170,8 @@ Skip, pause or cancel anytime{%- endcapture -%}
 
 
       {%- comment -%} customer reviews box, same as the product page (strips / tape own reviews; bundles add both) {%- endcomment -%}
-      <div class="sq-pdp-videos">{%- render 'somna-pdp-reviews-box', product: product, heading: 'Real Nights, Real Reviews', reviews: 2, fill: 'nasal-strips,mouth-tape', skip: 'mouth-tape:nasalstrip', all_label: 'See all reviews →', all_href: product.url -%}</div>
+      {%- assign rv_href = product.url | append: '#reviews' -%}
+      <div class="sq-pdp-videos">{%- render 'somna-pdp-reviews-box', product: product, heading: 'Real Nights, Real Reviews', reviews: 2, fill: 'nasal-strips,mouth-tape', skip: 'mouth-tape:nasalstrip', all_label: 'See all reviews →', all_href: rv_href -%}</div>
       {{- left_extras -}}
     </div>
     </div>
