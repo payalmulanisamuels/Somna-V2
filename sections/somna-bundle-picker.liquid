@@ -191,7 +191,7 @@
         else note.textContent = {{ s.note | json }};
         const add = q('[data-add]');
         add.disabled = !v.available;
-        q('[data-add-label]').textContent = v.available ? `${this.labels.add} · ${this.money(pr.price)}` : this.labels.soldOut;
+        q('[data-add-label]').textContent = v.available ? this.labels.add : this.labels.soldOut;
         this.querySelectorAll('[data-set-mode]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.setMode === this.mode)));
         q('[data-others]').innerHTML = this.products.map((o, i) => {
           if (i === this.active) return '';

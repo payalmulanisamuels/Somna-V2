@@ -33,13 +33,6 @@
             "caption": "How I put it on"
           }
         },
-        "perk_1": {
-          "type": "perk",
-          "settings": {
-            "icon": "shipping",
-            "text": "$4.95 shipping"
-          }
-        },
         "perk_2": {
           "type": "perk",
           "settings": {
@@ -87,7 +80,6 @@
         "video_1",
         "video_2",
         "video_3",
-        "perk_1",
         "perk_2",
         "perk_3",
         "sticker_1",
@@ -141,7 +133,10 @@
           "nasal-strips",
           "mouth-tape"
         ],
-        "photos_skip": "mouth-tape:nasalstrip"
+        "photos_skip": "mouth-tape:nasalstrip",
+        "ship_line": "3 free gifts on 2+ packs",
+        "trust_2": "7–9 business days · cancel anytime",
+        "sticky_banner": "+ 3 FREE GIFTS on 2+ packs"
       }
     },
     "recently_viewed": {
@@ -431,17 +426,6 @@
             "column_3_text": "3"
           }
         },
-        "bsrow_4": {
-          "type": "row",
-          "settings": {
-            "tab": "3",
-            "label": "Shipping",
-            "total": false,
-            "column_1_text": "$4.95",
-            "column_2_text": "$14.85",
-            "column_3_text": "$14.85"
-          }
-        },
         "bsrow_5": {
           "type": "row",
           "settings": {
@@ -612,7 +596,6 @@
         "bsrow_1",
         "bsrow_2",
         "bsrow_3",
-        "bsrow_4",
         "bsrow_5",
         "csrow_1",
         "csrow_2",
@@ -1379,7 +1362,7 @@
         "pack_position": 1,
         "use_subscription": true,
         "button_label": "Add to cart",
-        "note": "$4.95 standard shipping · Arrives in 7–9 business days",
+        "note": "Arrives in 7–9 business days",
         "sticker": "[night] a night",
         "nights_per_bag": 30,
         "background_color": "#afbdf8",
