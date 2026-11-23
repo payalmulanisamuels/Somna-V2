@@ -349,7 +349,7 @@
         <s data-compare{% if compare == 0 %} hidden{% endif %}>{{ compare | money_without_trailing_zeros }}</s>
         {%- assign pct = 0 -%}
         {%- if compare > 0 -%}{%- assign pct = compare | minus: price | times: 100 | divided_by: compare -%}{%- endif -%}
-        <span class="somna-pdp-hero__save" data-save{% if pct == 0 %} hidden{% endif %}>{{ s.save_label | replace: '[percent]', pct }}</span>
+        <span class="somna-pdp-hero__save" data-save{% if pct == 0 or s.bf_layout and mode == 'once' %} hidden{% endif %}>{{ s.save_label | replace: '[percent]', pct }}</span>
         {%- if mf.pdp_night_label != blank and price_nights > 0 -%}
           <span class="somna-pdp-hero__price-night" data-price-night>{{ price | times: 1.0 | divided_by: price_nights | round | money }}{{ mf.pdp_night_label.value }}</span>
         {%- endif -%}
@@ -692,7 +692,7 @@
         const priceNights = Number(this.dataset.priceNights) || 0;
         if (priceNight && priceNights) priceNight.textContent = this.money(Math.round(price / priceNights)) + (this.dataset.nightLabel || '');
         const pct = this.pct(price, v);
-        const save = q('[data-save]'); save.hidden = !pct; save.textContent = this.labels.save.replace('[percent]', pct);
+        const save = q('[data-save]'); save.hidden = !pct || (this.mode === 'once' && this.classList.contains('somna-pdp-hero--bf')); save.textContent = this.labels.save.replace('[percent]', pct);
         this.querySelectorAll('[data-pack]').forEach((input) => {
           const x = this.variants[Number(input.value)];
           const pr = this.priceOf(x);
@@ -724,7 +724,7 @@
         }
         q('[data-price-once]').textContent = this.money(v.price);
         const oncePct = this.pct(v.price, v);
-        q('[data-once-pct]').textContent = oncePct ? this.labels.pct.replace('[percent]', oncePct) : '';
+        q('[data-once-pct]').textContent = oncePct && !this.classList.contains('somna-pdp-hero--bf') ? this.labels.pct.replace('[percent]', oncePct) : '';
         if (this.planSelect) this.planSelect.disabled = this.mode !== 'sub';
         const add = q('[data-add]');
         add.disabled = !v.available;
@@ -928,7 +928,7 @@
           b.setAttribute('aria-pressed', String(m === buy.mode));
           b.disabled = m === 'sub' && !v.plans.length;
           const pct = m === 'sub' ? (v.plans.length ? buy.pct(buy.priceOf(v, 'sub'), v) : 0) : buy.pct(v.price, v);
-          b.querySelector('[data-sticky-pct]').textContent = pct ? `${pct}% off` : '';
+          b.querySelector('[data-sticky-pct]').textContent = pct && !(m === 'once' && buy.classList.contains('somna-pdp-hero--bf')) ? `${pct}% off` : '';
         });
         const note = this.querySelector('[data-sticky-note]');
         if (note) {
