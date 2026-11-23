@@ -55,14 +55,14 @@
         "step_3"
       ],
       "settings": {
-        "eyebrow": "1,000+ people already sleep better with Somna.",
+        "eyebrow": "[count] reviews from people sleeping better with Somna.",
         "avatar_1": "shopify://shop_images/somna-v2-hero-reviewer-1.jpg",
         "avatar_2": "shopify://shop_images/somna-v2-hero-reviewer-2.jpg",
         "avatar_3": "shopify://shop_images/somna-v2-hero-reviewer-3.jpg",
         "avatar_4": "shopify://shop_images/Precision_nasal_strip_design_correction-4.png",
         "avatar_5": "shopify://shop_images/somna_selfie_strips_runner.png",
         "avatars": "shopify://shop_images/somna-v2-steps-avatars.png",
-        "rating_text": "★★★★★ 4.6/5 Average Rating",
+        "rating_text": "★★★★★ [rating]/5 Average Rating",
         "image": "shopify://shop_images/somna-v2-steps-model.png",
         "heading": "Three Steps. Zero Fuss.",
         "text": "<p>From bathroom sink to lights out in under a minute.</p>",
@@ -77,7 +77,14 @@
         "padding_top": 24,
         "padding_bottom": 16,
         "wave_color": "#000000",
-        "wave_shape": "drip-2"
+        "wave_shape": "drip-2",
+        "review_products": [
+          "nasal-strips",
+          "sleep-bundle",
+          "mouth-tape",
+          "the-colour-set",
+          "season-bundle"
+        ]
       }
     },
     "match": {
@@ -987,7 +994,7 @@
                 "label": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Loved by 1,000+ Sleepers</p>",
+                    "text": "<p>Loved by sleepers</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "center",
@@ -2722,11 +2729,11 @@
         "featured_bg": "",
         "featured_fg": "",
         "show_summary": true,
-        "summary_source": "settings",
+        "summary_source": "judgeme_products",
         "count_label": "[count] reviews",
         "average": "4.6",
         "show_summary_stars": true,
-        "count": "1000+ reviews",
+        "count": "",
         "pct_5": 78,
         "pct_4": 15,
         "pct_3": 4,
@@ -2763,7 +2770,14 @@
         "error_text": "Reviews couldn't be loaded right now.",
         "retry_label": "Try again",
         "sample_note": "",
-        "chip_active_color": "#afbdf8"
+        "chip_active_color": "#afbdf8",
+        "summary_products": [
+          "nasal-strips",
+          "sleep-bundle",
+          "mouth-tape",
+          "the-colour-set",
+          "season-bundle"
+        ]
       }
     },
     "wave_black_peri": {
