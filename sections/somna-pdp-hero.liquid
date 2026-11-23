@@ -519,7 +519,7 @@
         {%- endif -%}
 
         <button type="submit" name="add" class="somna-buy__add somna-pdp-hero__add" data-add{% unless current.available %} disabled{% endunless %}>
-          <span data-add-label>{% if current.available %}{{ s.add_label }} · {{ price | money }}{% else %}{{ s.sold_out_label }}{% endif %}</span>
+          <span data-add-label>{% if current.available %}{{ s.add_label }}{% else %}{{ s.sold_out_label }}{% endif %}</span>
         </button>
         <p class="somna-buy__status" role="status" data-status></p>
       {%- endform -%}
@@ -728,7 +728,7 @@
         if (this.planSelect) this.planSelect.disabled = this.mode !== 'sub';
         const add = q('[data-add]');
         add.disabled = !v.available;
-        q('[data-add-label]').textContent = v.available ? `${this.labels.add} · ${this.money(price)}` : this.labels.soldOut;
+        q('[data-add-label]').textContent = v.available ? this.labels.add : this.labels.soldOut;
       }
       // colour swatches: point every pack at the variant with that colour and its size, then show that colour's photo
       setColor(color) {
@@ -3576,8 +3576,9 @@
 
   .somna-pdp-hero__dots { display: none; }
   @media screen and (max-width: 749px) {
-    /* phones: the whole photo (its own shape, never cropped) with dots, buy panel just below it, denser type */
-    .somna-pdp-hero--bf .somna-pdp-hero__thumbs { display: none; }
+    /* phones: the whole photo (its own shape, never cropped) with a row of thumbnails under it, buy panel just below, denser type */
+    .somna-pdp-hero--bf .somna-pdp-hero__thumbs { display: grid; margin-top: 4px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__dots { display: none; }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__main { width: 100%; height: auto; aspect-ratio: auto; }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__main img { width: 100%; height: auto; object-fit: contain; }
     /* the wavy top edge sits above the photo, not over it, so the photo's top line (e.g. "MOUTH TAPE") isn't cut */
@@ -3676,13 +3677,13 @@
     { "type": "checkbox", "id": "bf_layout", "label": "Use the Black Friday layout", "info": "Ticket sticker, benefit chips, offer line, gift unlock bar, moon countdown (date from the sale countdown bar) and reviews + guarantee under the button.", "default": false },
     { "type": "text", "id": "offer_line", "label": "Offer line", "default": "60% off with Subscribe & Save" },
     { "type": "text", "id": "offer_pill", "label": "No-code note", "default": "Sale price applied · no code" },
-    { "type": "text", "id": "ship_line", "label": "Shipping and gifts line", "default": "$4.95 flat shipping in the US · 3 free gifts on 2+ packs" },
+    { "type": "text", "id": "ship_line", "label": "Shipping and gifts line", "default": "3 free gifts on 2+ packs" },
     { "type": "text", "id": "gift_todo", "label": "Gift bar: not unlocked yet", "info": "[n] = bags still needed, [bags] = bag / bags.", "default": "Add [n] more [bags] to unlock 3 free gifts" },
     { "type": "text", "id": "gift_done", "label": "Gift bar: unlocked", "default": "3 free gifts unlocked ✓" },
     { "type": "text", "id": "sub_line", "label": "Subscribe & Save line", "info": "[renewal] = price of each order after the first, [price] = first order price.", "default": "Every month · then [renewal]/month · skip, pause or cancel anytime" },
     { "type": "text", "id": "moon_text", "label": "Moon countdown", "info": "[nights] and [date] come from the sale countdown bar. Hidden when the sale has ended.", "default": "[nights] nights left · ends [date]" },
     { "type": "text", "id": "trust_1", "label": "Under the button: first line", "info": "[stars], [rating] and [count] come from the product's reviews.", "default": "[stars] [rating] · [count] reviews | 30-Night Money-Back Guarantee" },
-    { "type": "text", "id": "trust_2", "label": "Under the button: second line", "default": "$4.95 shipping · 7–9 business days · cancel anytime" },
+    { "type": "text", "id": "trust_2", "label": "Under the button: second line", "default": "7–9 business days · cancel anytime" },
     { "type": "header", "content": "Buy panel" },
     { "type": "text", "id": "rating_format", "label": "Rating text", "info": "[rating] and [count] come from the product's review metafield.", "default": "[rating]/5 · [count] reviews" },
     { "type": "text", "id": "brand", "label": "Brand before the title", "default": "somna." },
@@ -3690,7 +3691,7 @@
     { "type": "text", "id": "box_colors_label", "label": "What's in the box: colours text", "info": "Before the colour dots (PDP – What's in the box colours).", "default": "Strip colors in this set:" },
     { "type": "header", "content": "Sticky add to cart" },
     { "type": "checkbox", "id": "sticky_enable", "label": "Show the sticky add to cart bar", "default": true, "info": "Appears once the buy box scrolls off the screen. Tapping the product opens “Choose your pack”." },
-    { "type": "inline_richtext", "id": "sticky_banner", "label": "Bar: banner", "default": "+ 3 FREE GIFTS on 2+ packs . $4.95 standard shipping" },
+    { "type": "inline_richtext", "id": "sticky_banner", "label": "Bar: banner", "default": "+ 3 FREE GIFTS on 2+ packs" },
     { "type": "text", "id": "sticky_sub_word", "label": "Bar: subscribe word", "default": "subscribe", "info": "Title reads “1 Bag. subscribe”" },
     { "type": "text", "id": "sticky_once_word", "label": "Bar: one-time word", "default": "one time" },
     { "type": "text", "id": "sticky_add_label", "label": "Bar: button", "default": "Add to cart" },
