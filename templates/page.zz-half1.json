@@ -201,7 +201,7 @@
         "error_label": "Couldn’t add to cart. Please try again.",
         "sold_out_label": "Sold out",
         "bar_title": "Start Subscribe & Save",
-        "bar_text": "From $19.95 off your first box.",
+        "bar_text": "From $19.95 a box",
         "bar_link": "shopify://products/sleep-bundle",
         "background_color": "#000000",
         "text_color": "#f3feee",
