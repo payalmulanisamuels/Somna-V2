@@ -51,6 +51,49 @@
     endfor
   endif
 
+  # several products (homepage): total count, average and bars weighted by each product's review count
+  if s.summary_source == 'judgeme_products' and s.summary_products != blank
+    assign t_count = 0
+    assign t_rating = 0.0
+    assign t5 = 0.0
+    assign t4 = 0.0
+    assign t3 = 0.0
+    assign t2 = 0.0
+    assign t1 = 0.0
+    for sp in s.summary_products
+      assign pj = sp.metafields.judgeme.review_widget_data.value
+      if pj and pj.number_of_reviews > 0
+        assign pc = pj.number_of_reviews | plus: 0
+        assign t_count = t_count | plus: pc
+        assign t_rating = pj.average_rating | times: pc | plus: t_rating
+        for h in pj.histogram
+          assign hw = h.percentage | times: pc
+          case h.rating
+            when 5
+              assign t5 = t5 | plus: hw
+            when 4
+              assign t4 = t4 | plus: hw
+            when 3
+              assign t3 = t3 | plus: hw
+            when 2
+              assign t2 = t2 | plus: hw
+            when 1
+              assign t1 = t1 | plus: hw
+          endcase
+        endfor
+      endif
+    endfor
+    if t_count > 0
+      assign sum_avg = t_rating | divided_by: t_count | round: 1
+      assign sum_count = s.count_label | default: '[count] reviews' | replace: '[count]', t_count
+      assign sum_p5 = t5 | divided_by: t_count | round
+      assign sum_p4 = t4 | divided_by: t_count | round
+      assign sum_p3 = t3 | divided_by: t_count | round
+      assign sum_p2 = t2 | divided_by: t_count | round
+      assign sum_p1 = t1 | divided_by: t_count | round
+    endif
+  endif
+
   assign f_title = s.featured_title
   assign f_text = s.featured_text
   assign f_name = s.featured_name
@@ -1572,11 +1615,12 @@
 
     { "type": "header", "content": "Review summary" },
     { "type": "checkbox", "id": "show_summary", "label": "Show summary", "default": true },
-    { "type": "select", "id": "summary_source", "label": "Rating, count and bars from", "options": [{ "value": "settings", "label": "The fields below" }, { "value": "judgeme", "label": "Judge.me (this product's real numbers)" }], "default": "settings" },
+    { "type": "select", "id": "summary_source", "label": "Rating, count and bars from", "options": [{ "value": "settings", "label": "The fields below" }, { "value": "judgeme", "label": "Judge.me (this product's real numbers)" }, { "value": "judgeme_products", "label": "Judge.me (total of the products below)" }], "default": "settings" },
+    { "type": "product_list", "id": "summary_products", "label": "Products to total", "info": "Used with \"Judge.me (total of the products below)\": adds up their review counts and weights the average and bars by count." },
     { "type": "text", "id": "count_label", "label": "Judge.me count text", "default": "[count] reviews", "info": "[count] is the number of Judge.me reviews." },
     { "type": "text", "id": "average", "label": "Average rating", "default": "4.6" },
     { "type": "checkbox", "id": "show_summary_stars", "label": "Show stars under the rating", "default": true },
-    { "type": "text", "id": "count", "label": "Review count", "default": "3600+ reviews" },
+    { "type": "text", "id": "count", "label": "Review count", "info": "Only shown when Judge.me numbers aren't used. Use a real figure." },
     { "type": "range", "id": "pct_5", "label": "5★ (%)", "min": 0, "max": 100, "step": 1, "default": 78 },
     { "type": "range", "id": "pct_4", "label": "4★ (%)", "min": 0, "max": 100, "step": 1, "default": 15 },
     { "type": "range", "id": "pct_3", "label": "3★ (%)", "min": 0, "max": 100, "step": 1, "default": 4 },
