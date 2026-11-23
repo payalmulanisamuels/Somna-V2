@@ -1317,3 +1317,63 @@
     }
   }
 
+
+/* Three steps: the how-to video in place of the "Watch how it works" button, play button on top */
+.somna-pdp-story__player {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #0b0f1d;
+  box-shadow: 0 8px 18px rgb(0 0 0 / 0.18);
+  aspect-ratio: 16 / 9;
+}
+.somna-pdp-story__player-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.somna-pdp-story__player-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.45), rgb(0 0 0 / 0.1));
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+.somna-pdp-story__player-icon {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--somna-story-button, #afbdf8);
+  color: #000;
+  box-shadow: 0 6px 16px rgb(0 0 0 / 0.3);
+  transition: scale 0.2s;
+}
+.somna-pdp-story__player-icon svg { width: 30px; margin-left: 4px; }
+.somna-pdp-story__player-play:hover .somna-pdp-story__player-icon { scale: 1.06; }
+.somna-pdp-story__player-play:focus-visible { outline: 3px solid #afbdf8; outline-offset: -3px; }
+.somna-pdp-story__player-label {
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 6px rgb(0 0 0 / 0.5);
+}
+.somna-pdp-story__player.is-playing .somna-pdp-story__player-play { display: none; }
+@media screen and (max-width: 749px) {
+  .somna-pdp-story__player { border-radius: 14px; }
+  .somna-pdp-story__player-icon { width: 56px; height: 56px; }
+  .somna-pdp-story__player-icon svg { width: 22px; margin-left: 3px; }
+  .somna-pdp-story__player-label { font-size: 0.875rem; }
+}
