@@ -244,6 +244,7 @@
 
       {%- when 'steps' -%}
         <div class="somna-pdp-story__steps">
+          {%- unless s.steps_hide_list -%}
           <ol class="somna-pdp-story__step-list" role="list">
             {%- for f in features -%}
               {%- assign photo = f.image.value -%}
@@ -257,6 +258,7 @@
               </li>
             {%- endfor -%}
           </ol>
+          {%- endunless -%}
           {%- liquid
             # video for the popup: the steps metaobject's "video" field, then the product metafield
             # custom.how_it_works_video, then the section's fallback video
@@ -624,6 +626,7 @@
     },
     { "type": "product", "id": "preview_product", "label": "Product for the theme editor", "info": "Only used where there is no product." },
     { "type": "video", "id": "video", "label": "Three steps: fallback video", "info": "The \"Watch how it works\" popup plays the product's steps metaobject \"video\" field, or the product metafield custom.how_it_works_video. This video is used only when neither is set." },
+    { "type": "checkbox", "id": "steps_hide_list", "label": "Three steps: hide the step rows", "info": "Shows only the heading and the video.", "default": false },
     { "type": "text", "id": "video_button_label", "label": "Three steps: button label", "default": "Watch how it works", "info": "Used when the steps metaobject has no button label." },
     { "type": "select", "id": "snore_direction", "label": "Problem: snore waves direction", "options": [{ "value": "right", "label": "Right" }, { "value": "tilt", "label": "Up and forward (45°)" }, { "value": "up", "label": "Up" }], "default": "right" },
     { "type": "checkbox", "id": "layers_animation", "label": "Animate \"What it's made of\"", "info": "When every layer has its own image: the How it works product travels in and peels into the layers as you scroll (phones: the layers peel apart without the travel). Off for reduced motion.", "default": true },
