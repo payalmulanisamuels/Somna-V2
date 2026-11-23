@@ -26,15 +26,23 @@
       # [count] / [rating] in the eyebrow and rating text = real Judge.me total of the chosen products (same as the homepage hero)
       assign rv_count = ''
       assign rv_rating = ''
-      if s.review_products != blank
-        capture rv
-          render 'somna-review-summary', products: s.review_products
+      assign rv_total = 0
+      assign rv_weighted = 0.0
+      for rp in s.review_products
+        capture one
+          render 'somna-review-summary', product: rp
         endcapture
-        assign rv = rv | strip
-        if rv != blank
-          assign rv_rating = rv | split: '|' | first
-          assign rv_count = rv | split: '|' | last
+        assign one = one | strip
+        if one != blank
+          assign one_count = one | split: '|' | last | plus: 0
+          assign one_rating = one | split: '|' | first | times: 1.0
+          assign rv_total = rv_total | plus: one_count
+          assign rv_weighted = one_rating | times: one_count | plus: rv_weighted
         endif
+      endfor
+      if rv_total > 0
+        assign rv_rating = rv_weighted | divided_by: rv_total | round: 1
+        assign rv_count = rv_total
       endif
       assign st_eyebrow = s.eyebrow | replace: '[count]', rv_count | replace: '[rating]', rv_rating
       assign st_rating = s.rating_text | replace: '[count]', rv_count | replace: '[rating]', rv_rating
