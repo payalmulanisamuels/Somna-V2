@@ -89,7 +89,7 @@
       ],
       "settings": {
         "drip_edges": true,
-        "badge_text": "60% off",
+        "badge_text": "",
         "sticker_text": "Bestseller",
         "rating_source": "judgeme",
         "verified_label": "Verified Buyer",
