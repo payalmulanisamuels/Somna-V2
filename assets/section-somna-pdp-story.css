@@ -1377,3 +1377,25 @@
   .somna-pdp-story__player-icon svg { width: 22px; margin-left: 3px; }
   .somna-pdp-story__player-label { font-size: 0.875rem; }
 }
+
+/* Three steps without the step rows: heading centred across the full width, the video centred below it */
+.somna-pdp-story.somna-pdp-story--steps-video .somna-pdp-story__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: clamp(20px, 3vw, 36px);
+}
+.somna-pdp-story--steps-video .somna-pdp-story__copy {
+  width: 100%;
+  max-width: none;
+  text-align: center;
+}
+.somna-pdp-story--steps-video .somna-pdp-story__heading,
+.somna-pdp-story--steps-video .somna-pdp-story__text {
+  max-width: none;
+  margin-inline: auto;
+}
+.somna-pdp-story--steps-video .somna-pdp-story__steps {
+  width: 100%;
+  max-width: 960px;
+}

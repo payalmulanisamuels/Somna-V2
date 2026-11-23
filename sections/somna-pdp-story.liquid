@@ -73,7 +73,7 @@
   endif
 -%}
 <div
-  class="somna-pdp-story somna-pdp-story--{{ layout_class }}{% if split %} somna-pdp-story--split{% endif %}"
+  class="somna-pdp-story somna-pdp-story--{{ layout_class }}{% if split %} somna-pdp-story--split{% endif %}{% if s.layout == 'steps' and s.steps_hide_list %} somna-pdp-story--steps-video{% endif %}"
   style="--somna-story-bg: {{ bg }}; --somna-story-fg: {{ s.text_color }}; --somna-story-heading: {{ s.heading_color }}; --somna-story-accent: {{ accent }}; --somna-story-card: {{ s.card_color }}; --somna-story-card-fg: {{ s.card_text_color }}; --somna-story-button: {{ button }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
 >
   <div class="somna-pdp-story__inner somna-container">
