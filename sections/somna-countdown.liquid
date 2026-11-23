@@ -133,14 +133,20 @@
           return;
         }
         dgs.forEach((dg, i) => {
-          const cur = dg.querySelector('i:not(.is-out)');
-          if (cur && cur.textContent === v[i]) return;
-          if (!animate || !cur) { dg.innerHTML = '<i>' + v[i] + '</i>'; return; }
+          // keep exactly one digit per slot: drop finished/leftover ones first (a background tab pauses animation
+          // frames but not the clock, which used to leave several digits stacked on top of each other)
+          dg.querySelectorAll('i.is-out').forEach((e) => e.remove());
+          const live = [...dg.querySelectorAll('i')];
+          const cur = live.pop();
+          live.forEach((e) => e.remove());
+          if (cur && cur.textContent === v[i]) { cur.className = ''; return; }
+          if (!animate || !cur || document.hidden) { dg.innerHTML = '<i>' + v[i] + '</i>'; return; }
           const next = document.createElement('i');
           next.className = 'is-in'; next.textContent = v[i];
           dg.appendChild(next);
-          requestAnimationFrame(() => requestAnimationFrame(() => { next.className = ''; cur.className = 'is-out'; }));
-          setTimeout(() => cur.remove(), 520);
+          void next.offsetWidth;                       // start the roll now, without waiting for animation frames
+          next.className = ''; cur.className = 'is-out';
+          setTimeout(() => { if (cur.isConnected) cur.remove(); }, 520);
         });
       }
       disconnectedCallback() { clearInterval(this.timer); cancelAnimationFrame(this.raf); if (this.ro) this.ro.disconnect(); document.body.style.removeProperty('--somna-cd-height'); }
