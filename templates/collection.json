@@ -575,7 +575,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>We ship free within the US. Orders arrive in 7–9 business days.</p>",
+                    "text": "<p>$4.95 flat shipping in the US. Orders arrive in 7–9 business days.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
