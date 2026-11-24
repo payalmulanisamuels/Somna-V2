@@ -26,8 +26,8 @@
       <svg viewBox="0 -2 92 20" focusable="false" data-moons></svg>
     </span>
     <p class="somna-cd__label">
-      <span class="somna-cd__label-desk">{{ s.label }}</span>
-      <span class="somna-cd__label-mob">{{ s.label_mobile }}{% if s.date_mobile != blank %}<span>{{ s.date_mobile }}</span>{% endif %}</span>
+      <span class="somna-cd__label-desk">{{ s.label }}{% if s.offer != blank %}<strong class="somna-cd__offer">{{ s.offer }}</strong>{% endif %}</span>
+      <span class="somna-cd__label-mob">{{ s.label_mobile }}{% if s.date_mobile != blank %}<span>{{ s.date_mobile }}</span>{% endif %}{% if s.offer != blank %}<strong class="somna-cd__offer">{{ s.offer }}</strong>{% endif %}</span>
     </p>
     <div class="somna-cd__clock">
       {%- for unit in (1..4) -%}
@@ -209,6 +209,9 @@
     color: var(--cd-text, #f3feee);
   }
   .somna-cd__label-mob { display: none; }
+  /* offer line under the label (e.g. 60% OFF + FREE GIFTS) */
+  .somna-cd__label-desk { display: grid; gap: 2px; text-align: center; }
+  .somna-cd__offer { display: block; color: var(--cd-accent, #afbdf8); font-size: 1.375rem; font-weight: 900; line-height: 1.1; letter-spacing: 0.03em; }
   .somna-cd__clock { display: flex; align-items: flex-start; gap: 8px; }
   .somna-cd__unit { display: grid; justify-items: center; gap: 4px; }
   .somna-cd__tile {
@@ -271,6 +274,7 @@
     .somna-cd__moons, .somna-cd__date, .somna-cd__label-desk { display: none; }
     .somna-cd__label-mob { display: grid; gap: 1px; font-size: 0.6875rem; letter-spacing: 0.04em; }
     .somna-cd__label-mob span { color: var(--cd-accent, #afbdf8); }
+    .somna-cd__label-mob .somna-cd__offer { margin-top: 1px; font-size: 0.8125rem; letter-spacing: 0.02em; }
     .somna-cd__clock { gap: 4px; }
     .somna-cd__tile { min-width: 32px; height: 28px; padding: 0 4px; border-radius: 5px; }
     .somna-cd__num { font-size: 1.0625rem; }
@@ -298,6 +302,7 @@
       "default": "2026-12-02T23:59:00-08:00"
     },
     { "type": "text", "id": "label", "label": "Label (desktop)", "default": "Black Friday sale ends in" },
+    { "type": "text", "id": "offer", "label": "Offer line under the label", "default": "60% OFF + FREE GIFTS" },
     { "type": "range", "id": "moon_cycle", "label": "Moons: seconds to fill all five", "min": 5, "max": 60, "step": 5, "unit": "s", "default": 10 },
     { "type": "text", "id": "date_text", "label": "End date shown (desktop)", "default": "Wed 2 Dec, 11:59 PM PT" },
     { "type": "text", "id": "label_mobile", "label": "Label (phones)", "default": "Sale ends" },
