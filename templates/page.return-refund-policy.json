@@ -93,35 +93,35 @@
           "type": "item",
           "settings": {
             "heading": "1. Sleep Satisfaction Guarantee",
-            "text": "<p>We stand behind every Somna product. If you are not completely satisfied with your purchase, you may return it under our 30-Night Money-Back Guarantee, calculated from the confirmed date of delivery.</p>"
+            "text": "<p>We stand behind every Somna product. Your first order is covered by our 30-Night Money-Back Guarantee, counted from the confirmed date of delivery.</p>"
           }
         },
         "item_2": {
           "type": "item",
           "settings": {
-            "heading": "2. Eligibility for Returns",
-            "text": "<p>To qualify for a refund under our satisfaction guarantee:</p><p>Initiation Window: The return request must be initiated within 30 nights of the delivery date.</p><p>Condition: For hygiene, safety, and health reasons, consumable items (Nasal Strips and Mouth Tape) must remain completely unused, sealed, and in their original, unopened packaging. Opened or partially used packs cannot be accepted.</p>"
+            "heading": "2. 30-Night Money-Back Guarantee",
+            "text": "<p>30-Night Money-Back Guarantee: try SOMNA for 30 nights from delivery. If it's not for you, contact us within 30 nights of delivery and we'll refund your first order, even if it's opened. No need to send it back. One claim per customer. Applies to your first order only; subscription renewals and free gifts are not included.</p>"
           }
         },
         "item_3": {
           "type": "item",
           "settings": {
-            "heading": "3. Return Process",
-            "text": "<p>Items marked as \"Final Sale,\" \"Clearance,\" or promotional free gifts are not eligible for returns or refunds.</p>"
+            "heading": "3. Final Sale Items",
+            "text": "<p>Items marked as \"Final Sale\" or \"Clearance\", and promotional free gifts, are not eligible for refunds.</p>"
           }
         },
         "item_4": {
           "type": "item",
           "settings": {
-            "heading": "4. Return Shipping Costs",
-            "text": "<p>Customers are responsible for all return shipping costs. We recommend using a trackable shipping service or purchasing shipping insurance. We cannot guarantee that we will receive</p><p>your returned item and are not responsible for returns lost in transit. Original shipping charges are non-refundable.</p>"
+            "heading": "4. No Need to Send It Back",
+            "text": "<p>You don't need to return anything to claim the guarantee, so there are no return shipping costs.</p>"
           }
         },
         "item_5": {
           "type": "item",
           "settings": {
             "heading": "5. Refunds",
-            "text": "<p>Once your return is received and inspected, we will send you an email to notify you of the approval or rejection of your refund. If approved, your refund will be processed, and a credit will automatically be applied to your original method of payment within 5–10 business days.</p>"
+            "text": "<p>Once we confirm your claim, we'll email you and refund your original payment method within 5–10 business days.</p>"
           }
         },
         "item_6": {
@@ -134,8 +134,8 @@
         "item_7": {
           "type": "item",
           "settings": {
-            "heading": "7. Final Sale Items",
-            "text": "<p>To initiate a return:</p><p>1. Email our support team at hello@somnasleep.com with your order number and reason for return.</p><p>2. If your return is approved, we will provide you with a Return Merchandise Authorization (RMA) number and instructions on where to send your package.</p><p>3. Do not send items back without first requesting an RMA. Items sent back without authorization will not be accepted or refunded.</p>"
+            "heading": "7. How to Claim",
+            "text": "<p>Email us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> within 30 nights of delivery with your order number. No need to send anything back.</p>"
           }
         }
       },
