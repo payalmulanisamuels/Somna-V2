@@ -462,8 +462,12 @@
 
   .somna-page-hero--open .somna-page-hero__image {
     min-height: 0;
-    aspect-ratio: 523 / 305;
+    aspect-ratio: 523 / 350;
   }
+
+  /* the wavy bottom edge cuts through the photo itself (no empty dark band under the photo) */
+  .somna-page-hero--open .somna-page-hero__media.somna-edge-drip-bottom { border-bottom-width: 0 !important; }
+  .somna-page-hero--open .somna-page-hero__media.somna-edge-drip-bottom .somna-page-hero__image { display: block; }
 
   /* jump links under the text (How to use: "Nasal Strips ↓") */
   /* Figma 4859:1909: mint pill, thin black border */
