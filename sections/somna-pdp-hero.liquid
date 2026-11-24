@@ -348,8 +348,10 @@
       {%- capture rating_html -%}
         {%- if rating != blank -%}
           <p class="somna-pdp-hero__rating">
-            <span class="somna-pdp-hero__rating-stars" aria-hidden="true">★★★★★</span>
-            {{ s.rating_format | replace: '[rating]', rating | replace: '[count]', rating_count }}
+            <a class="somna-pdp-hero__rating-link" href="#reviews" data-rv-jump onclick="var t=document.getElementById('reviews')||document.querySelector('.somna-reviews');if(t){event.preventDefault();event.stopPropagation();t.scrollIntoView({behavior:'smooth',block:'start'});}">
+              <span class="somna-pdp-hero__rating-stars" aria-hidden="true">★★★★★</span>
+              {{ s.rating_format | replace: '[rating]', rating | replace: '[count]', rating_count }}
+            </a>
           </p>
         {%- endif -%}
       {%- endcapture -%}
@@ -3810,6 +3812,10 @@
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__moon:has(somna-moon-line:not([hidden])) { margin-top: 10px; padding: 7px 16px; }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__trust { margin-top: 12px; }
   }
+  /* the rating line jumps to the reviews section */
+  .somna-pdp-hero__rating-link { color: inherit; text-decoration: none; cursor: pointer; }
+  .somna-pdp-hero__rating-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+  #reviews { scroll-margin-top: calc(var(--somna-cd-height, 0px) + 12px); }
   /* one-line product tagline under the title */
   .somna-pdp-hero__lead { margin: 6px 0 0; max-width: 34em; color: rgb(243 254 238 / 0.82); font-size: clamp(0.9375rem, 1.05vw, 1.0625rem); line-height: 1.45; }
   @media screen and (max-width: 749px) { .somna-pdp-hero__lead { margin-top: 4px; font-size: 0.875rem; } }
