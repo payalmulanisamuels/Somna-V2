@@ -99,6 +99,7 @@
             <legend class="visually-hidden">{{ s.mode_label }}</legend>
             <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="sub" data-mode-input> <span class="somna-buy__mode-label">{{ s.sub_label }}<span class="somna-buy__mode-pct" data-sub-pct></span></span> <span class="somna-buy__mode-price" data-price-sub></span></label>
             <p class="somna-buy__sub-line" data-sub-line hidden></p>
+            {%- if s.sub_note != blank -%}<p class="somna-buy__sub-line" data-sub-note hidden>{{ s.sub_note }}</p>{%- endif -%}
             <label class="visually-hidden" for="{{ section.id }}-plan">{{ s.plan_label | default: 'Delivery frequency' }}</label>
             <select class="somna-buy__plan" id="{{ section.id }}-plan" data-plan hidden></select>
             <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="once" data-mode-input> <span class="somna-buy__mode-label">{{ s.once_label }}<span class="somna-buy__mode-pct" data-once-pct></span></span> <span class="somna-buy__mode-price" data-price-once></span></label>
@@ -193,6 +194,7 @@
           const tpl = subP && subP.renew && subP.renew !== subP.price ? this.labels.subLine : this.labels.subSame;
           line.textContent = subP ? tpl.replace('[price]', this.money(subP.price)).replace('[renewal]', this.money(subP.renew || subP.price)).replace('[interval]', iv).replace(/\s+·\s*$/, '').trim() : '';
           line.hidden = !subP || this.mode !== 'sub';
+          const note = q('[data-sub-note]'); if (note) note.hidden = line.hidden;
         }
         q('[data-price-once]').textContent = this.money(v.once);
         const sp = v.plan != null ? this.pct(v, 'sub') : 0, op = this.pct(v, 'once');
@@ -862,6 +864,7 @@
     { "type": "text", "id": "night_label", "label": "Per-night suffix", "default": "/night" },
     { "type": "header", "content": "Subscribe & Save" },
     { "type": "text", "id": "sub_line", "label": "Line (first box cheaper)", "default": "[price] first box · then [renewal] [interval]" },
+    { "type": "text", "id": "sub_note", "label": "Subscribe & Save: second line", "default": "Skip, pause or cancel anytime" },
     { "type": "text", "id": "sub_line_same", "label": "Line (same price every time)", "default": "[renewal] [interval] · same price every time" },
     { "type": "text", "id": "plan_label", "label": "Delivery frequency label (screen readers)", "default": "Delivery frequency" },
     { "type": "product_list", "id": "first_box_products", "label": "First-box discount: products", "info": "Products with a 'first payment only' subscription discount in Shopify Discounts." },
