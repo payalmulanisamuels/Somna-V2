@@ -407,6 +407,29 @@
 {%- render 'somna-photo-lightbox' -%}
 
 <script>
+  /* Judge.me "Show more" loads the next reviews but keeps the list capped at its first height (max-height), so
+     the new cards stay hidden. After a tap, grow the cap to fit everything loaded so far. */
+  (function () {
+    var grow = function (grid) {
+      var box = grid.querySelector('.jdgm-masonry-grid__container'); if (!box) return;
+      var h = Math.ceil(box.getBoundingClientRect().height);
+      if (h > 0) grid.style.maxHeight = (h + 24) + 'px';
+    };
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('.jdgm-masonry-grid__btn, .jdgm-masonry-grid__footer button');
+      if (!btn) return;
+      var grid = btn.closest('.jdgm-masonry-grid') || document.querySelector('.jdgm-masonry-grid'); if (!grid) return;
+      var box = grid.querySelector('.jdgm-masonry-grid__container');
+      var before = box ? box.getBoundingClientRect().height : 0, tries = 0;
+      var wait = function () {
+        tries++;
+        var now = box ? box.getBoundingClientRect().height : 0;
+        if (now > before + 10 || tries > 40) { grow(grid); setTimeout(function () { grow(grid); }, 600); return; }
+        setTimeout(wait, 100);
+      };
+      setTimeout(wait, 100);
+    }, true);
+  })();
   /* Judge.me review cards load their photo as a 160px thumbnail; the card now shows it full width, so swap in an
      800px copy of the same image (same URL, larger width) to keep it sharp. Watches for cards Judge.me adds later. */
   (function () {
