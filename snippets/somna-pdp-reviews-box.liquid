@@ -67,9 +67,10 @@
     {%- assign rv_pick = false -%}
     {%- if rv_pics != '' -%}
       {%- if strip == false -%}
-        {%- comment -%} one-review mode: keep the shortest real review that has a photo (at least 25 characters) {%- endcomment -%}
+        {%- comment -%} one-review mode: up to 5 real 4–5 star reviews with a photo, short enough to show in full
+          (25–240 characters); they take turns, one at a time {%- endcomment -%}
         {%- assign rv_len = ph_rv.body_html | strip_html | strip | size -%}{%- assign rv_rate = ph_rv.rating | plus: 0 -%}
-        {%- if rv_len >= 25 and rv_len < rv_best_len and rv_rate >= 4 -%}{%- assign rv_pick = true -%}{%- assign rv_best_len = rv_len -%}{%- assign rv_count = 0 -%}{%- assign rv_html = '' -%}{%- endif -%}
+        {%- if rv_len >= 25 and rv_len <= 240 and rv_rate >= 4 and rv_count < 5 -%}{%- assign rv_pick = true -%}{%- endif -%}
       {%- elsif rv_count < rv_limit -%}
         {%- assign rv_pick = true -%}
       {%- endif -%}
@@ -125,7 +126,40 @@
         {%- endfor -%}
       </ul>
       {%- endunless -%}
-      {%- if rv_html != '' -%}<ul class="somna-pdp-hero__rv-list" role="list">{{ rv_html }}</ul>{%- endif -%}
+      {%- if rv_html != '' -%}
+        {%- if strip == false and rv_count > 1 -%}
+          <somna-rv-rotate class="somna-pdp-hero__rv-rotate" data-count="{{ rv_count }}">
+            <ul class="somna-pdp-hero__rv-list" role="list" aria-live="polite">{{ rv_html }}</ul>
+            <div class="somna-pdp-hero__rv-dots" aria-hidden="true">{%- for i in (1..rv_count) -%}<button type="button" tabindex="-1" data-dot="{{ forloop.index0 }}"></button>{%- endfor -%}</div>
+          </somna-rv-rotate>
+          <script>
+            if (!customElements.get('somna-rv-rotate')) {
+              customElements.define('somna-rv-rotate', class extends HTMLElement {
+                connectedCallback() {
+                  this.items = [...this.querySelectorAll('.somna-pdp-hero__rv-item')];
+                  this.dots = [...this.querySelectorAll('[data-dot]')];
+                  if (this.items.length < 2) return;
+                  this.show(Math.floor(Math.random() * this.items.length));
+                  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+                  const start = () => { clearInterval(this.t); this.t = setInterval(() => this.show((this.i + 1) % this.items.length), reduce ? 8000 : 5000); };
+                  start();
+                  this.addEventListener('mouseenter', () => clearInterval(this.t));
+                  this.addEventListener('mouseleave', start);
+                  this.dots.forEach((d) => d.addEventListener('click', () => { this.show(+d.dataset.dot); start(); }));
+                }
+                show(n) {
+                  this.i = n;
+                  this.items.forEach((it, k) => { it.classList.toggle('is-active', k === n); it.setAttribute('aria-hidden', k === n ? 'false' : 'true'); });
+                  this.dots.forEach((d, k) => d.classList.toggle('is-active', k === n));
+                }
+                disconnectedCallback() { clearInterval(this.t); }
+              });
+            }
+          </script>
+        {%- else -%}
+          <ul class="somna-pdp-hero__rv-list" role="list">{{ rv_html }}</ul>
+        {%- endif -%}
+      {%- endif -%}
       {%- if all_label != blank -%}<a class="somna-pdp-hero__rv-all" href="{{ all_href | default: '#reviews' }}"{% if all_href == blank %} data-rv-jump{% endif %}>{{ all_label }}</a>{%- endif -%}
     </div>
   </div>
