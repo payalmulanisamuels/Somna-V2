@@ -1832,19 +1832,23 @@
      Cards keep their own height (photo cards taller, text cards shorter) and stack in columns.
      The card body uses display: contents (so the avatar can be the full-width photo), which drops its
      padding — so the spacing goes on the text pieces themselves. */
+  /* 4 / 3 / 2 columns, filled left to right; a small script sets each card's row span from its height
+     (class is-masonry), so short cards sit right under the card above them */
   .somna-reviews .somna-reviews__list {
-    display: block !important;
-    columns: 4;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     column-gap: 20px;
+    row-gap: 20px;
+    align-items: start;
   }
+  .somna-reviews .somna-reviews__list.is-masonry { grid-auto-rows: 2px; row-gap: 0; }
   .somna-reviews .somna-reviews__list > .somna-reviews__card {
-    display: inline-flex;
+    display: flex;
     width: 100%;
     height: auto;
-    margin: 0 0 20px;
-    break-inside: avoid;
-    vertical-align: top;
+    margin: 0;
   }
+  .somna-reviews .somna-reviews__list.is-masonry > .somna-reviews__card { grid-row-end: span var(--rv-rows, 100); }
   .somna-reviews .somna-reviews__list > .somna-reviews__card[hidden] { display: none; }
   .somna-reviews .somna-reviews__list > .somna-reviews__card > .somna-reviews__stars { margin: 14px 16px 6px; }
   .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__body > :not(img) {
@@ -1857,12 +1861,10 @@
   .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__body p { margin-bottom: 8px; font-size: 13px; line-height: 1.5; }
   .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__who { margin: 2px 0 0; padding-bottom: 16px; font-size: 11px; }
   @media screen and (min-width: 750px) and (max-width: 989px) {
-    .somna-reviews .somna-reviews__list { columns: 3; column-gap: 16px; }
-    .somna-reviews .somna-reviews__list > .somna-reviews__card { margin-bottom: 16px; }
+    .somna-reviews .somna-reviews__list { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 16px; row-gap: 16px; }
   }
   @media screen and (max-width: 749px) {
-    .somna-reviews .somna-reviews__list { columns: 2; column-gap: 10px; }
-    .somna-reviews .somna-reviews__list > .somna-reviews__card { margin-bottom: 10px; }
+    .somna-reviews .somna-reviews__list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 10px; row-gap: 10px; }
     .somna-reviews .somna-reviews__list > .somna-reviews__card > .somna-reviews__stars { margin: 10px 11px 4px; }
     .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__body > :not(img) { padding-inline: 11px; }
     .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__title,
@@ -1872,6 +1874,36 @@
     .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__who { padding-bottom: 11px; font-size: 10px; }
   }
 {% endstylesheet %}
+
+<script>
+  /* masonry for the review cards: row span = card height + gap, in 2px rows */
+  (() => {
+    document.querySelectorAll('.somna-reviews [data-list]').forEach((list) => {
+      if (list.dataset.masonry) return;
+      list.dataset.masonry = '1';
+      const gapOf = () => { const w = window.innerWidth; return w < 750 ? 10 : w < 990 ? 16 : 20; };
+      let raf = 0;
+      const layout = () => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const gap = gapOf();
+          list.classList.add('is-masonry');
+          list.querySelectorAll(':scope > .somna-reviews__card').forEach((card) => {
+            const h = card.getBoundingClientRect().height;
+            if (h) card.style.setProperty('--rv-rows', Math.ceil((h + gap) / 2));
+          });
+        });
+      };
+      const ro = new ResizeObserver(layout);
+      const watch = () => list.querySelectorAll(':scope > .somna-reviews__card').forEach((c) => { if (!c.dataset.rvObs) { c.dataset.rvObs = '1'; ro.observe(c); } });
+      new MutationObserver(() => { watch(); layout(); }).observe(list, { childList: true, attributes: true, subtree: true, attributeFilter: ['hidden'] });
+      list.addEventListener('load', layout, true);
+      window.addEventListener('resize', layout);
+      watch();
+      layout();
+    });
+  })();
+</script>
 
 {% schema %}
 {
