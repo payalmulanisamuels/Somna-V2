@@ -309,7 +309,7 @@
               {%- for i in (1..5) -%}<span class="somna-reviews__star{% if avg < i %}{% assign below = i | minus: 1 %}{% if avg > below %} is-half{% else %} is-empty{% endif %}{% endif %}">{{ star_svg }}</span>{%- endfor -%}
             </span>
           {%- endif -%}
-          {%- if sum_count != blank -%}<p class="somna-reviews__count">1000+</p>{%- endif -%}
+          {%- if sum_count != blank -%}<p class="somna-reviews__count">1000+ Reviews</p>{%- endif -%}
         </div>
 
         <ul class="somna-reviews__bars" role="list">
