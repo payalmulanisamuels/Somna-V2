@@ -1610,7 +1610,7 @@
   }
 
   /* No uploaded photo: show a purposeful visual placeholder instead of an empty gap */
-  .somna-reviews__list > .somna-reviews__card:not(:has(.somna-reviews__photo))::before {
+  .somna-reviews__list > .somna-reviews__card:not(:has(.somna-reviews__photo)):not(:has(img.somna-reviews__avatar))::before {
     content: '📷  Customer photo';
     display: grid;
     place-items: center;
@@ -1628,21 +1628,47 @@
     background: linear-gradient(135deg, #e8c9a8 0%, #c79d78 100%);
   }
 
-  .somna-reviews__list > .somna-reviews__card:nth-child(4n + 2):not(:has(.somna-reviews__photo))::before {
+  .somna-reviews__list > .somna-reviews__card:nth-child(4n + 2):not(:has(.somna-reviews__photo)):not(:has(img.somna-reviews__avatar))::before {
     background: linear-gradient(135deg, #cce8dc 0%, #78ad98 100%);
   }
 
-  .somna-reviews__list > .somna-reviews__card:nth-child(4n + 3):not(:has(.somna-reviews__photo))::before {
+  .somna-reviews__list > .somna-reviews__card:nth-child(4n + 3):not(:has(.somna-reviews__photo)):not(:has(img.somna-reviews__avatar))::before {
     background: linear-gradient(135deg, #c4c9f4 0%, #777fce 100%);
   }
 
-  .somna-reviews__list > .somna-reviews__card:nth-child(4n):not(:has(.somna-reviews__photo))::before {
+  .somna-reviews__list > .somna-reviews__card:nth-child(4n):not(:has(.somna-reviews__photo)):not(:has(img.somna-reviews__avatar))::before {
     background: linear-gradient(135deg, #e4cba9 0%, #a9855d 100%);
   }
 
-  /* Hide initials/avatar in this compact photo-first card design */
-  .somna-reviews__list > .somna-reviews__card .somna-reviews__avatar {
+  /* Customer avatar photos are used as the full-width card image. */
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__body {
+    display: contents !important;
+  }
+
+  .somna-reviews__list > .somna-reviews__card img.somna-reviews__avatar {
+    display: block !important;
+    order: 0 !important;
+    flex: 0 0 auto;
+    width: 100% !important;
+    max-width: 100%;
+    height: auto !important;
+    aspect-ratio: 1 / 1.04;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* Initials are not photos; use the designed gradient fallback instead. */
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__avatar--initials {
     display: none !important;
+  }
+
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__body > * {
+    order: 2;
+    width: 100%;
   }
 
   /* Rating sits directly below the photo */
