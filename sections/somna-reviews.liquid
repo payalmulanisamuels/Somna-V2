@@ -285,12 +285,19 @@
         {%- endfor -%}
       {%- endfor -%}
       {%- assign jm_photo_list = jm_photos | split: '^' -%}
+      {%- assign has_photo_block = false -%}
+      {%- for block in photo_blocks limit: s.gallery_limit -%}
+        {%- if block.settings.image != blank -%}
+          {%- assign has_photo_block = true -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
       {%- assign has_gallery = false -%}
       {%- if s.show_gallery -%}
-        {%- comment -%} a product without photo reviews shows no photos; the photo blocks are for pages without a product (homepage) {%- endcomment -%}
+        {%- comment -%} Only show the gallery when an actual review photo or configured gallery image exists. {%- endcomment -%}
         {%- if jm_photo_list.size > 0 -%}
           {%- assign has_gallery = true -%}
-        {%- elsif photo_blocks.size > 0 -%}
+        {%- elsif has_photo_block -%}
           {%- if rv_product == blank or s.gallery_source == 'blocks' -%}{%- assign has_gallery = true -%}{%- endif -%}
         {%- endif -%}
       {%- endif -%}
