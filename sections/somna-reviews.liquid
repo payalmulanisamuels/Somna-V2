@@ -1914,8 +1914,10 @@
     .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item { position: static !important; width: auto !important; transform: none !important; }
     .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item-inner { height: 100%; padding: 0 !important; }
     .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item-inner > * { height: 100%; }
-    .somna-reviews .jdgm-horizon-widget .somna-r--item :is(h3, h4, [class*='title']) { font-size: 1rem !important; line-height: 1.15 !important; }
-    .somna-reviews .jdgm-horizon-widget .somna-r--item :is(p, [class*='body'], [class*='content']) { font-size: 0.8125rem !important; line-height: 1.4 !important; }
+    .somna-reviews .jdgm-horizon-widget .somna-r--item .jdgm-review-card__title { font-size: 1rem !important; line-height: 1.15 !important; }
+    .somna-reviews .jdgm-horizon-widget .somna-r--item .jdgm-review-card__name { font-size: 0.75rem !important; }
+    .somna-reviews .jdgm-horizon-widget .somna-r--item p:not(.jdgm-review-card__title):not(.jdgm-review-card__name) { font-size: 0.8125rem !important; line-height: 1.4 !important; }
+    .somna-reviews .jdgm-horizon-widget .somna-r--item .jm-star-rating__font-icon { font-size: 14px !important; }
   }
   .somna-reviews .jdgm-horizon-widget .jdgm-review-card {
     overflow: hidden;
