@@ -208,6 +208,7 @@
     display: block;
     background: var(--cd-bg, #141832);
     color: var(--cd-text, #f3feee);
+    border-top: 1px solid rgba(175, 189, 248, 0.18);
     border-bottom: 1px solid rgba(175, 189, 248, 0.18);
   }
   .somna-cd[hidden] { display: none; }
@@ -303,7 +304,7 @@
   .somna-cd__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
   @media screen and (max-width: 749px) {
-    .somna-cd__inner { gap: 10px; padding: 5px 12px 4px; }
+    .somna-cd__inner { gap: 10px; padding: 5px 12px; }
     .somna-cd__moons, .somna-cd__date, .somna-cd__label-desk { display: none; }
     .somna-cd__label-mob { display: grid; gap: 2px; font-size: 0.75rem; letter-spacing: 0.04em; }
     .somna-cd__label-mob span { color: var(--cd-accent, #afbdf8); }
