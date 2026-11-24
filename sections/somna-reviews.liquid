@@ -400,6 +400,28 @@
 
 {%- render 'somna-photo-lightbox' -%}
 
+<script>
+  /* Judge.me review cards load their photo as a 160px thumbnail; the card now shows it full width, so swap in an
+     800px copy of the same image (same URL, larger width) to keep it sharp. Watches for cards Judge.me adds later. */
+  (function () {
+    var sharpen = function (root) {
+      (root || document).querySelectorAll('.jdgm-horizon-widget .jdgm-review-card__media-frame img:not([data-sharp])').forEach(function (img) {
+        var src = img.getAttribute('src') || '';
+        if (src.indexOf('review-images.judgeme.com') === -1) return;
+        img.setAttribute('data-sharp', '1');
+        var big = /[?&]width=\d+/.test(src) ? src.replace(/([?&]width=)\d+/, '$1800') : src + (src.indexOf('?') > -1 ? '&' : '?') + 'width=800';
+        img.removeAttribute('srcset');
+        img.setAttribute('src', big);
+      });
+    };
+    var start = function () {
+      sharpen();
+      if ('MutationObserver' in window) new MutationObserver(function () { sharpen(); }).observe(document.body, { childList: true, subtree: true });
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
+  })();
+</script>
+
 {% stylesheet %}
   /* product pages: #reviews (from the quiz result's "See all reviews") lands below the sticky header */
   #reviews.somna-reviews { scroll-margin-top: 90px; }
