@@ -258,7 +258,7 @@
       {%- endcomment -%}
       {%- if s.below_media == 'photos' -%}
         {%- assign rv_fill = s.photos_fill_from | map: 'handle' | join: ',' -%}
-        {%- render 'somna-pdp-reviews-box', product: product, heading: s.photos_heading, label: s.photos_label, reviews: s.photos_reviews, fill: rv_fill, skip: s.photos_skip, all_label: s.photos_all_label, verified_label: s.verified_label -%}
+        {%- render 'somna-pdp-reviews-box', product: product, heading: s.photos_heading, label: s.photos_label, reviews: s.photos_reviews, fill: rv_fill, skip: s.photos_skip, all_label: s.photos_all_label, verified_label: s.verified_label, strip: s.photos_strip -%}
       {%- else -%}
       {%- assign product_videos = mf.pdp_videos.value -%}
       {%- if product_videos.size > 0 or video_blocks.size > 0 -%}
@@ -3482,6 +3482,9 @@
   .somna-pdp-hero__rv img:focus-visible { outline: 3px solid #3b438a; outline-offset: -3px; }
   .somna-pdp-hero__rv-more { position: absolute; inset: 0; display: grid; place-items: center; background: rgb(11 15 29 / 0.6); color: #fff; font-family: var(--font-accent--family); font-size: 1rem; pointer-events: none; }
   .somna-pdp-hero__rv-more--mob { display: none; }
+  .somna-pdp-hero__rv--solo { padding-top: 2px; padding-bottom: 2px; }
+  .somna-pdp-hero__rv--solo .somna-pdp-hero__rv-list { margin: 0; border-top: 0; }
+  .somna-pdp-hero__rv--solo .somna-pdp-hero__rv-item:last-child { border-bottom: 0; }
   .somna-pdp-hero__rv-list { margin: 10px 0 0; padding: 0; border-top: 1px solid rgb(11 15 29 / 0.12); list-style: none; }
   .somna-pdp-hero__rv-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid rgb(11 15 29 / 0.12); }
   .somna-pdp-hero__rv-pics { flex: none; width: 52px; margin: 0; padding: 0; list-style: none; }
@@ -3786,6 +3789,7 @@
     { "type": "text", "id": "photos_heading", "label": "Customer photos heading", "default": "Real Nights, Real Reviews" },
     { "type": "product_list", "id": "photos_fill_from", "label": "Customer photos: fill bundle pages from", "info": "Pages of these products show only their own photos. Every other product (the bundles) shows its own photos first, then these products' photos.", "limit": 6 },
     { "type": "text", "id": "photos_skip", "label": "Customer photos: leave out", "info": "product-handle:file-word, comma separated — e.g. mouth-tape:nasalstrip hides strip photos posted in mouth tape reviews." },
+    { "type": "checkbox", "id": "photos_strip", "label": "Customer photos: show photo strip", "default": true },
     { "type": "text", "id": "photos_label", "label": "Customer photos: strip label", "default": "Customer photos" },
     { "type": "range", "id": "photos_reviews", "label": "Customer photos: reviews shown", "min": 1, "max": 5, "step": 1, "default": 2 },
     { "type": "text", "id": "photos_all_label", "label": "Customer photos: link to all reviews", "default": "See all reviews ↓" },
