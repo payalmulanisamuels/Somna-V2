@@ -181,6 +181,10 @@
 
       <div class="somna-pdp-hero__main{% if s.drip_edges %} somna-edge-drip-top somna-pdp-hero__main--{{ s.main_drip | default: 'over' }}{% endif %}{% if s.main_shape != blank and s.main_shape != 'natural' %} somna-pdp-hero__main--shape-{{ s.main_shape }}{% endif %}">
         {%- if first_image -%}
+          {%- if s.bf_layout and images.size > 1 -%}
+            <button type="button" class="somna-pdp-hero__arrow somna-pdp-hero__arrow--prev" data-step="-1" aria-label="Previous photo"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button type="button" class="somna-pdp-hero__arrow somna-pdp-hero__arrow--next" data-step="1" aria-label="Next photo"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          {%- endif -%}
           {{ first_image | image_url: width: 1100 | image_tag: data-main: '', loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 1300px) 570px, (min-width: 990px) 445px, (min-width: 750px) 45vw, 100vw', widths: '600, 900, 1100', alt: first_image.alt | default: product.title }}
         {%- endif -%}
       </div>
@@ -527,6 +531,7 @@
                 {%- assign line_same = s.sub_line_same | default: s.sub_line -%}
                 <p class="somna-pdp-hero__sub-line" data-sub-line="step"{% if fb_current == 0 %} hidden{% endif %}>{{ s.sub_line | replace: '[renewal]', renew_html | replace: '[price]', '<span data-sub-each></span>' | replace: '[interval]', '<span data-sub-interval></span>' }}</p>
                 <p class="somna-pdp-hero__sub-line" data-sub-line="same"{% if fb_current > 0 %} hidden{% endif %}>{{ line_same | replace: '[renewal]', renew_html | replace: '[price]', '<span data-sub-each></span>' | replace: '[interval]', '<span data-sub-interval></span>' }}</p>
+                {%- if s.sub_note != blank -%}<p class="somna-pdp-hero__sub-line somna-pdp-hero__sub-note">{{ s.sub_note }}</p>{%- endif -%}
               {%- elsif s.sub_points != blank -%}
                 <ul class="somna-pdp-hero__sub-points" role="list">
                   {%- assign points = s.sub_points | newline_to_br | split: '<br />' -%}
@@ -819,7 +824,15 @@
         const next = dots[(i + (dx < 0 ? 1 : -1) + dots.length) % dots.length];
         next.click();
       };
+      step(d) {
+        const dots = [...this.querySelectorAll('.somna-pdp-hero__dots [data-media]')];
+        if (!dots.length) return;
+        const i = Math.max(0, dots.findIndex((x) => x.getAttribute('aria-current') === 'true'));
+        dots[(i + d + dots.length) % dots.length].click();
+      }
       onClick = (e) => {
+        const arrow = e.target.closest('[data-step]');
+        if (arrow) { this.step(Number(arrow.dataset.step)); return; }
         const thumb = e.target.closest('[data-media]');
         if (thumb) {
           const img = this.querySelector('[data-main]');
@@ -3506,6 +3519,37 @@
     .somna-pdp-hero__rv-pics li { width: 56px; }
   }
 
+  /* main photo: previous / next arrows */
+  .somna-pdp-hero__main { position: relative; }
+  .somna-pdp-hero__arrow {
+    position: absolute;
+    top: calc(50% + var(--somna-drip-h, 0px) / 2);
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.92);
+    color: #0b0f1d;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
+    cursor: pointer;
+    translate: 0 -50%;
+    transition: background 0.15s, scale 0.15s;
+  }
+  .somna-pdp-hero__arrow:hover { background: #fff; scale: 1.06; }
+  .somna-pdp-hero__arrow:focus-visible { outline: 2px solid #afbdf8; outline-offset: 2px; }
+  .somna-pdp-hero__arrow--prev { left: 10px; }
+  .somna-pdp-hero__arrow--next { right: 10px; }
+  @media screen and (max-width: 749px) {
+    .somna-pdp-hero__arrow { width: 32px; height: 32px; }
+    .somna-pdp-hero__arrow svg { width: 16px; height: 16px; }
+    .somna-pdp-hero__arrow--prev { left: 6px; }
+    .somna-pdp-hero__arrow--next { right: 6px; }
+  }
+
   /* ===== Black Friday layout (setting "Use the Black Friday layout") ===== */
   .somna-pdp-hero--bf .somna-pdp-hero__brand,
   .somna-pdp-hero--bf .somna-pdp-hero__tagline,
@@ -3745,6 +3789,7 @@
     { "type": "text", "id": "gift_todo", "label": "Gift bar: not unlocked yet", "info": "[n] = bags still needed, [bags] = bag / bags.", "default": "Add [n] more [bags] to unlock 3 free gifts" },
     { "type": "text", "id": "gift_done", "label": "Gift bar: unlocked", "default": "3 free gifts unlocked ✓" },
     { "type": "text", "id": "sub_line", "label": "Subscribe & Save line (first box cheaper)", "info": "Shown when the first box costs less than renewals. [price] = first box, [renewal] = each delivery after, [interval] = chosen frequency (e.g. every month).", "default": "[price] first box · then [renewal] [interval]" },
+    { "type": "text", "id": "sub_note", "label": "Subscribe & Save: second line", "default": "Skip, pause or cancel anytime" },
     { "type": "text", "id": "sub_line_same", "label": "Subscribe & Save line (same price every time)", "info": "Shown when every delivery costs the same (bundles).", "default": "[renewal] [interval] · same price every time" },
     { "type": "product_list", "id": "first_box_products", "label": "First-box discount: products", "info": "Products with a 'first payment only' subscription discount in Shopify Discounts." },
     { "type": "textarea", "id": "first_box_off", "label": "First-box discount: amount off per pack", "info": "One per line: pack name = amount off the first box, matching your discounts. E.g. 1 Bag = 3" },
