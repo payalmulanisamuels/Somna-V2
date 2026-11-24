@@ -1,6 +1,6 @@
 {%- doc -%}
   Somna V2 — one product in the Shop mega menu (snippets/somna-mega-menu).
-  Line: the product's Collection – card details field, else "From [price]" (lowest Subscribe & Save price).
+  Line: the product's Collection – card details field (rows show nothing without it; cards/stage fall back to "From [price]").
 
   @param {product} product
   @param {string} style - row | card | name | stage
@@ -71,7 +71,8 @@
       </span>
       <span class="somna-mega__info">
         <span class="somna-mega__title">{{ p.title | escape }}{{ dots_html }}</span>
-        <span class="somna-mega__line">{{ line | escape }}</span>
+        {%- comment -%} rows show the product's own card details only — no "From $… · Subscribe & Save" price line {%- endcomment -%}
+        {%- if mf.card_details.value != blank -%}<span class="somna-mega__line">{{ line | escape }}</span>{%- endif -%}
       </span>
       <span class="somna-mega__arrow" aria-hidden="true">→</span>
     </a>
