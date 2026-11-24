@@ -59,6 +59,31 @@
   </div>
 </somna-countdown>
 
+{%- if template.name == 'product' and section.settings.pdp_land_scroll -%}
+  <script>
+    /* product pages: on arrival, scroll past the announcement bar so the countdown sits right under the sticky
+       header and more of the product shows (like ryzesuperfoods.com). Skipped when the visitor came with a #link,
+       is returning to a scrolled position, or has already scrolled. */
+    (function () {
+      if (location.hash || (history.state && history.state.somnaLanded)) return;
+      var go = function () {
+        var cd = document.querySelector('.somna-cd'); if (!cd || cd.closest('[hidden]') || !cd.offsetHeight) return;
+        /* the theme scrolls inside .page-wrapper, not the window */
+        var sc = cd.closest('.page-wrapper');
+        if (!sc || sc.scrollHeight <= sc.clientHeight + 1) sc = null;
+        var top = sc ? sc.scrollTop : window.scrollY;
+        if (top > 5) return;
+        var hdr = document.querySelector('#header-component'); hdr = hdr && (hdr.closest('.shopify-section') || hdr);
+        var off = hdr && getComputedStyle(hdr).position === 'sticky' ? hdr.getBoundingClientRect().height : 0;
+        var y = cd.getBoundingClientRect().top - (sc ? sc.getBoundingClientRect().top : 0) + top - off;
+        if (y > 2) (sc || window).scrollTo({ top: y, behavior: 'instant' });
+        try { history.replaceState(Object.assign({}, history.state, { somnaLanded: true }), ''); } catch (e) {}
+      };
+      if (document.readyState === 'complete') requestAnimationFrame(go); else window.addEventListener('load', function () { requestAnimationFrame(go); }, { once: true });
+    })();
+  </script>
+{%- endif -%}
+
 <script>
   if (!customElements.get('somna-countdown')) {
     customElements.define('somna-countdown', class extends HTMLElement {
@@ -318,6 +343,7 @@
       "default": "2026-12-02T23:59:00-08:00"
     },
     { "type": "text", "id": "label", "label": "Label (desktop)", "default": "Black Friday sale ends in" },
+    { "type": "checkbox", "id": "pdp_land_scroll", "label": "Product pages: scroll to this bar on arrival", "default": true },
     { "type": "text", "id": "offer", "label": "Offer line under the label", "default": "60% OFF + FREE GIFTS" },
     { "type": "range", "id": "moon_cycle", "label": "Moons: seconds to fill all five", "min": 5, "max": 60, "step": 5, "unit": "s", "default": 10 },
     { "type": "text", "id": "date_text", "label": "End date shown (desktop)", "default": "Wed 2 Dec, 11:59 PM PT" },

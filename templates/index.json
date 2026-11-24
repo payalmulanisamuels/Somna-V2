@@ -20,12 +20,12 @@
         "subheading": "With Subscribe & Save",
         "tagline": "Small change, softer nights. Strips for your nose and tape for your lips.",
         "price_product": "nasal-strips",
-        "price_line": "From [price] a bag · One-time 50% off",
-        "price_line_mobile": "From [price] a bag · One-time 50% off\n3 free gifts on 2+ packs",
-        "benefits": "Drug-free\n30-Night guarantee\n3 free gifts on 2+ packs",
+        "price_line": "From [price] a bag",
+        "price_line_mobile": "From [price] a bag\nFree gifts on 2+ packs",
+        "benefits": "Drug-free\n30-Night guarantee\nFree gifts on 2+ packs",
         "button_label": "Shop the sale",
         "button_link": "shopify://pages/black-friday-sale",
-        "moon_text": "[nights] nights left · ends [date]",
+        "moon_text": "",
         "review_products": [
           "nasal-strips",
           "sleep-bundle",
@@ -38,7 +38,8 @@
         "guarantee_mobile": "30-Night Money-Back Guarantee",
         "background_color": "#0b0f1d",
         "padding_top": 72,
-        "padding_bottom": 96
+        "padding_bottom": 96,
+        "first_box_off": 3
       }
     },
     "recently_viewed": {
