@@ -133,7 +133,13 @@
   </span>
   <span class="somna-md-card__info">
     {%- if style != 'bundle' -%}
-      {%- render 'somna-rating', product: p, format: st.somna_drawer_rating_format, tag: 'span', class: 'somna-md-card__rating' -%}
+      {%- liquid
+        assign r_fmt = st.somna_drawer_rating_format
+        if style == 'best'
+          assign r_fmt = '[rating]/5'
+        endif
+      -%}
+      {%- render 'somna-rating', product: p, format: r_fmt, tag: 'span', class: 'somna-md-card__rating' -%}
     {%- endif -%}
     <span class="somna-md-card__title-row">
       <span class="somna-md-card__title">{{ name | escape }}</span>
@@ -143,7 +149,8 @@
         </span>
       {%- endif -%}
     </span>
-    <span class="somna-md-card__price">
+    {%- comment -%} Bestsellers cards: stars, name and button only (no price line) {%- endcomment -%}
+    <span class="somna-md-card__price"{% if style == 'best' %} hidden{% endif %}>
       <span>{{ price_line }}</span>
       {%- if side_line != blank -%}<span>{{ side_line }}</span>{%- endif -%}
     </span>
@@ -283,6 +290,7 @@
     opacity: 1;
   }
 
+  .somna-md-card__price[hidden] { display: none !important; }
   /* rating line small enough to show in full on the two-up cards */
   .somna-md-card--best .somna-md-card__rating,
   .somna-md-card--best .somna-md-card__rating * { font-size: 9.5px !important; line-height: 1.25 !important; }
