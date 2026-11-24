@@ -1399,3 +1399,16 @@
   width: 100%;
   max-width: 960px;
 }
+
+/* "Watch how it works" as a heading above the video (moved off the video; the play button stays on it) */
+.somna-pdp-story__watch-heading {
+  margin: 0 0 clamp(12px, 1.6vw, 20px);
+  font-family: var(--font-accent--family);
+  font-weight: var(--font-accent--weight);
+  font-size: clamp(1.625rem, 3vw, 2.75rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--somna-story-heading, currentColor);
+}
+.somna-pdp-story__player .somna-pdp-story__player-label { display: none; }
