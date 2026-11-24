@@ -16,6 +16,12 @@
   endcapture
   assign once_off = once_off | strip | plus: 0
   assign once_factor = 100 | minus: once_off | times: 1.0 | divided_by: 100
+  # first-box discount (same rules as the product page): "pack name = amount off" per line
+  assign fb_handles = ''
+  for fp in s.first_box_products
+    assign fb_handles = fb_handles | append: ',' | append: fp.handle | append: ','
+  endfor
+  assign fb_rules = s.first_box_off | newline_to_br | split: '<br />'
 
   assign n_all = 0
   assign n_strips = 0
@@ -88,6 +94,7 @@
               {%- assign chips = '' -%}
               {%- assign n_sizes = 0 -%}
               {%- assign default_set = false -%}
+              {%- assign fb_key = ',' | append: p.handle | append: ',' -%}
               {%- for v in p.variants -%}
                 {%- if first_color != '' and v.option1 != first_color -%}{%- continue -%}{%- endif -%}
                 {%- liquid
@@ -101,6 +108,14 @@
                   endfor
                   if sub == nil
                     assign sub = v.price
+                  elsif fb_handles contains fb_key
+                    for r in fb_rules
+                      assign r_parts = r | split: '='
+                      assign r_title = r_parts.first | strip
+                      if r_parts.size > 1 and r_title == v.title
+                        assign sub = r_parts.last | strip | times: 100 | round | times: -1 | plus: sub
+                      endif
+                    endfor
                   endif
                   assign once = v.price | times: once_factor | round
                   assign full = v.compare_at_price | default: 0
@@ -644,6 +659,8 @@
     { "type": "text", "id": "plan_label", "label": "Plan choice name (screen readers)", "default": "Choose a plan" },
     { "type": "select", "id": "default_plan", "label": "Plan selected by default", "options": [{ "value": "once", "label": "One-time" }, { "value": "sub", "label": "Subscribe & Save" }], "default": "once" },
     { "type": "text", "id": "sub_label", "label": "Subscribe price label", "default": "Subscribe & Save" },
+    { "type": "product_list", "id": "first_box_products", "label": "First-box discount: products", "info": "Subscribe & Save shows the first-box price (plan price less the amount below), like the product page." },
+    { "type": "textarea", "id": "first_box_off", "label": "First-box discount: amount off per pack", "info": "One per line: pack name = amount off the first box. E.g. 1 Bag = 3" },
     { "type": "text", "id": "once_label", "label": "One-time price label", "default": "One-time:" },
     { "type": "text", "id": "size_label", "label": "Size chips name (screen readers)", "default": "Choose a size" },
     { "type": "text", "id": "sticker", "label": "Card sticker", "info": "Round sticker on each card's corner. Leave empty to hide.", "default": "Up to 60% off" },

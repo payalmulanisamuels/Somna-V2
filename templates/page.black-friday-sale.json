@@ -210,14 +210,6 @@
             "text": "Every product. Skip, pause or cancel anytime."
           }
         },
-        "o2": {
-          "type": "offer",
-          "settings": {
-            "offer": "50% off",
-            "title": "One-time",
-            "text": "Every product. No subscription."
-          }
-        },
         "o3": {
           "type": "offer",
           "settings": {
@@ -229,7 +221,6 @@
       },
       "block_order": [
         "o1",
-        "o2",
         "o3"
       ],
       "settings": {
@@ -328,7 +319,12 @@
         "heading": "<p>Shop everything</p>",
         "show_filters": true,
         "padding_top": 48,
-        "padding_bottom": 72
+        "padding_bottom": 72,
+        "first_box_products": [
+          "nasal-strips",
+          "mouth-tape"
+        ],
+        "first_box_off": "1 Bag = 3\n2 Bags = 5\n4 Bags = 7"
       }
     },
     "wave_shop_gifts": {
