@@ -212,6 +212,9 @@
     .somna-bfh__moon--mob .somna-moonline { gap: 8px; font-size: 0.8125rem; }
     .somna-bfh__moon--mob .somna-moonline__moons svg { width: 96px; height: 11px; }
   }
+  /* wide desktops: copy moves in from the left edge so the middle of the banner isn't empty */
+  @media screen and (min-width: 1200px) { .somna-bfh__copy { margin-left: clamp(24px, 4vw, 72px); } }
+  @media screen and (min-width: 1600px) { .somna-bfh__copy { margin-left: clamp(72px, 8vw, 180px); } }
   /* phones: same structure as the sale page hero — centred copy at the top (badge, heading, lines, button),
      pouches photo below it fading into the background */
   @media screen and (max-width: 749px) {
