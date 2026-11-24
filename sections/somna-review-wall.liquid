@@ -56,6 +56,27 @@
   {%- endfor -%}
 {%- endcapture -%}
 
+{%- if s.demo -%}
+  {%- capture cards -%}
+    {%- assign demo_h = '220,170,150,240,0,190,160,0,210,140,230,175' | split: ',' -%}
+    {%- for h in demo_h -%}
+      {%- assign hh = h | plus: 0 -%}
+      {%- assign g = forloop.index0 | modulo: 4 -%}
+      <article class="somna-rwall__card" data-product="{% cycle 'nasal-strips', 'mouth-tape', 'sleep-bundle' %}" data-rating="{% if forloop.index == 5 %}3{% else %}5{% endif %}" data-media="{% if hh > 0 %}1{% else %}0{% endif %}">
+        {%- if hh > 0 -%}<div class="somna-rwall__media"><div class="somna-rwall__ph somna-rwall__ph--{{ g }}" style="height: {{ hh }}px;">📷 customer photo</div>{%- if forloop.index == 2 -%}<span class="somna-rwall__play" aria-hidden="true">▶</span>{%- endif -%}</div>{%- endif -%}
+        <div class="somna-rwall__body">
+          <p class="somna-rwall__stars">{% if forloop.index == 5 %}★★★<span class="is-off">★★</span>{% else %}★★★★★{% endif %}</p>
+          <h3 class="somna-rwall__title">{% if forloop.index == 2 %}“[customer video]”{% else %}“[real short headline]”{% endif %}</h3>
+          {%- if hh == 0 -%}<p class="somna-rwall__text">[A short quote from a real review goes here.]</p>{%- endif -%}
+          <p class="somna-rwall__meta"><span>First name L.</span><span class="somna-rwall__dot" aria-hidden="true">·</span><span class="somna-rwall__verified"><svg viewBox="0 0 12 10" width="11" height="9" aria-hidden="true"><path d="M1 5l3.5 3.5L11 1.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ s.verified_label }}</span></p>
+          {%- if s.show_product -%}<p class="somna-rwall__product">{% cycle 'pn': 'Nasal Strips', 'Mouth Tape', 'Sleep Bundle' %}</p>{%- endif -%}
+        </div>
+      </article>
+    {%- endfor -%}
+  {%- endcapture -%}
+  {%- assign shown = 12 -%}
+  {%- assign total_count = '[count]' -%}
+{%- endif -%}
 {%- if shown > 0 or request.design_mode -%}
 <section class="somna-rwall" style="--rw-bg: {{ s.background_color }}; --rw-fg: {{ s.text_color }}; --rw-card: {{ s.card_color }}; --rw-star: {{ s.star_color }}; --rw-pad-t: {{ s.padding_top }}px; --rw-pad-b: {{ s.padding_bottom }}px;">
   <div class="somna-container somna-rwall__inner">
@@ -64,7 +85,8 @@
     {%- if shown == 0 -%}
       <p class="somna-rwall__empty">{{ 'No verified-buyer reviews yet for the chosen products, so this section is hidden on the storefront. It fills itself as Judge.me collects reviews from real orders.' }}</p>
     {%- else -%}
-      {%- assign avg = total_weighted | divided_by: total_count | round: 1 -%}
+      {%- if s.demo -%}{%- assign avg = '4.6' -%}{%- else -%}{%- assign avg = total_weighted | divided_by: total_count | round: 1 -%}{%- endif -%}
+      {%- if s.demo -%}<p class="somna-rwall__demo-note">Design preview · placeholder content</p>{%- endif -%}
       <div class="somna-rwall__summary">
         <span class="somna-rwall__avg">{{ avg }}</span>
         <span class="somna-rwall__summary-stars" aria-hidden="true">★★★★★</span>
@@ -191,6 +213,12 @@
   .somna-rwall__meta { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 0; font-size: 0.8125rem; color: #555; }
   .somna-rwall__verified { display: inline-flex; gap: 3px; align-items: center; color: #1a7f37; font-weight: 600; }
   .somna-rwall__product { margin: 6px 0 0; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: #777; }
+  .somna-rwall__ph { display: grid; place-items: center; color: #fff; font-size: 0.875rem; font-weight: 600; text-shadow: 0 1px 4px rgb(0 0 0 / 0.25); }
+  .somna-rwall__ph--0 { background: linear-gradient(160deg, #f3d9bf, #b98a62); }
+  .somna-rwall__ph--1 { background: linear-gradient(160deg, #d6f0e2, #6aa98a); }
+  .somna-rwall__ph--2 { background: linear-gradient(160deg, #cdd6ff, #6f7fe0); }
+  .somna-rwall__ph--3 { background: linear-gradient(160deg, #f6e3c4, #a87d55); }
+  .somna-rwall__demo-note { margin: -8px auto 16px; width: fit-content; padding: 4px 12px; border: 1px dashed currentColor; border-radius: 999px; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.8; }
   .somna-rwall__none, .somna-rwall__empty { text-align: center; opacity: 0.8; }
   .somna-rwall__empty { max-width: 560px; margin: 12px auto 0; padding: 16px; border: 1.5px dashed currentColor; border-radius: 12px; font-size: 0.9375rem; }
 {% endstylesheet %}
@@ -203,6 +231,7 @@
   "settings": [
     { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Real nights, real reviews" },
     { "type": "product_list", "id": "products", "label": "Products", "limit": 6, "info": "Reviews and filter chips come from these products' Judge.me reviews. Only verified-buyer reviews are shown." },
+    { "type": "checkbox", "id": "demo", "label": "Design preview (placeholder cards)", "info": "Shows fixed placeholder cards labelled as a design preview, instead of reviews. For checking the layout only.", "default": false },
     { "type": "range", "id": "max_reviews", "label": "Most reviews shown", "min": 4, "max": 40, "step": 2, "default": 16 },
     { "type": "text", "id": "count_label", "label": "Count label", "default": "[count] reviews" },
     { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified" },
