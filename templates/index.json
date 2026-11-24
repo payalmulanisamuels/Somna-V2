@@ -2798,7 +2798,7 @@
         "bottom_wave": false,
         "bottom_wave_color": "",
         "bottom_wave_shape": "drip-7",
-        "show_featured": true,
+        "show_featured": false,
         "featured_source": "settings",
         "featured_title": "Hooked from bag one.",
         "featured_text": "I bought one bag to try. Now I'm on Autoship and I've sent a pack to my sister.",
@@ -2859,7 +2859,8 @@
         "error_text": "Reviews couldn't be loaded right now.",
         "retry_label": "Try again",
         "sample_note": "",
-        "chip_active_color": "#afbdf8"
+        "chip_active_color": "#afbdf8",
+        "summary_wave": true
       }
     },
     "wave_black_peri": {
