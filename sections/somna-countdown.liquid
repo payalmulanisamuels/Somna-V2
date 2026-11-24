@@ -100,9 +100,22 @@
         }
         try { history.replaceState(Object.assign({}, history.state, { somnaLanded: true }), ''); } catch (e) {}
       };
-      /* start as soon as the page's HTML is in (no wait for images), then glide down */
-      if (document.readyState !== 'loading') requestAnimationFrame(go);
-      else document.addEventListener('DOMContentLoaded', function () { requestAnimationFrame(go); }, { once: true });
+      /* start as soon as there is enough page below to scroll into (checks every 40ms while the page streams in),
+         without waiting for the rest of the page or its images */
+      var done = false, tries = 0;
+      var ready = function () {
+        var cd = document.querySelector('.somna-cd'); if (!cd) return false;
+        var sc = cd.closest('.page-wrapper') || document.scrollingElement;
+        var need = cd.getBoundingClientRect().top - (sc.getBoundingClientRect ? sc.getBoundingClientRect().top : 0);
+        return sc.scrollHeight - sc.clientHeight >= need + 2 && sc.clientHeight > 0;
+      };
+      var attempt = function () {
+        if (done) return;
+        if (ready() || document.readyState !== 'loading' || tries > 75) { done = true; requestAnimationFrame(go); return; }
+        tries++; setTimeout(attempt, 40);
+      };
+      attempt();
+      document.addEventListener('DOMContentLoaded', attempt, { once: true });
     })();
   </script>
 {%- endif -%}
