@@ -3267,22 +3267,134 @@
         "layout": "compact"
       }
     },
-    "review_wall": {
-      "type": "somna-review-wall",
+    "reviews": {
+      "type": "somna-reviews",
+      "blocks": {
+        "photo_1": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-review-photo-1.png",
+            "alt": ""
+          }
+        },
+        "photo_2": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-review-photo-2.png",
+            "alt": ""
+          }
+        },
+        "photo_3": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-review-photo-3.png",
+            "alt": ""
+          }
+        },
+        "photo_4": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-review-photo-4.png",
+            "alt": ""
+          }
+        },
+        "photo_5": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-review-photo-5.png",
+            "alt": ""
+          }
+        }
+      },
+      "block_order": [
+        "photo_1",
+        "photo_2",
+        "photo_3",
+        "photo_4",
+        "photo_5"
+      ],
       "settings": {
-        "heading": "Real nights, real reviews",
-        "products": [
-          "nasal-strips",
-          "mouth-tape",
-          "sleep-bundle",
-          "the-colour-set",
-          "season-bundle"
-        ],
-        "max_reviews": 16,
+        "eyebrow": "Reviews",
+        "heading": "<p>What <em>sleepers</em> are saying</p>",
+        "accent_color": "#afbdf8",
         "background_color": "#000000",
         "text_color": "#f3feee",
-        "card_color": "#ffffff",
-        "star_color": "#f5c242"
+        "card_color": "#f3feee",
+        "card_text_color": "#0b1a45",
+        "star_color": "#f5c242",
+        "max_width": 1000,
+        "show_edges": true,
+        "padding_top": 24,
+        "padding_bottom": 32,
+        "padding_top_mobile": 8,
+        "padding_bottom_mobile": 16,
+        "top_wave": false,
+        "top_wave_color": "",
+        "top_wave_shape": "drip-10",
+        "bottom_wave": false,
+        "bottom_wave_color": "",
+        "bottom_wave_shape": "drip-7",
+        "show_featured": true,
+        "featured_source": "settings",
+        "featured_title": "Hooked from bag one.",
+        "featured_text": "I bought one bag to try. Now I'm on Autoship and I've sent a pack to my sister.",
+        "featured_name": "Priya S.",
+        "featured_avatar": "shopify://shop_images/somna-v2-review-avatar-1.png",
+        "featured_verified": "Verified buyer.",
+        "featured_product": "Sleep bundle",
+        "featured_rating": 5,
+        "featured_bg": "",
+        "featured_fg": "",
+        "show_summary": true,
+        "summary_source": "judgeme_products",
+        "count_label": "[count] reviews",
+        "average": "4.6",
+        "show_summary_stars": true,
+        "count": "",
+        "pct_5": 78,
+        "pct_4": 15,
+        "pct_3": 4,
+        "pct_2": 2,
+        "pct_1": 1,
+        "bar_color": "#98a3de",
+        "track_color": "#d8ddd4",
+        "show_gallery": true,
+        "photo_popup": true,
+        "gallery_limit": 6,
+        "gallery_source": "judgeme_store",
+        "gallery_skip": "casualbathroomnasalstrip",
+        "photo_alt": "Photo from [name]'s review",
+        "sheet_url": "https://docs.google.com/spreadsheets/d/1pOrOzI06fWZ82O1l47xT8u4N2zk5FmM9/edit?gid=405744366#gid=405744366",
+        "initial_count": 4,
+        "batch_size": 4,
+        "show_filters": true,
+        "show_review_photos": true,
+        "show_verified": true,
+        "verified_label": "Verified Buyer",
+        "show_product": true,
+        "show_dates": true,
+        "name_format": "short",
+        "samples_in_preview": true,
+        "filters_label": "Filter reviews",
+        "chip_all": "ALL",
+        "chip_5": "5★",
+        "chip_4": "4★",
+        "chip_low": "3 & below",
+        "chip_photos": "with photos",
+        "more_label": "Show more reviews ↓",
+        "app_mobile_more": false,
+        "empty_text": "No reviews match this filter yet.",
+        "error_text": "Reviews couldn't be loaded right now.",
+        "retry_label": "Try again",
+        "sample_note": "",
+        "chip_active_color": "#afbdf8",
+        "summary_products": [
+          "nasal-strips",
+          "sleep-bundle",
+          "mouth-tape",
+          "the-colour-set",
+          "season-bundle"
+        ]
       }
     }
   },
@@ -3304,7 +3416,7 @@
     "bundles",
     "faq",
     "wave_mint_black_3",
-    "review_wall",
+    "reviews",
     "wave_black_peri",
     "guarantee",
     "wave_peri_photo",
