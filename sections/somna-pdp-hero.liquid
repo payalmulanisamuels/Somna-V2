@@ -53,8 +53,27 @@
   assign once_factor = 100 | minus: settings.somna_once_discount
   assign current_once = current.price | times: once_factor | divided_by: 100
   assign alloc = current.selling_plan_allocations | first
+  # first-box price: the store's "first payment only" subscription discounts (Shopify Discounts) take a fixed amount off
+  # the plan price on the first order; the theme can't read discounts, so the amounts per pack are set in the section
+  assign fb_on = false
+  for fp in s.first_box_products
+    if fp.id == product.id
+      assign fb_on = true
+    endif
+  endfor
+  assign fb_rules = s.first_box_off | newline_to_br | split: '<br />'
+  assign fb_current = 0
+  if fb_on
+    for r in fb_rules
+      assign r_parts = r | split: '='
+      assign r_title = r_parts.first | strip
+      if r_parts.size > 1 and r_title == current.title
+        assign fb_current = r_parts.last | strip | times: 100 | round
+      endif
+    endfor
+  endif
   if mode == 'sub' and alloc
-    assign price = alloc.price
+    assign price = alloc.price | minus: fb_current
   else
     assign price = current_once
   endif
@@ -122,8 +141,20 @@
   <script type="application/json" data-variants>
     [
     {%- for v in product.variants -%}
+      {%- liquid
+        assign fb_v = 0
+        if fb_on
+          for r in fb_rules
+            assign r_parts = r | split: '='
+            assign r_title = r_parts.first | strip
+            if r_parts.size > 1 and r_title == v.title
+              assign fb_v = r_parts.last | strip | times: 100 | round
+            endif
+          endfor
+        endif
+      -%}
       { "id": {{ v.id }}, "title": {{ v.title | json }}, "options": {{ v.options | json }}, "image": {% if v.featured_media %}{{ v.featured_media | image_url: width: 1100 | json }}{% else %}null{% endif %}, "available": {{ v.available | json }}, "price": {{ v.price | times: once_factor | divided_by: 100 }}, "compare": {% assign v_cmp = v.compare_at_price | default: 0 %}{% if v.price > v_cmp %}{{ v.price }}{% else %}{{ v_cmp }}{% endif %}, "plans": [
-        {%- for a in v.selling_plan_allocations -%}{ "id": {{ a.selling_plan.id }}, "label": {{ a.selling_plan.options.first.value | default: a.selling_plan.name | json }}, "price": {{ a.price }}, "renew": {% if a.price_adjustments.size > 1 %}{{ a.price_adjustments[1].price }}{% else %}{{ a.price }}{% endif %} }{% unless forloop.last %},{% endunless %}{%- endfor -%}
+        {%- for a in v.selling_plan_allocations -%}{ "id": {{ a.selling_plan.id }}, "label": {{ a.selling_plan.options.first.value | default: a.selling_plan.name | json }}, "price": {{ a.price | minus: fb_v }}, "renew": {% if a.price_adjustments.size > 1 %}{{ a.price_adjustments[1].price }}{% else %}{{ a.price }}{% endif %} }{% unless forloop.last %},{% endunless %}{%- endfor -%}
       ] }{% unless forloop.last %},{% endunless %}
     {%- endfor -%}
     ]
@@ -493,7 +524,9 @@
                   endif
                 -%}
                 {%- capture renew_html -%}<span data-sub-renew>{% if renew > 0 %}{{ renew | money }}{% endif %}</span>{%- endcapture -%}
-                <p class="somna-pdp-hero__sub-line">{{ s.sub_line | replace: '[renewal]', renew_html | replace: '[price]', '<span data-sub-each></span>' | replace: '[interval]', '<span data-sub-interval></span>' }}</p>
+                {%- assign line_same = s.sub_line_same | default: s.sub_line -%}
+                <p class="somna-pdp-hero__sub-line" data-sub-line="step"{% if fb_current == 0 %} hidden{% endif %}>{{ s.sub_line | replace: '[renewal]', renew_html | replace: '[price]', '<span data-sub-each></span>' | replace: '[interval]', '<span data-sub-interval></span>' }}</p>
+                <p class="somna-pdp-hero__sub-line" data-sub-line="same"{% if fb_current > 0 %} hidden{% endif %}>{{ line_same | replace: '[renewal]', renew_html | replace: '[price]', '<span data-sub-each></span>' | replace: '[interval]', '<span data-sub-interval></span>' }}</p>
               {%- elsif s.sub_points != blank -%}
                 <ul class="somna-pdp-hero__sub-points" role="list">
                   {%- assign points = s.sub_points | newline_to_br | split: '<br />' -%}
@@ -732,6 +765,8 @@
         const intervalText = opt ? opt.textContent : (subPlan ? this.dataset.interval || '' : '');
         this.querySelectorAll('[data-sub-interval]').forEach((el) => { el.textContent = intervalText.trim().replace(/^Deliver(y)?\s+/i, ''); });
         this.querySelectorAll('[data-sub-renew]').forEach((el) => { el.textContent = subPlan ? this.money(subPlan.renew || subPlan.price) : ''; });
+        const stepUp = !!(subPlan && subPlan.renew && subPlan.renew !== subPlan.price);
+        this.querySelectorAll('[data-sub-line]').forEach((el) => { el.hidden = (el.dataset.subLine === 'step') !== stepUp; });
         const gb = q('[data-gift-bar]');
         if (gb) {
           const have = this.bags(v), need = Math.max(0, this.giftMin - have);
@@ -3709,7 +3744,10 @@
     { "type": "text", "id": "ship_line", "label": "Shipping and gifts line", "default": "3 free gifts on 2+ packs" },
     { "type": "text", "id": "gift_todo", "label": "Gift bar: not unlocked yet", "info": "[n] = bags still needed, [bags] = bag / bags.", "default": "Add [n] more [bags] to unlock 3 free gifts" },
     { "type": "text", "id": "gift_done", "label": "Gift bar: unlocked", "default": "3 free gifts unlocked ✓" },
-    { "type": "text", "id": "sub_line", "label": "Subscribe & Save line", "info": "[price] = first order price, [renewal] = price of each order after the first, [interval] = the chosen delivery frequency (e.g. every 30 days).", "default": "Delivered [interval] · then [renewal] each delivery · skip, pause or cancel anytime" },
+    { "type": "text", "id": "sub_line", "label": "Subscribe & Save line (first box cheaper)", "info": "Shown when the first box costs less than renewals. [price] = first box, [renewal] = each delivery after, [interval] = chosen frequency (e.g. every month).", "default": "[price] first box · then [renewal] [interval]" },
+    { "type": "text", "id": "sub_line_same", "label": "Subscribe & Save line (same price every time)", "info": "Shown when every delivery costs the same (bundles).", "default": "[renewal] [interval] · same price every time" },
+    { "type": "product_list", "id": "first_box_products", "label": "First-box discount: products", "info": "Products with a 'first payment only' subscription discount in Shopify Discounts." },
+    { "type": "textarea", "id": "first_box_off", "label": "First-box discount: amount off per pack", "info": "One per line: pack name = amount off the first box, matching your discounts. E.g. 1 Bag = 3" },
     { "type": "text", "id": "moon_text", "label": "Moon countdown", "info": "[nights] and [date] come from the sale countdown bar. Hidden when the sale has ended.", "default": "[nights] nights left · ends [date]" },
     { "type": "text", "id": "trust_1", "label": "Under the button: first line", "info": "[stars], [rating] and [count] come from the product's reviews.", "default": "[stars] [rating] · [count] reviews | 30-Night Money-Back Guarantee" },
     { "type": "text", "id": "trust_2", "label": "Under the button: second line", "default": "7–9 business days · cancel anytime" },
