@@ -123,7 +123,7 @@
     [
     {%- for v in product.variants -%}
       { "id": {{ v.id }}, "title": {{ v.title | json }}, "options": {{ v.options | json }}, "image": {% if v.featured_media %}{{ v.featured_media | image_url: width: 1100 | json }}{% else %}null{% endif %}, "available": {{ v.available | json }}, "price": {{ v.price | times: once_factor | divided_by: 100 }}, "compare": {% assign v_cmp = v.compare_at_price | default: 0 %}{% if v.price > v_cmp %}{{ v.price }}{% else %}{{ v_cmp }}{% endif %}, "plans": [
-        {%- for a in v.selling_plan_allocations -%}{ "id": {{ a.selling_plan.id }}, "price": {{ a.price }}, "renew": {% if a.price_adjustments.size > 1 %}{{ a.price_adjustments[1].price }}{% else %}{{ a.price }}{% endif %} }{% unless forloop.last %},{% endunless %}{%- endfor -%}
+        {%- for a in v.selling_plan_allocations -%}{ "id": {{ a.selling_plan.id }}, "label": {{ a.selling_plan.options.first.value | default: a.selling_plan.name | json }}, "price": {{ a.price }}, "renew": {% if a.price_adjustments.size > 1 %}{{ a.price_adjustments[1].price }}{% else %}{{ a.price }}{% endif %} }{% unless forloop.last %},{% endunless %}{%- endfor -%}
       ] }{% unless forloop.last %},{% endunless %}
     {%- endfor -%}
     ]
@@ -493,19 +493,21 @@
                   endif
                 -%}
                 {%- capture renew_html -%}<span data-sub-renew>{% if renew > 0 %}{{ renew | money }}{% endif %}</span>{%- endcapture -%}
-                <p class="somna-pdp-hero__sub-line">{{ s.sub_line | replace: '[renewal]', renew_html | replace: '[price]', '<span data-sub-each></span>' }}</p>
+                <p class="somna-pdp-hero__sub-line">{{ s.sub_line | replace: '[renewal]', renew_html | replace: '[price]', '<span data-sub-each></span>' | replace: '[interval]', '<span data-sub-interval></span>' }}</p>
               {%- elsif s.sub_points != blank -%}
                 <ul class="somna-pdp-hero__sub-points" role="list">
                   {%- assign points = s.sub_points | newline_to_br | split: '<br />' -%}
                   {%- for t in points -%}{%- assign pt = t | strip | replace: '[price]', '<span data-sub-each></span>' | replace: '[interval]', '<span data-sub-interval></span>' -%}{%- if pt != blank -%}<li><span class="somna-check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span><span>{{ pt }}</span></li>{%- endif -%}{%- endfor -%}
                 </ul>
               {%- endif -%}
-              {%- assign group = product.selling_plan_groups | first -%}
-              {%- if group.selling_plans.size > 1 -%}
+              {%- comment -%} delivery frequency: the selected pack's own plans (each pack can have its own subscription plan); the script swaps the list when the pack changes {%- endcomment -%}
+              {%- assign plan_max = 0 -%}
+              {%- for v in product.variants -%}{%- if v.selling_plan_allocations.size > plan_max -%}{%- assign plan_max = v.selling_plan_allocations.size -%}{%- endif -%}{%- endfor -%}
+              {%- if plan_max > 1 -%}
                 <label class="visually-hidden" for="{{ section.id }}-plan">{{ s.plan_label }}</label>
-                <select class="somna-pdp-hero__plan" id="{{ section.id }}-plan" data-plan>
-                  {%- for plan in group.selling_plans -%}
-                    <option value="{{ plan.id }}"{% if alloc and plan.id == alloc.selling_plan.id %} selected{% endif %}>{{ plan.options.first.value | default: plan.name }}</option>
+                <select class="somna-pdp-hero__plan" id="{{ section.id }}-plan" data-plan{% if current.selling_plan_allocations.size < 2 %} hidden{% endif %}>
+                  {%- for a in current.selling_plan_allocations -%}
+                    <option value="{{ a.selling_plan.id }}"{% if alloc and a.selling_plan.id == alloc.selling_plan.id %} selected{% endif %}>{{ a.selling_plan.options.first.value | default: a.selling_plan.name }}</option>
                   {%- endfor -%}
                 </select>
               {%- endif -%}
@@ -677,9 +679,24 @@
       base(v, price) { return Math.max(v.compare || 0, price < v.price ? v.price : 0); } // v.compare = regular price (or compare-at), v.price = one-time sale price
       pct(price, v) { const base = this.base(v, price); return base > price ? Math.round((1 - price / base) * 100) : 0; }
       priceHTML(p) { const [a, b] = this.money(p).split('.'); return b ? `${a}<sup>${b}</sup>` : a; }
+      syncPlans(v) {
+        const sel = this.planSelect;
+        if (!sel) return;
+        const key = v.plans.map((p) => p.id).join(',');
+        if (sel.dataset.key !== key) {
+          const prevLabel = sel.options[sel.selectedIndex]?.textContent;
+          const prevIndex = Math.max(sel.selectedIndex, 0);
+          sel.replaceChildren(...v.plans.map((p) => new Option(p.label, p.id)));
+          const same = v.plans.findIndex((p) => p.label === prevLabel);
+          sel.selectedIndex = same >= 0 ? same : Math.min(prevIndex, v.plans.length - 1);
+          sel.dataset.key = key;
+        }
+        sel.hidden = v.plans.length < 2;
+      }
       update() {
         const v = this.variants[this.v];
         const q = (s) => this.querySelector(s);
+        this.syncPlans(v);
         if (this.mode === 'sub' && !v.plans.length) this.mode = 'once';
         const price = this.priceOf(v);
         const plan = this.plan(v);
@@ -3458,8 +3475,9 @@
   .somna-pdp-hero--bf .somna-pdp-hero__brand,
   .somna-pdp-hero--bf .somna-pdp-hero__tagline,
   .somna-pdp-hero--bf .somna-pdp-hero__savings,
-  .somna-pdp-hero--bf .somna-buy__pack-night,
-  .somna-pdp-hero--bf .somna-pdp-hero__plan { display: none; }
+  .somna-pdp-hero--bf .somna-buy__pack-night { display: none; }
+  .somna-pdp-hero--bf .somna-pdp-hero__plan { margin-top: 10px; }
+  .somna-pdp-hero__plan[hidden] { display: none; }
   /* ticket sticker on the photo */
   .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge {
     top: 22px; left: 128px; z-index: 3; display: flex; flex-direction: column; align-items: center;
@@ -3691,7 +3709,7 @@
     { "type": "text", "id": "ship_line", "label": "Shipping and gifts line", "default": "3 free gifts on 2+ packs" },
     { "type": "text", "id": "gift_todo", "label": "Gift bar: not unlocked yet", "info": "[n] = bags still needed, [bags] = bag / bags.", "default": "Add [n] more [bags] to unlock 3 free gifts" },
     { "type": "text", "id": "gift_done", "label": "Gift bar: unlocked", "default": "3 free gifts unlocked ✓" },
-    { "type": "text", "id": "sub_line", "label": "Subscribe & Save line", "info": "[renewal] = price of each order after the first, [price] = first order price.", "default": "Every month · then [renewal]/month · skip, pause or cancel anytime" },
+    { "type": "text", "id": "sub_line", "label": "Subscribe & Save line", "info": "[price] = first order price, [renewal] = price of each order after the first, [interval] = the chosen delivery frequency (e.g. every 30 days).", "default": "Delivered [interval] · then [renewal] each delivery · skip, pause or cancel anytime" },
     { "type": "text", "id": "moon_text", "label": "Moon countdown", "info": "[nights] and [date] come from the sale countdown bar. Hidden when the sale has ended.", "default": "[nights] nights left · ends [date]" },
     { "type": "text", "id": "trust_1", "label": "Under the button: first line", "info": "[stars], [rating] and [count] come from the product's reviews.", "default": "[stars] [rating] · [count] reviews | 30-Night Money-Back Guarantee" },
     { "type": "text", "id": "trust_2", "label": "Under the button: second line", "default": "7–9 business days · cancel anytime" },
