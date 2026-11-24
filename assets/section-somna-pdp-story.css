@@ -1412,3 +1412,33 @@
   color: var(--somna-story-heading, currentColor);
 }
 .somna-pdp-story__player .somna-pdp-story__player-label { display: none; }
+
+/* Three steps video layout: "Watch how to use it" is the main heading, "Three steps…" a size smaller below it;
+   no eyebrow or intro line; the video plays muted on a loop with a sound button */
+.somna-pdp-story--steps-video .somna-pdp-story__eyebrow,
+.somna-pdp-story--steps-video .somna-pdp-story__text { display: none; }
+.somna-pdp-story__watch-title {
+  margin: 0 0 clamp(8px, 1vw, 14px);
+  color: #000;
+  font-family: var(--font-accent--family);
+  font-weight: var(--font-accent--weight);
+  font-size: clamp(2rem, 3.85vw, 3.4375rem);
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+.somna-pdp-story__watch-title .is-accent { color: var(--somna-story-accent, #98a3de); }
+.somna-pdp-story--steps-video .somna-pdp-story__heading { font-size: clamp(1.5rem, 2.7vw, 2.5rem); line-height: 1.25; }
+.somna-pdp-story__player.is-auto { position: relative; }
+.somna-pdp-story__sound {
+  position: absolute; right: 14px; bottom: 14px; z-index: 2;
+  display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px;
+  border: 0; border-radius: 999px; background: rgb(11 15 29 / 0.72); color: #f3feee;
+  font: 700 0.8125rem/1 var(--font-body--family, sans-serif); cursor: pointer; backdrop-filter: blur(4px);
+}
+.somna-pdp-story__sound:hover { background: rgb(11 15 29 / 0.88); }
+.somna-pdp-story__sound:focus-visible { outline: 3px solid #afbdf8; outline-offset: 2px; }
+.somna-pdp-story__sound .is-on, .somna-pdp-story__player.has-sound .somna-pdp-story__sound .is-off { display: none; }
+.somna-pdp-story__player.has-sound .somna-pdp-story__sound .is-on { display: inline; }
+@media screen and (max-width: 749px) {
+  .somna-pdp-story__sound { right: 10px; bottom: 10px; padding: 7px 11px; font-size: 0.75rem; }
+}
