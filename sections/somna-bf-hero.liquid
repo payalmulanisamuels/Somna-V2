@@ -239,6 +239,20 @@
     .somna-bfh__btn svg { width: 24px; height: 20px; }
     .somna-bfh__proof { justify-content: center; margin-top: 16px; text-align: left; }
   }
+  /* phones: photo in the middle — badge, heading, lines and price on top, then the pouches photo, then the
+     benefits, button and reviews below it */
+  @media screen and (max-width: 749px) {
+    .somna-bfh { align-items: center; padding: calc(var(--header-group-height, 0px) + 16px) var(--page-margin, 16px) 28px; text-align: center; }
+    .somna-bfh .somna-bfh__inner, .somna-bfh .somna-bfh__copy { display: contents; }
+    .somna-bfh .somna-bfh__ticket--desk { order: 1; }
+    .somna-bfh .somna-bfh__title { order: 2; }
+    .somna-bfh .somna-bfh__tagline { order: 3; }
+    .somna-bfh .somna-bfh__price-mob { order: 4; }
+    .somna-bfh .somna-bfh__media { order: 5; align-self: stretch; width: auto; height: clamp(240px, 70vw, 330px); margin: 8px calc(var(--page-margin, 16px) * -1) 0; }
+    .somna-bfh .somna-bfh__perks { order: 6; margin-top: 4px; }
+    .somna-bfh .somna-bfh__cta { order: 7; }
+    .somna-bfh .somna-bfh__proof { order: 8; }
+  }
 {% endstylesheet %}
 
 {% schema %}
