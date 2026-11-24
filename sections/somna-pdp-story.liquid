@@ -78,6 +78,9 @@
 >
   <div class="somna-pdp-story__inner somna-container">
     <div class="somna-pdp-story__copy">
+      {%- if s.layout == 'steps' and s.steps_hide_list and s.watch_title != blank -%}
+        <h2 class="somna-pdp-story__watch-title">{{ s.watch_title }}{% if s.watch_title_accent != blank %} <span class="is-accent">{{ s.watch_title_accent }}</span>{% endif %}</h2>
+      {%- endif -%}
       {%- if c.eyebrow != blank -%}<p class="somna-pdp-story__eyebrow">{{ c.eyebrow.value }}</p>{%- endif -%}
       <h2 class="somna-pdp-story__heading">
         <span{% if accent_first %} class="is-accent"{% endif %}>{{ c.heading.value }}</span>
@@ -273,6 +276,17 @@
           -%}
           {%- if how_video != blank and how_video.sources != blank and button_label != blank -%}
             {%- comment -%} the video sits right under the steps with a play button on it; tap plays it in place {%- endcomment -%}
+            {%- if s.steps_hide_list -%}
+            {%- comment -%} plays by itself, muted, on a loop, once it scrolls into view; a button turns the sound on {%- endcomment -%}
+            <somna-autoplay-video class="somna-pdp-story__player is-auto">
+              {{ how_video | video_tag: playsinline: true, muted: true, loop: true, preload: 'none', class: 'somna-pdp-story__player-video', image_size: '1280x' }}
+              <button type="button" class="somna-pdp-story__sound" data-sound aria-pressed="false" aria-label="Turn sound on">
+                <svg class="is-off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" fill="currentColor"/><path d="m22 9-6 6M16 9l6 6"/></svg>
+                <svg class="is-on" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>
+                <span data-sound-label>Sound on</span>
+              </button>
+            </somna-autoplay-video>
+            {%- else -%}
             {%- if button_label != blank -%}<h3 class="somna-pdp-story__watch-heading">{{ button_label }}</h3>{%- endif -%}
             <somna-inline-video class="somna-pdp-story__player">
               {{ how_video | video_tag: playsinline: true, preload: 'none', class: 'somna-pdp-story__player-video', image_size: '1280x' }}
@@ -281,6 +295,7 @@
                 <span class="somna-pdp-story__player-label">{{ button_label }}</span>
               </button>
             </somna-inline-video>
+            {%- endif -%}
           {%- elsif c.button_label != blank and c.button_url != blank -%}
             <a class="somna-pdp-story__button" href="{{ c.button_url.value | replace: 'https://usesomna.com', '' }}">
               <span class="somna-pdp-story__button-icon">{% render 'somna-pdp-icon', name: 'play' %}</span>{{ c.button_label.value }}
@@ -298,6 +313,26 @@
 {%- if s.layout == 'steps' -%}
 <script src="{{ 'somna-video-modal.js' | asset_url }}" defer></script>
 <script>
+  if (!customElements.get('somna-autoplay-video')) {
+    customElements.define('somna-autoplay-video', class extends HTMLElement {
+      connectedCallback() {
+        const v = this.querySelector('video'), b = this.querySelector('[data-sound]');
+        if (!v) return;
+        v.muted = true; v.loop = true; v.playsInline = true; v.removeAttribute('controls');
+        const play = () => { const p = v.play(); if (p) p.catch(() => {}); };
+        if ('IntersectionObserver' in window) {
+          new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) play(); else v.pause(); }), { threshold: 0.25 }).observe(this);
+        } else play();
+        if (b) b.addEventListener('click', () => {
+          v.muted = !v.muted; if (!v.muted) play();
+          b.setAttribute('aria-pressed', String(!v.muted));
+          b.setAttribute('aria-label', v.muted ? 'Turn sound on' : 'Turn sound off');
+          const l = b.querySelector('[data-sound-label]'); if (l) l.textContent = v.muted ? 'Sound on' : 'Sound off';
+          this.classList.toggle('has-sound', !v.muted);
+        });
+      }
+    });
+  }
   if (!customElements.get('somna-inline-video')) {
     customElements.define('somna-inline-video', class extends HTMLElement {
       connectedCallback() {
@@ -628,6 +663,8 @@
     { "type": "product", "id": "preview_product", "label": "Product for the theme editor", "info": "Only used where there is no product." },
     { "type": "video", "id": "video", "label": "Three steps: fallback video", "info": "The \"Watch how it works\" popup plays the product's steps metaobject \"video\" field, or the product metafield custom.how_it_works_video. This video is used only when neither is set." },
     { "type": "checkbox", "id": "steps_hide_list", "label": "Three steps: hide the step rows", "info": "Shows only the heading and the video.", "default": false },
+    { "type": "text", "id": "watch_title", "label": "Three steps video: main heading", "default": "Watch how to", "info": "Shown above the steps heading when the step rows are hidden." },
+    { "type": "text", "id": "watch_title_accent", "label": "Three steps video: main heading (lavender part)", "default": "use it" },
     { "type": "text", "id": "video_button_label", "label": "Three steps: button label", "default": "Watch how it works", "info": "Used when the steps metaobject has no button label." },
     { "type": "select", "id": "snore_direction", "label": "Problem: snore waves direction", "options": [{ "value": "right", "label": "Right" }, { "value": "tilt", "label": "Up and forward (45°)" }, { "value": "up", "label": "Up" }], "default": "right" },
     { "type": "checkbox", "id": "layers_animation", "label": "Animate \"What it's made of\"", "info": "When every layer has its own image: the How it works product travels in and peels into the layers as you scroll (phones: the layers peel apart without the travel). Off for reduced motion.", "default": true },
