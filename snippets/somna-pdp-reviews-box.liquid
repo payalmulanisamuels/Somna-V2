@@ -11,7 +11,8 @@
   @param {string} [all_label] - link text to all reviews (blank hides it)
   @param {string} [all_href] - link target (default: scroll to the reviews section on the page)
   @param {string} [verified_label] - default "Verified buyer"
-  @param {boolean} [strip] - show the "Customer photos" strip (default true; false = review rows only)
+  @param {boolean} [strip] - show the "Customer photos" strip (default true; false = one review only: the shortest
+    real review with a photo, shown in full, no date)
 {%- enddoc -%}
 {%- comment -%}
   Customer reviews card (instead of the quote card and the videos): a "Customer photos" strip, then the latest
@@ -26,6 +27,7 @@
   assign rv_count = 0
   assign rv_html = ''
   assign rv_limit = reviews | default: 2
+  assign rv_best_len = 100000
   # own photos first; pages of products NOT in "Fill from" (the bundles) add those products' photos
   assign ph_fill = fill | default: '' | split: ','
   assign ph_handles = product.handle
@@ -62,7 +64,17 @@
         {%- assign ph_count = ph_count | plus: 1 -%}
       {%- endunless -%}
     {%- endfor -%}
-    {%- if rv_pics != '' and rv_count < rv_limit -%}
+    {%- assign rv_pick = false -%}
+    {%- if rv_pics != '' -%}
+      {%- if strip == false -%}
+        {%- comment -%} one-review mode: keep the shortest real review that has a photo (at least 25 characters) {%- endcomment -%}
+        {%- assign rv_len = ph_rv.body_html | strip_html | strip | size -%}{%- assign rv_rate = ph_rv.rating | plus: 0 -%}
+        {%- if rv_len >= 25 and rv_len < rv_best_len and rv_rate >= 4 -%}{%- assign rv_pick = true -%}{%- assign rv_best_len = rv_len -%}{%- assign rv_count = 0 -%}{%- assign rv_html = '' -%}{%- endif -%}
+      {%- elsif rv_count < rv_limit -%}
+        {%- assign rv_pick = true -%}
+      {%- endif -%}
+    {%- endif -%}
+    {%- if rv_pick -%}
       {%- liquid
         assign rv_count = rv_count | plus: 1
         assign rv_parts = ph_rv.reviewer_name | strip | split: ' '
@@ -84,7 +96,7 @@
           <div class="somna-pdp-hero__rv-text">
             <div class="somna-pdp-hero__rv-top">
               <p class="somna-pdp-hero__rv-name"><span class="somna-pdp-hero__rv-stars" role="img" aria-label="{{ rv_stars }} out of 5 stars">{% for i in (1..5) %}<span{% if i > rv_stars %} class="is-empty"{% endif %}>★</span>{% endfor %}</span> {{ rv_name | escape }}{% if ph_rv.verified_buyer %} <small>✓ {{ verified_label | default: 'Verified buyer' }}</small>{% endif %}</p>
-              <time datetime="{{ ph_rv.created_at | date: '%Y-%m-%d' }}">{{ ph_rv.created_at | date: '%b %-d, %Y' }}</time>
+              {%- unless strip == false -%}<time datetime="{{ ph_rv.created_at | date: '%Y-%m-%d' }}">{{ ph_rv.created_at | date: '%b %-d, %Y' }}</time>{%- endunless -%}
             </div>
             <p class="somna-pdp-hero__rv-body">{{ ph_rv.body_html | strip_html | strip | escape }}</p>
           </div>
