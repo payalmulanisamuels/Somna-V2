@@ -3519,6 +3519,15 @@
     .somna-pdp-hero__rv-pics li { width: 56px; }
   }
 
+  /* colour swatches: smaller (all screen sizes) */
+  .somna-pdp-hero .somna-pdp-hero__swatches { gap: 12px; }
+  .somna-pdp-hero .somna-pdp-hero__swatch { width: 34px; height: 34px; }
+  .somna-pdp-hero .somna-pdp-hero__swatch:has(input:checked) { box-shadow: 0 0 0 2px #0b0f1d, 0 0 0 4px var(--somna-mint); }
+  @media screen and (max-width: 749px) {
+    .somna-pdp-hero .somna-pdp-hero__swatches { gap: 10px; }
+    .somna-pdp-hero .somna-pdp-hero__swatch { width: 28px; height: 28px; }
+  }
+
   /* main photo: previous / next arrows */
   .somna-pdp-hero__main { position: relative; }
   .somna-pdp-hero__arrow {
