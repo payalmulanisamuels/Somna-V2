@@ -530,7 +530,7 @@
           <legend class="visually-hidden">{{ s.mode_label }}</legend>
           {%- if has_plans -%}
             <div class="somna-pdp-hero__mode-box" data-mode-box="sub">
-              <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="sub" data-mode-input{% if mode == 'sub' %} checked{% endif %}> <span class="somna-buy__mode-label"><strong>{{ s.sub_label }}</strong><span data-sub-pct></span></span> <span class="somna-buy__mode-price" data-price-sub>{% if alloc %}{{ alloc.price | money }}{% endif %}</span></label>
+              <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="sub" data-mode-input{% if mode == 'sub' %} checked{% endif %}> <span class="somna-buy__mode-label"><strong>{{ s.sub_label }}</strong><span data-sub-pct></span></span> <span class="somna-buy__mode-prices"><s class="somna-buy__mode-was" data-was-sub></s><span class="somna-buy__mode-price" data-price-sub>{% if alloc %}{{ alloc.price | money }}{% endif %}</span></span></label>
               {%- if s.bf_layout and s.sub_line != blank -%}
                 {%- liquid
                   assign renew = 0
@@ -565,7 +565,7 @@
               {%- endif -%}
             </div>
           {%- endif -%}
-          <label class="somna-buy__mode somna-pdp-hero__once"><input type="radio" name="{{ section.id }}-mode" value="once" data-mode-input{% if mode == 'once' %} checked{% endif %}> <span class="somna-buy__mode-label">{{ s.once_label }}<span data-once-pct></span></span> <span class="somna-buy__mode-price" data-price-once>{{ current_once | money }}</span></label>
+          <label class="somna-buy__mode somna-pdp-hero__once"><input type="radio" name="{{ section.id }}-mode" value="once" data-mode-input{% if mode == 'once' %} checked{% endif %}> <span class="somna-buy__mode-label">{{ s.once_label }}<span data-once-pct></span></span> <span class="somna-buy__mode-prices"><s class="somna-buy__mode-was" data-was-once></s><span class="somna-buy__mode-price" data-price-once>{{ current_once | money }}</span></span></label>
         </fieldset>
 
         <button type="submit" name="add" class="somna-buy__add somna-pdp-hero__add" data-add{% unless current.available %} disabled{% endunless %}>
@@ -777,6 +777,7 @@
         this.querySelector('[data-mode-box]')?.classList.toggle('is-active', this.mode === 'sub');
         const subPrice = v.plans.length ? this.priceOf(v, 'sub') : 0;
         const subEl = q('[data-price-sub]'); if (subEl) subEl.textContent = subPrice ? this.money(subPrice) : '';
+        const wasSub = q('[data-was-sub]'); if (wasSub) { const b = subPrice ? this.base(v, subPrice) : 0; wasSub.textContent = b > subPrice ? this.money(b) : ''; }
         const subPct = subPrice ? this.pct(subPrice, v) : 0;
         const subPctEl = q('[data-sub-pct]'); if (subPctEl) subPctEl.textContent = subPct && !this.classList.contains('somna-pdp-hero--bf') ? this.labels.pct.replace('[percent]', subPct) : '';
         this.querySelectorAll('[data-sub-each]').forEach((el) => { el.textContent = subPrice ? this.money(subPrice) : ''; });
@@ -795,6 +796,7 @@
           gb.querySelector('[data-gift-text]').textContent = need ? gb.dataset.todo.replace('[n]', need).replace('[bags]', need === 1 ? 'bag' : 'bags') : gb.dataset.done;
         }
         q('[data-price-once]').textContent = this.money(v.price);
+        const wasOnce = q('[data-was-once]'); if (wasOnce) { const b = this.base(v, v.price); wasOnce.textContent = b > v.price ? this.money(b) : ''; }
         const oncePct = this.pct(v.price, v);
         q('[data-once-pct]').textContent = oncePct && !this.classList.contains('somna-pdp-hero--bf') ? this.labels.pct.replace('[percent]', oncePct) : '';
         if (this.planSelect) this.planSelect.disabled = this.mode !== 'sub';
@@ -3793,6 +3795,11 @@
     .somna-pdp-hero__trust-1 { font-size: 0.8125rem; }
     .somna-pdp-hero__trust-2 { font-size: 0.75rem; }
   }
+  /* plan boxes: crossed-out full price before each price */
+  .somna-buy__mode-prices { display: inline-flex; align-items: baseline; gap: 8px; margin-left: auto; white-space: nowrap; }
+  .somna-buy__mode-was { color: #6b6f86; font-size: 0.9375rem; font-weight: 500; }
+  .somna-buy__mode-was:empty { display: none; }
+  @media screen and (max-width: 749px) { .somna-buy__mode-was { font-size: 0.8125rem; } }
   /* gift line sits beside the price (in place of the SAVE badge) */
   .somna-pdp-hero--bf .somna-pdp-hero__price .somna-pdp-hero__ship--inline { margin: 0; align-self: center; }
   /* desktop: tighter buy box so it fits in one screen */
