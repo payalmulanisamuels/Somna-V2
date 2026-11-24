@@ -67,12 +67,16 @@
     (function () {
       if (location.hash || (history.state && history.state.somnaLanded)) return;
       var go = function () {
-        if (window.scrollY > 5) return;
         var cd = document.querySelector('.somna-cd'); if (!cd || cd.closest('[hidden]') || !cd.offsetHeight) return;
+        /* the theme scrolls inside .page-wrapper, not the window */
+        var sc = cd.closest('.page-wrapper');
+        if (!sc || sc.scrollHeight <= sc.clientHeight + 1) sc = null;
+        var top = sc ? sc.scrollTop : window.scrollY;
+        if (top > 5) return;
         var hdr = document.querySelector('#header-component'); hdr = hdr && (hdr.closest('.shopify-section') || hdr);
         var off = hdr && getComputedStyle(hdr).position === 'sticky' ? hdr.getBoundingClientRect().height : 0;
-        var y = cd.getBoundingClientRect().top + window.scrollY - off;
-        if (y > 2) window.scrollTo({ top: y, behavior: 'auto' });
+        var y = cd.getBoundingClientRect().top - (sc ? sc.getBoundingClientRect().top : 0) + top - off;
+        if (y > 2) (sc || window).scrollTo({ top: y, behavior: 'instant' });
         try { history.replaceState(Object.assign({}, history.state, { somnaLanded: true }), ''); } catch (e) {}
       };
       if (document.readyState === 'complete') requestAnimationFrame(go); else window.addEventListener('load', function () { requestAnimationFrame(go); }, { once: true });
