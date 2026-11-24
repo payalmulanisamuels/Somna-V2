@@ -1215,6 +1215,24 @@
             "custom_width_mobile": 100
           },
           "blocks": {}
+        },
+        "first_order_note": {
+          "type": "text",
+          "settings": {
+            "text": "<p>First order · no need to send it back</p>",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "text_color": "#000000"
+          },
+          "blocks": {}
         }
       },
       "block_order": [
@@ -1222,6 +1240,7 @@
         "eyebrow",
         "heading",
         "text",
+        "first_order_note",
         "button"
       ],
       "settings": {
