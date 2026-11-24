@@ -221,16 +221,13 @@
     .somna-bfh { display: flex; flex-direction: column; align-items: center; padding: calc(var(--header-group-height, 0px) + 14px) var(--page-margin, 16px) 24px; text-align: center; }
     .somna-bfh .somna-bfh__inner, .somna-bfh .somna-bfh__copy { display: contents; }
     .somna-bfh .somna-bfh__ticket--mob { display: none; }
-    /* pill badge: lavender part + dark part */
-    .somna-bfh .somna-bfh__ticket--desk {
-      order: 1; display: inline-flex; flex-direction: row; align-items: stretch; margin: 0 0 14px; padding: 0;
-      border: 0; border-radius: 8px; background: none; box-shadow: none; rotate: 0deg; overflow: hidden;
-    }
-    .somna-bfh .somna-bfh__ticket--desk span { padding: 6px 10px; background: #afbdf8; color: #0b0f1d; font: 800 12px/1.2 var(--font-body--family, sans-serif); letter-spacing: 0.02em; }
-    .somna-bfh .somna-bfh__ticket--desk small { display: flex; align-items: center; padding: 6px 10px; border: 1px solid rgb(175 189 248 / 0.35); border-left: 0; border-radius: 0 8px 8px 0; background: #1d2244; color: #f3feee; font: 600 12px/1.2 var(--font-body--family, sans-serif); letter-spacing: 0; text-transform: none; }
-    /* heading: white first line, lavender second line */
-    .somna-bfh .somna-bfh__title { order: 2; align-items: center; color: #f3feee; font-size: clamp(2.5rem, 12vw, 3rem); line-height: 1; white-space: normal; }
-    .somna-bfh .somna-bfh__title span { margin-top: 4px; color: #afbdf8; font-size: clamp(1.5rem, 7.4vw, 1.875rem); line-height: 1.1; }
+    /* badge: the dashed white ticket (same design as desktop), a little smaller */
+    .somna-bfh .somna-bfh__ticket--desk { order: 1; display: inline-flex; margin: 0 0 14px; padding: 5px 12px 4px; border-width: 2px; rotate: -3deg; box-shadow: 0 0 0 3px #fff, 4px 5px 0 3px rgb(0 0 0 / 0.85); }
+    .somna-bfh .somna-bfh__ticket--desk span { font-size: 15px; }
+    .somna-bfh .somna-bfh__ticket--desk small { font-size: 9px; }
+    /* heading: same colours as before (lavender 60% OFF, white second line) */
+    .somna-bfh .somna-bfh__title { order: 2; align-items: center; color: #afbdf8; font-size: clamp(2.5rem, 12vw, 3rem); line-height: 1; white-space: normal; }
+    .somna-bfh .somna-bfh__title span { margin-top: 4px; color: #f3feee; font-size: clamp(1.5rem, 7.4vw, 1.875rem); line-height: 1.1; }
     .somna-bfh .somna-bfh__tagline { order: 3; display: block; max-width: 300px; margin: 12px auto 0; color: rgb(243 254 238 / 0.75); font-size: 13px; font-weight: 400; line-height: 1.45; text-transform: none; }
     .somna-bfh .somna-bfh__tagline strong, .somna-bfh .somna-bfh__tagline b { color: #f3feee; }
     .somna-bfh .somna-bfh__price-mob { order: 4; display: block; margin: 8px 0 0; font-size: 13px; line-height: 1.45; }
