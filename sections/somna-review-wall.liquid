@@ -161,12 +161,13 @@
   .somna-rwall__chips {
     display: flex;
     gap: 8px;
-    justify-content: center;
+    justify-content: safe center; /* centred when they fit; start at the left and scroll when they don't */
     margin-bottom: 24px;
     overflow-x: auto;
     scrollbar-width: none;
   }
   .somna-rwall__chips::-webkit-scrollbar { display: none; }
+  @media screen and (max-width: 749px) { .somna-rwall__chips { justify-content: flex-start; margin-inline: calc(var(--page-margin, 16px) * -1); padding-inline: var(--page-margin, 16px); } }
   .somna-rwall__chip {
     flex: none;
     padding: 9px 18px;
