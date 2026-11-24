@@ -82,12 +82,40 @@
         var hdr = document.querySelector('#header-component'); hdr = hdr && (hdr.closest('.shopify-section') || hdr);
         var off = hdr && getComputedStyle(hdr).position === 'sticky' ? hdr.getBoundingClientRect().height : 0;
         var y = cd.getBoundingClientRect().top - (sc ? sc.getBoundingClientRect().top : 0) + top - off;
-        if (y > 2) (sc || window).scrollTo({ top: y, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+        if (y > 2) {
+          var el = sc || document.scrollingElement || document.documentElement;
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.scrollTop = y; }
+          else {
+            /* quick 300ms glide (the browser's own smooth scroll is slower on phones) */
+            var t0 = null, dur = 300;
+            el.style.scrollBehavior = 'auto';
+            var step = function (t) {
+              if (t0 === null) t0 = t;
+              var k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+              el.scrollTop = y * e;
+              if (k < 1) requestAnimationFrame(step); else el.style.scrollBehavior = '';
+            };
+            requestAnimationFrame(step);
+          }
+        }
         try { history.replaceState(Object.assign({}, history.state, { somnaLanded: true }), ''); } catch (e) {}
       };
-      /* a short pause after the page shows, then a smooth glide down */
-      var later = function () { setTimeout(go, 350); };
-      if (document.readyState === 'complete') later(); else window.addEventListener('load', later, { once: true });
+      /* start as soon as there is enough page below to scroll into (checks every 40ms while the page streams in),
+         without waiting for the rest of the page or its images */
+      var done = false, tries = 0;
+      var ready = function () {
+        var cd = document.querySelector('.somna-cd'); if (!cd) return false;
+        var sc = cd.closest('.page-wrapper') || document.scrollingElement;
+        var need = cd.getBoundingClientRect().top - (sc.getBoundingClientRect ? sc.getBoundingClientRect().top : 0);
+        return sc.scrollHeight - sc.clientHeight >= need + 2 && sc.clientHeight > 0;
+      };
+      var attempt = function () {
+        if (done) return;
+        if (ready() || document.readyState !== 'loading' || tries > 75) { done = true; requestAnimationFrame(go); return; }
+        tries++; setTimeout(attempt, 40);
+      };
+      attempt();
+      document.addEventListener('DOMContentLoaded', attempt, { once: true });
     })();
   </script>
 {%- endif -%}
