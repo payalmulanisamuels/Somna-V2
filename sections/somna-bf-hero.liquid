@@ -216,8 +216,8 @@
   @media screen and (min-width: 1200px) { .somna-bfh__copy { margin-left: clamp(24px, 4vw, 72px); } }
   @media screen and (min-width: 1600px) { .somna-bfh__copy { margin-left: clamp(72px, 8vw, 180px); } }
   /* phones: clean centred banner (reference: pill badge, two-line heading, short line, 3 icons, small button,
-     then the pouches photo and the reviews) */
-  @media screen and (max-width: 749px) {
+     then the pouches photo and the reviews); tablets (750–989px) use the same layout */
+  @media screen and (max-width: 989px) {
     .somna-bfh { display: flex; flex-direction: column; align-items: center; padding: calc(var(--header-group-height, 0px) + 14px) var(--page-margin, 16px) 24px; text-align: center; }
     .somna-bfh .somna-bfh__inner, .somna-bfh .somna-bfh__copy { display: contents; }
     .somna-bfh .somna-bfh__ticket--mob { display: none; }
@@ -251,6 +251,12 @@
     .somna-bfh .somna-bfh__proof .somna-seal small { margin-top: 1px; font-size: 7.5px; }
     .somna-bfh .somna-bfh__reviews { font-size: 13px; }
     .somna-bfh .somna-bfh__guarantee { font-size: 12px; color: rgb(243 254 238 / 0.75); }
+  }
+  /* tablets: keep the photo and reviews row a comfortable width, centred */
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-bfh .somna-bfh__media { align-self: center; width: min(100%, 620px); height: 380px; margin: 16px auto 0; }
+    .somna-bfh .somna-bfh__proof { align-self: center; justify-content: center; }
+    .somna-bfh .somna-bfh__tagline { max-width: 420px; font-size: 15px; }
   }
 {% endstylesheet %}
 
