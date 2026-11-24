@@ -17,6 +17,9 @@
         endif
       endfor
     endfor
+    if sub != nil and s.first_box_off > 0
+      assign sub = s.first_box_off | times: 100 | round | times: -1 | plus: sub
+    endif
   endif
   # real review numbers: total of the chosen products, average weighted by each product's count
   assign rev_total = 0
@@ -208,6 +211,30 @@
     .somna-bfh__moon--mob .somna-moonline { gap: 8px; font-size: 0.8125rem; }
     .somna-bfh__moon--mob .somna-moonline__moons svg { width: 96px; height: 11px; }
   }
+  /* phones: same structure as the sale page hero — centred copy at the top (badge, heading, lines, button),
+     pouches photo below it fading into the background */
+  @media screen and (max-width: 749px) {
+    .somna-bfh { display: flex; flex-direction: column; }
+    .somna-bfh__inner { order: 1; padding-block: calc(var(--header-group-height, 0px) + var(--header-height, 60px) + 22px) 0; }
+    .somna-bfh__media { order: 2; height: clamp(260px, 78vw, 360px); margin-top: 8px; }
+    .somna-bfh__media::before { background: linear-gradient(to bottom, var(--bfh-bg) 0%, rgb(11 15 29 / 0) 30%, rgb(11 15 29 / 0) 80%, var(--bfh-bg) 100%); }
+    .somna-bfh .somna-bfh__img--mob { object-position: 50% 70%; }
+    .somna-bfh .somna-bfh__ticket--mob { display: none; }
+    .somna-bfh__copy { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .somna-bfh .somna-bfh__ticket--desk { display: inline-flex; margin-bottom: 14px; padding: 5px 12px 4px; border-width: 2px; rotate: -3deg; box-shadow: 0 0 0 3px #fff, 4px 5px 0 3px rgb(0 0 0 / 0.85); }
+    .somna-bfh__ticket--desk span { font-size: 15px; }
+    .somna-bfh__ticket--desk small { font-size: 9px; }
+    .somna-bfh__title { align-items: center; font-size: clamp(2.5rem, 12vw, 3.25rem); line-height: 1.05; }
+    .somna-bfh__title span { margin-top: 6px; font-size: clamp(1.125rem, 5.4vw, 1.375rem); }
+    .somna-bfh .somna-bfh__tagline { display: block; max-width: 300px; margin: 10px auto 0; color: rgb(243 254 238 / 0.67); font-size: 14px; font-weight: 400; line-height: 1.35; text-transform: none; }
+    .somna-bfh__price-mob { margin: 8px 0 0; font-size: 14px; line-height: 1.45; }
+    .somna-bfh .somna-bfh__perks { display: flex; justify-content: center; gap: 4px 12px; margin-top: 8px; color: rgb(243 254 238 / 0.7); font-size: 11px; }
+    .somna-bfh__perks svg { width: 11px; height: 11px; }
+    .somna-bfh__cta { align-items: center; gap: 12px; margin-top: 16px; }
+    .somna-bfh__btn { padding: 14px 28px; border-radius: 14px; font-size: 1.125rem; }
+    .somna-bfh__btn svg { width: 24px; height: 20px; }
+    .somna-bfh__proof { justify-content: center; margin-top: 16px; text-align: left; }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -224,6 +251,7 @@
     { "type": "text", "id": "subheading", "label": "Subheading", "default": "With Subscribe & Save" },
     { "type": "text", "id": "tagline", "label": "Tagline (desktop)", "default": "Small change, softer nights. Strips for your nose and tape for your lips." },
     { "type": "product", "id": "price_product", "label": "Price from this product", "info": "[price] = its lowest Subscribe & Save price." },
+    { "type": "number", "id": "first_box_off", "label": "First-box discount ($)", "info": "Taken off [price], so it shows the first-box Subscribe & Save price (e.g. 3 → $19.95)." },
     { "type": "text", "id": "price_line", "label": "Price line (desktop)", "default": "From [price] a bag · One-time 50% off" },
     { "type": "textarea", "id": "price_line_mobile", "label": "Price lines (phones)", "default": "From [price] a bag · One-time 50% off\n3 free gifts on 2+ packs" },
     { "type": "textarea", "id": "benefits", "label": "Benefits (desktop)", "info": "One per line. A line with \"gift\" gets the gift icon.", "default": "Drug-free\n30-Night guarantee\n3 free gifts on 2+ packs" },
