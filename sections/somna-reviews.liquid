@@ -1555,6 +1555,274 @@
     font-size: 1.125rem; line-height: 1.3; pointer-events: none;
   }
   .somna-reviews__gallery li[hidden] { display: none; }
+
+  /* =========================================================
+     REVIEW CARDS — customer-photo grid layout
+     Desktop: 4 columns | tablet: 3 columns | mobile: 2 columns
+     A designed photo placeholder is shown when a review has no image.
+     ========================================================= */
+
+  .somna-reviews__list {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: start;
+    gap: 18px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .somna-reviews__list > .somna-reviews__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #fff;
+    color: #171717;
+    box-shadow: 0 2px 9px rgb(0 0 0 / 0.10);
+  }
+
+  /* Real customer image */
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__photo {
+    display: block;
+    order: 0;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1.04;
+    flex: 0 0 auto;
+    margin: 0;
+    border-radius: 0;
+    object-fit: cover;
+    background: #e8e3da;
+  }
+
+  /* No uploaded photo: show a purposeful visual placeholder instead of an empty gap */
+  .somna-reviews__list > .somna-reviews__card:not(:has(.somna-reviews__photo))::before {
+    content: '📷  Customer photo';
+    display: grid;
+    place-items: center;
+    width: 100%;
+    aspect-ratio: 1 / 1.04;
+    flex: 0 0 auto;
+    order: 0;
+    padding: 12px;
+    color: #fff;
+    font-size: clamp(11px, 1vw, 14px);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-align: center;
+    text-shadow: 0 1px 4px rgb(0 0 0 / 0.28);
+    background: linear-gradient(135deg, #e8c9a8 0%, #c79d78 100%);
+  }
+
+  .somna-reviews__list > .somna-reviews__card:nth-child(4n + 2):not(:has(.somna-reviews__photo))::before {
+    background: linear-gradient(135deg, #cce8dc 0%, #78ad98 100%);
+  }
+
+  .somna-reviews__list > .somna-reviews__card:nth-child(4n + 3):not(:has(.somna-reviews__photo))::before {
+    background: linear-gradient(135deg, #c4c9f4 0%, #777fce 100%);
+  }
+
+  .somna-reviews__list > .somna-reviews__card:nth-child(4n):not(:has(.somna-reviews__photo))::before {
+    background: linear-gradient(135deg, #e4cba9 0%, #a9855d 100%);
+  }
+
+  /* Hide initials/avatar in this compact photo-first card design */
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__avatar {
+    display: none !important;
+  }
+
+  /* Rating sits directly below the photo */
+  .somna-reviews__list > .somna-reviews__card > .somna-reviews__stars {
+    order: 1;
+    display: flex;
+    align-self: flex-start;
+    gap: 2px;
+    margin: 9px 10px 3px;
+  }
+
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__star {
+    width: 13px;
+    height: 13px;
+  }
+
+  /* Review headline, body and reviewer details */
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__body {
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    padding: 0 10px 10px;
+  }
+
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__title,
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__title .jm-text {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    margin: 0;
+    color: #171717;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__text,
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__body p {
+    margin: 0;
+    color: #555;
+    font-size: 12px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__who {
+    display: block;
+    margin: 2px 0 0;
+    color: #777;
+    font-size: 10px;
+    line-height: 1.35;
+  }
+
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__who strong {
+    color: #555;
+    font-weight: 500;
+  }
+
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__verified {
+    color: #16834a;
+    font-weight: 600;
+  }
+
+  /* Compact filter chips, matching the reference */
+  .somna-reviews__chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 7px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 2px;
+  }
+
+  .somna-reviews__chip {
+    min-height: 30px;
+    padding: 5px 13px;
+    border: 1px solid #c9c9c9;
+    border-radius: 999px;
+    background: #fff;
+    color: #222;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow: none;
+  }
+
+  .somna-reviews__chip[aria-pressed='true'] {
+    border-color: #171717;
+    background: #171717;
+    color: #fff;
+    box-shadow: none;
+  }
+
+  .somna-reviews__chip:focus-visible {
+    outline: 2px solid var(--somna-rv-chip, #afbdf8);
+    outline-offset: 3px;
+  }
+
+
+  .somna-reviews__list > .somna-reviews__card--skeleton {
+    display: grid !important;
+    grid-template-columns: 40px minmax(0, 1fr);
+    align-items: start;
+    gap: 10px;
+    min-height: 92px;
+    padding: 14px;
+  }
+
+  .somna-reviews__list > .somna-reviews__card--skeleton span:first-child {
+    width: 40px;
+    height: 40px;
+  }
+
+  .somna-reviews__list > .somna-reviews__card--skeleton span:last-child {
+    width: 100%;
+    height: 52px;
+  }
+
+  /* Skeleton cards should not display the no-photo placeholder */
+  .somna-reviews__list > .somna-reviews__card--skeleton::before {
+    display: none !important;
+  }
+
+  @media screen and (min-width: 990px) {
+    .somna-reviews__list {
+      gap: 20px;
+    }
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-reviews__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .somna-reviews__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .somna-reviews__list > .somna-reviews__card {
+      border-radius: 12px;
+    }
+
+    .somna-reviews__list > .somna-reviews__card > .somna-reviews__stars {
+      margin: 8px 9px 3px;
+    }
+
+    .somna-reviews__list > .somna-reviews__card .somna-reviews__body {
+      gap: 3px;
+      padding: 0 9px 9px;
+    }
+
+    .somna-reviews__list > .somna-reviews__card .somna-reviews__title,
+    .somna-reviews__list > .somna-reviews__card .somna-reviews__title .jm-text {
+      font-size: 12px;
+    }
+
+    .somna-reviews__list > .somna-reviews__card .somna-reviews__who {
+      font-size: 9px;
+    }
+
+    .somna-reviews__chip {
+      min-height: 28px;
+      padding: 5px 11px;
+      font-size: 11px;
+    }
+  }
+
+  @media screen and (max-width: 360px) {
+    .somna-reviews__list {
+      gap: 8px;
+    }
+
+    .somna-reviews__list > .somna-reviews__card .somna-reviews__body {
+      padding-inline: 8px;
+    }
+  }
+
 {% endstylesheet %}
 
 {% schema %}
