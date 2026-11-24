@@ -135,7 +135,7 @@
     {%- if style != 'bundle' -%}
       {%- liquid
         assign r_fmt = st.somna_drawer_rating_format
-        if style == 'best'
+        if style == 'best' or style == 'wide'
           assign r_fmt = '[rating]/5'
         endif
       -%}
@@ -150,7 +150,7 @@
       {%- endif -%}
     </span>
     {%- comment -%} Bestsellers and bundle cards: no price line {%- endcomment -%}
-    <span class="somna-md-card__price"{% if style == 'best' or style == 'bundle' %} hidden{% endif %}>
+    <span class="somna-md-card__price"{% if style == 'best' or style == 'bundle' or style == 'wide' %} hidden{% endif %}>
       <span>{{ price_line }}</span>
       {%- if side_line != blank -%}<span>{{ side_line }}</span>{%- endif -%}
     </span>
