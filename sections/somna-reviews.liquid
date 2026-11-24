@@ -1882,7 +1882,33 @@
   .somna-reviews .jdgm-horizon-widget .jm-review-widget-minimal-header__title { color: var(--somna-rv-fg); }
   .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item-inner { padding: 8px; }
   .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__fade { background: linear-gradient(to bottom, transparent 0%, var(--somna-rv-bg, #0b0f1d) 100%) !important; }
-  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button { color: var(--somna-rv-fg); }
+  /* Judge.me's own "Show more" in the theme's button style (the theme's extra button is off) */
+  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    min-width: min(100%, 360px);
+    min-height: 52px;
+    padding: 10px 28px;
+    border: 0;
+    border-radius: 14px;
+    background: var(--somna-rv-chip, #afbdf8);
+    color: #000;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgb(0 0 0 / 0.25);
+    cursor: pointer;
+    transition: translate 0.2s;
+  }
+  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button * { color: #000; fill: currentColor; stroke: currentColor; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button:hover { translate: 0 -2px; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button:focus-visible { outline: 2px solid var(--somna-rv-fg); outline-offset: 3px; }
+  @media screen and (max-width: 749px) { .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button { width: 100%; } }
   .somna-reviews .jdgm-horizon-widget .jdgm-review-card {
     overflow: hidden;
     border-radius: 14px;
