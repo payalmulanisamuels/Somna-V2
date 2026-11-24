@@ -71,7 +71,11 @@
        header and more of the product shows (like ryzesuperfoods.com). Skipped when the visitor came with a #link,
        is returning to a scrolled position, or has already scrolled. */
     (function () {
-      if (location.hash || (history.state && history.state.somnaLanded)) return;
+      /* a refresh scrolls down again; coming back with the Back button keeps the visitor's place */
+      var nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {};
+      var isReload = nav.type === 'reload' || (performance.navigation && performance.navigation.type === 1);
+      if (location.hash || (!isReload && history.state && history.state.somnaLanded)) return;
+      if (isReload && 'scrollRestoration' in history) history.scrollRestoration = 'manual';
       var go = function () {
         var cd = document.querySelector('.somna-cd'); if (!cd || cd.closest('[hidden]') || !cd.offsetHeight) return;
         /* the theme scrolls inside .page-wrapper, not the window */
