@@ -3396,6 +3396,17 @@
       },
       {
         "type": "text",
+        "id": "somna_drawer_sale_label",
+        "label": "Sale link (above Bestsellers)",
+        "info": "Bold link to the sale page. Leave empty to hide."
+      },
+      {
+        "type": "url",
+        "id": "somna_drawer_sale_url",
+        "label": "Sale link URL"
+      },
+      {
+        "type": "text",
         "id": "somna_drawer_link_1",
         "label": "Link 1",
         "default": "How to use"

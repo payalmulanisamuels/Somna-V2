@@ -64,7 +64,8 @@
     /* product pages: the header scrolls away (not sticky), so on arrival the page can start at this countdown bar,
        like ryzesuperfoods.com; the photo column then sticks just below the top of the screen */
     #header-group .header-section { position: relative !important; top: auto !important; }
-    @media screen and (min-width: 990px) { .somna-pdp-hero__gallery-wrap { top: 16px !important; } }
+    .shopify-section:has(> .somna-cd) { top: 0 !important; }
+    @media screen and (min-width: 990px) { .somna-pdp-hero__gallery-wrap { top: calc(var(--somna-cd-height, 0px) + 16px) !important; } }
   </style>
   <script>
     /* product pages: on arrival, scroll past the announcement bar so the countdown sits right under the sticky
@@ -244,6 +245,9 @@
     border-bottom: 1px solid rgba(175, 189, 248, 0.18);
   }
   .somna-cd[hidden] { display: none; }
+  /* the bar stays in view while scrolling: it sticks right under the sticky header (top of the screen on product
+     pages, where the header scrolls away) */
+  .shopify-section:has(> .somna-cd:not([hidden])) { position: sticky; top: calc(var(--header-height, 0px) - 1px); z-index: 17; }
   /* transparent header (homepage): the first section is pulled up under the whole header group, so its content must
      also clear this bar, not only the header (Horizon only offsets by the header when a section follows it) */
   #header-group:has(#header-component[transparent]):has(.somna-cd:not([hidden])) ~ .content-for-layout > .shopify-section:first-child .section:not(.disable-section-top-offset).spacing-style,
