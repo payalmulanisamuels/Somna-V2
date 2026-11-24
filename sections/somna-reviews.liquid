@@ -1609,36 +1609,7 @@
     background: #e8e3da;
   }
 
-  /* No uploaded photo: show a purposeful visual placeholder instead of an empty gap */
-  .somna-reviews__list > .somna-reviews__card:not(:has(.somna-reviews__photo)):not(:has(img.somna-reviews__avatar))::before {
-    content: '📷  Customer photo';
-    display: grid;
-    place-items: center;
-    width: 100%;
-    aspect-ratio: 1 / 1.04;
-    flex: 0 0 auto;
-    order: 0;
-    padding: 12px;
-    color: #fff;
-    font-size: clamp(11px, 1vw, 14px);
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    text-align: center;
-    text-shadow: 0 1px 4px rgb(0 0 0 / 0.28);
-    background: linear-gradient(135deg, #e8c9a8 0%, #c79d78 100%);
-  }
-
-  .somna-reviews__list > .somna-reviews__card:nth-child(4n + 2):not(:has(.somna-reviews__photo)):not(:has(img.somna-reviews__avatar))::before {
-    background: linear-gradient(135deg, #cce8dc 0%, #78ad98 100%);
-  }
-
-  .somna-reviews__list > .somna-reviews__card:nth-child(4n + 3):not(:has(.somna-reviews__photo)):not(:has(img.somna-reviews__avatar))::before {
-    background: linear-gradient(135deg, #c4c9f4 0%, #777fce 100%);
-  }
-
-  .somna-reviews__list > .somna-reviews__card:nth-child(4n):not(:has(.somna-reviews__photo)):not(:has(img.somna-reviews__avatar))::before {
-    background: linear-gradient(135deg, #e4cba9 0%, #a9855d 100%);
-  }
+  /* No uploaded photo: the card is text only (no placeholder block) */
 
   /* Customer avatar photos are used as the full-width card image. */
   .somna-reviews__list > .somna-reviews__card .somna-reviews__body {
