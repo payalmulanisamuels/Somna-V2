@@ -1447,3 +1447,11 @@
 .somna-pdp-story--steps-video .somna-pdp-story__heading span { display: inline; }
 .somna-pdp-story--steps-video .somna-pdp-story__heading .is-accent,
 .somna-pdp-story--steps-video .somna-pdp-story__heading span { color: #000; }
+
+/* video layout: less space above the heading and below the video */
+.somna-pdp-story.somna-pdp-story--steps-video { padding-block: clamp(24px, 3vw, 40px) clamp(16px, 2vw, 28px) !important; }
+.somna-pdp-story.somna-pdp-story--steps-video .somna-pdp-story__inner { gap: clamp(14px, 2vw, 24px); }
+@media screen and (max-width: 749px) {
+  .somna-pdp-story.somna-pdp-story--steps-video { padding-block: 18px 12px !important; }
+  .somna-pdp-story__watch-title { font-size: clamp(1.5rem, 7.6vw, 2rem); margin-bottom: 6px; }
+}
