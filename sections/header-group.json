@@ -59,7 +59,8 @@
         "accent_color": "#afbdf8",
         "tile_color": "#262c52",
         "muted_color": "#c3c9e8",
-        "moon_cycle": 10
+        "moon_cycle": 10,
+        "offer": "60% OFF + FREE GIFTS"
       }
     },
     "header_section": {
