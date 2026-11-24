@@ -156,6 +156,9 @@
 
 {% stylesheet %}
   /* Figma 4927:568 — the drawer itself (width, colour, slide) is styled in snippets/header-drawer.liquid (.menu-drawer--somna) */
+  /* nothing pokes out sideways (sticker, waves), so the menu never scrolls left/right */
+  .somna-md { overflow-x: clip; max-width: 100%; }
+  :has(> .somna-md) { overflow-x: hidden; }
   .somna-md {
     --smd-mint: #f3feee;
     --smd-lav: #afbdf8;
