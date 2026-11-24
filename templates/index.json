@@ -1969,7 +1969,7 @@
         "error_label": "Couldn’t add to cart. Please try again.",
         "sold_out_label": "Sold out",
         "bar_title": "Start Subscribe & Save",
-        "bar_text": "From $19.95 a box",
+        "bar_text": "$19.95 first box, then $22.95",
         "bar_link": "shopify://products/sleep-bundle",
         "background_color": "#000000",
         "text_color": "#f3feee",
@@ -2437,7 +2437,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>It delivers automatically on your chosen schedule at up to 60% off, and you can skip, pause, or cancel anytime.</p>",
+                    "text": "<p>It delivers automatically on your chosen schedule. Strips and Tape: your first box is $19.95, then each pack renews at $22.95, still less than the $24.95 one-time price. Bundles stay the same price every delivery. Skip, pause or cancel anytime.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",

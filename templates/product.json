@@ -136,7 +136,12 @@
         "photos_skip": "mouth-tape:nasalstrip",
         "ship_line": "3 free gifts on 2+ packs",
         "trust_2": "7–9 business days · cancel anytime",
-        "sticky_banner": "3 FREE GIFTS on 2+ packs"
+        "sticky_banner": "3 FREE GIFTS on 2+ packs",
+        "first_box_products": [
+          "nasal-strips",
+          "mouth-tape"
+        ],
+        "first_box_off": "1 Bag = 3\n2 Bags = 5\n4 Bags = 7"
       }
     },
     "recently_viewed": {
