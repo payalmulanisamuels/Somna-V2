@@ -51,6 +51,20 @@
   if best == nil
     assign best_variant = first_variant | default: p.selected_or_first_available_variant
     assign best = best_variant.price
+  else
+    # Strips and Tape: first-box Subscribe & Save price, same as the product page (1 Bag $3 off, 2 Bags $5, 4 Bags $7)
+    if p.handle == 'nasal-strips' or p.handle == 'mouth-tape'
+      assign fb_off = 0
+      case best_variant.title
+        when '1 Bag'
+          assign fb_off = 300
+        when '2 Bags'
+          assign fb_off = 500
+        when '4 Bags'
+          assign fb_off = 700
+      endcase
+      assign best = best | minus: fb_off
+    endif
   endif
   assign compare = best_variant.compare_at_price | default: 0
   if compare <= best
@@ -268,6 +282,12 @@
     color: #b9b9b9;
     opacity: 1;
   }
+
+  /* rating line small enough to show in full on the two-up cards */
+  .somna-md-card--best .somna-md-card__rating,
+  .somna-md-card--best .somna-md-card__rating * { font-size: 11px !important; line-height: 1.2 !important; }
+  .somna-md-card--best .somna-md-card__rating .somna-stars-line__stars,
+  .somna-md-card--best .somna-md-card__rating [class*='stars'] { letter-spacing: 0 !important; }
 
   .somna-md-card--best .somna-md-card__title {
     font-size: 12px;
