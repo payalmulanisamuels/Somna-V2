@@ -3686,17 +3686,17 @@
   .somna-pdp-hero__dots { display: none; }
   @media screen and (max-width: 749px) {
     /* phones: the whole photo (its own shape, never cropped) with a row of thumbnails under it, buy panel just below, denser type */
-    /* thumbnails in a column on the left, main photo on the right; the column scrolls and is as tall as the photo */
-    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__gallery { grid-template-columns: 58px minmax(0, 1fr); gap: 8px; align-items: start; }
-    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__main { grid-column: 2; grid-row: 1; }
+    /* main photo on top, thumbnails in one scrolling row under it */
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__gallery { grid-template-columns: minmax(0, 1fr); gap: 8px; align-items: start; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__main { grid-column: 1; grid-row: 1; }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__thumbs {
-      display: grid; grid-column: 1; grid-row: 1; order: 0; align-self: stretch;
-      grid-auto-flow: row; grid-auto-columns: auto; grid-auto-rows: 58px; gap: 6px;
-      height: 0; min-height: calc(100% - 34px); margin: 34px 0 0;
-      overflow-x: hidden; overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none;
+      display: grid; grid-column: 1; grid-row: 2; order: 2; align-self: start;
+      grid-auto-flow: column; grid-auto-columns: calc((100% - 4 * 6px) / 5); grid-auto-rows: auto; gap: 6px;
+      height: auto; min-height: 0; margin: 0;
+      overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none;
     }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__thumbs::-webkit-scrollbar { display: none; }
-    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__thumb { width: 58px; height: 58px; aspect-ratio: 1; border-radius: 10px; scroll-snap-align: start; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__thumb { width: 100%; height: auto; aspect-ratio: 1; border-radius: 10px; scroll-snap-align: start; }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__thumb[aria-current='true'] { outline: 2px solid #0b0f1d; outline-offset: -2px; }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__dots { display: none; }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__main { width: 100%; height: auto; aspect-ratio: auto; }
