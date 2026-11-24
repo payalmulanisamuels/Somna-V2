@@ -102,6 +102,12 @@
       if (window.ResizeObserver) new ResizeObserver(update).observe(ul);
       var labels = { from: {{ s.price_prefix | json }}, sub: {{ s.subscribe_label | json }}, cta: {{ s.button_label | json }} };
       var onceOff = {{ settings.somna_once_discount | default: 0 }};
+      // first-box Subscribe & Save discount (same as the product page): handle -> { pack name: cents off }
+      var fbHandles = {{ s.first_box_handles | default: '' | split: ',' | json }}.map(function (h) { return h.trim(); });
+      var fbOff = {};
+      {{ s.first_box_off | default: '' | newline_to_br | split: '<br />' | json }}.forEach(function (r) {
+        var parts = r.split('='); if (parts.length > 1) fbOff[parts[0].trim()] = Math.round(parseFloat(parts[1]) * 100) || 0;
+      });
       // star rating per product (Judge.me, snippets/somna-rating), keyed by handle
       var ratings = {
         {%- for rp in collections.all.products -%}
@@ -141,7 +147,8 @@
           var low = { price: p.price_min, compare: 0 };
           (p.variants || []).forEach(function (v) {
             var cands = [hasPlans ? Math.round(v.price * (100 - onceOff) / 100) : v.price];
-            (v.selling_plan_allocations || []).forEach(function (a) { cands.push(a.price); });
+            var off = fbHandles.indexOf(p.handle) > -1 ? (fbOff[v.title] || fbOff[v.public_title] || 0) : 0;
+            (v.selling_plan_allocations || []).forEach(function (a) { cands.push(a.price - off); });
             var best = Math.min.apply(null, cands);
             if (best <= low.price) low = { price: best, compare: Math.max(v.price, v.compare_at_price || 0) };
           });
@@ -479,6 +486,20 @@
       "id": "price_prefix",
       "label": "Price prefix",
       "default": "From"
+    },
+    {
+      "type": "text",
+      "id": "first_box_handles",
+      "label": "First-box discount: product handles",
+      "info": "Comma separated. Their Subscribe & Save price shows the first-box price, like the product page.",
+      "default": "nasal-strips, mouth-tape"
+    },
+    {
+      "type": "textarea",
+      "id": "first_box_off",
+      "label": "First-box discount: amount off per pack",
+      "info": "One per line: pack name = amount off. E.g. 1 Bag = 3",
+      "default": "1 Bag = 3\n2 Bags = 5\n4 Bags = 7"
     },
     {
       "type": "text",
