@@ -43,6 +43,44 @@
         .somna-policy-band__pills a { transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.15s ease; }
         .somna-policy-band__pills a:active { transform: scale(0.97); }
       </style>
+      {%- comment -%} tabs switch the policy in place: the page under the tabs fades out, the next policy (fetched, or
+        already loaded on hover) fades in, the address bar updates; Back/Forward work. Falls back to a normal link. {%- endcomment -%}
+      <script>
+        (function () {
+          if (window.__somnaPolicyTabs) return; window.__somnaPolicyTabs = true;
+          var cache = {};
+          var get = function (url) { return cache[url] || (cache[url] = fetch(url, { credentials: 'same-origin' }).then(function (r) { if (!r.ok) throw 0; return r.text(); })); };
+          var main = function (doc) { return doc.querySelector('main') || doc.querySelector('.content-for-layout'); };
+          var swap = function (url, push) {
+            var cur = main(document); if (!cur) { location.href = url; return; }
+            cur.style.transition = 'opacity 0.2s ease'; cur.style.opacity = '0';
+            Promise.all([get(url), new Promise(function (r) { setTimeout(r, 200); })]).then(function (res) {
+              var doc = new DOMParser().parseFromString(res[0], 'text/html'), next = main(doc);
+              if (!next) { location.href = url; return; }
+              cur.innerHTML = next.innerHTML;
+              document.title = doc.title;
+              if (push) history.pushState({ somnaPolicy: url }, '', url);
+              var band = cur.querySelector('.somna-policy-band__pills');
+              var y = band ? band.getBoundingClientRect().top : 0;
+              if (y < 0 || y > window.innerHeight * 0.6) { var sc = document.querySelector('.page-wrapper') || document.scrollingElement; sc.scrollTop = 0; }
+              requestAnimationFrame(function () { cur.style.opacity = '1'; });
+            }).catch(function () { location.href = url; });
+          };
+          document.addEventListener('mouseover', function (e) { var a = e.target.closest && e.target.closest('.somna-policy-band__pills a'); if (a) get(a.href); });
+          document.addEventListener('touchstart', function (e) { var a = e.target.closest && e.target.closest('.somna-policy-band__pills a'); if (a) get(a.href); }, { passive: true });
+          document.addEventListener('click', function (e) {
+            var a = e.target.closest && e.target.closest('.somna-policy-band__pills a');
+            if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+            e.preventDefault();
+            if (a.getAttribute('aria-current') === 'page') return;
+            document.querySelectorAll('.somna-policy-band__pills a').forEach(function (x) { x.removeAttribute('aria-current'); });
+            a.setAttribute('aria-current', 'page');
+            swap(a.href, true);
+          });
+          history.replaceState({ somnaPolicy: location.href }, '');
+          window.addEventListener('popstate', function (e) { if (e.state && e.state.somnaPolicy) swap(e.state.somnaPolicy, false); });
+        })();
+      </script>
     {%- endif -%}
   </div>
 </div>
