@@ -168,8 +168,8 @@
   },
   "order": [
     "header_announcements_9jGBFp",
-    "somna_countdown",
     "somna_quiz_bar",
-    "header_section"
+    "header_section",
+    "somna_countdown"
   ]
 }
