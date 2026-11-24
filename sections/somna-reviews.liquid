@@ -1873,6 +1873,41 @@
     .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__body p { font-size: 12px; }
     .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__who { padding-bottom: 11px; font-size: 10px; }
   }
+
+  /* ===== Product page: Judge.me review widget styled like the homepage cards =====
+     Judge.me lays out its own masonry (absolute positions from its script); this only sets colours,
+     card surface, inner spacing and type, so its measurements stay correct. */
+  .somna-reviews .jdgm-horizon-widget { color: var(--somna-rv-fg); }
+  .somna-reviews .jdgm-horizon-widget .jm-review-widget__header,
+  .somna-reviews .jdgm-horizon-widget .jm-review-widget-minimal-header__title { color: var(--somna-rv-fg); }
+  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item-inner { padding: 8px; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card {
+    overflow: hidden;
+    border-radius: 14px;
+    background: #fff;
+    color: #171717;
+    box-shadow: 0 2px 9px rgb(0 0 0 / 0.10);
+  }
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card__content { padding: 16px 16px 18px; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card * { color: inherit; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card .jm-star-rating,
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card .jm-star-rating * { color: #f5c242; fill: currentColor; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card__title {
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 18px;
+    line-height: 1.15;
+    color: #171717;
+  }
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card p:not(.jdgm-review-card__title) { color: #555; font-size: 13px; line-height: 1.5; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card a,
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card button { color: #171717; }
+  @media screen and (max-width: 749px) {
+    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item-inner { padding: 5px; }
+    .somna-reviews .jdgm-horizon-widget .jdgm-review-card__content { padding: 11px 11px 13px; }
+    .somna-reviews .jdgm-horizon-widget .jdgm-review-card__title { font-size: 15px; }
+    .somna-reviews .jdgm-horizon-widget .jdgm-review-card p:not(.jdgm-review-card__title) { font-size: 12px; }
+  }
 {% endstylesheet %}
 
 <script>
