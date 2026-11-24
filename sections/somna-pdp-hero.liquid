@@ -355,8 +355,8 @@
       {%- endcapture -%}
       {%- if s.bf_layout -%}
         <div class="somna-pdp-hero__head">
-          <h1 class="somna-pdp-hero__title"><span class="somna-pdp-hero__brand">{{ s.brand }}</span> {{ product.title }}</h1>
           {{ rating_html }}
+          <h1 class="somna-pdp-hero__title"><span class="somna-pdp-hero__brand">{{ s.brand }}</span> {{ product.title }}</h1>
         </div>
       {%- else -%}
         {{ rating_html }}
@@ -3580,9 +3580,9 @@
   .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge span { max-width: none; font-size: clamp(30px, 3.125vw, 40px); line-height: 1.1; white-space: nowrap; }
   .somna-pdp-hero--bf .somna-pdp-hero__badge small { margin-top: 2px; font-size: clamp(12px, 1.17vw, 15px); font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
   /* title with the rating on its right */
-  .somna-pdp-hero--bf .somna-pdp-hero__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 6px 20px; margin-top: 14px; }
+  .somna-pdp-hero--bf .somna-pdp-hero__head { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-top: 14px; }
   .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__title { flex: 0 1 auto; width: auto; margin: 0; font-size: clamp(2.25rem, 3.4vw, 3.5rem); line-height: 1.15; }
-  .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__rating { margin: 0 0 8px; color: #f3feee; font-size: 1.125rem; font-weight: 400; white-space: nowrap; }
+  .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__rating { margin: 0; color: #f3feee; font-size: 1.125rem; font-weight: 400; white-space: nowrap; }
   .somna-pdp-hero--bf .somna-pdp-hero__rating-stars { color: #f5c84c; }
   /* benefits as small chips */
   .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__features { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 18px 0 0; padding: 0; border: 0; font-size: 1.125rem; }
@@ -3637,7 +3637,7 @@
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge span { font-size: clamp(20px, 1.6vw, 24px); }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__badge small { font-size: 10px; }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__title { font-size: clamp(2rem, 2.6vw, 2.625rem); }
-    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__rating { margin-bottom: 6px; font-size: 1rem; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__rating { margin-bottom: 0; font-size: 1rem; }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__features { gap: 6px 18px; margin-top: 14px; font-size: 1rem; }
     .somna-pdp-hero--bf .somna-pdp-hero__offer { margin-top: 20px; padding: 6px 16px 4px; font-size: clamp(0.9375rem, 1.2vw, 1.1875rem); box-shadow: 5px 5px 0 #afbdf8; }
     .somna-pdp-hero--bf .somna-pdp-hero__nocode { margin-top: 12px; padding: 4px 14px; font-size: 0.9375rem; }
@@ -3721,7 +3721,7 @@
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__panel { position: relative; z-index: 2; margin-top: 12px; border-radius: 24px 24px 0 0; }
     .somna-pdp-hero--bf .somna-pdp-hero__head { margin-top: 2px; }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__title { font-size: 2rem; }
-    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__rating { margin-bottom: 4px; font-size: 0.875rem; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__rating { margin-bottom: 0; font-size: 0.875rem; }
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__features { gap: 4px 14px; margin-top: 8px; font-size: 0.875rem; }
     .somna-pdp-hero__offer { margin-top: 14px; padding: 5px 12px 3px; font-size: 0.9375rem; box-shadow: 3px 3px 0 #afbdf8; white-space: nowrap; }
     .somna-pdp-hero__nocode { gap: 6px; margin-top: 8px; padding: 3px 11px; font-size: 0.8125rem; }
