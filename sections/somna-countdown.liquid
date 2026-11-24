@@ -60,6 +60,12 @@
 </somna-countdown>
 
 {%- if template.name == 'product' and section.settings.pdp_land_scroll -%}
+  <style>
+    /* product pages: the header scrolls away (not sticky), so on arrival the page can start at this countdown bar,
+       like ryzesuperfoods.com; the photo column then sticks just below the top of the screen */
+    #header-group .header-section { position: relative !important; top: auto !important; }
+    @media screen and (min-width: 990px) { .somna-pdp-hero__gallery-wrap { top: 16px !important; } }
+  </style>
   <script>
     /* product pages: on arrival, scroll past the announcement bar so the countdown sits right under the sticky
        header and more of the product shows (like ryzesuperfoods.com). Skipped when the visitor came with a #link,
