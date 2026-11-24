@@ -9,6 +9,59 @@
  */
 {
   "sections": {
+    "bf_hero": {
+      "type": "somna-bf-hero",
+      "settings": {
+        "image": "shopify://shop_images/somna-v2-hero-pouches.png",
+        "image_mobile": "shopify://shop_images/somna-v2-hero-mobile.jpg",
+        "ticket": "Pre-Black Friday",
+        "ticket_sub": "Discount applied ✓",
+        "heading": "60% off.",
+        "subheading": "With Subscribe & Save",
+        "tagline": "Small change, softer nights. Strips for your nose and tape for your lips.",
+        "price_product": "nasal-strips",
+        "price_line": "From [price] a bag · One-time 50% off",
+        "price_line_mobile": "From [price] a bag · One-time 50% off\n3 free gifts on 2+ packs",
+        "benefits": "Drug-free\n30-Night guarantee\n3 free gifts on 2+ packs",
+        "button_label": "Shop the sale",
+        "button_link": "shopify://pages/black-friday-sale",
+        "moon_text": "[nights] nights left · ends [date]",
+        "review_products": [
+          "nasal-strips",
+          "sleep-bundle",
+          "mouth-tape",
+          "the-colour-set",
+          "season-bundle"
+        ],
+        "reviews_line": "[stars] [rating] · [count] reviews",
+        "quote": "“Easy to put on and it stays on all night.” Sarah M. ✓ Verified buyer",
+        "guarantee_mobile": "30-Night Money-Back Guarantee",
+        "background_color": "#0b0f1d",
+        "padding_top": 72,
+        "padding_bottom": 96
+      }
+    },
+    "recently_viewed": {
+      "type": "somna-recently-viewed",
+      "settings": {
+        "mode": "show",
+        "layout": "compact",
+        "threshold": 3,
+        "max_products": 8,
+        "eyebrow": "Recently viewed",
+        "heading": "Still thinking about it?",
+        "price_prefix": "From",
+        "subscribe_label": "Subscribe & Save",
+        "button_label": "Shop now",
+        "prev_label": "Previous products",
+        "next_label": "Next products",
+        "background_color": "#0b0f1d",
+        "card_color": "#f3feee",
+        "button_color": "#afbdf8",
+        "padding_top": 36,
+        "padding_bottom": 48
+      }
+    },
     "wave_navy_mint": {
       "type": "somna-wave",
       "settings": {
@@ -17,6 +70,7 @@
         "shape": "drip-1",
         "overlap": false,
         "flip": false,
+        "mobile_full": false,
         "drops": true,
         "animate": true,
         "roll": 8,
@@ -56,6 +110,13 @@
       ],
       "settings": {
         "eyebrow": "[count] reviews from people sleeping better with Somna.",
+        "review_products": [
+          "nasal-strips",
+          "sleep-bundle",
+          "mouth-tape",
+          "the-colour-set",
+          "season-bundle"
+        ],
         "avatar_1": "shopify://shop_images/somna-v2-hero-reviewer-1.jpg",
         "avatar_2": "shopify://shop_images/somna-v2-hero-reviewer-2.jpg",
         "avatar_3": "shopify://shop_images/somna-v2-hero-reviewer-3.jpg",
@@ -77,14 +138,7 @@
         "padding_top": 24,
         "padding_bottom": 16,
         "wave_color": "#000000",
-        "wave_shape": "drip-2",
-        "review_products": [
-          "nasal-strips",
-          "sleep-bundle",
-          "mouth-tape",
-          "the-colour-set",
-          "season-bundle"
-        ]
+        "wave_shape": "drip-2"
       }
     },
     "match": {
@@ -348,10 +402,13 @@
             "column_4_image": "shopify://shop_images/image_1.png",
             "column_4_label": "Nasal dilators",
             "highlight": true,
+            "show_names": false,
             "only_on_match": false,
             "eyebrow": "",
             "heading": "",
-            "text": ""
+            "text": "",
+            "sticker": "",
+            "note": ""
           }
         },
         "tab_tape": {
@@ -367,10 +424,13 @@
             "column_4_image": "shopify://shop_images/somna-v2-compare-mouth-guard.png",
             "column_4_label": "Mouthguards",
             "highlight": true,
+            "show_names": false,
             "only_on_match": false,
             "eyebrow": "",
             "heading": "",
-            "text": ""
+            "text": "",
+            "sticker": "",
+            "note": ""
           }
         },
         "row_1": {
@@ -378,6 +438,7 @@
           "settings": {
             "tab": "2",
             "label": "Drug-free",
+            "total": false,
             "column_1": true,
             "column_2": true,
             "column_3": true,
@@ -393,6 +454,7 @@
           "settings": {
             "tab": "2",
             "label": "Nothing in your mouth",
+            "total": false,
             "column_1": true,
             "column_2": true,
             "column_3": true,
@@ -408,6 +470,7 @@
           "settings": {
             "tab": "2",
             "label": "Nothing around your head",
+            "total": false,
             "column_1": true,
             "column_2": true,
             "column_3": false,
@@ -423,6 +486,7 @@
           "settings": {
             "tab": "2",
             "label": "Made for lips",
+            "total": false,
             "column_1": true,
             "column_2": false,
             "column_3": false,
@@ -438,6 +502,7 @@
           "settings": {
             "tab": "2",
             "label": "Pairs with Nasal Strips",
+            "total": false,
             "column_1": true,
             "column_2": false,
             "column_3": false,
@@ -453,6 +518,7 @@
           "settings": {
             "tab": "1",
             "label": "Drug-free",
+            "total": false,
             "column_1": true,
             "column_2": true,
             "column_3": false,
@@ -468,6 +534,7 @@
           "settings": {
             "tab": "1",
             "label": "Nothing inside your nose",
+            "total": false,
             "column_1": true,
             "column_2": true,
             "column_3": true,
@@ -483,6 +550,7 @@
           "settings": {
             "tab": "1",
             "label": "Structural strip design",
+            "total": false,
             "column_1": true,
             "column_2": false,
             "column_3": false,
@@ -498,6 +566,7 @@
           "settings": {
             "tab": "1",
             "label": "Pairs with Mouth Tape",
+            "total": false,
             "column_1": true,
             "column_2": false,
             "column_3": false,
@@ -513,6 +582,7 @@
           "settings": {
             "tab": "1",
             "label": "Three colors to match you",
+            "total": false,
             "column_1": true,
             "column_2": false,
             "column_3": false,
@@ -1770,6 +1840,7 @@
         "shape": "drip-7",
         "overlap": false,
         "flip": false,
+        "mobile_full": false,
         "drops": true,
         "animate": true,
         "roll": 8,
@@ -2643,11 +2714,143 @@
         "shape": "drip-10",
         "overlap": false,
         "flip": false,
+        "mobile_full": false,
         "drops": true,
         "animate": true,
         "roll": 8,
         "height": 140,
         "height_mobile": 48
+      }
+    },
+    "reviews": {
+      "type": "somna-reviews",
+      "blocks": {
+        "photo_1": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-review-photo-1.png",
+            "alt": ""
+          }
+        },
+        "photo_2": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-review-photo-2.png",
+            "alt": ""
+          }
+        },
+        "photo_3": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-review-photo-3.png",
+            "alt": ""
+          }
+        },
+        "photo_4": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-review-photo-4.png",
+            "alt": ""
+          }
+        },
+        "photo_5": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/somna-v2-review-photo-5.png",
+            "alt": ""
+          }
+        }
+      },
+      "block_order": [
+        "photo_1",
+        "photo_2",
+        "photo_3",
+        "photo_4",
+        "photo_5"
+      ],
+      "settings": {
+        "eyebrow": "Reviews",
+        "heading": "<p>What <em>sleepers</em> are saying</p>",
+        "accent_color": "#afbdf8",
+        "background_color": "#000000",
+        "text_color": "#f3feee",
+        "card_color": "#f3feee",
+        "card_text_color": "#0b1a45",
+        "star_color": "#f5c242",
+        "max_width": 1000,
+        "show_edges": true,
+        "padding_top": 24,
+        "padding_bottom": 32,
+        "padding_top_mobile": 8,
+        "padding_bottom_mobile": 16,
+        "top_wave": false,
+        "top_wave_color": "",
+        "top_wave_shape": "drip-10",
+        "bottom_wave": false,
+        "bottom_wave_color": "",
+        "bottom_wave_shape": "drip-7",
+        "show_featured": true,
+        "featured_source": "settings",
+        "featured_title": "Hooked from bag one.",
+        "featured_text": "I bought one bag to try. Now I'm on Autoship and I've sent a pack to my sister.",
+        "featured_name": "Priya S.",
+        "featured_avatar": "shopify://shop_images/somna-v2-review-avatar-1.png",
+        "featured_verified": "Verified buyer.",
+        "featured_product": "Sleep bundle",
+        "featured_rating": 5,
+        "featured_bg": "",
+        "featured_fg": "",
+        "show_summary": true,
+        "summary_source": "judgeme_products",
+        "summary_products": [
+          "nasal-strips",
+          "sleep-bundle",
+          "mouth-tape",
+          "the-colour-set",
+          "season-bundle"
+        ],
+        "count_label": "[count] reviews",
+        "average": "4.6",
+        "show_summary_stars": true,
+        "count": "",
+        "pct_5": 78,
+        "pct_4": 15,
+        "pct_3": 4,
+        "pct_2": 2,
+        "pct_1": 1,
+        "bar_color": "#98a3de",
+        "track_color": "#d8ddd4",
+        "show_gallery": true,
+        "gallery_skip": "casualbathroomnasalstrip",
+        "gallery_more": true,
+        "photo_popup": true,
+        "gallery_limit": 6,
+        "gallery_source": "judgeme_store",
+        "photo_alt": "Photo from [name]'s review",
+        "sheet_url": "https://docs.google.com/spreadsheets/d/1pOrOzI06fWZ82O1l47xT8u4N2zk5FmM9/edit?gid=405744366#gid=405744366",
+        "initial_count": 4,
+        "batch_size": 4,
+        "show_filters": true,
+        "show_review_photos": true,
+        "show_verified": true,
+        "verified_label": "Verified Buyer",
+        "show_product": true,
+        "show_dates": true,
+        "name_format": "short",
+        "samples_in_preview": true,
+        "filters_label": "Filter reviews",
+        "chip_all": "ALL",
+        "chip_5": "5★",
+        "chip_4": "4★",
+        "chip_low": "3 & below",
+        "chip_photos": "with photos",
+        "more_label": "Show more reviews ↓",
+        "app_mobile_more": false,
+        "empty_text": "No reviews match this filter yet.",
+        "error_text": "Reviews couldn't be loaded right now.",
+        "retry_label": "Try again",
+        "sample_note": "Design preview · placeholder content",
+        "chip_active_color": "#afbdf8"
       }
     },
     "wave_black_peri": {
@@ -2658,6 +2861,7 @@
         "shape": "drip-7",
         "overlap": false,
         "flip": false,
+        "mobile_full": false,
         "drops": true,
         "animate": true,
         "roll": 8,
@@ -2824,6 +3028,7 @@
         "shape": "drip-4",
         "overlap": true,
         "flip": false,
+        "mobile_full": false,
         "drops": true,
         "animate": true,
         "roll": 8,
@@ -3207,194 +3412,12 @@
         "shape": "drip-11",
         "overlap": false,
         "flip": false,
+        "mobile_full": false,
         "drops": true,
         "animate": true,
         "roll": 8,
         "height": 140,
         "height_mobile": 48
-      }
-    },
-    "bf_hero": {
-      "type": "somna-bf-hero",
-      "settings": {
-        "image": "shopify://shop_images/somna-v2-hero-pouches.png",
-        "image_mobile": "shopify://shop_images/somna-v2-hero-mobile.jpg",
-        "ticket": "Pre-Black Friday",
-        "ticket_sub": "Discount applied ✓",
-        "heading": "60% off.",
-        "subheading": "With Subscribe & Save",
-        "tagline": "Small change, softer nights. Strips for your nose and tape for your lips.",
-        "price_product": "nasal-strips",
-        "price_line": "From [price] a bag · One-time 50% off",
-        "price_line_mobile": "From [price] a bag · One-time 50% off\n3 free gifts on 2+ packs",
-        "benefits": "Drug-free\n30-Night guarantee\n3 free gifts on 2+ packs",
-        "button_label": "Shop the sale",
-        "button_link": "shopify://pages/black-friday-sale",
-        "moon_text": "[nights] nights left · ends [date]",
-        "review_products": [
-          "nasal-strips",
-          "sleep-bundle",
-          "mouth-tape",
-          "the-colour-set",
-          "season-bundle"
-        ],
-        "reviews_line": "[stars] [rating] · [count] reviews",
-        "quote": "“Easy to put on and it stays on all night.” Sarah M. ✓ Verified buyer",
-        "guarantee_mobile": "30-Night Money-Back Guarantee",
-        "background_color": "#0b0f1d",
-        "padding_top": 72,
-        "padding_bottom": 96
-      }
-    },
-    "recently_viewed": {
-      "type": "somna-recently-viewed",
-      "settings": {
-        "mode": "show",
-        "threshold": 3,
-        "max_products": 8,
-        "eyebrow": "Recently viewed",
-        "heading": "Still thinking about it?",
-        "price_prefix": "From",
-        "subscribe_label": "Subscribe & Save",
-        "button_label": "Shop now",
-        "prev_label": "Previous products",
-        "next_label": "Next products",
-        "background_color": "#0b0f1d",
-        "card_color": "#f3feee",
-        "button_color": "#afbdf8",
-        "padding_top": 36,
-        "padding_bottom": 48,
-        "layout": "compact"
-      }
-    },
-    "reviews": {
-      "type": "somna-reviews",
-      "blocks": {
-        "photo_1": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/somna-v2-review-photo-1.png",
-            "alt": ""
-          }
-        },
-        "photo_2": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/somna-v2-review-photo-2.png",
-            "alt": ""
-          }
-        },
-        "photo_3": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/somna-v2-review-photo-3.png",
-            "alt": ""
-          }
-        },
-        "photo_4": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/somna-v2-review-photo-4.png",
-            "alt": ""
-          }
-        },
-        "photo_5": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/somna-v2-review-photo-5.png",
-            "alt": ""
-          }
-        }
-      },
-      "block_order": [
-        "photo_1",
-        "photo_2",
-        "photo_3",
-        "photo_4",
-        "photo_5"
-      ],
-      "settings": {
-        "eyebrow": "Reviews",
-        "heading": "<p>What <em>sleepers</em> are saying</p>",
-        "accent_color": "#afbdf8",
-        "background_color": "#000000",
-        "text_color": "#f3feee",
-        "card_color": "#f3feee",
-        "card_text_color": "#0b1a45",
-        "star_color": "#f5c242",
-        "max_width": 1000,
-        "show_edges": true,
-        "padding_top": 24,
-        "padding_bottom": 32,
-        "padding_top_mobile": 8,
-        "padding_bottom_mobile": 16,
-        "top_wave": false,
-        "top_wave_color": "",
-        "top_wave_shape": "drip-10",
-        "bottom_wave": false,
-        "bottom_wave_color": "",
-        "bottom_wave_shape": "drip-7",
-        "show_featured": true,
-        "featured_source": "settings",
-        "featured_title": "Hooked from bag one.",
-        "featured_text": "I bought one bag to try. Now I'm on Autoship and I've sent a pack to my sister.",
-        "featured_name": "Priya S.",
-        "featured_avatar": "shopify://shop_images/somna-v2-review-avatar-1.png",
-        "featured_verified": "Verified buyer.",
-        "featured_product": "Sleep bundle",
-        "featured_rating": 5,
-        "featured_bg": "",
-        "featured_fg": "",
-        "show_summary": true,
-        "summary_source": "judgeme_products",
-        "count_label": "[count] reviews",
-        "average": "4.6",
-        "show_summary_stars": true,
-        "count": "",
-        "pct_5": 78,
-        "pct_4": 15,
-        "pct_3": 4,
-        "pct_2": 2,
-        "pct_1": 1,
-        "bar_color": "#98a3de",
-        "track_color": "#d8ddd4",
-        "show_gallery": true,
-        "photo_popup": true,
-        "gallery_limit": 6,
-        "gallery_source": "judgeme_store",
-        "gallery_skip": "casualbathroomnasalstrip",
-        "photo_alt": "Photo from [name]'s review",
-        "sheet_url": "https://docs.google.com/spreadsheets/d/1pOrOzI06fWZ82O1l47xT8u4N2zk5FmM9/edit?gid=405744366#gid=405744366",
-        "initial_count": 4,
-        "batch_size": 4,
-        "show_filters": true,
-        "show_review_photos": true,
-        "show_verified": true,
-        "verified_label": "Verified Buyer",
-        "show_product": true,
-        "show_dates": true,
-        "name_format": "short",
-        "samples_in_preview": true,
-        "filters_label": "Filter reviews",
-        "chip_all": "ALL",
-        "chip_5": "5★",
-        "chip_4": "4★",
-        "chip_low": "3 & below",
-        "chip_photos": "with photos",
-        "more_label": "Show more reviews ↓",
-        "app_mobile_more": false,
-        "empty_text": "No reviews match this filter yet.",
-        "error_text": "Reviews couldn't be loaded right now.",
-        "retry_label": "Try again",
-        "sample_note": "",
-        "chip_active_color": "#afbdf8",
-        "summary_products": [
-          "nasal-strips",
-          "sleep-bundle",
-          "mouth-tape",
-          "the-colour-set",
-          "season-bundle"
-        ]
       }
     }
   },
