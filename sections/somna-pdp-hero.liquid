@@ -384,7 +384,7 @@
         <s data-compare{% if compare == 0 %} hidden{% endif %}>{{ compare | money_without_trailing_zeros }}</s>
         {%- assign pct = 0 -%}
         {%- if compare > 0 -%}{%- assign pct = compare | minus: price | times: 100 | divided_by: compare -%}{%- endif -%}
-        <span class="somna-pdp-hero__save" data-save{% if pct == 0 or s.bf_layout and mode == 'once' %} hidden{% endif %}>{{ s.save_label | replace: '[percent]', pct }}</span>
+        <span class="somna-pdp-hero__save" data-save{% if pct == 0 or s.bf_layout %} hidden{% endif %}>{{ s.save_label | replace: '[percent]', pct }}</span>
         {%- if mf.pdp_night_label != blank and price_nights > 0 -%}
           <span class="somna-pdp-hero__price-night" data-price-night>{{ price | times: 1.0 | divided_by: price_nights | round | money }}{{ mf.pdp_night_label.value }}</span>
         {%- endif -%}
@@ -749,7 +749,7 @@
         const priceNights = Number(this.dataset.priceNights) || 0;
         if (priceNight && priceNights) priceNight.textContent = this.money(Math.round(price / priceNights)) + (this.dataset.nightLabel || '');
         const pct = this.pct(price, v);
-        const save = q('[data-save]'); save.hidden = !pct || (this.mode === 'once' && this.classList.contains('somna-pdp-hero--bf')); save.textContent = this.labels.save.replace('[percent]', pct);
+        const save = q('[data-save]'); save.hidden = !pct || this.classList.contains('somna-pdp-hero--bf'); save.textContent = this.labels.save.replace('[percent]', pct);
         this.querySelectorAll('[data-pack]').forEach((input) => {
           const x = this.variants[Number(input.value)];
           const pr = this.priceOf(x);
