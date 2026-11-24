@@ -354,6 +354,12 @@
           </ul>
         {%- endif -%}
       </div>
+      {%- if s.summary_wave -%}
+        {%- comment -%} wavy bottom edge under the rating summary (the same tear shape, card colour dripping down) {%- endcomment -%}
+        <div class="somna-reviews__tear somna-reviews__tear--bottom" aria-hidden="true">
+          <svg viewBox="0 0 1000 60" preserveAspectRatio="none" focusable="false"><path fill="{{ s.card_color }}" d="M0,0 L0.0,14.9 L13.3,23.2 L26.5,36.5 L39.8,46.4 L53.1,53.1 L66.3,56.4 L79.6,54.7 L92.9,51.4 L106.1,46.4 L119.4,39.8 L132.7,34.8 L145.9,33.2 L159.2,49.8 L172.5,59.7 L185.7,53.1 L199.0,41.5 L212.3,34.8 L225.5,33.2 L245.4,34.8 L265.3,31.5 L285.2,23.2 L298.5,26.5 L318.4,44.8 L331.7,49.8 L351.6,41.5 L371.5,29.9 L391.4,28.2 L411.3,34.8 L437.8,38.1 L457.7,36.5 L471.0,21.6 L484.2,8.3 L504.1,28.2 L524.0,43.1 L543.9,49.8 L563.8,48.1 L583.7,43.1 L603.6,34.8 L623.5,26.5 L636.8,24.9 L650.1,43.1 L663.3,53.1 L683.3,43.1 L703.2,28.2 L723.1,26.5 L756.2,26.5 L776.1,19.9 L796.0,13.3 L815.9,31.5 L835.8,43.1 L855.7,36.5 L875.6,24.9 L895.5,19.9 L915.4,23.2 L942.0,28.2 L968.5,31.5 L988.4,16.6 L1000,1.7 L1000,0 Z"/></svg>
+        </div>
+      {%- endif -%}
     {%- endif -%}
 
     {%- if s.show_filters and use_app == false -%}
@@ -496,6 +502,11 @@
     line-height: 0;
   }
 
+  .somna-reviews__summary:has(+ .somna-reviews__tear--bottom) { border-end-start-radius: 0; border-end-end-radius: 0; }
+  .somna-reviews__tear--bottom { margin-block: calc(-1 * var(--somna-rv-gap) - 1px) 0; }
+  .somna-reviews__tear--bottom svg { aspect-ratio: 1000 / 60; }
+  /* Judge.me's own photo row above the review cards: hidden (the summary already shows the customer photos) */
+  .somna-reviews .jdgm-horizon-widget .jm-media-preview { display: none !important; }
   .somna-reviews__tear svg {
     display: block;
     width: 100%;
@@ -2093,6 +2104,7 @@
 
     { "type": "header", "content": "Review summary" },
     { "type": "checkbox", "id": "show_summary", "label": "Show summary", "default": true },
+    { "type": "checkbox", "id": "summary_wave", "label": "Wavy bottom edge under the summary", "default": false },
     { "type": "select", "id": "summary_source", "label": "Rating, count and bars from", "options": [{ "value": "settings", "label": "The fields below" }, { "value": "judgeme", "label": "Judge.me (this product's real numbers)" }, { "value": "judgeme_products", "label": "Judge.me (total of the products below)" }], "default": "settings" },
     { "type": "product_list", "id": "summary_products", "label": "Products to total", "info": "Used with \"Judge.me (total of the products below)\": adds up their review counts and weights the average and bars by count." },
     { "type": "text", "id": "count_label", "label": "Judge.me count text", "default": "[count] reviews", "info": "[count] is the number of Judge.me reviews." },
