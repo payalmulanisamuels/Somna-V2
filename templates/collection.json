@@ -535,7 +535,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>It delivers automatically on your chosen schedule at up to 60% off, and you can skip, pause, or cancel anytime.</p>",
+                    "text": "<p>It delivers automatically on your chosen schedule. Strips and Tape: your first box is $19.95, then each pack renews at $22.95, still less than the $24.95 one-time price. Bundles stay the same price every delivery. Skip, pause or cancel anytime.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -575,7 +575,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>We ship free within the US. Orders arrive in 7–9 business days.</p>",
+                    "text": "<p>$4.95 flat shipping in the US. Orders arrive in 7–9 business days.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",

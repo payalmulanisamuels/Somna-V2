@@ -33,13 +33,6 @@
             "caption": "How I put it on"
           }
         },
-        "perk_1": {
-          "type": "perk",
-          "settings": {
-            "icon": "shipping",
-            "text": "$4.95 shipping"
-          }
-        },
         "perk_2": {
           "type": "perk",
           "settings": {
@@ -87,7 +80,6 @@
         "video_1",
         "video_2",
         "video_3",
-        "perk_1",
         "perk_2",
         "perk_3",
         "sticker_1",
@@ -97,7 +89,7 @@
       ],
       "settings": {
         "drip_edges": true,
-        "badge_text": "60% off",
+        "badge_text": "",
         "sticker_text": "Bestseller",
         "rating_source": "judgeme",
         "verified_label": "Verified Buyer",
@@ -141,7 +133,15 @@
           "nasal-strips",
           "mouth-tape"
         ],
-        "photos_skip": "mouth-tape:nasalstrip"
+        "photos_skip": "mouth-tape:nasalstrip",
+        "ship_line": "3 free gifts on 2+ packs",
+        "trust_2": "7–9 business days · cancel anytime",
+        "sticky_banner": "3 FREE GIFTS on 2+ packs",
+        "first_box_products": [
+          "nasal-strips",
+          "mouth-tape"
+        ],
+        "first_box_off": "1 Bag = 3\n2 Bags = 5"
       }
     },
     "recently_viewed": {
@@ -232,7 +232,8 @@
         "padding_top": 24,
         "padding_bottom": 40,
         "wave_color": "#0b0f1d",
-        "wave_shape": "drip-6"
+        "wave_shape": "drip-6",
+        "steps_hide_list": true
       }
     },
     "compare": {
@@ -431,17 +432,6 @@
             "column_3_text": "3"
           }
         },
-        "bsrow_4": {
-          "type": "row",
-          "settings": {
-            "tab": "3",
-            "label": "Shipping",
-            "total": false,
-            "column_1_text": "$4.95",
-            "column_2_text": "$14.85",
-            "column_3_text": "$14.85"
-          }
-        },
         "bsrow_5": {
           "type": "row",
           "settings": {
@@ -612,7 +602,6 @@
         "bsrow_1",
         "bsrow_2",
         "bsrow_3",
-        "bsrow_4",
         "bsrow_5",
         "csrow_1",
         "csrow_2",
@@ -1116,7 +1105,7 @@
         "summary_source": "judgeme",
         "average": "4.6",
         "show_summary_stars": true,
-        "count": "3600+ reviews",
+        "count": "",
         "pct_5": 78,
         "pct_4": 15,
         "pct_3": 4,
@@ -1128,8 +1117,8 @@
         "photo_popup": true,
         "gallery_limit": 6,
         "sheet_url": "https://docs.google.com/spreadsheets/d/1pOrOzI06fWZ82O1l47xT8u4N2zk5FmM9/edit?gid=405744366#gid=405744366",
-        "initial_count": 4,
-        "batch_size": 4,
+        "initial_count": 8,
+        "batch_size": 8,
         "show_filters": true,
         "show_review_photos": true,
         "show_verified": true,
@@ -1138,7 +1127,7 @@
         "show_dates": true,
         "name_format": "short",
         "samples_in_preview": true,
-        "app_mobile_more": true,
+        "app_mobile_more": false,
         "chip_active_color": "#afbdf8"
       }
     },
@@ -1379,7 +1368,7 @@
         "pack_position": 1,
         "use_subscription": true,
         "button_label": "Add to cart",
-        "note": "$4.95 standard shipping · Arrives in 7–9 business days",
+        "note": "Arrives in 7–9 business days",
         "sticker": "[night] a night",
         "nights_per_bag": 30,
         "background_color": "#afbdf8",

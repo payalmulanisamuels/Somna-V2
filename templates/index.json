@@ -76,14 +76,14 @@
         "step_3"
       ],
       "settings": {
-        "eyebrow": "1,000+ people already sleep better with Somna.",
+        "eyebrow": "[count] reviews from people sleeping better with Somna.",
         "avatar_1": "shopify://shop_images/somna-v2-hero-reviewer-1.jpg",
         "avatar_2": "shopify://shop_images/somna-v2-hero-reviewer-2.jpg",
         "avatar_3": "shopify://shop_images/somna-v2-hero-reviewer-3.jpg",
         "avatar_4": "shopify://shop_images/Precision_nasal_strip_design_correction-4.png",
         "avatar_5": "shopify://shop_images/somna_selfie_strips_runner.png",
         "avatars": "shopify://shop_images/somna-v2-steps-avatars.png",
-        "rating_text": "★★★★★ 4.6/5 Average Rating",
+        "rating_text": "★★★★★ [rating]/5 Average Rating",
         "image": "shopify://shop_images/somna-v2-steps-model.png",
         "heading": "Three Steps. Zero Fuss.",
         "text": "<p>From bathroom sink to lights out in under a minute.</p>",
@@ -98,7 +98,14 @@
         "padding_top": 24,
         "padding_bottom": 16,
         "wave_color": "#000000",
-        "wave_shape": "drip-2"
+        "wave_shape": "drip-2",
+        "review_products": [
+          "nasal-strips",
+          "sleep-bundle",
+          "mouth-tape",
+          "the-colour-set",
+          "season-bundle"
+        ]
       }
     },
     "match": {
@@ -1008,7 +1015,7 @@
                 "label": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Loved by 1,000+ Sleepers</p>",
+                    "text": "<p>Loved by sleepers</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "center",
@@ -1983,7 +1990,7 @@
         "error_label": "Couldn’t add to cart. Please try again.",
         "sold_out_label": "Sold out",
         "bar_title": "Start Subscribe & Save",
-        "bar_text": "From $19.95 off your first box.",
+        "bar_text": "$19.95 first box, then $22.95",
         "bar_link": "shopify://products/sleep-bundle",
         "background_color": "#000000",
         "text_color": "#f3feee",
@@ -2291,7 +2298,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>We ship free within the US. Orders arrive in 7–9 business days.</p>",
+                    "text": "<p>$4.95 flat shipping in the US. Orders arrive in 7–9 business days.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -2451,7 +2458,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>It delivers automatically on your chosen schedule at up to 60% off, and you can skip, pause, or cancel anytime.</p>",
+                    "text": "<p>It delivers automatically on your chosen schedule. Strips and Tape: your first box is $19.95, then each pack renews at $22.95, still less than the $24.95 one-time price. Bundles stay the same price every delivery. Skip, pause or cancel anytime.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -2743,11 +2750,11 @@
         "featured_bg": "",
         "featured_fg": "",
         "show_summary": true,
-        "summary_source": "settings",
+        "summary_source": "judgeme_products",
         "count_label": "[count] reviews",
         "average": "4.6",
         "show_summary_stars": true,
-        "count": "1000+ reviews",
+        "count": "",
         "pct_5": 78,
         "pct_4": 15,
         "pct_3": 4,
@@ -2762,8 +2769,8 @@
         "gallery_skip": "casualbathroomnasalstrip",
         "photo_alt": "Photo from [name]'s review",
         "sheet_url": "https://docs.google.com/spreadsheets/d/1pOrOzI06fWZ82O1l47xT8u4N2zk5FmM9/edit?gid=405744366#gid=405744366",
-        "initial_count": 4,
-        "batch_size": 4,
+        "initial_count": 8,
+        "batch_size": 8,
         "show_filters": true,
         "show_review_photos": true,
         "show_verified": true,
@@ -2784,7 +2791,14 @@
         "error_text": "Reviews couldn't be loaded right now.",
         "retry_label": "Try again",
         "sample_note": "",
-        "chip_active_color": "#afbdf8"
+        "chip_active_color": "#afbdf8",
+        "summary_products": [
+          "nasal-strips",
+          "sleep-bundle",
+          "mouth-tape",
+          "the-colour-set",
+          "season-bundle"
+        ]
       }
     },
     "wave_black_peri": {
@@ -3362,8 +3376,8 @@
         "subheading": "With Subscribe & Save",
         "tagline": "Small change, softer nights. Strips for your nose and tape for your lips.",
         "price_product": "nasal-strips",
-        "price_line": "From [price] a bag · One-time 50% off · $4.95 flat shipping in the US",
-        "price_line_mobile": "From [price] a bag · One-time 50% off\n$4.95 flat shipping in the US · 3 free gifts on 2+ packs",
+        "price_line": "From [price] a bag · One-time 50% off",
+        "price_line_mobile": "From [price] a bag · One-time 50% off\n3 free gifts on 2+ packs",
         "benefits": "Drug-free\n30-Night guarantee\n3 free gifts on 2+ packs",
         "button_label": "Shop the sale",
         "button_link": "shopify://pages/black-friday-sale",
