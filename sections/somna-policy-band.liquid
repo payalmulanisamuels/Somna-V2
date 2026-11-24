@@ -34,6 +34,15 @@
           <a href="{{ b.link }}"{% if current %} aria-current="page"{% endif %} {{ block.shopify_attributes }}>{{ b.label | escape }}</a>
         {%- endfor -%}
       </nav>
+      {%- comment -%} switching policy pages feels instant and smooth: the next page is loaded in the background as
+        soon as a tab is hovered or touched, and the page swap cross-fades (browsers that support view transitions) {%- endcomment -%}
+      <script type="speculationrules">{"prerender":[{"source":"document","where":{"selector_matches":".somna-policy-band__pills a:not([aria-current])"},"eagerness":"moderate"}]}</script>
+      <style>
+        @view-transition { navigation: auto; }
+        ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.25s; }
+        .somna-policy-band__pills a { transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.15s ease; }
+        .somna-policy-band__pills a:active { transform: scale(0.97); }
+      </style>
     {%- endif -%}
   </div>
 </div>
