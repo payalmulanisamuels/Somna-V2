@@ -49,17 +49,28 @@
     "somna_countdown": {
       "type": "somna-countdown",
       "settings": {
-        "end_at": "2026-11-23T23:59:00-08:00",
+        "end_at": "2026-11-24T23:59:00-08:00",
         "label": "Pre-Black Friday sale ends in",
-        "date_text": "Mon 23 Nov, 11:59 PM PT",
+        "moon_cycle": 10,
+        "date_text": "Tue 24 Nov, 11:59 PM PT",
         "label_mobile": "Sale ends",
-        "date_mobile": "Mon 23 Nov",
+        "date_mobile": "Tue 24 Nov",
         "bg_color": "#141832",
         "text_color": "#f3feee",
         "accent_color": "#afbdf8",
         "tile_color": "#262c52",
-        "muted_color": "#c3c9e8",
-        "moon_cycle": 10
+        "muted_color": "#c3c9e8"
+      }
+    },
+    "somna_quiz_bar": {
+      "type": "somna-quiz-bar",
+      "settings": {
+        "text": "",
+        "link_label": "Take the quiz",
+        "link": "shopify://pages/quiz",
+        "phones_only": true,
+        "bg_color": "#afbdf8",
+        "text_color": "#000000"
       }
     },
     "header_section": {
@@ -152,17 +163,6 @@
         "collection_inverse_logo": false,
         "text_color_transparent_collection": "",
         "transparent_header_tint": "linear-gradient(90deg, rgba(0, 0, 0, 0.16), rgba(102, 102, 102, 0.16) 100%)"
-      }
-    },
-    "somna_quiz_bar": {
-      "type": "somna-quiz-bar",
-      "settings": {
-        "text": "",
-        "link_label": "Take the quiz",
-        "link": "shopify://pages/quiz",
-        "phones_only": true,
-        "bg_color": "#afbdf8",
-        "text_color": "#000000"
       }
     }
   },
