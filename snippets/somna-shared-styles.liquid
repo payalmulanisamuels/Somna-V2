@@ -3,6 +3,9 @@
   section renders it so the stylesheet below is bundled once with the theme styles.
 {%- endcomment -%}
 {% stylesheet %}
+  /* page sections overlap by 1px so a hairline of the page background never shows between two sections
+     (sections often sit at fractional pixel positions, which can leave a thin white strip while scrolling) */
+  main > .shopify-section + .shopify-section { margin-top: -1px; }
   /* Homepage hero (Figma 4397:1502): the small reviewer photos by "Join 1,000+ people…" are round, ringed in mint
      and overlap, the left one on top. Phones keep their sizes from assets/somna-home-mobile.css. */
   [class*='__avatars'].group-block .image-block__image {
