@@ -41,9 +41,24 @@
       ],
       "variants": [
         {%- assign once_factor = 100 | minus: settings.somna_once_discount -%}
+        {%- assign fb_on = false -%}
+        {%- for fp in s.first_box_products -%}{%- if fp.id == p.id -%}{%- assign fb_on = true -%}{%- endif -%}{%- endfor -%}
+        {%- assign fb_rules = s.first_box_off | newline_to_br | split: '<br />' -%}
         {%- for v in p.variants -%}
-          {%- assign alloc = v.selling_plan_allocations | first -%}
-          { "id": {{ v.id }}, "title": {{ v.title | json }}, "available": {{ v.available | json }}, "once": {{ v.price | times: once_factor | divided_by: 100 }}, "onceCompare": {% assign v_cmp = v.compare_at_price | default: 0 %}{% if v.price > v_cmp %}{{ v.price }}{% else %}{{ v_cmp }}{% endif %}, "sub": {% if alloc %}{{ alloc.price }}{% else %}null{% endif %}, "plan": {% if alloc %}{{ alloc.selling_plan.id }}{% else %}null{% endif %} }{% unless forloop.last %},{% endunless %}
+          {%- liquid
+            assign alloc = v.selling_plan_allocations | first
+            assign fb_v = 0
+            if fb_on
+              for r in fb_rules
+                assign r_parts = r | split: '='
+                assign r_title = r_parts.first | strip
+                if r_parts.size > 1 and r_title == v.title
+                  assign fb_v = r_parts.last | strip | times: 100 | round
+                endif
+              endfor
+            endif
+          -%}
+          { "id": {{ v.id }}, "title": {{ v.title | json }}, "available": {{ v.available | json }}, "once": {{ v.price | times: once_factor | divided_by: 100 }}, "onceCompare": {% assign v_cmp = v.compare_at_price | default: 0 %}{% if v.price > v_cmp %}{{ v.price }}{% else %}{{ v_cmp }}{% endif %}, "sub": {% if alloc %}{{ alloc.price }}{% else %}null{% endif %}, "plan": {% if alloc %}{{ alloc.selling_plan.id }}{% else %}null{% endif %}, "plans": [{%- for a in v.selling_plan_allocations -%}{ "id": {{ a.selling_plan.id }}, "label": {{ a.selling_plan.options.first.value | default: a.selling_plan.name | json }}, "price": {{ a.price | minus: fb_v }}, "renew": {{ a.price }} }{% unless forloop.last %},{% endunless %}{%- endfor -%}] }{% unless forloop.last %},{% endunless %}
         {%- endfor -%}
       ]
     }{% unless forloop.last %},{% endunless %}
@@ -83,6 +98,9 @@
           <fieldset class="somna-buy__modes">
             <legend class="visually-hidden">{{ s.mode_label }}</legend>
             <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="sub" data-mode-input> <span class="somna-buy__mode-label">{{ s.sub_label }}<span class="somna-buy__mode-pct" data-sub-pct></span></span> <span class="somna-buy__mode-price" data-price-sub></span></label>
+            <p class="somna-buy__sub-line" data-sub-line hidden></p>
+            <label class="visually-hidden" for="{{ section.id }}-plan">{{ s.plan_label | default: 'Delivery frequency' }}</label>
+            <select class="somna-buy__plan" id="{{ section.id }}-plan" data-plan hidden></select>
             <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="once" data-mode-input> <span class="somna-buy__mode-label">{{ s.once_label }}<span class="somna-buy__mode-pct" data-once-pct></span></span> <span class="somna-buy__mode-price" data-price-once></span></label>
           </fieldset>
 
@@ -121,7 +139,8 @@
         this.mode = this.dataset.mode === 'once' ? 'once' : 'sub';
         this.v = this.products.map((p) => { const i = p.popularIndex >= 0 && p.variants[p.popularIndex]?.available ? p.popularIndex : p.variants.findIndex((x) => x.available); return Math.max(0, i); });
         this.m = this.products.map(() => 0);
-        this.labels = { add: {{ s.add_label | json }}, added: {{ s.added_label | json }}, error: {{ s.error_label | json }}, soldOut: {{ s.sold_out_label | json }}, night: {{ s.night_label | json }} };
+        this.fi = 0; // chosen delivery frequency (position in each pack's plan list)
+        this.labels = { add: {{ s.add_label | json }}, added: {{ s.added_label | json }}, error: {{ s.error_label | json }}, soldOut: {{ s.sold_out_label | json }}, night: {{ s.night_label | json }}, subLine: {{ s.sub_line | default: '[price] first box · then [renewal] [interval]' | json }}, subSame: {{ s.sub_line_same | default: '[renewal] [interval] · same price every time' | json }} };
         this.money = (c) => somnaMoney(c, this.dataset.currency, this.dataset.locale);
         this.addEventListener('click', this.onClick);
         this.addEventListener('change', this.onChange);
@@ -135,7 +154,8 @@
       }
       esc(t) { const d = document.createElement('div'); d.textContent = t == null ? '' : String(t); return d.innerHTML; }
       bags(v) { const n = parseInt(String(v.title).replace(/[^0-9]/g, ''), 10); return n > 0 ? n : 1; }
-      price(v, mode = this.mode) { const sub = mode === 'sub' && v.plan != null; return { price: sub ? v.sub : v.once, compare: sub ? (v.sub < Math.max(v.once, v.onceCompare) ? Math.max(v.once, v.onceCompare) : 0) : (v.onceCompare > v.once ? v.onceCompare : 0), plan: sub ? v.plan : null }; }
+      planOf(v) { const ps = v.plans || []; return ps.length ? ps[Math.min(this.fi, ps.length - 1)] : null; }
+      price(v, mode = this.mode) { const sub = mode === 'sub' && v.plan != null; const pl = sub ? this.planOf(v) : null; if (pl) { const full = Math.max(v.once, v.onceCompare); return { price: pl.price, compare: pl.price < full ? full : 0, plan: pl.id, renew: pl.renew, label: pl.label }; } return { price: sub ? v.sub : v.once, compare: sub ? (v.sub < Math.max(v.once, v.onceCompare) ? Math.max(v.once, v.onceCompare) : 0) : (v.onceCompare > v.once ? v.onceCompare : 0), plan: sub ? v.plan : null }; }
       pct(v, mode) { const pr = this.price(v, mode); return pr.compare > pr.price ? Math.round((1 - pr.price / pr.compare) * 100) : 0; }
       render(first) {
         const p = this.products[this.p];
@@ -159,7 +179,21 @@
             <span class="somna-buy__pack-name">${this.esc(x.title)}</span><span class="somna-buy__pack-price">${this.money(pr.price)}</span>${pr.compare ? `<s>${this.money(pr.compare)}</s>` : ''}${night}</label>`;
         }).join('');
         this.querySelectorAll('[data-mode-input]').forEach((r) => { r.checked = r.value === this.mode; r.disabled = r.value === 'sub' && v.plan == null; });
-        q('[data-price-sub]').textContent = v.plan != null ? this.money(v.sub) : '';
+        const subP = v.plan != null ? this.price(v, 'sub') : null;
+        q('[data-price-sub]').textContent = subP ? this.money(subP.price) : '';
+        const sel = q('[data-plan]'), line = q('[data-sub-line]'), ps = v.plans || [];
+        if (sel) {
+          const key = ps.map((x) => x.id).join(',');
+          if (sel.dataset.key !== key) { sel.replaceChildren(...ps.map((x) => new Option(x.label, x.id))); sel.dataset.key = key; }
+          sel.selectedIndex = Math.min(this.fi, Math.max(ps.length - 1, 0));
+          sel.hidden = ps.length < 2 || this.mode !== 'sub';
+        }
+        if (line) {
+          const iv = subP && subP.label ? subP.label.trim().replace(/^Deliver(y)?\s+/i, '') : '';
+          const tpl = subP && subP.renew && subP.renew !== subP.price ? this.labels.subLine : this.labels.subSame;
+          line.textContent = subP ? tpl.replace('[price]', this.money(subP.price)).replace('[renewal]', this.money(subP.renew || subP.price)).replace('[interval]', iv).replace(/\s+·\s*$/, '').trim() : '';
+          line.hidden = !subP || this.mode !== 'sub';
+        }
         q('[data-price-once]').textContent = this.money(v.once);
         const sp = v.plan != null ? this.pct(v, 'sub') : 0, op = this.pct(v, 'once');
         q('[data-sub-pct]').textContent = sp ? ` · ${sp}% off` : '';
@@ -184,6 +218,7 @@
       };
       onChange = (e) => {
         if (e.target.matches('[data-pack]')) { this.v[this.p] = Number(e.target.value); if (this.mode === 'sub' && this.products[this.p].variants[this.v[this.p]].plan == null) this.mode = 'once'; this.render(); this.querySelector(`[data-pack][value="${e.target.value}"]`)?.focus(); }
+        if (e.target.matches('[data-plan]')) { this.fi = e.target.selectedIndex; this.render(); this.querySelector('[data-plan]')?.focus(); return; }
         if (e.target.matches('[data-mode-input]')) { this.mode = e.target.value; this.render(); this.querySelector(`[data-mode-input][value="${this.mode}"]`)?.focus(); }
       };
       onKey = (e) => {
@@ -488,6 +523,22 @@
     accent-color: #000;
   }
 
+  .somna-buy__sub-line { margin: -2px 0 4px 34px; font-size: 0.8125rem; line-height: 1.35; opacity: 0.85; }
+  .somna-buy__plan {
+    width: 100%;
+    min-height: 38px;
+    margin: 2px 0 6px;
+    padding: 0 40px 0 10px;
+    border: 1px solid currentColor;
+    border-radius: 6px;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 14px center / 12px 8px;
+    color: #000;
+    font: inherit;
+    font-size: 0.9375rem;
+    appearance: none;
+    cursor: pointer;
+  }
+  .somna-buy__plan[hidden], .somna-buy__sub-line[hidden] { display: none; }
   .somna-buy__mode-price {
     margin-left: auto;
   }
@@ -809,6 +860,12 @@
     { "type": "text", "id": "brand", "label": "Brand before the title", "default": "somna." },
     { "type": "text", "id": "packs_label", "label": "Pack label", "default": "Choose Your Pack" },
     { "type": "text", "id": "night_label", "label": "Per-night suffix", "default": "/night" },
+    { "type": "header", "content": "Subscribe & Save" },
+    { "type": "text", "id": "sub_line", "label": "Line (first box cheaper)", "default": "[price] first box · then [renewal] [interval]" },
+    { "type": "text", "id": "sub_line_same", "label": "Line (same price every time)", "default": "[renewal] [interval] · same price every time" },
+    { "type": "text", "id": "plan_label", "label": "Delivery frequency label (screen readers)", "default": "Delivery frequency" },
+    { "type": "product_list", "id": "first_box_products", "label": "First-box discount: products", "info": "Products with a 'first payment only' subscription discount in Shopify Discounts." },
+    { "type": "textarea", "id": "first_box_off", "label": "First-box discount: amount off per pack", "info": "One per line: pack name = amount off the first box. E.g. 1 Bag = 3" },
     { "type": "text", "id": "mode_label", "label": "Purchase option label (screen readers)", "default": "Purchase option" },
     { "type": "text", "id": "sub_label", "label": "Subscribe label", "default": "Subscribe & Save" },
     { "type": "text", "id": "once_label", "label": "One-time label", "default": "One-time purchase" },
