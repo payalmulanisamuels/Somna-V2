@@ -273,6 +273,7 @@
           -%}
           {%- if how_video != blank and how_video.sources != blank and button_label != blank -%}
             {%- comment -%} the video sits right under the steps with a play button on it; tap plays it in place {%- endcomment -%}
+            {%- if button_label != blank -%}<h3 class="somna-pdp-story__watch-heading">{{ button_label }}</h3>{%- endif -%}
             <somna-inline-video class="somna-pdp-story__player">
               {{ how_video | video_tag: playsinline: true, preload: 'none', class: 'somna-pdp-story__player-video', image_size: '1280x' }}
               <button type="button" class="somna-pdp-story__player-play" data-play aria-label="{{ button_label | escape }}">
