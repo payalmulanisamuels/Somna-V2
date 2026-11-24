@@ -1955,10 +1955,12 @@
   .somna-reviews .jdgm-horizon-widget .jdgm-review-card {
     overflow: hidden;
     border-radius: 14px;
-    background: #fff;
+    background: var(--somna-rv-card, #f3feee) !important;
     color: #171717;
     box-shadow: 0 2px 9px rgb(0 0 0 / 0.10);
   }
+  /* the theme's light mint all the way through the card (Judge.me paints a light grey on the inner boxes) */
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card :is(.jdgm-review-card__content, .jm-box) { background: transparent !important; }
   .somna-reviews .jdgm-horizon-widget .jdgm-review-card__content { padding: 16px 16px 18px; }
   .somna-reviews .jdgm-horizon-widget .jdgm-review-card * { color: inherit; }
   .somna-reviews .jdgm-horizon-widget .jdgm-review-card .jm-star-rating,
