@@ -7,6 +7,7 @@
   phone styles for this page's gifts and FAQ sections (theme Section blocks, so they are styled here).
   @param {string} [handle] - product the prices come from (default nasal-strips)
   @param {string} [meta] - info line shown on phones under the price line
+  @param {number} [first_off] - first-box discount in dollars taken off the Subscribe & Save price (e.g. 3)
 {%- enddoc -%}
 {%- liquid
   assign hp = all_products[handle] | default: all_products['nasal-strips']
@@ -17,6 +18,9 @@
       assign sub = a.price
     endif
   endfor
+  if first_off
+    assign sub = first_off | times: 100 | round | times: -1 | plus: sub
+  endif
   capture once_off
     render 'somna-sale', get: 'once_off'
   endcapture
