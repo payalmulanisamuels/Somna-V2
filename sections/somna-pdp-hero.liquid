@@ -3814,8 +3814,10 @@
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__trust { margin-top: 12px; }
   }
   /* the rating line jumps to the reviews section */
-  .somna-pdp-hero__rating-link { color: inherit; text-decoration: none; cursor: pointer; }
-  .somna-pdp-hero__rating-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .somna-pdp-hero .somna-pdp-hero__rating-link,
+  .somna-pdp-hero .somna-pdp-hero__rating-link:is(:hover, :focus, :active, :visited) { color: #f3feee !important; text-decoration: none; cursor: pointer; }
+  .somna-pdp-hero .somna-pdp-hero__rating-link:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgb(243 254 238 / 0.6); }
+  .somna-pdp-hero .somna-pdp-hero__rating-link .somna-pdp-hero__rating-stars { color: #f5c84c !important; }
   #reviews { scroll-margin-top: calc(var(--somna-cd-height, 0px) + 12px); }
   /* one-line product tagline under the title */
   .somna-pdp-hero__lead { margin: 6px 0 0; max-width: 34em; color: rgb(243 254 238 / 0.82); font-size: clamp(0.9375rem, 1.05vw, 1.0625rem); line-height: 1.45; }
