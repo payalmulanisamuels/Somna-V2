@@ -187,6 +187,8 @@
           {%- endif -%}
           {{ first_image | image_url: width: 1100 | image_tag: data-main: '', loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 1300px) 570px, (min-width: 990px) 445px, (min-width: 750px) 45vw, 100vw', widths: '600, 900, 1100', alt: first_image.alt | default: product.title }}
         {%- endif -%}
+        {%- comment -%} sale layout: the Bestseller sticker sits on the photo's top-left corner {%- endcomment -%}
+        {%- if s.bf_layout and hero_sticker != blank -%}<p class="somna-pdp-hero__sticker somna-pdp-hero__sticker--photo{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}" style="--somna-shake-delay: 0.7s;">{{ hero_sticker }}</p>{%- endif -%}
       </div>
 
       {%- if s.bf_layout and images.size > 1 -%}
@@ -197,7 +199,7 @@
         </div>
       {%- endif -%}
       {%- if s.badge_text != blank -%}<p class="somna-pdp-hero__badge{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}"><span>{{ s.badge_text }}</span>{% if s.bf_layout and s.badge_sub != blank %}<small>{{ s.badge_sub }}</small>{% endif %}</p>{%- endif -%}
-      {%- if hero_sticker != blank -%}<p class="somna-pdp-hero__sticker{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}" style="--somna-shake-delay: 0.7s;">{{ hero_sticker }}</p>{%- endif -%}
+      {%- if hero_sticker != blank and s.bf_layout == false -%}<p class="somna-pdp-hero__sticker{% if s.badge_motion != 'none' %} somna-shake--{{ s.badge_motion }}{% endif %}" style="--somna-shake-delay: 0.7s;">{{ hero_sticker }}</p>{%- endif -%}
     </div>
 
     <div class="somna-pdp-hero__side">
@@ -3830,6 +3832,8 @@
   .somna-pdp-hero .somna-pdp-hero__rating-link:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgb(243 254 238 / 0.6); }
   .somna-pdp-hero .somna-pdp-hero__rating-link .somna-pdp-hero__rating-stars { color: #f5c84c !important; }
   #reviews { scroll-margin-top: calc(var(--somna-cd-height, 0px) + 12px); }
+  /* Bestseller sticker on the photo's top-left, just under the wavy top edge */
+  .somna-pdp-hero .somna-pdp-hero__main .somna-pdp-hero__sticker--photo { position: absolute; z-index: 3; top: calc(var(--somna-drip-h, 56px) + 10px); left: 16px; right: auto; bottom: auto; rotate: -4deg; }
   /* one-line product tagline under the title */
   .somna-pdp-hero__lead { margin: 6px 0 0; max-width: 34em; color: rgb(243 254 238 / 0.82); font-size: clamp(0.9375rem, 1.05vw, 1.0625rem); line-height: 1.45; }
   @media screen and (max-width: 749px) { .somna-pdp-hero__lead { margin-top: 4px; font-size: 0.875rem; } }
