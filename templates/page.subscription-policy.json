@@ -100,7 +100,7 @@
           "type": "item",
           "settings": {
             "heading": "2. Managing Your Subscription",
-            "text": "<p>You can skip an upcoming order, change your product or colour, change your delivery frequency, update your quantity or tier, or update your payment and shipping details at any time from your account — no need to contact support. Visit [Manage my subscription →].</p>"
+            "text": "<p>You can skip an upcoming order, change your product or colour, change your delivery frequency, update your quantity or tier, or update your payment and shipping details at any time from your account — no need to contact support. Visit <a href=\"/account\">Manage my subscription →</a>.</p>"
           }
         },
         "item_3": {
