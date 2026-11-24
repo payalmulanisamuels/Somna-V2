@@ -1442,3 +1442,8 @@
 @media screen and (max-width: 749px) {
   .somna-pdp-story__sound { right: 10px; bottom: 10px; padding: 7px 11px; font-size: 0.75rem; }
 }
+
+/* video layout: "Three steps. Under a minute." on one line, all black */
+.somna-pdp-story--steps-video .somna-pdp-story__heading span { display: inline; }
+.somna-pdp-story--steps-video .somna-pdp-story__heading .is-accent,
+.somna-pdp-story--steps-video .somna-pdp-story__heading span { color: #000; }
