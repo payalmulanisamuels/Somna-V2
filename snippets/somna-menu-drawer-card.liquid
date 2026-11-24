@@ -149,8 +149,8 @@
         </span>
       {%- endif -%}
     </span>
-    {%- comment -%} Bestsellers cards: stars, name and button only (no price line) {%- endcomment -%}
-    <span class="somna-md-card__price"{% if style == 'best' %} hidden{% endif %}>
+    {%- comment -%} Bestsellers and bundle cards: no price line {%- endcomment -%}
+    <span class="somna-md-card__price"{% if style == 'best' or style == 'bundle' %} hidden{% endif %}>
       <span>{{ price_line }}</span>
       {%- if side_line != blank -%}<span>{{ side_line }}</span>{%- endif -%}
     </span>
