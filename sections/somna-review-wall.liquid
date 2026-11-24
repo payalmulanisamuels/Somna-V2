@@ -1,0 +1,227 @@
+{%- comment -%}
+  Review wall (homepage): photo-first review cards in a masonry grid with filter chips.
+  Reads each chosen product's Judge.me data and shows only reviews Judge.me marks as a verified buyer,
+  so the wall fills itself as real order reviews come in. With none yet, nothing shows on the storefront
+  (the theme editor shows a note instead).
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign shown = 0
+  assign total_count = 0
+  assign total_weighted = 0.0
+  assign seen = ''
+-%}
+{%- capture cards -%}
+  {%- for p in s.products -%}
+    {%- assign jm = p.metafields.judgeme.review_widget_data.value -%}
+    {%- if jm == blank -%}{%- continue -%}{%- endif -%}
+    {%- liquid
+      assign pc = jm.number_of_reviews | plus: 0
+      assign total_count = total_count | plus: pc
+      assign total_weighted = jm.average_rating | times: pc | plus: total_weighted
+      assign pool = jm.photo_gallery | concat: jm.reviews
+    -%}
+    {%- for r in pool -%}
+      {%- if shown >= s.max_reviews -%}{%- break -%}{%- endif -%}
+      {%- unless r.verified_buyer == true -%}{%- continue -%}{%- endunless -%}
+      {%- assign key = '|' | append: r.uuid | append: '|' -%}
+      {%- if seen contains key -%}{%- continue -%}{%- endif -%}
+      {%- assign seen = seen | append: key -%}
+      {%- assign rating = r.rating | plus: 0 -%}
+      {%- assign pic = r.pictures_urls | first -%}
+      {%- assign pic_url = pic.huge | default: pic.original -%}
+      {%- assign vid = r.video_thumbnail_urls | first -%}
+      {%- assign media = pic_url | default: vid -%}
+      {%- assign shown = shown | plus: 1 -%}
+      <article class="somna-rwall__card" data-product="{{ p.handle }}" data-rating="{{ rating }}" data-media="{% if media != blank %}1{% else %}0{% endif %}">
+        {%- if media != blank -%}
+          <div class="somna-rwall__media">
+            <img src="{{ media }}" alt="{{ s.photo_alt | replace: '[name]', r.reviewer_name | escape }}" loading="lazy" width="600" height="600">
+            {%- if vid != blank and pic_url == blank -%}<span class="somna-rwall__play" aria-hidden="true">▶</span>{%- endif -%}
+          </div>
+        {%- endif -%}
+        <div class="somna-rwall__body">
+          <p class="somna-rwall__stars" aria-label="{{ rating }} out of 5 stars">{% for i in (1..5) %}<span{% if i > rating %} class="is-off"{% endif %}>★</span>{% endfor %}</p>
+          {%- if r.title != blank -%}<h3 class="somna-rwall__title">“{{ r.title }}”</h3>{%- endif -%}
+          {%- if media == blank and r.body != blank -%}<p class="somna-rwall__text">{{ r.body | strip_html | truncatewords: 30 }}</p>{%- endif -%}
+          <p class="somna-rwall__meta">
+            <span>{{ r.reviewer_name | split: ' ' | first }} {{ r.reviewer_name | split: ' ' | last | slice: 0 }}.</span>
+            <span class="somna-rwall__dot" aria-hidden="true">·</span>
+            <span class="somna-rwall__verified"><svg viewBox="0 0 12 10" width="11" height="9" aria-hidden="true"><path d="M1 5l3.5 3.5L11 1.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ s.verified_label }}</span>
+          </p>
+          {%- if s.show_product -%}<p class="somna-rwall__product">{{ p.title }}</p>{%- endif -%}
+        </div>
+      </article>
+    {%- endfor -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- if shown > 0 or request.design_mode -%}
+<section class="somna-rwall" style="--rw-bg: {{ s.background_color }}; --rw-fg: {{ s.text_color }}; --rw-card: {{ s.card_color }}; --rw-star: {{ s.star_color }}; --rw-pad-t: {{ s.padding_top }}px; --rw-pad-b: {{ s.padding_bottom }}px;">
+  <div class="somna-container somna-rwall__inner">
+    {%- if s.heading != blank -%}<h2 class="somna-rwall__heading">{{ s.heading }}</h2>{%- endif -%}
+
+    {%- if shown == 0 -%}
+      <p class="somna-rwall__empty">{{ 'No verified-buyer reviews yet for the chosen products, so this section is hidden on the storefront. It fills itself as Judge.me collects reviews from real orders.' }}</p>
+    {%- else -%}
+      {%- assign avg = total_weighted | divided_by: total_count | round: 1 -%}
+      <div class="somna-rwall__summary">
+        <span class="somna-rwall__avg">{{ avg }}</span>
+        <span class="somna-rwall__summary-stars" aria-hidden="true">★★★★★</span>
+        <span class="somna-rwall__count">{{ s.count_label | replace: '[count]', total_count }}</span>
+      </div>
+
+      <div class="somna-rwall__chips" role="group" aria-label="{{ s.filter_label | escape }}">
+        <button type="button" class="somna-rwall__chip is-active" data-filter="all" aria-pressed="true">{{ s.all_label }}</button>
+        {%- if s.photos_label != blank -%}<button type="button" class="somna-rwall__chip" data-filter="media" aria-pressed="false">{{ s.photos_label }}</button>{%- endif -%}
+        {%- for p in s.products -%}<button type="button" class="somna-rwall__chip" data-filter="product:{{ p.handle }}" aria-pressed="false">{{ p.title }}</button>{%- endfor -%}
+        {%- if s.low_label != blank -%}<button type="button" class="somna-rwall__chip" data-filter="low" aria-pressed="false">{{ s.low_label }}</button>{%- endif -%}
+      </div>
+
+      <div class="somna-rwall__grid" data-rwall-grid>{{ cards }}</div>
+      <p class="somna-rwall__none" data-rwall-none hidden>{{ s.none_label }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+  (() => {
+    const root = document.currentScript.previousElementSibling;
+    const grid = root?.querySelector('[data-rwall-grid]');
+    if (!grid) return;
+    const none = root.querySelector('[data-rwall-none]');
+    root.addEventListener('click', (e) => {
+      const chip = e.target.closest('[data-filter]');
+      if (!chip) return;
+      const f = chip.dataset.filter;
+      root.querySelectorAll('[data-filter]').forEach((c) => { const on = c === chip; c.classList.toggle('is-active', on); c.setAttribute('aria-pressed', on); });
+      let n = 0;
+      grid.querySelectorAll('.somna-rwall__card').forEach((card) => {
+        const ok = f === 'all'
+          || (f === 'media' && card.dataset.media === '1')
+          || (f === 'low' && Number(card.dataset.rating) <= 3)
+          || (f.startsWith('product:') && card.dataset.product === f.slice(8));
+        card.hidden = !ok;
+        if (ok) n++;
+      });
+      if (none) none.hidden = n > 0;
+    });
+  })();
+</script>
+{%- endif -%}
+
+{% stylesheet %}
+  .somna-rwall {
+    padding-block: var(--rw-pad-t, 64px) var(--rw-pad-b, 64px);
+    background: var(--rw-bg);
+    color: var(--rw-fg);
+  }
+  .somna-rwall__heading {
+    margin: 0 0 12px;
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .somna-rwall__summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    align-items: baseline;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+  .somna-rwall__avg { font-size: clamp(2.25rem, 3.4vw, 3rem); font-weight: 800; line-height: 1; }
+  .somna-rwall__summary-stars { color: var(--rw-star); font-size: 1.375rem; letter-spacing: 2px; }
+  .somna-rwall__count { font-size: 0.9375rem; opacity: 0.8; }
+  .somna-rwall__chips {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .somna-rwall__chips::-webkit-scrollbar { display: none; }
+  .somna-rwall__chip {
+    flex: none;
+    padding: 9px 18px;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+  .somna-rwall__chip.is-active { background: var(--rw-fg); color: var(--rw-bg); border-color: var(--rw-fg); }
+  .somna-rwall__chip:focus-visible { outline: 2px solid var(--rw-star); outline-offset: 2px; }
+
+  /* masonry: columns let cards keep their own height (photo cards taller than text cards) */
+  .somna-rwall__grid { columns: 2; column-gap: 12px; }
+  @media screen and (min-width: 750px) { .somna-rwall__grid { columns: 3; column-gap: 18px; } }
+  @media screen and (min-width: 1100px) { .somna-rwall__grid { columns: 4; column-gap: 20px; } }
+
+  .somna-rwall__card {
+    display: inline-block;
+    width: 100%;
+    margin: 0 0 12px;
+    overflow: hidden;
+    border-radius: 16px;
+    background: var(--rw-card);
+    color: #111;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.08);
+    break-inside: avoid;
+  }
+  @media screen and (min-width: 750px) { .somna-rwall__card { margin-bottom: 18px; } }
+  .somna-rwall__card[hidden] { display: none; }
+  .somna-rwall__media { position: relative; }
+  .somna-rwall__media img { display: block; width: 100%; height: auto; }
+  .somna-rwall__play {
+    position: absolute; inset: 0; margin: auto; display: grid; place-items: center;
+    width: 48px; height: 48px; border-radius: 50%; background: rgb(0 0 0 / 0.55); color: #fff; font-size: 1.125rem;
+  }
+  .somna-rwall__body { padding: 12px 14px 14px; }
+  .somna-rwall__stars { margin: 0 0 6px; color: var(--rw-star); font-size: 0.9375rem; letter-spacing: 1px; }
+  .somna-rwall__stars .is-off { opacity: 0.25; }
+  .somna-rwall__title { margin: 0 0 6px; font-size: 1rem; font-weight: 700; line-height: 1.3; }
+  .somna-rwall__text { margin: 0 0 8px; font-size: 0.875rem; line-height: 1.45; }
+  .somna-rwall__meta { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 0; font-size: 0.8125rem; color: #555; }
+  .somna-rwall__verified { display: inline-flex; gap: 3px; align-items: center; color: #1a7f37; font-weight: 600; }
+  .somna-rwall__product { margin: 6px 0 0; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: #777; }
+  .somna-rwall__none, .somna-rwall__empty { text-align: center; opacity: 0.8; }
+  .somna-rwall__empty { max-width: 560px; margin: 12px auto 0; padding: 16px; border: 1.5px dashed currentColor; border-radius: 12px; font-size: 0.9375rem; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna review wall",
+  "tag": "div",
+  "class": "section-somna-review-wall",
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Real nights, real reviews" },
+    { "type": "product_list", "id": "products", "label": "Products", "limit": 6, "info": "Reviews and filter chips come from these products' Judge.me reviews. Only verified-buyer reviews are shown." },
+    { "type": "range", "id": "max_reviews", "label": "Most reviews shown", "min": 4, "max": 40, "step": 2, "default": 16 },
+    { "type": "text", "id": "count_label", "label": "Count label", "default": "[count] reviews" },
+    { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified" },
+    { "type": "checkbox", "id": "show_product", "label": "Show product name on cards", "default": true },
+    { "type": "header", "content": "Filter chips" },
+    { "type": "text", "id": "filter_label", "label": "Filters label (screen readers)", "default": "Filter reviews" },
+    { "type": "text", "id": "all_label", "label": "All", "default": "All" },
+    { "type": "text", "id": "photos_label", "label": "With photos", "default": "With photos" },
+    { "type": "text", "id": "low_label", "label": "Low ratings", "default": "1–3★" },
+    { "type": "text", "id": "none_label", "label": "No match text", "default": "No reviews match this filter yet." },
+    { "type": "text", "id": "photo_alt", "label": "Photo alt text", "default": "Photo from [name]'s review" },
+    { "type": "header", "content": "Colors and spacing" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#f4f2ec" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#0b0f1d" },
+    { "type": "color", "id": "card_color", "label": "Card", "default": "#ffffff" },
+    { "type": "color", "id": "star_color", "label": "Stars", "default": "#e9a400" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 64 }
+  ],
+  "presets": [{ "name": "Somna review wall" }]
+}
+{% endschema %}
