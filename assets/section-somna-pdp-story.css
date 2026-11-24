@@ -1427,7 +1427,7 @@
   text-transform: uppercase;
 }
 .somna-pdp-story__watch-title .is-accent { color: var(--somna-story-accent, #98a3de); }
-.somna-pdp-story--steps-video .somna-pdp-story__heading { font-size: clamp(1.5rem, 2.7vw, 2.5rem); line-height: 1.25; }
+.somna-pdp-story--steps-video .somna-pdp-story__heading { font-size: clamp(1.125rem, 1.9vw, 1.75rem); line-height: 1.25; }
 .somna-pdp-story__player.is-auto { position: relative; }
 .somna-pdp-story__sound {
   position: absolute; right: 14px; bottom: 14px; z-index: 2;
