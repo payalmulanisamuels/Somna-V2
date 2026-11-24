@@ -70,7 +70,7 @@
         <input type="hidden" name="id" value="{{ v.id }}">
         {%- if plan_id != blank -%}<input type="hidden" name="selling_plan" value="{{ plan_id }}">{%- endif -%}
         <button type="submit" class="somna-pdp-cta__button"{% unless v.available %} disabled{% endunless %}>
-          {%- if v.available -%}{{ s.button_label }} · {{ price_money }}{%- else -%}{{ s.sold_out_label }}{%- endif -%}
+          {%- if v.available -%}{{ s.button_label }}{%- else -%}{{ s.sold_out_label }}{%- endif -%}
         </button>
         <p class="somna-pdp-cta__status" role="status"></p>
       </form>

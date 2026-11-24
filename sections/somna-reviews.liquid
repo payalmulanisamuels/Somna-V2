@@ -51,6 +51,49 @@
     endfor
   endif
 
+  # several products (homepage): total count, average and bars weighted by each product's review count
+  if s.summary_source == 'judgeme_products' and s.summary_products != blank
+    assign t_count = 0
+    assign t_rating = 0.0
+    assign t5 = 0.0
+    assign t4 = 0.0
+    assign t3 = 0.0
+    assign t2 = 0.0
+    assign t1 = 0.0
+    for sp in s.summary_products
+      assign pj = sp.metafields.judgeme.review_widget_data.value
+      if pj and pj.number_of_reviews > 0
+        assign pc = pj.number_of_reviews | plus: 0
+        assign t_count = t_count | plus: pc
+        assign t_rating = pj.average_rating | times: pc | plus: t_rating
+        for h in pj.histogram
+          assign hw = h.percentage | times: pc
+          case h.rating
+            when 5
+              assign t5 = t5 | plus: hw
+            when 4
+              assign t4 = t4 | plus: hw
+            when 3
+              assign t3 = t3 | plus: hw
+            when 2
+              assign t2 = t2 | plus: hw
+            when 1
+              assign t1 = t1 | plus: hw
+          endcase
+        endfor
+      endif
+    endfor
+    if t_count > 0
+      assign sum_avg = t_rating | divided_by: t_count | round: 1
+      assign sum_count = s.count_label | default: '[count] reviews' | replace: '[count]', t_count
+      assign sum_p5 = t5 | divided_by: t_count | round
+      assign sum_p4 = t4 | divided_by: t_count | round
+      assign sum_p3 = t3 | divided_by: t_count | round
+      assign sum_p2 = t2 | divided_by: t_count | round
+      assign sum_p1 = t1 | divided_by: t_count | round
+    endif
+  endif
+
   assign f_title = s.featured_title
   assign f_text = s.featured_text
   assign f_name = s.featured_name
@@ -242,12 +285,19 @@
         {%- endfor -%}
       {%- endfor -%}
       {%- assign jm_photo_list = jm_photos | split: '^' -%}
+      {%- assign has_photo_block = false -%}
+      {%- for block in photo_blocks limit: s.gallery_limit -%}
+        {%- if block.settings.image != blank -%}
+          {%- assign has_photo_block = true -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
       {%- assign has_gallery = false -%}
       {%- if s.show_gallery -%}
-        {%- comment -%} a product without photo reviews shows no photos; the photo blocks are for pages without a product (homepage) {%- endcomment -%}
+        {%- comment -%} Only show the gallery when an actual review photo or configured gallery image exists. {%- endcomment -%}
         {%- if jm_photo_list.size > 0 -%}
           {%- assign has_gallery = true -%}
-        {%- elsif photo_blocks.size > 0 -%}
+        {%- elsif has_photo_block -%}
           {%- if rv_product == blank or s.gallery_source == 'blocks' -%}{%- assign has_gallery = true -%}{%- endif -%}
         {%- endif -%}
       {%- endif -%}
@@ -325,7 +375,7 @@
       {%- if s.app_mobile_more -%}<label class="somna-reviews__more somna-reviews__more--app" for="{{ section.id }}-more" aria-hidden="true">{{ s.more_label | escape }}</label>{%- endif -%}
     {%- else -%}
     <p class="somna-reviews__note" data-note hidden></p>
-    <ul class="somna-reviews__list" role="list" data-list aria-live="polite" aria-busy="true">
+    <ul class="somna-reviews__list" role="list" data-list data-no-reveal aria-live="polite" aria-busy="true">
       {%- if s.sheet_url != blank -%}
         {%- for i in (1..2) -%}<li class="somna-reviews__card somna-reviews__card--skeleton" aria-hidden="true"><span></span><span></span></li>{%- endfor -%}
       {%- endif -%}
@@ -1512,7 +1562,411 @@
     font-size: 1.125rem; line-height: 1.3; pointer-events: none;
   }
   .somna-reviews__gallery li[hidden] { display: none; }
+
+  /* =========================================================
+     REVIEW CARDS — customer-photo grid layout
+     Desktop: 4 columns | tablet: 3 columns | mobile: 2 columns
+     A designed photo placeholder is shown when a review has no image.
+     ========================================================= */
+
+  .somna-reviews__list {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: start;
+    gap: 18px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .somna-reviews__list > .somna-reviews__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #fff;
+    color: #171717;
+    box-shadow: 0 2px 9px rgb(0 0 0 / 0.10);
+  }
+
+  /* Real customer image */
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__photo {
+    display: block;
+    order: 0;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1.04;
+    flex: 0 0 auto;
+    margin: 0;
+    border-radius: 0;
+    object-fit: cover;
+    background: #e8e3da;
+  }
+
+  /* No uploaded photo: the card is text only (no placeholder block) */
+
+  /* Customer avatar photos are used as the full-width card image. */
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__body {
+    display: contents !important;
+  }
+
+  .somna-reviews__list > .somna-reviews__card img.somna-reviews__avatar {
+    display: block !important;
+    order: 0 !important;
+    flex: 0 0 auto;
+    width: 100% !important;
+    max-width: 100%;
+    height: auto !important;
+    aspect-ratio: 1 / 1.04;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* Initials are not photos; use the designed gradient fallback instead. */
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__avatar--initials {
+    display: none !important;
+  }
+
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__body > * {
+    order: 2;
+    width: 100%;
+  }
+
+  /* Rating sits directly below the photo */
+  .somna-reviews__list > .somna-reviews__card > .somna-reviews__stars {
+    order: 1;
+    display: flex;
+    align-self: flex-start;
+    gap: 2px;
+    margin: 9px 10px 3px;
+  }
+
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__star {
+    width: 13px;
+    height: 13px;
+  }
+
+  /* Review headline, body and reviewer details */
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__body {
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    padding: 0 10px 10px;
+  }
+
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__title,
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__title .jm-text {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    margin: 0;
+    color: #171717;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__text,
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__body p {
+    margin: 0;
+    color: #555;
+    font-size: 12px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__who {
+    display: block;
+    margin: 2px 0 0;
+    color: #777;
+    font-size: 10px;
+    line-height: 1.35;
+  }
+
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__who strong {
+    color: #555;
+    font-weight: 500;
+  }
+
+  .somna-reviews__list > .somna-reviews__card .somna-reviews__verified {
+    color: #16834a;
+    font-weight: 600;
+  }
+
+  /* Compact filter chips, matching the reference */
+  .somna-reviews__chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 7px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 2px;
+  }
+
+  .somna-reviews__chip {
+    min-height: 30px;
+    padding: 5px 13px;
+    border: 1px solid #c9c9c9;
+    border-radius: 999px;
+    background: #fff;
+    color: #222;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow: none;
+  }
+
+  .somna-reviews__chip[aria-pressed='true'] {
+    border-color: #171717;
+    background: #171717;
+    color: #fff;
+    box-shadow: none;
+  }
+
+  .somna-reviews__chip:focus-visible {
+    outline: 2px solid var(--somna-rv-chip, #afbdf8);
+    outline-offset: 3px;
+  }
+
+
+  .somna-reviews__list > .somna-reviews__card--skeleton {
+    display: grid !important;
+    grid-template-columns: 40px minmax(0, 1fr);
+    align-items: start;
+    gap: 10px;
+    min-height: 92px;
+    padding: 14px;
+  }
+
+  .somna-reviews__list > .somna-reviews__card--skeleton span:first-child {
+    width: 40px;
+    height: 40px;
+  }
+
+  .somna-reviews__list > .somna-reviews__card--skeleton span:last-child {
+    width: 100%;
+    height: 52px;
+  }
+
+  /* Skeleton cards should not display the no-photo placeholder */
+  .somna-reviews__list > .somna-reviews__card--skeleton::before {
+    display: none !important;
+  }
+
+  @media screen and (min-width: 990px) {
+    .somna-reviews__list {
+      gap: 20px;
+    }
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-reviews__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .somna-reviews__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .somna-reviews__list > .somna-reviews__card {
+      border-radius: 12px;
+    }
+
+    .somna-reviews__list > .somna-reviews__card > .somna-reviews__stars {
+      margin: 8px 9px 3px;
+    }
+
+    .somna-reviews__list > .somna-reviews__card .somna-reviews__body {
+      gap: 3px;
+      padding: 0 9px 9px;
+    }
+
+    .somna-reviews__list > .somna-reviews__card .somna-reviews__title,
+    .somna-reviews__list > .somna-reviews__card .somna-reviews__title .jm-text {
+      font-size: 12px;
+    }
+
+    .somna-reviews__list > .somna-reviews__card .somna-reviews__who {
+      font-size: 9px;
+    }
+
+    .somna-reviews__chip {
+      min-height: 28px;
+      padding: 5px 11px;
+      font-size: 11px;
+    }
+  }
+
+  @media screen and (max-width: 360px) {
+    .somna-reviews__list {
+      gap: 8px;
+    }
+
+    .somna-reviews__list > .somna-reviews__card .somna-reviews__body {
+      padding-inline: 8px;
+    }
+  }
+
+
+  /* ===== Masonry + inner spacing =====
+     Cards keep their own height (photo cards taller, text cards shorter) and stack in columns.
+     The card body uses display: contents (so the avatar can be the full-width photo), which drops its
+     padding — so the spacing goes on the text pieces themselves. */
+  /* 4 / 3 / 2 columns, filled left to right; a small script sets each card's row span from its height
+     (class is-masonry), so short cards sit right under the card above them */
+  .somna-reviews .somna-reviews__list {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 20px;
+    row-gap: 20px;
+    align-items: start;
+  }
+  .somna-reviews .somna-reviews__list.is-masonry { grid-auto-rows: 2px; row-gap: 0; }
+  .somna-reviews .somna-reviews__list > .somna-reviews__card {
+    display: flex;
+    width: 100%;
+    height: auto;
+    margin: 0;
+  }
+  .somna-reviews .somna-reviews__list.is-masonry > .somna-reviews__card { grid-row-end: span var(--rv-rows, 100); }
+  .somna-reviews .somna-reviews__list > .somna-reviews__card[hidden] { display: none; }
+  .somna-reviews .somna-reviews__list > .somna-reviews__card > .somna-reviews__stars { margin: 14px 16px 6px; }
+  .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__body > :not(img) {
+    box-sizing: border-box;
+    padding-inline: 16px;
+  }
+  .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__title,
+  .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__title .jm-text { margin-bottom: 6px; font-size: 14px; }
+  .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__text,
+  .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__body p { margin-bottom: 8px; font-size: 13px; line-height: 1.5; }
+  .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__who { margin: 2px 0 0; padding-bottom: 16px; font-size: 11px; }
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-reviews .somna-reviews__list { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 16px; row-gap: 16px; }
+  }
+  @media screen and (max-width: 749px) {
+    .somna-reviews .somna-reviews__list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 10px; row-gap: 10px; }
+    .somna-reviews .somna-reviews__list > .somna-reviews__card > .somna-reviews__stars { margin: 10px 11px 4px; }
+    .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__body > :not(img) { padding-inline: 11px; }
+    .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__title,
+    .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__title .jm-text { font-size: 12.5px; }
+    .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__text,
+    .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__body p { font-size: 12px; }
+    .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__who { padding-bottom: 11px; font-size: 10px; }
+  }
+
+  /* ===== Product page: Judge.me review widget styled like the homepage cards =====
+     Judge.me lays out its own masonry (absolute positions from its script); this only sets colours,
+     card surface, inner spacing and type, so its measurements stay correct. */
+  .somna-reviews .jdgm-horizon-widget { color: var(--somna-rv-fg); }
+  .somna-reviews .jdgm-horizon-widget .jm-review-widget__header,
+  .somna-reviews .jdgm-horizon-widget .jm-review-widget-minimal-header__title { color: var(--somna-rv-fg); }
+  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item-inner { padding: 8px; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__fade { background: linear-gradient(to bottom, transparent 0%, var(--somna-rv-bg, #0b0f1d) 100%) !important; }
+  /* Judge.me's own "Show more" in the theme's button style (the theme's extra button is off) */
+  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    min-width: min(100%, 360px);
+    min-height: 52px;
+    padding: 10px 28px;
+    border: 0;
+    border-radius: 14px;
+    background: var(--somna-rv-chip, #afbdf8);
+    color: #000;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgb(0 0 0 / 0.25);
+    cursor: pointer;
+    transition: translate 0.2s;
+  }
+  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button * { color: #000; fill: currentColor; stroke: currentColor; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button:hover { translate: 0 -2px; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button:focus-visible { outline: 2px solid var(--somna-rv-fg); outline-offset: 3px; }
+  @media screen and (max-width: 749px) { .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button { width: 100%; } }
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card {
+    overflow: hidden;
+    border-radius: 14px;
+    background: #fff;
+    color: #171717;
+    box-shadow: 0 2px 9px rgb(0 0 0 / 0.10);
+  }
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card__content { padding: 16px 16px 18px; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card * { color: inherit; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card .jm-star-rating,
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card .jm-star-rating * { color: #f5c242; fill: currentColor; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card__title {
+    font-family: var(--font-accent--family);
+    font-weight: var(--font-accent--weight);
+    font-size: 18px;
+    line-height: 1.15;
+    color: #171717;
+  }
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card p:not(.jdgm-review-card__title) { color: #555; font-size: 13px; line-height: 1.5; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card a,
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card button { color: #171717; }
+  @media screen and (max-width: 749px) {
+    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item-inner { padding: 5px; }
+    .somna-reviews .jdgm-horizon-widget .jdgm-review-card__content { padding: 11px 11px 13px; }
+    .somna-reviews .jdgm-horizon-widget .jdgm-review-card__title { font-size: 15px; }
+    .somna-reviews .jdgm-horizon-widget .jdgm-review-card p:not(.jdgm-review-card__title) { font-size: 12px; }
+  }
 {% endstylesheet %}
+
+<script>
+  /* masonry for the review cards: row span = card height + gap, in 2px rows */
+  (() => {
+    document.querySelectorAll('.somna-reviews [data-list]').forEach((list) => {
+      if (list.dataset.masonry) return;
+      list.dataset.masonry = '1';
+      const gapOf = () => { const w = window.innerWidth; return w < 750 ? 10 : w < 990 ? 16 : 20; };
+      let raf = 0;
+      const layout = () => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const gap = gapOf();
+          list.classList.add('is-masonry');
+          list.querySelectorAll(':scope > .somna-reviews__card').forEach((card) => {
+            const h = card.getBoundingClientRect().height;
+            if (h) card.style.setProperty('--rv-rows', Math.ceil((h + gap) / 2));
+          });
+        });
+      };
+      const ro = new ResizeObserver(layout);
+      const watch = () => list.querySelectorAll(':scope > .somna-reviews__card').forEach((c) => { if (!c.dataset.rvObs) { c.dataset.rvObs = '1'; ro.observe(c); } });
+      new MutationObserver(() => { watch(); layout(); }).observe(list, { childList: true, attributes: true, subtree: true, attributeFilter: ['hidden'] });
+      list.addEventListener('load', layout, true);
+      window.addEventListener('resize', layout);
+      watch();
+      layout();
+    });
+  })();
+</script>
 
 {% schema %}
 {
@@ -1572,11 +2026,12 @@
 
     { "type": "header", "content": "Review summary" },
     { "type": "checkbox", "id": "show_summary", "label": "Show summary", "default": true },
-    { "type": "select", "id": "summary_source", "label": "Rating, count and bars from", "options": [{ "value": "settings", "label": "The fields below" }, { "value": "judgeme", "label": "Judge.me (this product's real numbers)" }], "default": "settings" },
+    { "type": "select", "id": "summary_source", "label": "Rating, count and bars from", "options": [{ "value": "settings", "label": "The fields below" }, { "value": "judgeme", "label": "Judge.me (this product's real numbers)" }, { "value": "judgeme_products", "label": "Judge.me (total of the products below)" }], "default": "settings" },
+    { "type": "product_list", "id": "summary_products", "label": "Products to total", "info": "Used with \"Judge.me (total of the products below)\": adds up their review counts and weights the average and bars by count." },
     { "type": "text", "id": "count_label", "label": "Judge.me count text", "default": "[count] reviews", "info": "[count] is the number of Judge.me reviews." },
     { "type": "text", "id": "average", "label": "Average rating", "default": "4.6" },
     { "type": "checkbox", "id": "show_summary_stars", "label": "Show stars under the rating", "default": true },
-    { "type": "text", "id": "count", "label": "Review count", "default": "3600+ reviews" },
+    { "type": "text", "id": "count", "label": "Review count", "info": "Only shown when Judge.me numbers aren't used. Use a real figure." },
     { "type": "range", "id": "pct_5", "label": "5★ (%)", "min": 0, "max": 100, "step": 1, "default": 78 },
     { "type": "range", "id": "pct_4", "label": "4★ (%)", "min": 0, "max": 100, "step": 1, "default": 15 },
     { "type": "range", "id": "pct_3", "label": "3★ (%)", "min": 0, "max": 100, "step": 1, "default": 4 },

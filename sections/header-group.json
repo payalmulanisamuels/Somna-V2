@@ -157,7 +157,7 @@
     "somna_quiz_bar": {
       "type": "somna-quiz-bar",
       "settings": {
-        "text": "Not sure where to start? 60-sec sleep quiz",
+        "text": "",
         "link_label": "Take the quiz",
         "link": "shopify://pages/quiz",
         "phones_only": true,

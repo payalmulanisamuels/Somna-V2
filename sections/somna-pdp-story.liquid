@@ -73,7 +73,7 @@
   endif
 -%}
 <div
-  class="somna-pdp-story somna-pdp-story--{{ layout_class }}{% if split %} somna-pdp-story--split{% endif %}"
+  class="somna-pdp-story somna-pdp-story--{{ layout_class }}{% if split %} somna-pdp-story--split{% endif %}{% if s.layout == 'steps' and s.steps_hide_list %} somna-pdp-story--steps-video{% endif %}"
   style="--somna-story-bg: {{ bg }}; --somna-story-fg: {{ s.text_color }}; --somna-story-heading: {{ s.heading_color }}; --somna-story-accent: {{ accent }}; --somna-story-card: {{ s.card_color }}; --somna-story-card-fg: {{ s.card_text_color }}; --somna-story-button: {{ button }}; padding-block: {{ s.padding_top }}px {{ s.padding_bottom }}px;"
 >
   <div class="somna-pdp-story__inner somna-container">
@@ -244,6 +244,7 @@
 
       {%- when 'steps' -%}
         <div class="somna-pdp-story__steps">
+          {%- unless s.steps_hide_list -%}
           <ol class="somna-pdp-story__step-list" role="list">
             {%- for f in features -%}
               {%- assign photo = f.image.value -%}
@@ -257,6 +258,7 @@
               </li>
             {%- endfor -%}
           </ol>
+          {%- endunless -%}
           {%- liquid
             # video for the popup: the steps metaobject's "video" field, then the product metafield
             # custom.how_it_works_video, then the section's fallback video
@@ -270,26 +272,14 @@
             assign button_label = c.button_label.value | default: s.video_button_label
           -%}
           {%- if how_video != blank and how_video.sources != blank and button_label != blank -%}
-            <button
-              type="button"
-              class="somna-pdp-story__button"
-              aria-haspopup="dialog"
-              aria-controls="SomnaHowVideo-{{ section.id }}"
-              data-somna-video-open
-            >
-              <span class="somna-pdp-story__button-icon">{% render 'somna-pdp-icon', name: 'play' %}</span>{{ button_label }}
-            </button>
-            <dialog
-              id="SomnaHowVideo-{{ section.id }}"
-              class="somna-video-modal"
-              aria-label="{{ button_label | escape }}"
-              data-somna-video-modal
-            >
-              <button type="button" class="somna-video-modal__close" aria-label="{{ 'accessibility.close' | t | default: 'Close' }}" data-somna-video-close>
-                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+            {%- comment -%} the video sits right under the steps with a play button on it; tap plays it in place {%- endcomment -%}
+            <somna-inline-video class="somna-pdp-story__player">
+              {{ how_video | video_tag: playsinline: true, preload: 'none', class: 'somna-pdp-story__player-video', image_size: '1280x' }}
+              <button type="button" class="somna-pdp-story__player-play" data-play aria-label="{{ button_label | escape }}">
+                <span class="somna-pdp-story__player-icon">{% render 'somna-pdp-icon', name: 'play' %}</span>
+                <span class="somna-pdp-story__player-label">{{ button_label }}</span>
               </button>
-              {{ how_video | video_tag: controls: true, playsinline: true, preload: 'none', class: 'somna-video-modal__video', image_size: '1080x'  | replace: ' poster=', ' data-poster=' | replace: '<img ', '<img loading="lazy" ' }}
-            </dialog>
+            </somna-inline-video>
           {%- elsif c.button_label != blank and c.button_url != blank -%}
             <a class="somna-pdp-story__button" href="{{ c.button_url.value | replace: 'https://usesomna.com', '' }}">
               <span class="somna-pdp-story__button-icon">{% render 'somna-pdp-icon', name: 'play' %}</span>{{ c.button_label.value }}
@@ -306,6 +296,18 @@
 
 {%- if s.layout == 'steps' -%}
 <script src="{{ 'somna-video-modal.js' | asset_url }}" defer></script>
+<script>
+  if (!customElements.get('somna-inline-video')) {
+    customElements.define('somna-inline-video', class extends HTMLElement {
+      connectedCallback() {
+        const v = this.querySelector('video'), b = this.querySelector('[data-play]');
+        if (!v || !b) return;
+        b.addEventListener('click', () => { this.classList.add('is-playing'); v.controls = true; v.play().catch(() => {}); });
+        v.addEventListener('ended', () => { this.classList.remove('is-playing'); v.controls = false; });
+      }
+    });
+  }
+</script>
 {%- endif -%}
 
 {%- if layout_class == 'layers' and s.layers_animation and c != blank -%}
@@ -624,6 +626,7 @@
     },
     { "type": "product", "id": "preview_product", "label": "Product for the theme editor", "info": "Only used where there is no product." },
     { "type": "video", "id": "video", "label": "Three steps: fallback video", "info": "The \"Watch how it works\" popup plays the product's steps metaobject \"video\" field, or the product metafield custom.how_it_works_video. This video is used only when neither is set." },
+    { "type": "checkbox", "id": "steps_hide_list", "label": "Three steps: hide the step rows", "info": "Shows only the heading and the video.", "default": false },
     { "type": "text", "id": "video_button_label", "label": "Three steps: button label", "default": "Watch how it works", "info": "Used when the steps metaobject has no button label." },
     { "type": "select", "id": "snore_direction", "label": "Problem: snore waves direction", "options": [{ "value": "right", "label": "Right" }, { "value": "tilt", "label": "Up and forward (45°)" }, { "value": "up", "label": "Up" }], "default": "right" },
     { "type": "checkbox", "id": "layers_animation", "label": "Animate \"What it's made of\"", "info": "When every layer has its own image: the How it works product travels in and peels into the layers as you scroll (phones: the layers peel apart without the travel). Off for reduced motion.", "default": true },

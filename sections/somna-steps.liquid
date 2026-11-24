@@ -22,9 +22,34 @@
         endif
       endfor
     -%}
+    {%- liquid
+      # [count] / [rating] in the eyebrow and rating text = real Judge.me total of the chosen products (same as the homepage hero)
+      assign rv_count = ''
+      assign rv_rating = ''
+      assign rv_total = 0
+      assign rv_weighted = 0.0
+      for rp in s.review_products
+        capture one
+          render 'somna-review-summary', product: rp
+        endcapture
+        assign one = one | strip
+        if one != blank
+          assign one_count = one | split: '|' | last | plus: 0
+          assign one_rating = one | split: '|' | first | times: 1.0
+          assign rv_total = rv_total | plus: one_count
+          assign rv_weighted = one_rating | times: one_count | plus: rv_weighted
+        endif
+      endfor
+      if rv_total > 0
+        assign rv_rating = rv_weighted | divided_by: rv_total | round: 1
+        assign rv_count = rv_total
+      endif
+      assign st_eyebrow = s.eyebrow | replace: '[count]', rv_count | replace: '[rating]', rv_rating
+      assign st_rating = s.rating_text | replace: '[count]', rv_count | replace: '[rating]', rv_rating
+    -%}
     {%- if s.eyebrow != blank or s.avatars != blank or avatar_count > 0 or s.rating_text != blank -%}
       <div class="somna-steps__proof">
-        {%- if s.eyebrow != blank -%}<p class="somna-steps__eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
+        {%- if s.eyebrow != blank -%}<p class="somna-steps__eyebrow">{{ st_eyebrow }}</p>{%- endif -%}
         {%- if avatar_count > 0 -%}
           {%- comment -%} real reviewer photos, round and overlapping (same look as the homepage hero) {%- endcomment -%}
           <span class="somna-steps__avatars somna-steps__avatars--photos">
@@ -38,7 +63,7 @@
         {%- elsif s.avatars != blank -%}
           {{ s.avatars | image_url: width: 240 | image_tag: class: 'somna-steps__avatars', alt: '', loading: 'lazy', width: 120, widths: '120, 240', sizes: '120px' }}
         {%- endif -%}
-        {%- if s.rating_text != blank -%}<p class="somna-steps__rating">{{ s.rating_text }}</p>{%- endif -%}
+        {%- if s.rating_text != blank -%}<p class="somna-steps__rating">{{ st_rating }}</p>{%- endif -%}
       </div>
     {%- endif -%}
 
@@ -399,14 +424,15 @@
   "class": "section-somna-steps",
   "settings": [
     { "type": "header", "content": "Social proof" },
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "info": "[count] = total Judge.me reviews and [rating] = average, from the products below." },
+    { "type": "product_list", "id": "review_products", "label": "Review numbers from these products" },
     { "type": "image_picker", "id": "avatar_1", "label": "Reviewer photo 1", "info": "Real reviewer photos, shown round and overlapping. When set, they replace the avatars image below." },
     { "type": "image_picker", "id": "avatar_2", "label": "Reviewer photo 2" },
     { "type": "image_picker", "id": "avatar_3", "label": "Reviewer photo 3" },
     { "type": "image_picker", "id": "avatar_4", "label": "Reviewer photo 4" },
     { "type": "image_picker", "id": "avatar_5", "label": "Reviewer photo 5" },
     { "type": "image_picker", "id": "avatars", "label": "Avatars image" },
-    { "type": "text", "id": "rating_text", "label": "Rating text", "info": "Only use a figure you can verify." },
+    { "type": "text", "id": "rating_text", "label": "Rating text", "info": "Use [rating] / [count] for the real Judge.me numbers." },
     { "type": "header", "content": "Steps" },
     { "type": "image_picker", "id": "image", "label": "Main image" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "Three steps. Zero fuss." },
