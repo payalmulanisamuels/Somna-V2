@@ -3449,6 +3449,16 @@
         "label": "Link 5 URL"
       },
       {
+        "type": "text",
+        "id": "somna_drawer_link_6",
+        "label": "Link 6"
+      },
+      {
+        "type": "url",
+        "id": "somna_drawer_link_6_url",
+        "label": "Link 6 URL"
+      },
+      {
         "type": "header",
         "content": "Account"
       },
