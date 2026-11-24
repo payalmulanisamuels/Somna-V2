@@ -375,7 +375,7 @@
       {%- if s.app_mobile_more -%}<label class="somna-reviews__more somna-reviews__more--app" for="{{ section.id }}-more" aria-hidden="true">{{ s.more_label | escape }}</label>{%- endif -%}
     {%- else -%}
     <p class="somna-reviews__note" data-note hidden></p>
-    <ul class="somna-reviews__list" role="list" data-list aria-live="polite" aria-busy="true">
+    <ul class="somna-reviews__list" role="list" data-list data-no-reveal aria-live="polite" aria-busy="true">
       {%- if s.sheet_url != blank -%}
         {%- for i in (1..2) -%}<li class="somna-reviews__card somna-reviews__card--skeleton" aria-hidden="true"><span></span><span></span></li>{%- endfor -%}
       {%- endif -%}
@@ -1827,6 +1827,50 @@
     }
   }
 
+
+  /* ===== Masonry + inner spacing =====
+     Cards keep their own height (photo cards taller, text cards shorter) and stack in columns.
+     The card body uses display: contents (so the avatar can be the full-width photo), which drops its
+     padding — so the spacing goes on the text pieces themselves. */
+  .somna-reviews .somna-reviews__list {
+    display: block !important;
+    columns: 4;
+    column-gap: 20px;
+  }
+  .somna-reviews .somna-reviews__list > .somna-reviews__card {
+    display: inline-flex;
+    width: 100%;
+    height: auto;
+    margin: 0 0 20px;
+    break-inside: avoid;
+    vertical-align: top;
+  }
+  .somna-reviews .somna-reviews__list > .somna-reviews__card[hidden] { display: none; }
+  .somna-reviews .somna-reviews__list > .somna-reviews__card > .somna-reviews__stars { margin: 14px 16px 6px; }
+  .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__body > :not(img) {
+    box-sizing: border-box;
+    padding-inline: 16px;
+  }
+  .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__title,
+  .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__title .jm-text { margin-bottom: 6px; font-size: 14px; }
+  .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__text,
+  .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__body p { margin-bottom: 8px; font-size: 13px; line-height: 1.5; }
+  .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__who { margin: 2px 0 0; padding-bottom: 16px; font-size: 11px; }
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .somna-reviews .somna-reviews__list { columns: 3; column-gap: 16px; }
+    .somna-reviews .somna-reviews__list > .somna-reviews__card { margin-bottom: 16px; }
+  }
+  @media screen and (max-width: 749px) {
+    .somna-reviews .somna-reviews__list { columns: 2; column-gap: 10px; }
+    .somna-reviews .somna-reviews__list > .somna-reviews__card { margin-bottom: 10px; }
+    .somna-reviews .somna-reviews__list > .somna-reviews__card > .somna-reviews__stars { margin: 10px 11px 4px; }
+    .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__body > :not(img) { padding-inline: 11px; }
+    .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__title,
+    .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__title .jm-text { font-size: 12.5px; }
+    .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__text,
+    .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__body p { font-size: 12px; }
+    .somna-reviews .somna-reviews__list > .somna-reviews__card .somna-reviews__who { padding-bottom: 11px; font-size: 10px; }
+  }
 {% endstylesheet %}
 
 {% schema %}
