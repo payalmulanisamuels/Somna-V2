@@ -232,17 +232,21 @@
   }
 
   /* overlap the neighbouring sections by 1px so no hairline shows at fractional heights (tablet) */
+  /* waves overlap the sections above and below by 2px and sit on top of them, so no hairline of the page
+     background shows at fractional heights or while scrolling */
   .somna-wave--shape {
-    margin-block-start: -1px;
+    position: relative;
+    z-index: 1;
+    margin-block-start: -2px;
   }
 
   .somna-wave--shape:not(.somna-wave--overlap) {
-    margin-block-end: -1px;
+    margin-block-end: -2px;
   }
 
   .somna-wave--shape .somna-wave__canvas {
-    inset: -1px 0;
-    height: calc(100% + 2px);
+    inset: -2px 0;
+    height: calc(100% + 4px);
   }
 
   .somna-wave--overlap {
