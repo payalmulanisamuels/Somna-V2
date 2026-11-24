@@ -27,7 +27,7 @@
     </span>
     <p class="somna-cd__label">
       <span class="somna-cd__label-desk">{{ s.label }}{% if s.offer != blank %}<strong class="somna-cd__offer">{{ s.offer }}</strong>{% endif %}</span>
-      <span class="somna-cd__label-mob">{{ s.label_mobile }}{% if s.date_mobile != blank %}<span>{{ s.date_mobile }}</span>{% endif %}{% if s.offer != blank %}<strong class="somna-cd__offer">{{ s.offer }}</strong>{% endif %}</span>
+      <span class="somna-cd__label-mob"><b class="somna-cd__mob-top">{{ s.label_mobile }}{% if s.date_mobile != blank %} <span>{{ s.date_mobile }}</span>{% endif %}</b>{% if s.offer != blank %}<strong class="somna-cd__offer">{{ s.offer }}</strong>{% endif %}</span>
     </p>
     <div class="somna-cd__clock">
       {%- for unit in (1..4) -%}
@@ -272,9 +272,10 @@
   @media screen and (max-width: 749px) {
     .somna-cd__inner { gap: 10px; padding: 5px 12px 4px; }
     .somna-cd__moons, .somna-cd__date, .somna-cd__label-desk { display: none; }
-    .somna-cd__label-mob { display: grid; gap: 1px; font-size: 0.6875rem; letter-spacing: 0.04em; }
+    .somna-cd__label-mob { display: grid; gap: 2px; font-size: 0.75rem; letter-spacing: 0.04em; }
     .somna-cd__label-mob span { color: var(--cd-accent, #afbdf8); }
-    .somna-cd__label-mob .somna-cd__offer { margin-top: 1px; font-size: 0.8125rem; letter-spacing: 0.02em; }
+    .somna-cd__label-mob .somna-cd__mob-top { font-weight: inherit; white-space: nowrap; }
+    .somna-cd__label-mob .somna-cd__offer { margin-top: 1px; font-size: inherit; font-weight: 900; letter-spacing: inherit; white-space: nowrap; }
     .somna-cd__clock { gap: 4px; }
     .somna-cd__tile { min-width: 32px; height: 28px; padding: 0 4px; border-radius: 5px; }
     .somna-cd__num { font-size: 1.0625rem; }
