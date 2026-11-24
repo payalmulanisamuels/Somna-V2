@@ -11,6 +11,7 @@
   @param {string} [all_label] - link text to all reviews (blank hides it)
   @param {string} [all_href] - link target (default: scroll to the reviews section on the page)
   @param {string} [verified_label] - default "Verified buyer"
+  @param {boolean} [strip] - show the "Customer photos" strip (default true; false = review rows only)
 {%- enddoc -%}
 {%- comment -%}
   Customer reviews card (instead of the quote card and the videos): a "Customer photos" strip, then the latest
@@ -97,7 +98,8 @@
 {%- if ph_entries.size > 0 -%}
   <div class="somna-pdp-hero__videos somna-pdp-hero__photos">
     {%- if heading != blank -%}<h2 class="somna-pdp-hero__videos-title">{{ heading }}</h2>{%- endif -%}
-    <div class="somna-pdp-hero__rv">
+    <div class="somna-pdp-hero__rv{% if strip == false %} somna-pdp-hero__rv--solo{% endif %}">
+      {%- unless strip == false -%}
       <p class="somna-pdp-hero__rv-label">{{ label | default: 'Customer photos' }}</p>
       <ul class="somna-pdp-hero__rv-strip" role="list" data-photo-popup>
         {%- assign more_mob = ph_entries.size | minus: 4 -%}
@@ -110,6 +112,7 @@
           </li>
         {%- endfor -%}
       </ul>
+      {%- endunless -%}
       {%- if rv_html != '' -%}<ul class="somna-pdp-hero__rv-list" role="list">{{ rv_html }}</ul>{%- endif -%}
       {%- if all_label != blank -%}<a class="somna-pdp-hero__rv-all" href="{{ all_href | default: '#reviews' }}"{% if all_href == blank %} data-rv-jump{% endif %}>{{ all_label }}</a>{%- endif -%}
     </div>
