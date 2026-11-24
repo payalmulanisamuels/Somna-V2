@@ -1127,7 +1127,7 @@
         "show_dates": true,
         "name_format": "short",
         "samples_in_preview": true,
-        "app_mobile_more": true,
+        "app_mobile_more": false,
         "chip_active_color": "#afbdf8"
       }
     },
