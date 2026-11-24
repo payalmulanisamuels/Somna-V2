@@ -3502,10 +3502,16 @@
   .somna-pdp-hero__rv--solo .somna-pdp-hero__rv-item:last-child { border-bottom: 0; }
   .somna-pdp-hero__rv--solo .somna-pdp-hero__rv-body { display: block; overflow: visible; -webkit-line-clamp: unset; line-clamp: none; }
   /* several reviews taking turns: all in one spot (the card is as tall as the longest), one shown at a time */
-  .somna-pdp-hero__rv-rotate .somna-pdp-hero__rv-list { display: grid; }
+  .somna-pdp-hero__rv-rotate .somna-pdp-hero__rv-list { display: block; }
   .somna-pdp-hero__rv-rotate .somna-pdp-hero__rv-item, .somna-pdp-hero__rv--solo .somna-pdp-hero__rv-item { border-bottom: 0 !important; }
-  .somna-pdp-hero__rv-rotate .somna-pdp-hero__rv-item { grid-area: 1 / 1; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0s linear 0.5s; }
-  .somna-pdp-hero__rv-rotate .somna-pdp-hero__rv-item.is-active { opacity: 1; visibility: visible; transition: opacity 0.5s ease, visibility 0s; }
+  /* only the shown review takes space, so the box fits it (no empty space above shorter reviews) */
+  .somna-pdp-hero__rv-rotate .somna-pdp-hero__rv-item { display: none !important; }
+  .somna-pdp-hero__rv-rotate .somna-pdp-hero__rv-item.is-active { display: flex !important; animation: somna-rv-in 0.5s ease; }
+  @keyframes somna-rv-in { from { opacity: 0; } to { opacity: 1; } }
+  @media screen and (max-width: 749px) {
+    .somna-pdp-hero__rv--solo .somna-pdp-hero__rv-item { padding-block: 10px 6px !important; }
+    .somna-pdp-hero__rv-dots { padding-bottom: 6px; }
+  }
   .somna-pdp-hero__rv-dots { display: flex; justify-content: center; gap: 6px; padding: 0 0 8px; }
   .somna-pdp-hero__rv-dots button { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 50%; background: rgb(11 15 29 / 0.2); cursor: pointer; transition: background 0.2s, width 0.2s; }
   .somna-pdp-hero__rv-dots button.is-active { width: 18px; border-radius: 999px; background: #0b0f1d; }
