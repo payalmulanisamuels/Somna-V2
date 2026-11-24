@@ -17,7 +17,7 @@
         "announcement_BxgCk9": {
           "type": "_announcement",
           "settings": {
-            "text": "☾ Black Friday · 60% off with Subscribe &amp; Save<em> · 3 free gifts on 2+ packs · Ends Mon 23 Nov</em>",
+            "text": "☾ Black Friday · 60% off with Subscribe & Save<em> · 3 free gifts on 2+ packs · Ends Tue 24 Nov</em>",
             "link": "",
             "font": "var(--font-body--family)",
             "font_size": "0.875rem",
@@ -44,22 +44,6 @@
         "divider_color": "{{ settings.color_palette.color2 }}",
         "padding-block-start": 8,
         "padding-block-end": 8
-      }
-    },
-    "somna_countdown": {
-      "type": "somna-countdown",
-      "settings": {
-        "end_at": "2026-11-24T23:59:00-08:00",
-        "label": "Pre-Black Friday sale ends in",
-        "moon_cycle": 10,
-        "date_text": "Tue 24 Nov, 11:59 PM PT",
-        "label_mobile": "Sale ends",
-        "date_mobile": "Tue 24 Nov",
-        "bg_color": "#141832",
-        "text_color": "#f3feee",
-        "accent_color": "#afbdf8",
-        "tile_color": "#262c52",
-        "muted_color": "#c3c9e8"
       }
     },
     "somna_quiz_bar": {
@@ -163,6 +147,22 @@
         "collection_inverse_logo": false,
         "text_color_transparent_collection": "",
         "transparent_header_tint": "linear-gradient(90deg, rgba(0, 0, 0, 0.16), rgba(102, 102, 102, 0.16) 100%)"
+      }
+    },
+    "somna_countdown": {
+      "type": "somna-countdown",
+      "settings": {
+        "end_at": "2026-11-24T23:59:00-08:00",
+        "label": "Pre-Black Friday sale ends in",
+        "moon_cycle": 10,
+        "date_text": "Tue 24 Nov, 11:59 PM PT",
+        "label_mobile": "Sale ends",
+        "date_mobile": "Tue 24 Nov",
+        "bg_color": "#141832",
+        "text_color": "#f3feee",
+        "accent_color": "#afbdf8",
+        "tile_color": "#262c52",
+        "muted_color": "#c3c9e8"
       }
     }
   },
