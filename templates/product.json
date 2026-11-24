@@ -1099,7 +1099,7 @@
         "bottom_wave": true,
         "bottom_wave_color": "#afbdf8",
         "bottom_wave_shape": "drip-10",
-        "show_featured": true,
+        "show_featured": false,
         "featured_source": "judgeme",
         "featured_title": "Hooked from bag one.",
         "featured_text": "I bought one bag to try. Now I'm on Autoship and I've sent a pack to my sister.",
@@ -1135,7 +1135,8 @@
         "name_format": "short",
         "samples_in_preview": true,
         "app_mobile_more": false,
-        "chip_active_color": "#afbdf8"
+        "chip_active_color": "#afbdf8",
+        "summary_wave": true
       }
     },
     "guarantee": {
