@@ -891,7 +891,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>You're covered by our 30-Night Money-Back Guarantee, counted from delivery.</p>",
+                    "text": "<p>30-Night Money-Back Guarantee: try SOMNA for 30 nights from delivery. If it's not for you, contact us within 30 nights of delivery and we'll refund your first order, even if it's opened. No need to send it back. One claim per customer. Applies to your first order only; subscription renewals and free gifts are not included.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
