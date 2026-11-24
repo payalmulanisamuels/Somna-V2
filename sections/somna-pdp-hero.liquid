@@ -385,12 +385,12 @@
         {%- assign pct = 0 -%}
         {%- if compare > 0 -%}{%- assign pct = compare | minus: price | times: 100 | divided_by: compare -%}{%- endif -%}
         <span class="somna-pdp-hero__save" data-save{% if pct == 0 or s.bf_layout %} hidden{% endif %}>{{ s.save_label | replace: '[percent]', pct }}</span>
+        {%- if s.bf_layout and s.ship_line != blank -%}<span class="somna-pdp-hero__ship somna-pdp-hero__ship--inline">{{ s.ship_line }}</span>{%- endif -%}
         {%- if mf.pdp_night_label != blank and price_nights > 0 -%}
           <span class="somna-pdp-hero__price-night" data-price-night>{{ price | times: 1.0 | divided_by: price_nights | round | money }}{{ mf.pdp_night_label.value }}</span>
         {%- endif -%}
       </p>
       {%- if mf.pdp_savings_note != blank -%}<p class="somna-pdp-hero__savings">{{ mf.pdp_savings_note.value }}</p>{%- endif -%}
-      {%- if s.bf_layout and s.ship_line != blank -%}<p class="somna-pdp-hero__ship">{{ s.ship_line }}</p>{%- endif -%}
 
       {%- comment -%} What's in the box: under the price for single-variant products; after the packs when there are packs (Sleep Bundle) {%- endcomment -%}
       {%- capture box_markup -%}
@@ -554,13 +554,12 @@
           <label class="somna-buy__mode somna-pdp-hero__once"><input type="radio" name="{{ section.id }}-mode" value="once" data-mode-input{% if mode == 'once' %} checked{% endif %}> <span class="somna-buy__mode-label">{{ s.once_label }}<span data-once-pct></span></span> <span class="somna-buy__mode-price" data-price-once>{{ current_once | money }}</span></label>
         </fieldset>
 
-        {%- if s.bf_layout and s.moon_text != blank -%}
-          <div class="somna-pdp-hero__moon">{% render 'somna-moon-line', text: s.moon_text, date: 'auto' %}</div>
-        {%- endif -%}
-
         <button type="submit" name="add" class="somna-buy__add somna-pdp-hero__add" data-add{% unless current.available %} disabled{% endunless %}>
           <span data-add-label>{% if current.available %}{{ s.add_label }}{% else %}{{ s.sold_out_label }}{% endif %}</span>
         </button>
+        {%- if s.bf_layout and s.moon_text != blank -%}
+          <div class="somna-pdp-hero__moon">{% render 'somna-moon-line', text: s.moon_text, date: 'auto' %}</div>
+        {%- endif -%}
         <p class="somna-buy__status" role="status" data-status></p>
       {%- endform -%}
 
@@ -3761,6 +3760,26 @@
     .somna-pdp-hero__giftbar p { font-size: 0.8125rem; }
     .somna-pdp-hero__trust-1 { font-size: 0.8125rem; }
     .somna-pdp-hero__trust-2 { font-size: 0.75rem; }
+  }
+  /* gift line sits beside the price (in place of the SAVE badge) */
+  .somna-pdp-hero--bf .somna-pdp-hero__price .somna-pdp-hero__ship--inline { margin: 0; align-self: center; }
+  /* desktop: tighter buy box so it fits in one screen */
+  @media screen and (min-width: 990px) {
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__head { margin-top: 6px; gap: 4px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__features { margin-top: 10px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__offer { margin-top: 14px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__nocode { margin-top: 8px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__price { margin-top: 10px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__packs { margin-top: 14px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__packs .somna-buy__pack { padding: 14px 8px 8px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__packs .somna-buy__pack-list { gap: 14px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__giftbar { margin: 10px 0 4px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__plan { margin-top: 6px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__modes { gap: 8px; padding: 12px 18px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__mode-box { gap: 6px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__add { min-height: 54px; margin-top: 12px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__moon:has(somna-moon-line:not([hidden])) { margin-top: 10px; padding: 7px 16px; }
+    .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__trust { margin-top: 12px; }
   }
 {% endstylesheet %}
 
