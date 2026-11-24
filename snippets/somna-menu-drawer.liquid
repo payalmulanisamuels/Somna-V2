@@ -379,12 +379,16 @@
   }
 
   .somna-md__wave {
-    margin-top: 12px;
+    margin-top: 0;
     line-height: 0;
   }
+  /* less empty space above the wave (under Bestsellers) */
+  .somna-md__body:has(+ .somna-md__wave) { padding-bottom: 0 !important; }
 
+  /* the bundles band starts right under the wave's curve (no flat lavender strip first) */
   .somna-md__wave + .somna-md__band {
-    margin-top: -1px;
+    margin-top: -16px;
+    position: relative;
   }
 
   .somna-md__band {
