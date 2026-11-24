@@ -1908,6 +1908,11 @@
   .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button:hover { translate: 0 -2px; }
   .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button:focus-visible { outline: 2px solid var(--somna-rv-fg); outline-offset: 3px; }
   @media screen and (max-width: 749px) { .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button { width: 100%; } }
+  /* phones: Judge.me's review cards in one simple list (no masonry grid) */
+  @media screen and (max-width: 749px) {
+    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__container { display: flex !important; flex-direction: column; gap: 10px; height: auto !important; }
+    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item { position: static !important; width: 100% !important; transform: none !important; }
+  }
   .somna-reviews .jdgm-horizon-widget .jdgm-review-card {
     overflow: hidden;
     border-radius: 14px;
