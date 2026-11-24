@@ -1938,14 +1938,18 @@
 {% endstylesheet %}
 
 <script>
-  /* masonry for the review cards: each card goes into the shortest column (2px grid rows), then the last card of
-     each column stretches so all columns end level — no empty space under short columns */
+  /* masonry for the review cards: each card goes into the shortest column (2px grid rows). If one column ends
+     well above the others, more reviews are added (from the same list "Show more" uses) until the columns
+     roughly line up — real reviews fill the space instead of empty card space. */
   (() => {
     document.querySelectorAll('.somna-reviews [data-list]').forEach((list) => {
       if (list.dataset.masonry) return;
       list.dataset.masonry = '1';
+      const host = list.closest('somna-reviews');
       const gapOf = () => { const w = window.innerWidth; return w < 750 ? 10 : w < 990 ? 16 : 20; };
       let raf = 0;
+      let fills = 0; // reviews added to fill gaps in this round (capped)
+      const MAX_FILLS = 6;
       const layout = () => {
         cancelAnimationFrame(raf);
         raf = requestAnimationFrame(() => {
@@ -1957,7 +1961,6 @@
           const heights = cards.map((c) => c.getBoundingClientRect().height);
           list.classList.add('is-masonry');
           const colEnd = new Array(cols).fill(0);
-          const last = new Array(cols).fill(null);
           cards.forEach((c, i) => {
             const span = Math.ceil((heights[i] + gap) / 2);
             let col = 0;
@@ -1965,20 +1968,18 @@
             c.style.gridColumn = String(col + 1);
             c.style.gridRow = `${colEnd[col] + 1} / span ${span}`;
             colEnd[col] += span;
-            last[col] = { c, span, start: colEnd[col] - span };
           });
-          const maxEnd = Math.max(...colEnd);
-          last.forEach((l, k) => {
-            if (!l || cards.length <= cols) return;
-            const extra = maxEnd - colEnd[k];
-            if (extra <= 0) return;
-            const span = l.span + extra;
-            l.c.style.gridRow = `${l.start + 1} / span ${span}`;
-            l.c.style.height = `${span * 2 - gap}px`;
-          });
+          // a column ending more than ~a short card above the tallest one: add another review (it lands there)
+          const gapPx = (Math.max(...colEnd) - Math.min(...colEnd)) * 2;
+          const canAdd = host && typeof host.render === 'function' && host.filtered && host.shown < host.filtered.length;
+          if (cols > 1 && cards.length >= cols && gapPx > 170 && canAdd && fills < MAX_FILLS) {
+            fills++;
+            host.render(1); // the MutationObserver lays out again
+          }
         });
       };
       new MutationObserver(layout).observe(list, { childList: true, attributes: true, subtree: true, attributeFilter: ['hidden'] });
+      host?.querySelector('[data-more]')?.addEventListener('click', () => { fills = 0; });
       list.addEventListener('load', layout, true);
       window.addEventListener('resize', layout);
       document.fonts?.ready.then(layout);
