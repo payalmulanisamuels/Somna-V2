@@ -100,7 +100,7 @@
         {%- if s.low_label != blank -%}<button type="button" class="somna-rwall__chip" data-filter="low" aria-pressed="false">{{ s.low_label }}</button>{%- endif -%}
       </div>
 
-      <div class="somna-rwall__grid" data-rwall-grid>{{ cards }}</div>
+      <div class="somna-rwall__grid" data-rwall-grid data-no-reveal>{{ cards }}</div>
       <p class="somna-rwall__none" data-rwall-none hidden>{{ s.none_label }}</p>
     {%- endif -%}
   </div>
