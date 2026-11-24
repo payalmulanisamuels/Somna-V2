@@ -1914,7 +1914,7 @@
     .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item { position: static !important; width: auto !important; transform: none !important; }
     .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item-inner { height: 100%; padding: 0 !important; }
     .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item-inner > * { height: 100%; }
-    .somna-reviews .jdgm-horizon-widget .somna-r--item .jdgm-review-card__title { font-size: 1rem !important; line-height: 1.15 !important; }
+    .somna-reviews .jdgm-horizon-widget .somna-r--item .jdgm-review-card__title { font-size: 0.9375rem !important; line-height: 1.45 !important; }
     .somna-reviews .jdgm-horizon-widget .somna-r--item .jdgm-review-card__name { font-size: 0.75rem !important; }
     .somna-reviews .jdgm-horizon-widget .somna-r--item p:not(.jdgm-review-card__title):not(.jdgm-review-card__name) { font-size: 0.8125rem !important; line-height: 1.4 !important; }
     .somna-reviews .jdgm-horizon-widget .somna-r--item .jm-star-rating__font-icon { font-size: 14px !important; }
@@ -1934,9 +1934,12 @@
     font-family: var(--font-accent--family);
     font-weight: var(--font-accent--weight);
     font-size: 18px;
-    line-height: 1.15;
+    line-height: 1.4;
+    padding-block: 1px;
     color: #171717;
   }
+  /* "More" link under the review text: body size, not 16px */
+  .somna-reviews .jdgm-horizon-widget .jdgm-review-card__more-text { font-size: 13px !important; font-weight: 600; }
   .somna-reviews .jdgm-horizon-widget .jdgm-review-card p:not(.jdgm-review-card__title) { color: #555; font-size: 13px; line-height: 1.5; }
   .somna-reviews .jdgm-horizon-widget .jdgm-review-card a,
   .somna-reviews .jdgm-horizon-widget .jdgm-review-card button { color: #171717; }
