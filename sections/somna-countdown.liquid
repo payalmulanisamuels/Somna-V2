@@ -82,10 +82,12 @@
         var hdr = document.querySelector('#header-component'); hdr = hdr && (hdr.closest('.shopify-section') || hdr);
         var off = hdr && getComputedStyle(hdr).position === 'sticky' ? hdr.getBoundingClientRect().height : 0;
         var y = cd.getBoundingClientRect().top - (sc ? sc.getBoundingClientRect().top : 0) + top - off;
-        if (y > 2) (sc || window).scrollTo({ top: y, behavior: 'instant' });
+        if (y > 2) (sc || window).scrollTo({ top: y, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
         try { history.replaceState(Object.assign({}, history.state, { somnaLanded: true }), ''); } catch (e) {}
       };
-      if (document.readyState === 'complete') requestAnimationFrame(go); else window.addEventListener('load', function () { requestAnimationFrame(go); }, { once: true });
+      /* a short pause after the page shows, then a smooth glide down */
+      var later = function () { setTimeout(go, 350); };
+      if (document.readyState === 'complete') later(); else window.addEventListener('load', later, { once: true });
     })();
   </script>
 {%- endif -%}
