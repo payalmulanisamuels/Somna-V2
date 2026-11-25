@@ -3831,7 +3831,8 @@
   .somna-pdp-hero--bf .somna-pdp-hero__price .somna-pdp-hero__ship--inline { margin: 0; align-self: center; }
   /* "3 free gifts" links down to the free gifts section */
   .somna-pdp-hero__gift-link { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: pointer; }
-  .somna-pdp-hero__gift-link:hover { color: #afbdf8; }
+  /* the theme's link hover turns text dark (invisible on navy): keep it light and visible */
+  .somna-pdp-hero .somna-pdp-hero__gift-link:is(:hover, :focus-visible) { color: #afbdf8 !important; text-decoration-color: #afbdf8; text-decoration-thickness: 2px; }
   [id$='__gifts'] { scroll-margin-top: calc(var(--header-group-height, 0px) + 12px); }
   /* desktop: tighter buy box so it fits in one screen */
   @media screen and (min-width: 990px) {
