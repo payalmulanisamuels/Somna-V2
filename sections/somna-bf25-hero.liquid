@@ -88,7 +88,7 @@
       {%- if s.subheading != blank -%}<p class="somna-bf25__sub">{{ s.subheading }}</p>{%- endif -%}
       {%- if s.tagline != blank -%}<div class="somna-bf25__tagline">{{ s.tagline }}</div>{%- endif -%}
       {%- if s.price_line != blank and sub -%}
-        {%- capture sub_html -%}<b>{{ sub | money }}{{ s.price_suffix }}</b>{%- endcapture -%}
+        {%- capture sub_html -%}<b>{{ sub | money }}{% if s.price_suffix != blank %} {{ s.price_suffix | strip }}{% endif %}</b>{%- endcapture -%}
         <p class="somna-bf25__price">{{ s.price_line | replace: '[price]', sub_html }}</p>
       {%- endif -%}
 
@@ -257,7 +257,7 @@
     { "type": "product", "id": "price_product", "label": "Price from this product", "info": "[price] = its lowest Subscribe & Save price." },
     { "type": "number", "id": "first_box_off", "label": "First-box discount ($)", "info": "Taken off [price] (e.g. 3 → $19.95)." },
     { "type": "text", "id": "price_line", "label": "Price line", "default": "From [price]" },
-    { "type": "text", "id": "price_suffix", "label": "After the price (inside the colour)", "default": " a bag" },
+    { "type": "text", "id": "price_suffix", "label": "After the price (inside the colour)", "default": "a bag" },
     { "type": "textarea", "id": "benefits", "label": "Icons", "info": "One per line. \"gift\" → gift icon, \"night\"/\"guarantee\" → shield, anything else → leaf.", "default": "Drug-free\n30-Nights guarantee\n3 Free gifts" },
     { "type": "text", "id": "button_label", "label": "Button", "default": "Shop now" },
     { "type": "url", "id": "button_link", "label": "Button link" },
