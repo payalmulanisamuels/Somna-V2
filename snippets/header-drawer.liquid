@@ -1586,6 +1586,11 @@
     backdrop-filter: none;
   }
 
+  /* closed menu: no overlay box at all (it sat 16px to the right and gave phones a sideways scroll) */
+  .header-drawer--somna .menu-drawer-container:not([open]) .menu-drawer__backdrop {
+    display: none;
+  }
+
   /* contents fade in just behind the slide, top to bottom (Horizon's keyframes, faster stagger) */
   .header-drawer--somna .menu-drawer-container[open] .menu-drawer__animated-element {
     animation-duration: 0.5s;

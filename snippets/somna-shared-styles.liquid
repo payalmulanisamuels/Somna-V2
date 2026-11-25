@@ -293,6 +293,10 @@
      put the pointer past the row's right edge, where clicks did nothing. The row's click area now
      reaches 32px past the plus (mouse/trackpad only, so phones get no extra width). */
   @media (hover: hover) and (pointer: fine) {
+    [id$='faq'] {
+      overflow-x: clip;
+    }
+
     [id$='faq'] .details__header {
       position: relative;
     }

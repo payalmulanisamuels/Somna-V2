@@ -309,7 +309,8 @@
               {%- for i in (1..5) -%}<span class="somna-reviews__star{% if avg < i %}{% assign below = i | minus: 1 %}{% if avg > below %} is-half{% else %} is-empty{% endif %}{% endif %}">{{ star_svg }}</span>{%- endfor -%}
             </span>
           {%- endif -%}
-          {%- if sum_count != blank -%}<p class="somna-reviews__count">{{ sum_count | escape }}</p>{%- endif -%}
+          {%- comment -%} product pages: that product's real review count; elsewhere (homepage) 1000+ {%- endcomment -%}
+          {%- if sum_count != blank -%}<p class="somna-reviews__count">{% if request.page_type == 'product' %}{{ sum_count | replace: ' reviews', ' Reviews' }}{% else %}1000+ Reviews{% endif %}</p>{%- endif -%}
         </div>
 
         <ul class="somna-reviews__bars" role="list">

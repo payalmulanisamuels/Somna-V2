@@ -1,0 +1,321 @@
+{%- doc -%}
+  Somna V2 — "More nights, same 60%" price table for the Black Friday sale page (Figma 5039:852).
+  One Product block per product group; its rows come from the product's sizes (first colour only):
+  size + nights (bags × the product's custom.nights, 30 when empty), Subscribe & Save price (lowest selling plan
+  price), One-time price (price less the one-time sale %, snippets/somna-sale) and the gifts note on 2+ bags.
+  The Subscribe & Save column is highlighted. Phones: the same rows as a stacked list (Figma 5075:3845) with a note under it.
+{%- enddoc -%}
+{%- render 'somna-shared-styles' -%}
+{%- liquid
+  assign s = section.settings
+  capture once_off
+    render 'somna-sale', get: 'once_off'
+  endcapture
+  assign once_off = once_off | strip | plus: 0
+  assign once_factor = 100 | minus: once_off | times: 1.0 | divided_by: 100
+-%}
+<div class="somna-sale-table" style="--sst-bg: {{ s.background_color }}; --sst-pt: {{ s.padding_top }}px; --sst-pb: {{ s.padding_bottom }}px;">
+  <div class="somna-container">
+    {%- if s.eyebrow != blank -%}<p class="somna-sale-table__eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+    {%- if s.heading != blank -%}<h2 class="somna-sale-table__heading somna-display">{{ s.heading | remove: '<p>' | remove: '</p>' }}</h2>{%- endif -%}
+
+    <div class="somna-sale-table__card" tabindex="0" role="region" aria-label="{{ s.heading | strip_html | escape }}">
+      <table class="somna-sale-table__table">
+        <colgroup><col style="width: 28%"><col style="width: 20.5%"><col style="width: 19.6%"><col style="width: 16.2%"><col style="width: 15.7%"></colgroup>
+        <thead>
+          <tr>
+            <th scope="col">{{ s.col_product | escape }}</th>
+            <th scope="col" class="is-center">{{ s.col_size | escape }}</th>
+            <th scope="col" class="is-center is-hi">{{ s.col_sub | escape }}</th>
+            <th scope="col" class="is-center">{{ s.col_once | escape }}</th>
+            <th scope="col" class="is-center">{{ s.col_gifts | escape }}</th>
+          </tr>
+        </thead>
+        {%- for block in section.blocks -%}
+          {%- assign p = block.settings.product -%}
+          {%- if p == blank -%}{%- continue -%}{%- endif -%}
+          {%- liquid
+            assign first_color = ''
+            assign size_index = 0
+            if p.options.size > 1
+              assign first_color = p.variants.first.option1
+              assign size_index = 1
+            endif
+            assign nights_per = p.metafields.custom.nights.value | default: 30
+            assign row = 0
+          -%}
+          <tbody class="somna-sale-table__group" {{ block.shopify_attributes }}>
+            {%- for v in p.variants -%}
+              {%- if first_color != '' and v.option1 != first_color -%}{%- continue -%}{%- endif -%}
+              {%- liquid
+                assign row = row | plus: 1
+                if size_index == 1
+                  assign size_label = v.option2
+                else
+                  assign size_label = v.option1
+                endif
+                assign bags = size_label | split: ' ' | first | plus: 0
+                if bags < 1
+                  assign bags = 1
+                endif
+                assign nights = bags | times: nights_per
+                assign sub = nil
+                for a in v.selling_plan_allocations
+                  if sub == nil or a.price < sub
+                    assign sub = a.price
+                  endif
+                endfor
+                if sub == nil
+                  assign sub = v.price
+                endif
+                assign once = v.price | times: once_factor | round
+                if size_label == 'Default Title'
+                  assign size_text = s.single_size | replace: '[nights]', nights
+                else
+                  assign size_text = size_label | downcase | append: ' · ' | append: nights | append: ' nights'
+                endif
+              -%}
+              <tr>
+                <th scope="row">{% if row == 1 %}{{ block.settings.label | default: p.title | escape }}{% endif %}</th>
+                <td class="is-center">{{ size_text | escape }}</td>
+                <td class="is-center is-hi">{{ sub | money }}</td>
+                <td class="is-center">{{ once | money }}</td>
+                <td class="is-center">
+                  {%- if bags >= s.gift_min and s.gifts_note != blank -%}
+                    <span class="somna-sale-table__gift">{% render 'somna-gift-glyph' %} {{ s.gifts_note | escape }}</span>
+                  {%- else -%}
+                    <span class="somna-sale-table__none" aria-label="{{ s.no_gifts_label | escape }}"></span>
+                  {%- endif -%}
+                </td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        {%- endfor -%}
+      </table>
+    </div>
+
+    {%- comment -%} phones (Figma 5075:3845): the same rows as a stacked list — size + gifts on the left, Subscribe & Save price and the one-time price on the right {%- endcomment -%}
+    <div class="somna-sale-table__list">
+      {%- for block in section.blocks -%}
+        {%- assign p = block.settings.product -%}
+        {%- if p == blank -%}{%- continue -%}{%- endif -%}
+        {%- liquid
+          assign first_color = ''
+          assign size_index = 0
+          if p.options.size > 1
+            assign first_color = p.variants.first.option1
+            assign size_index = 1
+          endif
+          assign nights_per = p.metafields.custom.nights.value | default: 30
+        -%}
+        <div class="somna-sale-table__mgroup">
+          <p class="somna-sale-table__mtitle">{{ block.settings.label | default: p.title | escape }}</p>
+          {%- for v in p.variants -%}
+            {%- if first_color != '' and v.option1 != first_color -%}{%- continue -%}{%- endif -%}
+            {%- liquid
+              if size_index == 1
+                assign size_label = v.option2
+              else
+                assign size_label = v.option1
+              endif
+              assign bags = size_label | split: ' ' | first | plus: 0
+              if bags < 1
+                assign bags = 1
+              endif
+              assign nights = bags | times: nights_per
+              assign sub = nil
+              for a in v.selling_plan_allocations
+                if sub == nil or a.price < sub
+                  assign sub = a.price
+                endif
+              endfor
+              if sub == nil
+                assign sub = v.price
+              endif
+              assign once = v.price | times: once_factor | round
+              if size_label == 'Default Title'
+                assign size_text = s.single_size | replace: '[nights]', nights
+              else
+                assign size_text = size_label | downcase | append: ' · ' | append: nights | append: ' nights'
+              endif
+            -%}
+            <div class="somna-sale-table__mrow">
+              <div>
+                <p class="somna-sale-table__msize">{{ size_text | escape }}</p>
+                {%- if bags >= s.gift_min and s.gifts_note != blank -%}
+                  <p class="somna-sale-table__mgift">{% render 'somna-gift-glyph' %} {{ s.gifts_note | escape }}</p>
+                {%- endif -%}
+              </div>
+              <div class="somna-sale-table__mprice">
+                <p class="somna-sale-table__msub">{{ sub | money }}</p>
+                <p class="somna-sale-table__monce">{{ s.once_short | escape }} {{ once | money }}</p>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+    {%- if s.footnote != blank -%}<p class="somna-sale-table__note">{{ s.footnote | escape }}</p>{%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .somna-sale-table {
+    --somna-content-width: 1219px;
+    background: var(--sst-bg);
+    color: #000;
+    padding-block: var(--sst-pt) var(--sst-pb);
+  }
+  .somna-sale-table__eyebrow {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.3;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .somna-sale-table__heading {
+    margin: 4px 0 28px;
+    font-size: 52px;
+    line-height: 1.35;
+    color: #000;
+  }
+  .somna-sale-table__card {
+    border: 2px solid #000;
+    border-radius: 16px;
+    background: #f4fef3;
+    box-shadow: 2.4px 3px 0 #000;
+    overflow: hidden;
+  }
+  .somna-sale-table__table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-size: 20px;
+    line-height: 1.3;
+    letter-spacing: 0.08em;
+  }
+  .somna-sale-table__table thead th {
+    height: 83px;
+    padding: 8px 20px;
+    background: #000;
+    color: #f3feee;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-align: left;
+    vertical-align: middle;
+  }
+  .somna-sale-table__table thead th.is-hi {
+    background: #afbdf8;
+    color: #000;
+    font-size: 20px;
+  }
+  .somna-sale-table__table thead th:nth-child(4) { font-size: 20px; }
+  .somna-sale-table__table thead th.is-center { text-align: center; }
+  .somna-sale-table__table tbody th,
+  .somna-sale-table__table tbody td {
+    height: 79px;
+    padding: 8px 20px;
+    border-inline-start: 1px solid #000;
+    vertical-align: middle;
+  }
+  .somna-sale-table__table tbody th {
+    border-inline-start: 0;
+    font-weight: 700;
+    text-align: left;
+  }
+  .somna-sale-table__table td.is-center { text-align: center; white-space: nowrap; }
+  .somna-sale-table__table td.is-hi { background: rgb(175 189 248 / 0.26); }
+  .somna-sale-table__group + .somna-sale-table__group tr:first-child > * { border-top: 1px solid #000; }
+  .somna-sale-table__gift { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; letter-spacing: 0; white-space: nowrap; }
+  .somna-sale-table__gift .somna-gift-glyph { flex: none; width: 20px; height: 20px; }
+  .somna-sale-table__none { display: inline-block; width: 53px; border-top: 1px solid #000; vertical-align: middle; }
+
+  @media screen and (max-width: 1199px) {
+    .somna-sale-table__heading { font-size: 42px; }
+    .somna-sale-table__table { font-size: 16px; letter-spacing: 0.04em; }
+    .somna-sale-table__table thead th { font-size: 22px; }
+    .somna-sale-table__table thead th.is-hi, .somna-sale-table__table thead th:nth-child(4) { font-size: 17px; }
+  }
+  /* tablets and phones: the table keeps its columns and scrolls sideways inside its card */
+  @media screen and (max-width: 989px) {
+    .somna-sale-table__card { overflow-x: auto; overscroll-behavior-x: contain; }
+    .somna-sale-table__table { min-width: 760px; }
+  }
+  .somna-sale-table__list, .somna-sale-table__note { display: none; }
+  @media screen and (max-width: 749px) {
+    /* phones: the table becomes a stacked list (Figma 5075:3845) */
+    .somna-sale-table__card { display: none; }
+    .somna-sale-table__list {
+      display: block;
+      margin-inline: 8px;
+      padding: 14px 18px 4px;
+      border: 2px solid #000;
+      border-radius: 16px;
+      background: #f4fef3;
+      box-shadow: 2.4px 3px 0 #000;
+    }
+    .somna-sale-table__list p { margin: 0; }
+    .somna-sale-table__mgroup + .somna-sale-table__mgroup { margin-top: 6px; }
+    .somna-sale-table__mtitle { font-size: 15px; font-weight: 700; letter-spacing: 0.04em; }
+    .somna-sale-table__mrow { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; min-height: 74px; padding-top: 6px; }
+    .somna-sale-table__msize { font-size: 18px; line-height: 1.3; letter-spacing: 0.06em; }
+    .somna-sale-table__mgift { display: flex; align-items: center; gap: 4px; margin-top: 2px !important; font-size: 11px; font-weight: 700; color: #98a3de; }
+    .somna-sale-table__mgift .somna-gift-glyph { flex: none; width: 18px; height: 18px; color: #000; }
+    .somna-sale-table__mprice { flex: none; text-align: right; }
+    .somna-sale-table__msub { font-size: 14px; font-weight: 700; line-height: 1.3; letter-spacing: 0.04em; }
+    .somna-sale-table__monce { font-size: 10px; line-height: 1.3; letter-spacing: 0.06em; }
+    .somna-sale-table__note { display: block; max-width: 330px; margin: 18px 8px 0; font-size: 11px; font-weight: 700; line-height: 1.3; letter-spacing: 0.04em; }
+    .somna-sale-table { padding-block: calc(var(--sst-pt) * 0.6) calc(var(--sst-pb) * 0.6); }
+    .somna-sale-table__eyebrow { font-size: 16px; }
+    .somna-sale-table__heading { margin: 6px 0 24px; font-size: 40px; line-height: 1.3; }
+    .somna-sale-table__card { border-radius: 14px; }
+    .somna-sale-table__table { min-width: 640px; font-size: 14px; letter-spacing: 0.03em; }
+    .somna-sale-table__table thead th { height: 60px; padding: 6px 12px; font-size: 15px; }
+    .somna-sale-table__table thead th.is-hi, .somna-sale-table__table thead th:nth-child(4) { font-size: 13px; }
+    .somna-sale-table__table tbody th, .somna-sale-table__table tbody td { height: 58px; padding: 6px 12px; }
+    .somna-sale-table__gift { font-size: 12px; }
+    .somna-sale-table__none { width: 32px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Somna sale price table",
+  "tag": "section",
+  "class": "section-somna-sale-table",
+  "settings": [
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#f4fef3" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Stock up" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>More nights, same 60%</p>" },
+    { "type": "header", "content": "Columns" },
+    { "type": "text", "id": "col_product", "label": "Product", "default": "Product" },
+    { "type": "text", "id": "col_size", "label": "Size", "default": "Size" },
+    { "type": "text", "id": "col_sub", "label": "Subscribe & Save", "default": "Subscribe & Save (60% off)" },
+    { "type": "text", "id": "col_once", "label": "One-time", "default": "One-time (50% off)" },
+    { "type": "text", "id": "col_gifts", "label": "Gifts", "default": "Gifts" },
+    { "type": "header", "content": "Rows" },
+    { "type": "text", "id": "single_size", "label": "Size for one-size products", "info": "[nights] = nights.", "default": "1 box · [nights] nights" },
+    { "type": "text", "id": "gifts_note", "label": "Gifts note", "default": "3 gifts on 2+" },
+    { "type": "range", "id": "gift_min", "label": "Gifts from (bags)", "min": 1, "max": 4, "step": 1, "default": 2 },
+    { "type": "text", "id": "no_gifts_label", "label": "No gifts (screen readers)", "default": "No gifts" },
+    { "type": "header", "content": "Phones" },
+    { "type": "paragraph", "content": "On phones the table shows as a list: size and gifts on the left, the Subscribe & Save price and the one-time price on the right." },
+    { "type": "text", "id": "once_short", "label": "One-time price label", "default": "one-time" },
+    { "type": "text", "id": "footnote", "label": "Note under the list", "default": "Every order: $4.95 standard shipping · Delivered in 7–9 business days · 30-Night Money-Back Guarantee" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "text", "id": "label", "label": "Name in the table", "info": "Leave empty to use the product title." }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Somna sale price table", "blocks": [{ "type": "product" }, { "type": "product" }] }]
+}
+{% endschema %}
