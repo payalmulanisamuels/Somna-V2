@@ -1857,3 +1857,10 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
     margin-top: calc(var(--header-height) * var(--transparent-header-offset-boolean) * -1);
   }
 }
+
+/* Somna: phones and tablets never scroll sideways (clip, not hidden, so the sticky header still works) */
+@media (max-width: 989px) {
+  .page-wrapper {
+    overflow-x: clip;
+  }
+}
