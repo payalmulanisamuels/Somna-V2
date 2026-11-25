@@ -100,7 +100,7 @@
                 "badge": {
                   "type": "somna-badge",
                   "settings": {
-                    "label": "Pre-Black Friday sale",
+                    "label": "Black Friday sale",
                     "text": "",
                     "color": "#afbdf8",
                     "text_color": "#000000",
@@ -111,7 +111,7 @@
                 "heading": {
                   "type": "text",
                   "settings": {
-                    "text": "<h1><em>60% off</em><br>everything.</h1>",
+                    "text": "<h1><em>70% off</em><br>everything.</h1>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -205,7 +205,7 @@
         "o1": {
           "type": "offer",
           "settings": {
-            "offer": "60% off",
+            "offer": "70% off",
             "title": "Subscribe & Save",
             "text": "Every product. Skip, pause or cancel anytime."
           }
@@ -315,7 +315,7 @@
       ],
       "settings": {
         "background_color": "#f3feee",
-        "badge": "Pre-Black Friday sale",
+        "badge": "Black Friday sale",
         "heading": "<p>Shop everything</p>",
         "show_filters": true,
         "padding_top": 48,
@@ -325,7 +325,7 @@
           "mouth-tape"
         ],
         "first_box_off": "1 Bag = 3\n2 Bags = 5\n4 Bags = 7",
-        "sticker": "60% off"
+        "sticker": "70% off"
       }
     },
     "wave_shop_gifts": {
@@ -915,7 +915,8 @@
       "settings": {
         "background_color": "#f4fef3",
         "eyebrow": "Stock up",
-        "heading": "<p>More nights, same 60%</p>",
+        "heading": "<p>More nights, same 70%</p>",
+        "col_sub": "Subscribe & Save (70% off)",
         "padding_top": 40,
         "padding_bottom": 72
       }
@@ -1089,7 +1090,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>The Pre-Black Friday prices are on for a limited time. When the sale ends, prices go back to normal.</p>",
+                    "text": "<p>The Black Friday prices are on for a limited time. When the sale ends, prices go back to normal.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",

@@ -1963,7 +1963,7 @@
           "type": "perk",
           "settings": {
             "icon_text": "%",
-            "text": "60% off first order"
+            "text": "70% off first order"
           }
         },
         "perk_2": {
@@ -1996,7 +1996,7 @@
             "product": "sleep-bundle",
             "image": "shopify://shop_images/somna-v2-sleep-bundle.png",
             "subtitle": "The full routine: Strips + Tape",
-            "badge": "Up to 60% off",
+            "badge": "Up to 70% off",
             "nights": 30
           }
         },
@@ -2006,7 +2006,7 @@
             "product": "the-colour-set",
             "image": "shopify://shop_images/somna-v2-color-set.png",
             "subtitle": "",
-            "badge": "Up to 60% off",
+            "badge": "Up to 70% off",
             "nights": 90
           }
         },
@@ -2016,7 +2016,7 @@
             "product": "season-bundle",
             "image": "shopify://shop_images/somna-v2-season-bundle.png",
             "subtitle": "",
-            "badge": "Up to 60% off",
+            "badge": "Up to 70% off",
             "nights": 90
           }
         }
