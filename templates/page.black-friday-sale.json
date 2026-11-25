@@ -137,7 +137,7 @@
                 "sale_line": {
                   "type": "custom-liquid",
                   "settings": {
-                    "custom_liquid": "{%- render 'somna-sale-hero-line', handle: 'nasal-strips', first_off: 3 -%}"
+                    "custom_liquid": "{%- render 'somna-sale-hero-line', handle: 'nasal-strips', first_off: 8 -%}"
                   },
                   "blocks": {}
                 }
@@ -324,7 +324,7 @@
           "nasal-strips",
           "mouth-tape"
         ],
-        "first_box_off": "1 Bag = 3\n2 Bags = 5\n4 Bags = 7",
+        "first_box_off": "1 Bag = 8\n2 Bags = 15\n4 Bags = 22",
         "sticker": "70% off"
       }
     },

@@ -52,16 +52,16 @@
     assign best_variant = first_variant | default: p.selected_or_first_available_variant
     assign best = best_variant.price
   else
-    # Strips and Tape: first-box Subscribe & Save price, same as the product page (1 Bag $3 off, 2 Bags $5, 4 Bags $7)
+    # Strips and Tape: first-box Subscribe & Save price, same as the product page (1 Bag $8 off, 2 Bags $15, 4 Bags $22)
     if p.handle == 'nasal-strips' or p.handle == 'mouth-tape'
       assign fb_off = 0
       case best_variant.title
         when '1 Bag'
-          assign fb_off = 300
+          assign fb_off = 800
         when '2 Bags'
-          assign fb_off = 500
+          assign fb_off = 1500
         when '4 Bags'
-          assign fb_off = 700
+          assign fb_off = 2200
       endcase
       assign best = best | minus: fb_off
     endif
