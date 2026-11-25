@@ -51,6 +51,7 @@
             assign row = 0
           -%}
           <tbody class="somna-sale-table__group" {{ block.shopify_attributes }}>
+            <tr class="somna-sale-table__grow"><th colspan="5" scope="colgroup">{{ block.settings.label | default: p.title | escape }}</th></tr>
             {%- for v in p.variants -%}
               {%- if first_color != '' and v.option1 != first_color -%}{%- continue -%}{%- endif -%}
               {%- liquid
@@ -97,13 +98,14 @@
               -%}
               <tr>
                 <th scope="row">{% if row == 1 %}{{ block.settings.label | default: p.title | escape }}{% endif %}</th>
-                <td class="is-center">{{ size_text | escape }}</td>
+                {%- assign sz = size_text | split: ' · ' -%}
+                <td class="is-center somna-sale-table__size">{{ sz[0] | escape }}{% if sz[1] %}<span class="somna-sale-table__szdot"> · </span><span class="somna-sale-table__szn">{{ sz[1] | escape }}</span>{% endif %}</td>
                 {%- assign renew_money = renew | money -%}
                 <td class="is-center is-hi">{{ sub | money }}{% if renew > sub and s.then_label != blank %}<small class="somna-sale-table__then">{{ s.then_label | replace: '[price]', renew_money }}</small>{% endif %}</td>
                 <td class="is-center">{{ once | money }}</td>
                 <td class="is-center">
                   {%- if bags >= s.gift_min and s.gifts_note != blank -%}
-                    <span class="somna-sale-table__gift">{% render 'somna-gift-glyph' %} {{ s.gifts_note | escape }}</span>
+                    <span class="somna-sale-table__gift">{% render 'somna-gift-glyph' %} <span>{{ s.gifts_note | escape }}</span></span>
                   {%- else -%}
                     <span class="somna-sale-table__none" aria-label="{{ s.no_gifts_label | escape }}"></span>
                   {%- endif -%}
@@ -279,12 +281,38 @@
     .somna-sale-table__table { min-width: 760px; }
   }
   .somna-sale-table__then { display: block; margin-top: 2px; font-size: 0.75em; font-weight: 400; opacity: 0.75; }
+  .somna-sale-table__grow { display: none; }
   .somna-sale-table__list, .somna-sale-table__note { display: none; }
   @media screen and (max-width: 749px) {
-    /* phones: the table becomes a stacked list (Figma 5075:3845) */
-    .somna-sale-table__card { display: none; }
+    /* phones: the same table as desktop, fitted to the screen (no sideways scroll). The product name moves
+       to a heading row above its sizes; columns: Size · Subscribe & Save · One-time · Gifts */
+    .somna-sale-table__card { display: block; margin-inline: 4px; overflow: hidden; border-radius: 14px; }
+    .somna-sale-table .somna-sale-table__table { min-width: 0; font-size: 12px; letter-spacing: 0.01em; }
+    .somna-sale-table__table col:nth-child(1) { width: 0 !important; }
+    .somna-sale-table__table col:nth-child(2) { width: 28% !important; }
+    .somna-sale-table__table col:nth-child(3) { width: 27% !important; }
+    .somna-sale-table__table col:nth-child(4) { width: 25% !important; }
+    .somna-sale-table__table col:nth-child(5) { width: 20% !important; }
+    .somna-sale-table__table tr:not(.somna-sale-table__grow) > :first-child { padding: 0 !important; border: 0 !important; font-size: 0; overflow: hidden; }
+    .somna-sale-table .somna-sale-table__table thead th { height: auto; padding: 10px 4px; font-size: 11px !important; line-height: 1.25; letter-spacing: 0.02em; text-align: center; }
+    .somna-sale-table .somna-sale-table__table tbody th, .somna-sale-table .somna-sale-table__table tbody td { height: auto; padding: 10px 4px; }
+    .somna-sale-table__table td.is-center { white-space: normal; }
+    .somna-sale-table__grow { display: table-row; }
+    .somna-sale-table .somna-sale-table__table .somna-sale-table__grow th { padding: 9px 10px; border-top: 1px solid #000; background: #000; color: #f3feee; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-align: left; }
+    .somna-sale-table__group:first-of-type .somna-sale-table__grow th { border-top: 0; }
+    .somna-sale-table__group + .somna-sale-table__group tr:first-child > * { border-top: 0; }
+    .somna-sale-table__group tr + tr:not(.somna-sale-table__grow) > * { border-top: 1px dashed rgb(0 0 0 / 0.2); }
+    .somna-sale-table__size { font-weight: 700; }
+    .somna-sale-table__szdot { display: none; }
+    .somna-sale-table__szn { display: block; margin-top: 1px; font-size: 10px; font-weight: 400; opacity: 0.75; }
+    .somna-sale-table__table td.is-hi { font-weight: 800; font-size: 13px; }
+    .somna-sale-table__then { font-size: 9.5px; font-weight: 400; }
+    .somna-sale-table__gift { flex-direction: column; gap: 2px; font-size: 9.5px; line-height: 1.2; white-space: normal; text-align: center; }
+    .somna-sale-table__gift .somna-gift-glyph { width: 16px; height: 16px; }
+    .somna-sale-table__none { width: 18px; }
+    /* the old stacked phone list is no longer shown */
     .somna-sale-table__list {
-      display: block;
+      display: none !important;
       margin-inline: 8px;
       padding: 14px 18px 4px;
       border: 2px solid #000;
