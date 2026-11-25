@@ -933,7 +933,8 @@
       "settings": {
         "top_color": "#f4fef3",
         "bottom_color": "#afbdf8",
-        "shape": "soft-1"
+        "shape": "soft-1",
+        "mobile_full": true
       }
     },
     "faq": {
