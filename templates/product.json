@@ -402,8 +402,8 @@
             "column_2_image": "shopify://shop_images/01-SOMNA-Sleep-Bundle-Hero.jpg",
             "column_3_image": "shopify://shop_images/strip-1_2b080541-bb5f-4874-9f2a-eb53b3f94218.png",
             "show_names": true,
-            "sticker": "Save up to $41.63",
-            "note": "Subscribe & Save prices, including $4.95 shipping per delivery. Strips + Tape bought separately: $14.95 each for the first box, then $22.95 each."
+            "sticker": "Save up to $31.73",
+            "note": "Subscribe & Save prices, before shipping. Strips + Tape bought separately: $14.95 each for the first box, then $22.95 each."
           }
         },
         "bsrow_1": {
@@ -446,9 +446,9 @@
             "tab": "3",
             "label": "Total for 90 nights",
             "total": true,
-            "column_1_text": "$94.92",
-            "column_2_text": "$104.76",
-            "column_3_text": "$136.55"
+            "column_1_text": "$89.97",
+            "column_2_text": "$89.91",
+            "column_3_text": "$121.70"
           }
         },
         "tab_color": {
