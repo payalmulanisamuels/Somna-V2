@@ -100,7 +100,7 @@
           "type": "item",
           "settings": {
             "heading": "2. Medical Disclaimer (CRITICAL)",
-            "text": "<p>SOMNA PRODUCTS ARE NOT MEDICAL DEVICES. THEY ARE NOT INTENDED TO DIAGNOSE, TREAT, CURE, OR PREVENT ANY DISEASE OR MEDICAL CONDITION, INCLUDING BUT NOT LIMITED TO SLEEP APNEA. All information provided by Somna on our website, packaging, or marketing materials is for informational purposes only and is not a substitute for professional medical advice. Always consult a physician or qualified healthcare provider regarding any medical condition or sleep disorder. By using our products, you acknowledge and agree that Somna is not providing medical advice.</p>"
+            "text": "<p>Somna products are not medical devices. They are not intended to diagnose, treat, cure, or prevent any disease or medical condition, including but not limited to sleep apnea. All information provided by Somna on our website, packaging, or marketing materials is for informational purposes only and is not a substitute for professional medical advice. Always consult a physician or qualified healthcare provider regarding any medical condition or sleep disorder. By using our products, you acknowledge and agree that Somna is not providing medical advice.</p>"
           }
         },
         "item_3": {
@@ -114,7 +114,7 @@
           "type": "item",
           "settings": {
             "heading": "4. Limitation of Liability",
-            "text": "<p>TO THE MAXIMUM EXTENT PERMITTED BY LAW, SOMNA AND ITS OFFICERS, DIRECTORS, EMPLOYEES, AND AGENTS SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, DATA, OR USE, ARISING OUT OF OR IN ANY WAY CONNECTED WITH YOUR USE OF OUR WEBSITE OR PRODUCTS. IN NO EVENT SHALL SOMNA'S TOTAL LIABILITY EXCEED THE AMOUNT YOU PAID FOR THE SPECIFIC PRODUCT GIVING RISE TO THE CLAIM.</p>"
+            "text": "<p>To the maximum extent permitted by law, Somna and its officers, directors, employees, and agents shall not be liable for any direct, indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, or use, arising out of or in any way connected with your use of our website or products. In no event shall Somna's total liability exceed the amount you paid for the specific product giving rise to the claim.</p>"
           }
         },
         "item_5": {
