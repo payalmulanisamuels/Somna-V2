@@ -479,7 +479,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>It delivers automatically on a schedule based on the size you choose. Strips and Tape: your first box is $19.95, then each pack renews at $22.95, still less than the $24.95 one-time price. Bundles stay the same price every delivery. Skip, pause, swap or cancel anytime from your account.</p>",
+                    "text": "<p>It delivers automatically on a schedule based on the size you choose. Strips and Tape: your first box is $14.95, then each pack renews at $22.95, still less than the $24.95 one-time price. Bundles stay the same price every delivery. Skip, pause, swap or cancel anytime from your account.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -1234,7 +1234,7 @@
           "type": "question",
           "settings": {
             "question": "How does Subscribe & Save work?",
-            "answer": "<p>It delivers automatically on a schedule based on the size you choose. Strips and Tape: your first box is $19.95, then each pack renews at $22.95, still less than the $24.95 one-time price. Bundles stay the same price every delivery. Skip, pause, swap or cancel anytime from your account.</p>",
+            "answer": "<p>It delivers automatically on a schedule based on the size you choose. Strips and Tape: your first box is $14.95, then each pack renews at $22.95, still less than the $24.95 one-time price. Bundles stay the same price every delivery. Skip, pause, swap or cancel anytime from your account.</p>",
             "open": false
           }
         },
