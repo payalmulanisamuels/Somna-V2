@@ -17,7 +17,7 @@
         "announcement_BxgCk9": {
           "type": "_announcement",
           "settings": {
-            "text": "Black Friday · 70% off with Subscribe & Save<em> · Free gifts · Ends Wed 2nd Dec ·</em>",
+            "text": "Black Friday · 70% off with Subscribe & Save<em> · Free gifts · Ends Wed 2nd Dec</em>",
             "link": "",
             "font": "var(--font-body--family)",
             "font_size": "0.875rem",
@@ -37,7 +37,7 @@
         "display_style": "scroll",
         "speed": 5,
         "scroll_speed": 20,
-        "scroll_gap": 16,
+        "scroll_gap": 64,
         "section_width": "full-width",
         "background_color": "#afbdf8",
         "divider_width": 0,
