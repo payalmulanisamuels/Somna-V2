@@ -28,7 +28,7 @@
   assign once = 100 | minus: once_off | times: hv.price | divided_by: 100
 -%}
 <p class="somna-sale-hero-line">Strips, Tape and every bundle. Subscribe &amp; Save from <b>{{ sub | money }}</b>, one-time from <b>{{ once | money }}</b>.</p>
-<p class="somna-sale-hero-meta">{{ meta | default: 'Drug-free · 30-Night guarantee · $4.95 shipping · 7–9 business days' | escape | replace: ' · ', ' <span aria-hidden="true">·</span> ' }}</p>
+<p class="somna-sale-hero-meta">{{ meta | default: 'Drug-free · 30-Night guarantee · 7–9 business days' | escape | replace: ' · ', ' <span aria-hidden="true">·</span> ' }}</p>
 <style>
   /* the header ends on a fractional pixel, which left a 1px white seam above the hero: tuck the hero 1px under it */
   .hero-wrapper:has(.somna-sale-hero-line) { margin-top: -1px; }

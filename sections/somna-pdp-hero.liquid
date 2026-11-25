@@ -412,7 +412,7 @@
         {%- assign pct = 0 -%}
         {%- if compare > 0 -%}{%- assign pct = compare | minus: price | times: 100 | divided_by: compare -%}{%- endif -%}
         <span class="somna-pdp-hero__save" data-save{% if pct == 0 or s.bf_layout %} hidden{% endif %}>{{ s.save_label | replace: '[percent]', pct }}</span>
-        {%- if s.bf_layout and s.ship_line != blank -%}<span class="somna-pdp-hero__ship somna-pdp-hero__ship--inline">{{ s.ship_line }}</span>{%- endif -%}
+        {%- if s.bf_layout and s.ship_line != blank -%}<a class="somna-pdp-hero__ship somna-pdp-hero__ship--inline somna-pdp-hero__gift-link" href="#gifts" data-gift-link>{{ s.ship_line }}</a>{%- endif -%}
         {%- if mf.pdp_night_label != blank and price_nights > 0 -%}
           <span class="somna-pdp-hero__price-night" data-price-night>{{ price | times: 1.0 | divided_by: price_nights | round | money }}{{ mf.pdp_night_label.value }}</span>
         {%- endif -%}
@@ -702,6 +702,14 @@
   {%- render 'somna-wave', top: section.settings.background_color, bottom: section.settings.wave_color, shape: section.settings.wave_shape -%}
 {%- endif -%}
 
+<script>
+  /* "3 free gifts on 2+ packs" in the buy box: smooth scroll to the free gifts section on this page */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('[data-gift-link]'); if (!a) return;
+    var t = document.querySelector('[id$="__gifts"]'); if (!t) return;
+    e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+</script>
 <script type="module">
   import { somnaAddToCart, somnaMoney } from '{{ 'somna-cart.js' | asset_url }}';
 
@@ -3821,6 +3829,10 @@
   @media screen and (max-width: 749px) { .somna-buy__mode-was { font-size: 0.8125rem; } }
   /* gift line sits beside the price (in place of the SAVE badge) */
   .somna-pdp-hero--bf .somna-pdp-hero__price .somna-pdp-hero__ship--inline { margin: 0; align-self: center; }
+  /* "3 free gifts" links down to the free gifts section */
+  .somna-pdp-hero__gift-link { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: pointer; }
+  .somna-pdp-hero__gift-link:hover { color: #afbdf8; }
+  [id$='__gifts'] { scroll-margin-top: calc(var(--header-group-height, 0px) + 12px); }
   /* desktop: tighter buy box so it fits in one screen */
   @media screen and (min-width: 990px) {
     .somna-pdp-hero.somna-pdp-hero--bf .somna-pdp-hero__head { margin-top: 6px; gap: 4px; }
