@@ -22,9 +22,9 @@
         "price_product": "nasal-strips",
         "first_box_off": 3,
         "price_line": "From [price]",
-        "price_suffix": " a bag",
+        "price_suffix": "a bag",
         "benefits": "Drug-free\n30-Nights guarantee\n3 Free gifts",
-        "button_label": "Shop now",
+        "button_label": "Claim my 70% Off",
         "button_link": "shopify://pages/black-friday-sale",
         "review_products": [
           "nasal-strips",
@@ -50,6 +50,8 @@
         "eyebrow": "Recently viewed",
         "heading": "Still thinking about it?",
         "price_prefix": "From",
+        "first_box_handles": "nasal-strips, mouth-tape",
+        "first_box_off": "1 Bag = 3\n2 Bags = 5\n4 Bags = 7",
         "subscribe_label": "Subscribe & Save",
         "button_label": "Shop now",
         "prev_label": "Previous products",
@@ -1930,6 +1932,7 @@
         "packs_label": "Choose Your Pack",
         "night_label": "/night",
         "sub_line": "[price] first box · then [renewal] [interval]",
+        "sub_note": "Skip, pause or cancel anytime",
         "sub_line_same": "[renewal] [interval] · same price every time",
         "plan_label": "Delivery frequency",
         "first_box_products": [
@@ -2808,6 +2811,7 @@
         "featured_bg": "",
         "featured_fg": "",
         "show_summary": true,
+        "summary_wave": true,
         "summary_source": "judgeme_products",
         "summary_products": [
           "nasal-strips",
@@ -2857,8 +2861,7 @@
         "error_text": "Reviews couldn't be loaded right now.",
         "retry_label": "Try again",
         "sample_note": "",
-        "chip_active_color": "#afbdf8",
-        "summary_wave": true
+        "chip_active_color": "#afbdf8"
       }
     },
     "wave_black_peri": {
