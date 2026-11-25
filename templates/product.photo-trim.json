@@ -514,8 +514,8 @@
           "settings": {
             "tab": "4",
             "label": "Price per night",
-            "column_1_text": "$0.67",
-            "column_2_text": "$0.67",
+            "column_1_text": "$0.50",
+            "column_2_text": "$0.50",
             "column_3_text": "Varies"
           }
         },
@@ -567,9 +567,9 @@
           "settings": {
             "tab": "5",
             "label": "Price per night",
-            "column_1_text": "$1.33 for both",
-            "column_2_text": "$1.33 for both",
-            "column_3_text": "$0.67"
+            "column_1_text": "$1.00 for both",
+            "column_2_text": "$1.00 for both",
+            "column_3_text": "$0.50"
           }
         }
       },
