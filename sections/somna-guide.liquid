@@ -72,9 +72,14 @@
               assign low = cv.price
               if cp.selling_plan_groups.size > 0
                 assign low = cv.price | times: once_factor | divided_by: 100
+                capture cv_fb
+                  render 'somna-first-box-off', product: cp, variant: cv
+                endcapture
+                assign cv_fb = cv_fb | strip | plus: 0
                 for a in cv.selling_plan_allocations
-                  if a.price < low
-                    assign low = a.price
+                  assign a_price = a.price | minus: cv_fb
+                  if a_price < low
+                    assign low = a_price
                   endif
                 endfor
               endif

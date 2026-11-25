@@ -68,8 +68,14 @@
                   assign t_factor = 100 | minus: settings.somna_once_discount
                   assign t_price = tv.price | times: t_factor | divided_by: 100
                   assign t_alloc = tv.selling_plan_allocations | first
-                  if t_alloc and t_alloc.price < t_price
-                    assign t_price = t_alloc.price
+                  if t_alloc
+                    capture t_fb
+                      render 'somna-first-box-off', product: trend, variant: tv
+                    endcapture
+                    assign t_sub = t_fb | strip | plus: 0 | times: -1 | plus: t_alloc.price
+                    if t_sub < t_price
+                      assign t_price = t_sub
+                    endif
                   endif
                 endif
               -%}
@@ -87,10 +93,17 @@
 
     {%- if pair != blank -%}
       {%- liquid
-        assign pair_alloc = pair.selected_or_first_available_variant.selling_plan_allocations | first
+        assign pair_v = pair.selected_or_first_available_variant
+        assign pair_alloc = pair_v.selling_plan_allocations | first
         assign from_price = pair.price_min
-        if pair_alloc and pair_alloc.price < from_price
-          assign from_price = pair_alloc.price
+        if pair_alloc
+          capture pair_fb
+            render 'somna-first-box-off', product: pair, variant: pair_v
+          endcapture
+          assign pair_sub = pair_fb | strip | plus: 0 | times: -1 | plus: pair_alloc.price
+          if pair_sub < from_price
+            assign from_price = pair_sub
+          endif
         endif
       -%}
       <a class="somna-pdp-pair__card somna-point-target" href="{{ pair.url }}">

@@ -269,7 +269,12 @@
       "foreground": "#000000",
       "color1": "#333333",
       "color2": "#DFDFDF"
-    }
+    },
+    "somna_first_box_products": [
+      "nasal-strips",
+      "mouth-tape"
+    ],
+    "somna_first_box_off": "1 Bag = 8\n2 Bags = 15\n4 Bags = 22"
   },
   "presets": {
     "Horizon": {
