@@ -23,9 +23,14 @@
   assign best = nil
   assign best_variant = nil
   for v in p.variants
+    capture v_fb
+      render 'somna-first-box-off', product: p, variant: v
+    endcapture
+    assign v_fb = v_fb | strip | plus: 0
     for a in v.selling_plan_allocations
-      if best == nil or a.price < best
-        assign best = a.price
+      assign a_price = a.price | minus: v_fb
+      if best == nil or a_price < best
+        assign best = a_price
         assign best_variant = v
       endif
     endfor

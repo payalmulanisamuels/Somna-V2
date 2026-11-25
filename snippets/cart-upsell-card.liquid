@@ -69,7 +69,10 @@
     if settings.upsell_add_as_subscription or product.requires_selling_plan
       assign upsell_allocation = upsell_variant.selling_plan_allocations.first
       if upsell_allocation
-        assign upsell_price = upsell_allocation.price
+        capture upsell_fb
+          render 'somna-first-box-off', product: product, variant: upsell_variant
+        endcapture
+        assign upsell_price = upsell_fb | strip | plus: 0 | times: -1 | plus: upsell_allocation.price
         assign upsell_selling_plan = upsell_allocation.selling_plan.id
       endif
     endif

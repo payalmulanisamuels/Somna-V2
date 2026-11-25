@@ -1863,6 +1863,19 @@
         "step": 5,
         "unit": "%",
         "default": 50
+      },
+      {
+        "type": "product_list",
+        "id": "somna_first_box_products",
+        "label": "Products with a first-box discount",
+        "info": "Subscribe & Save first order discount, same as the Shopify automatic discounts \"Subscribe & Save, first box\"."
+      },
+      {
+        "type": "textarea",
+        "id": "somna_first_box_off",
+        "label": "First-box discount ($)",
+        "info": "One per line: pack name = amount off, e.g. 1 Bag = 8. Shown on product cards, menus, the cart and the quiz.",
+        "default": "1 Bag = 8\n2 Bags = 15\n4 Bags = 22"
       }
     ]
   },

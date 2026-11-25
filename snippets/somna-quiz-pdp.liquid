@@ -66,8 +66,12 @@ Skip, pause or cancel anytime{%- endcapture -%}
   assign once_factor = 100 | minus: settings.somna_once_discount
   assign current_once = current.price | times: once_factor | divided_by: 100
   assign alloc = current.selling_plan_allocations | first
+  capture current_fb
+    render 'somna-first-box-off', product: product, variant: current
+  endcapture
+  assign current_fb = current_fb | strip | plus: 0
   if mode == 'sub' and alloc
-    assign price = alloc.price
+    assign price = alloc.price | minus: current_fb
   else
     assign price = current_once
   endif
@@ -134,8 +138,9 @@ Skip, pause or cancel anytime{%- endcapture -%}
   <script type="application/json" data-variants>
     [
     {%- for v in product.variants -%}
+      {%- capture v_fb -%}{%- render 'somna-first-box-off', product: product, variant: v -%}{%- endcapture -%}{%- assign v_fb = v_fb | strip | plus: 0 -%}
       { "id": {{ v.id }}, "title": {{ v.title | json }}, "options": {{ v.options | json }}, "image": {% if v.featured_media %}{{ v.featured_media | image_url: width: 1100 | json }}{% else %}null{% endif %}, "available": {{ v.available | json }}, "price": {{ v.price | times: once_factor | divided_by: 100 }}, "compare": {% assign v_cmp = v.compare_at_price | default: 0 %}{% if v.price > v_cmp %}{{ v.price }}{% else %}{{ v_cmp }}{% endif %}, "plans": [
-        {%- for a in v.selling_plan_allocations -%}{ "id": {{ a.selling_plan.id }}, "price": {{ a.price }} }{% unless forloop.last %},{% endunless %}{%- endfor -%}
+        {%- for a in v.selling_plan_allocations -%}{ "id": {{ a.selling_plan.id }}, "price": {{ a.price | minus: v_fb }} }{% unless forloop.last %},{% endunless %}{%- endfor -%}
       ] }{% unless forloop.last %},{% endunless %}
     {%- endfor -%}
     ]

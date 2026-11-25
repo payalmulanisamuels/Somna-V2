@@ -391,7 +391,10 @@
                   assign ralloc = rv.selling_plan_allocations | first
                   assign rprice = rv.price
                   if ralloc
-                    assign rprice = ralloc.price
+                    capture r_fb
+                      render 'somna-first-box-off', product: rp, variant: rv
+                    endcapture
+                    assign rprice = r_fb | strip | plus: 0 | times: -1 | plus: ralloc.price
                   endif
                   assign rbags = rv.title | split: ' ' | first | plus: 0
                   if rbags < 1
@@ -495,6 +498,10 @@
             endif
             assign v_nights = v_bags | times: 30
             assign v_once = v.price | times: sq_once_keep | divided_by: 100.0 | round
+            capture v_fb
+              render 'somna-first-box-off', product: rp, variant: v
+            endcapture
+            assign v_fb = v_fb | strip | plus: 0
             # Autoship plan whose interval is closest to the supply (30 / 60 / 120 nights), as on the product page
             assign v_plan = nil
             assign v_diff = 99999
@@ -513,7 +520,7 @@
           -%}
           { "id": {{ v.id }}, "size": {{ v_size | json }}, "color": {{ v_color | json }}, "bags": {{ v_bags }}, "nights": {{ v_nights }}, "available": {{ v.available | json }},
             "price": {{ v.price }}, "once": {{ v_once }},
-            "sub": {% if v_plan %}{{ v_plan.price }}{% else %}null{% endif %}, "plan": {% if v_plan %}{{ v_plan.selling_plan.id }}{% else %}null{% endif %}, "days": {% if v_plan %}{{ v_plan_days }}{% else %}0{% endif %},
+            "sub": {% if v_plan %}{{ v_plan.price | minus: v_fb }}{% else %}null{% endif %}, "plan": {% if v_plan %}{{ v_plan.selling_plan.id }}{% else %}null{% endif %}, "days": {% if v_plan %}{{ v_plan_days }}{% else %}0{% endif %},
             "image": {% if v.featured_image %}{{ v.featured_image | image_url: width: 900 | json }}{% else %}null{% endif %} }{% unless forloop.last %},{% endunless %}
         {%- endfor -%}
       ]

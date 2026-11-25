@@ -29,7 +29,10 @@
     assign price = v.price | times: once_factor | divided_by: 100
   endif
   if s.use_subscription and alloc
-    assign price = alloc.price
+    capture cta_fb
+      render 'somna-first-box-off', product: product, variant: v
+    endcapture
+    assign price = cta_fb | strip | plus: 0 | times: -1 | plus: alloc.price
     assign plan_id = alloc.selling_plan.id
   endif
   assign bags = v.title | split: ' ' | first | plus: 0
