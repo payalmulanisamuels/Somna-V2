@@ -13,6 +13,12 @@
   endcapture
   assign once_off = once_off | strip | plus: 0
   assign once_factor = 100 | minus: once_off | times: 1.0 | divided_by: 100
+  # first-box discount (same as the product page and the Shopify automatic discounts): "pack name = amount off"
+  assign fb_handles = ''
+  for fp in s.first_box_products
+    assign fb_handles = fb_handles | append: ',' | append: fp.handle | append: ','
+  endfor
+  assign fb_lines = s.first_box_off | default: '' | newline_to_br | split: '<br />'
 -%}
 <div class="somna-sale-table" style="--sst-bg: {{ s.background_color }}; --sst-pt: {{ s.padding_top }}px; --sst-pb: {{ s.padding_bottom }}px;">
   <div class="somna-container">
@@ -68,6 +74,20 @@
                 if sub == nil
                   assign sub = v.price
                 endif
+                assign renew = sub
+                assign fb_key = ',' | append: p.handle | append: ','
+                if fb_handles contains fb_key
+                  for ln in fb_lines
+                    assign parts = ln | split: '='
+                    if parts.size == 2
+                      assign k = parts[0] | strip
+                      if k == size_label
+                        assign off = parts[1] | strip | times: 100 | round
+                        assign sub = sub | minus: off
+                      endif
+                    endif
+                  endfor
+                endif
                 assign once = v.price | times: once_factor | round
                 if size_label == 'Default Title'
                   assign size_text = s.single_size | replace: '[nights]', nights
@@ -78,7 +98,8 @@
               <tr>
                 <th scope="row">{% if row == 1 %}{{ block.settings.label | default: p.title | escape }}{% endif %}</th>
                 <td class="is-center">{{ size_text | escape }}</td>
-                <td class="is-center is-hi">{{ sub | money }}</td>
+                {%- assign renew_money = renew | money -%}
+                <td class="is-center is-hi">{{ sub | money }}{% if renew > sub and s.then_label != blank %}<small class="somna-sale-table__then">{{ s.then_label | replace: '[price]', renew_money }}</small>{% endif %}</td>
                 <td class="is-center">{{ once | money }}</td>
                 <td class="is-center">
                   {%- if bags >= s.gift_min and s.gifts_note != blank -%}
@@ -132,6 +153,20 @@
               if sub == nil
                 assign sub = v.price
               endif
+              assign renew = sub
+              assign fb_key = ',' | append: p.handle | append: ','
+              if fb_handles contains fb_key
+                for ln in fb_lines
+                  assign parts = ln | split: '='
+                  if parts.size == 2
+                    assign k = parts[0] | strip
+                    if k == size_label
+                      assign off = parts[1] | strip | times: 100 | round
+                      assign sub = sub | minus: off
+                    endif
+                  endif
+                endfor
+              endif
               assign once = v.price | times: once_factor | round
               if size_label == 'Default Title'
                 assign size_text = s.single_size | replace: '[nights]', nights
@@ -148,6 +183,7 @@
               </div>
               <div class="somna-sale-table__mprice">
                 <p class="somna-sale-table__msub">{{ sub | money }}</p>
+                {%- if renew > sub and s.then_label != blank -%}{%- assign renew_money = renew | money -%}<p class="somna-sale-table__mthen">{{ s.then_label | replace: '[price]', renew_money }}</p>{%- endif -%}
                 <p class="somna-sale-table__monce">{{ s.once_short | escape }} {{ once | money }}</p>
               </div>
             </div>
@@ -242,6 +278,7 @@
     .somna-sale-table__card { overflow-x: auto; overscroll-behavior-x: contain; }
     .somna-sale-table__table { min-width: 760px; }
   }
+  .somna-sale-table__then { display: block; margin-top: 2px; font-size: 0.75em; font-weight: 400; opacity: 0.75; }
   .somna-sale-table__list, .somna-sale-table__note { display: none; }
   @media screen and (max-width: 749px) {
     /* phones: the table becomes a stacked list (Figma 5075:3845) */
@@ -256,14 +293,18 @@
       box-shadow: 2.4px 3px 0 #000;
     }
     .somna-sale-table__list p { margin: 0; }
-    .somna-sale-table__mgroup + .somna-sale-table__mgroup { margin-top: 6px; }
+    .somna-sale-table__mgroup + .somna-sale-table__mgroup { margin-top: 4px; }
     .somna-sale-table__mtitle { font-size: 15px; font-weight: 700; letter-spacing: 0.04em; }
-    .somna-sale-table__mrow { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; min-height: 74px; padding-top: 6px; }
-    .somna-sale-table__msize { font-size: 18px; line-height: 1.3; letter-spacing: 0.06em; }
+    .somna-sale-table__mrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; }
+    .somna-sale-table__mrow + .somna-sale-table__mrow { border-top: 1px dashed rgb(0 0 0 / 0.18); }
+    .somna-sale-table__mtitle { padding-top: 6px; }
+    .somna-sale-table__mgroup + .somna-sale-table__mgroup { padding-top: 10px; border-top: 2px solid #000; }
+    .somna-sale-table__mthen { font-size: 10px; line-height: 1.3; letter-spacing: 0.04em; color: #555; }
+    .somna-sale-table__msize { font-size: 16px; line-height: 1.3; letter-spacing: 0.04em; }
     .somna-sale-table__mgift { display: flex; align-items: center; gap: 4px; margin-top: 2px !important; font-size: 11px; font-weight: 700; color: #98a3de; }
     .somna-sale-table__mgift .somna-gift-glyph { flex: none; width: 18px; height: 18px; color: #000; }
     .somna-sale-table__mprice { flex: none; text-align: right; }
-    .somna-sale-table__msub { font-size: 14px; font-weight: 700; line-height: 1.3; letter-spacing: 0.04em; }
+    .somna-sale-table__msub { font-size: 16px; font-weight: 800; line-height: 1.25; letter-spacing: 0.02em; }
     .somna-sale-table__monce { font-size: 10px; line-height: 1.3; letter-spacing: 0.06em; }
     .somna-sale-table__note { display: block; max-width: 330px; margin: 18px 8px 0; font-size: 11px; font-weight: 700; line-height: 1.3; letter-spacing: 0.04em; }
     .somna-sale-table { padding-block: calc(var(--sst-pt) * 0.6) calc(var(--sst-pb) * 0.6); }
@@ -299,10 +340,14 @@
     { "type": "text", "id": "gifts_note", "label": "Gifts note", "default": "3 gifts on 2+" },
     { "type": "range", "id": "gift_min", "label": "Gifts from (bags)", "min": 1, "max": 4, "step": 1, "default": 2 },
     { "type": "text", "id": "no_gifts_label", "label": "No gifts (screen readers)", "default": "No gifts" },
+    { "type": "header", "content": "First box" },
+    { "type": "product_list", "id": "first_box_products", "label": "Products with a first-box discount" },
+    { "type": "textarea", "id": "first_box_off", "label": "First-box discount ($)", "info": "One per line: pack name = amount off (same as the Shopify automatic discounts). E.g. 1 Bag = 8" },
+    { "type": "text", "id": "then_label", "label": "Renewal price note", "info": "Under the first-box price. [price] = the renewal price.", "default": "then [price]" },
     { "type": "header", "content": "Phones" },
     { "type": "paragraph", "content": "On phones the table shows as a list: size and gifts on the left, the Subscribe & Save price and the one-time price on the right." },
     { "type": "text", "id": "once_short", "label": "One-time price label", "default": "one-time" },
-    { "type": "text", "id": "footnote", "label": "Note under the list", "default": "Every order: $4.95 standard shipping · Delivered in 7–9 business days · 30-Night Money-Back Guarantee" },
+    { "type": "text", "id": "footnote", "label": "Note under the list", "default": "Delivered in 7–9 business days · 30-Night Money-Back Guarantee" },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 56 },
     { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 }
   ],

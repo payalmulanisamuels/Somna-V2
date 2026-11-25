@@ -918,7 +918,14 @@
         "heading": "<p>More nights, same 70%</p>",
         "col_sub": "Subscribe & Save (70% off)",
         "padding_top": 40,
-        "padding_bottom": 72
+        "padding_bottom": 72,
+        "first_box_products": [
+          "nasal-strips",
+          "mouth-tape"
+        ],
+        "first_box_off": "1 Bag = 8\n2 Bags = 15\n4 Bags = 22",
+        "then_label": "then [price]",
+        "footnote": "Delivered in 7–9 business days · 30-Night Money-Back Guarantee"
       }
     },
     "wave_table_faq": {
