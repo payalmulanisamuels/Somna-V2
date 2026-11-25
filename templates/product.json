@@ -402,7 +402,7 @@
             "column_2_image": "shopify://shop_images/01-SOMNA-Sleep-Bundle-Hero.jpg",
             "column_3_image": "shopify://shop_images/strip-1_2b080541-bb5f-4874-9f2a-eb53b3f94218.png",
             "show_names": true,
-            "sticker": "Save up to $21.65",
+            "sticker": "Save up to $41.63",
             "note": "Subscribe & Save prices, including $4.95 shipping per delivery. Strips + Tape bought separately: $14.95 each for the first box, then $22.95 each."
           }
         },
@@ -446,9 +446,9 @@
             "tab": "3",
             "label": "Total for 90 nights",
             "total": true,
-            "column_1_text": "$124.90",
-            "column_2_text": "$134.70",
-            "column_3_text": "$146.55"
+            "column_1_text": "$94.92",
+            "column_2_text": "$104.76",
+            "column_3_text": "$136.55"
           }
         },
         "tab_color": {
@@ -533,8 +533,8 @@
           "settings": {
             "tab": "4",
             "label": "Price per night",
-            "column_1_text": "$0.67",
-            "column_2_text": "$0.67",
+            "column_1_text": "$0.50",
+            "column_2_text": "$0.50",
             "column_3_text": "Varies"
           }
         },
@@ -575,7 +575,7 @@
           "settings": {
             "tab": "5",
             "label": "Monthly price from month 2",
-            "column_1_text": "$39.95",
+            "column_1_text": "$29.97",
             "column_2_text": "$45.90",
             "column_3_text": "$22.95 (nose only)"
           }
@@ -585,7 +585,7 @@
           "settings": {
             "tab": "5",
             "label": "Price per night from month 2",
-            "column_1_text": "$1.33 for both",
+            "column_1_text": "$1.00 for both",
             "column_2_text": "$1.53 for both",
             "column_3_text": "$0.77 (nose only)"
           }
