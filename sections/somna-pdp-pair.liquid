@@ -93,7 +93,17 @@
 
     {%- if pair != blank -%}
       {%- liquid
-        assign pair_v = pair.selected_or_first_available_variant
+        # first bag: the 1 Bag size (first colour that's in stock), else the first available variant
+        assign pair_v = nil
+        for pv in pair.variants
+          if pv.available and pv.title contains '1 Bag'
+            assign pair_v = pv
+            break
+          endif
+        endfor
+        if pair_v == nil
+          assign pair_v = pair.selected_or_first_available_variant
+        endif
         assign pair_alloc = pair_v.selling_plan_allocations | first
         assign from_price = pair.price_min
         if pair_alloc
@@ -106,7 +116,8 @@
           endif
         endif
       -%}
-      <a class="somna-pdp-pair__card somna-point-target" href="{{ pair.url }}">
+      <div class="somna-pdp-pair__card somna-point-target">
+        <a class="somna-pdp-pair__card-link" href="{{ pair.url }}">
         {%- assign card_image = card_image | default: pair.featured_image -%}
         {%- if card_style == 'wide' -%}{%- assign sizes_attr = '(min-width: 750px) 488px, 90vw' -%}{%- else -%}{%- assign sizes_attr = '(min-width: 750px) 185px, 60vw' -%}{%- endif -%}
         {%- if card_image -%}{{ card_image | image_url: width: 1000 | image_tag: loading: 'lazy', alt: card_image.alt | default: pair.title, widths: '300, 450, 600, 800, 1000', sizes: sizes_attr }}{%- endif -%}
@@ -115,11 +126,58 @@
         {%- if mf.pdp_pair_note != blank -%}<span class="somna-pdp-pair__note">{{ mf.pdp_pair_note.value }}</span>{%- endif -%}
         {%- capture from_money -%}{{ from_price | money }}{%- endcapture -%}
         <span class="somna-pdp-pair__meta">{{ s.from_label | replace: '[price]', from_money }}{% if pair_alloc and s.sub_note != blank %} <span>{{ s.sub_note }}</span>{% endif %}</span>
-        <span class="somna-pdp-pair__button">{{ s.button_label }}</span>
-      </a>
+        </a>
+        <button type="button" class="somna-pdp-pair__button" data-pair-atc data-variant="{{ pair_v.id }}"{% if pair_alloc %} data-plan-id="{{ pair_alloc.selling_plan.id }}"{% endif %}{% unless pair_v.available %} disabled{% endunless %}>{{ s.button_label }}</button>
+        <p class="somna-pdp-pair__err" role="alert" hidden></p>
+      </div>
     {%- endif -%}
   </div>
 </div>
+<script>
+  /* "Add to cart" on the pair card: the first bag on Subscribe & Save, cart drawer refilled and opened
+     (same flow as the sale page cards / quiz) */
+  (function () {
+    if (window.somnaPairAtc) return; window.somnaPairAtc = true;
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-pair-atc]'); if (!btn || btn.getAttribute('aria-busy') === 'true') return;
+      e.preventDefault();
+      var card = btn.closest('.somna-pdp-pair__card'), err = card && card.querySelector('.somna-pdp-pair__err');
+      var root = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
+      var id = Number(btn.dataset.variant), body = { id: id, quantity: 1 };
+      if (btn.dataset.planId) body.selling_plan = Number(btn.dataset.planId);
+      var ids = Array.prototype.map.call(document.querySelectorAll('cart-items-component'), function (c) { return c.dataset.sectionId; }).filter(Boolean);
+      if (ids.length) body.sections = ids.join(',');
+      var drawer = document.querySelector('cart-drawer-component'), td = drawer && drawer.closest('theme-drawer');
+      var wasEmpty = !!(drawer && drawer.querySelector('[data-cart-drawer-empty], .cart-drawer--empty'));
+      var label = btn.textContent; btn.setAttribute('aria-busy', 'true'); btn.textContent = {{ 'Adding…' | json }};
+      if (err) err.hidden = true;
+      var deferred = null, Ev = null;
+      var addReq = fetch(root + 'cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) }).then(function (r) { return r.json(); });
+      var renderer = import('@theme/section-renderer').catch(function () { return null; });
+      import('@shopify/events').catch(function () { return null; }).then(function (m) {
+        Ev = m && m.CartLinesUpdateEvent; deferred = Ev ? Ev.createPromise() : null;
+        if (deferred) btn.dispatchEvent(new Ev({ action: 'add', context: 'product', lines: [{ merchandiseId: String(id), quantity: 1 }], promise: deferred.promise }));
+        return addReq;
+      }).then(function (added) {
+        if (added.status) throw new Error(added.description || added.message || 'Could not add to cart');
+        var html = added.sections && ids[0] && added.sections[ids[0]];
+        var shown = renderer.then(function (rs) { if (rs && rs.morphSection && html) return rs.morphSection(ids[0], html, { mode: 'hydration', injectStylesheet: wasEmpty }); }).catch(function () {}).then(function () {
+          if (td && typeof td.open === 'function') { if (!td.isOpen) td.open(); } else window.location.href = root + 'cart';
+        });
+        btn.textContent = {{ 'Added ✓' | json }};
+        setTimeout(function () { btn.textContent = label; btn.removeAttribute('aria-busy'); }, 1800);
+        return shown.then(function () { return fetch(root + 'cart.js'); }).then(function (r) { return r.json(); }).then(function (cart) {
+          if (deferred) deferred.resolve({ cart: Ev.createCartFromAjaxResponse(cart), detail: { items: cart.items, source: 'somna-pdp-pair', itemCount: 1, productId: String(added.product_id || ''), sections: added.sections, didError: false } });
+        });
+      }).catch(function (x) {
+        if (deferred) deferred.reject(x);
+        btn.textContent = label; btn.removeAttribute('aria-busy');
+        if (err) { err.textContent = (x && x.message) || 'Could not add to cart'; err.hidden = false; }
+      });
+    });
+    window.addEventListener('pageshow', function (e) { if (e.persisted) document.querySelectorAll('[data-pair-atc][aria-busy]').forEach(function (b) { b.removeAttribute('aria-busy'); }); });
+  })();
+</script>
 {%- if section.settings.wave_color != blank -%}
   {%- render 'somna-wave', top: section.settings.background_color, bottom: section.settings.wave_color, shape: section.settings.wave_shape -%}
 {%- endif -%}
@@ -328,7 +386,14 @@
     margin-left: 6px;
   }
 
+  .somna-pdp-pair__card-link { display: contents; color: inherit; text-decoration: none; }
+  .somna-pdp-pair__card-link:focus-visible img { outline: 2px solid #afbdf8; outline-offset: 2px; }
+  .somna-pdp-pair__err { margin: 6px 0 0; color: #ffb4b4; font-size: 0.8125rem; text-align: center; }
   .somna-pdp-pair__button {
+    width: 100%;
+    border: 0;
+    font-family: inherit;
+    cursor: pointer;
     display: grid;
     place-items: center;
     min-height: 48px;
@@ -342,7 +407,8 @@
     transition: background-color 0.2s, color 0.2s;
   }
 
-  .somna-pdp-pair__card:hover .somna-pdp-pair__button {
+  .somna-pdp-pair__button[aria-busy='true'], .somna-pdp-pair__button:disabled { cursor: default; opacity: 0.85; }
+  .somna-pdp-pair__button:is(:hover, :focus-visible) {
     background: #f3feee;
     color: #0b0f1d;
   }
