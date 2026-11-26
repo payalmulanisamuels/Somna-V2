@@ -609,7 +609,9 @@
     margin-block: calc(-1 * var(--somna-rv-gap) - 1px);
     line-height: 0;
   }
-
+.jm-navigation__next[data-v-a223cf03]:disabled, .jm-navigation__previous[data-v-a223cf03]:disabled {
+    display: none;
+}
   .somna-reviews__summary:has(+ .somna-reviews__tear--bottom) { border-end-start-radius: 0; border-end-end-radius: 0; }
   .somna-reviews__tear--bottom { margin-block: calc(-1 * var(--somna-rv-gap) - 1px) 0; }
   .somna-reviews__tear--bottom svg { aspect-ratio: 1000 / 60; }
