@@ -408,9 +408,10 @@
 {%- render 'somna-photo-lightbox' -%}
 
 <style>
-  /* phones: Judge.me's "Show more" sits under the reviews (not floating over the cards), fully solid */
+  /* phones: Judge.me's "Show more" fully solid; once opened it sits under the list (not floating over the cards) */
   @media screen and (max-width: 749px) {
-    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer { position: static !important; inset: auto !important; transform: none !important; margin-top: 12px !important; opacity: 1 !important; background: transparent !important; }
+    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer { opacity: 1 !important; }
+    .somna-reviews .jdgm-masonry-grid.somna-rv-open .jdgm-masonry-grid__footer { position: static !important; inset: auto !important; transform: none !important; margin-top: 12px !important; background: transparent !important; }
     .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button { opacity: 1 !important; }
     .somna-reviews .jdgm-masonry-grid.somna-rv-open .jdgm-masonry-grid__fade,
     .somna-reviews .jdgm-masonry-grid.somna-rv-open .jdgm-masonry-grid__peek { display: none !important; }
