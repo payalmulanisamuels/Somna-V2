@@ -153,9 +153,9 @@
     "somna_countdown": {
       "type": "somna-countdown",
       "settings": {
-        "end_at": "2026-12-02T23:59:00-08:00",
         "timer_mode": "session",
         "session_minutes": 360,
+        "end_at": "2026-12-02T23:59:00-08:00",
         "label": "Black Friday sale",
         "pdp_land_scroll": true,
         "offer": "70% OFF + 3 FREE GIFTS",
