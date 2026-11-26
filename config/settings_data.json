@@ -87,6 +87,7 @@
     "currency_code_enabled_product_pages": false,
     "currency_code_enabled_product_cards": false,
     "currency_code_enabled_cart_items": false,
+    "somna_once_discount": 60,
     "somna_first_box_products": [
       "nasal-strips",
       "mouth-tape"
@@ -215,10 +216,10 @@
           "discount_code": "WELCOME10",
           "shop_redirect": "/collections/all",
           "logo_text": "somna.",
-          "pill": "Black Friday",
+          "pill": "Black Friday Sale",
           "title_1": "What's in",
           "title_2": "the box?",
-          "box_text": "Tap the box to unwrap your Pre Black Friday extra.",
+          "box_text": "Tap the box to unwrap your Black Friday extra.",
           "button": "Tap to unwrap",
           "unwrapping": "Unwrapping…",
           "footnote": "One treat per customer · first order only",
@@ -284,8 +285,7 @@
       "foreground": "#000000",
       "color1": "#333333",
       "color2": "#DFDFDF"
-    },
-    "somna_once_discount": 60
+    }
   },
   "presets": {
     "Horizon": {
