@@ -2,7 +2,8 @@
   Somna V2 — "fly to cart": when anything is added to the cart (product page, sticky bar, pair card, sale cards,
   quiz, cards…), a small copy of that product's photo flies from the button into the header cart icon, which then
   gives a short bounce. Listens to the theme's own add-to-cart event, so it works for every add button and only
-  plays after the item was really added. Off for people who prefer reduced motion. Not for adds inside the cart drawer.
+  starts on the click. When the cart drawer would open on the add, it now opens right after the photo lands.
+  Off for people who prefer reduced motion (the drawer then opens straight away). Not for adds inside the cart drawer.
 {%- enddoc -%}
 <style>
   .somna-fly { position: fixed; z-index: 2147483000; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 12px;
@@ -29,10 +30,11 @@
       }
       return '';
     };
-    var fly = function (from) {
-      var icon = cartIcon(); if (!icon) return;
+    var fly = function (from, done) {
+      var finish = function () { if (done) { var d = done; done = null; d(); } };
+      var icon = cartIcon(); if (!icon) return finish();
       var a = from.getBoundingClientRect(), b = icon.getBoundingClientRect();
-      if (!a.width || a.bottom < 0 || a.top > window.innerHeight) return;
+      if (!a.width || a.bottom < 0 || a.top > window.innerHeight) return finish();
       /* header scrolled away (e.g. desktop product pages): fly to the top corner where the cart icon sits */
       var visible = b.bottom > 0 && b.top < window.innerHeight;
       var x0 = a.left + a.width / 2, y0 = a.top + a.height / 2, x1 = b.left + b.width / 2, y1 = visible ? b.top + b.height / 2 : 18;
@@ -49,20 +51,34 @@
       ], { duration: 750, easing: 'cubic-bezier(0.45, 0, 0.25, 1)' });
       anim.onfinish = function () {
         dot.remove();
-        if (!visible) return;
+        if (!visible) return finish();
         icon.classList.remove('somna-cart-bump'); void icon.offsetWidth; icon.classList.add('somna-cart-bump');
-        setTimeout(function () { icon.classList.remove('somna-cart-bump'); }, 550);
+        setTimeout(function () { icon.classList.remove('somna-cart-bump'); finish(); }, 450);
       };
+      setTimeout(finish, 2000); /* safety: never hold the drawer back */
     };
-    document.addEventListener('shopify:cart:lines-update', function (e) {
+    /* capture phase on window: runs before the cart drawer's own listener (on document), so the drawer's
+       auto-open can wait until the photo has landed in the cart icon, then the drawer opens as usual */
+    window.addEventListener('shopify:cart:lines-update', function (e) {
       if (e.action !== 'add' || reduce.matches) return;
       var from = e.target instanceof Element ? e.target : null;
-      if (!from || from.closest('#cart-drawer')) return;
+      if (!from || from.closest('#cart-drawer') || from.closest('dialog:modal')) return;
+      var dr = document.querySelector('#cart-drawer');
+      if (dr && (dr.isOpen === true || dr.querySelector('dialog[open]'))) return;
       var btn = from.matches('button, [type="submit"]') ? from : (from.querySelector('[type="submit"], button[name="add"], button') || from);
-      /* the cart drawer opening already shows the add (and sits above everything), so no flight then */
-      var drawerOpen = function () { var dr = document.querySelector('#cart-drawer'); return !!(dr && (dr.isOpen === true || dr.querySelector('dialog[open]'))); };
-      var go = function (res) { if (!(res && res.detail && res.detail.didError) && !drawerOpen()) fly(btn); };
-      if (e.promise && e.promise.then) e.promise.then(go, function () {}); else go();
-    });
+      var comp = document.querySelector('cart-drawer-component[auto-open]');
+      if (comp) comp.removeAttribute('auto-open');
+      var landed = false, result = null, opened = false;
+      var maybeOpen = function () {
+        if (!landed || !result || opened) return; opened = true;
+        if (comp) {
+          if (result === 'ok' && dr && !dr.isOpen && typeof dr.open === 'function') dr.open();
+          comp.setAttribute('auto-open', '');
+        }
+      };
+      fly(btn, function () { landed = true; maybeOpen(); });
+      var settle = function (res) { result = (res && res.detail && res.detail.didError) ? 'error' : 'ok'; maybeOpen(); };
+      if (e.promise && e.promise.then) e.promise.then(settle, function () { result = 'error'; maybeOpen(); }); else settle();
+    }, true);
   })();
 </script>
