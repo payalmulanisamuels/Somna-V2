@@ -8,10 +8,7 @@
 {% render 'text-component-shimmer-styles' %}
 {% render 'cart-typography-styles' %}
 
-{%- if section_id == 'cart-drawer-section' -%}
-  {% render 'somna-cart-savings' %}
-{%- endif -%}
-
+{%- capture somna_cart_totals -%}
 <div class="cart-totals">
   {% # We need to keep this node in place to allow morphing to work properly # %}
   <div class="cart-totals__original-container cart-primary-typography">
@@ -255,6 +252,25 @@
     </div>
   </div>
 </div>
+{%- endcapture -%}
+
+{%- if section_id == 'cart-drawer-section' -%}
+  {%- comment -%} Somna: price details collapsed under "View order summary" (drawer only), checkout button right below {%- endcomment -%}
+  <div class="somna-cdsum" data-somna-cdsum>
+    <button type="button" class="somna-cdsum__toggle" aria-expanded="false" aria-controls="somna-cdsum-panel" data-somna-cdsum-toggle>
+      <span class="somna-cdsum__label" data-open-label="Hide order summary" data-closed-label="View order summary">View order summary</span>
+      <svg class="somna-cdsum__chev" viewBox="0 0 12 8" aria-hidden="true" focusable="false"><path d="M1 1.5 6 6.5l5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="somna-cdsum__panel" id="somna-cdsum-panel" role="region" aria-label="Order summary">
+      <div class="somna-cdsum__inner">
+        {% render 'somna-cart-savings' %}
+        {{ somna_cart_totals }}
+      </div>
+    </div>
+  </div>
+{%- else -%}
+  {{ somna_cart_totals }}
+{%- endif -%}
 
 <div class="cart__ctas">
   <button

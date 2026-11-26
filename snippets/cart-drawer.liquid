@@ -145,6 +145,31 @@
 {%- endif -%}
 
 <script>
+  /* Somna order summary toggle in the cart drawer: smooth open/close; stays open/closed when the drawer re-renders */
+  if (!window.somnaCdsum) {
+    window.somnaCdsum = { open: false };
+    const apply = (root) => {
+      (root || document).querySelectorAll('[data-somna-cdsum]').forEach((box) => {
+        const btn = box.querySelector('[data-somna-cdsum-toggle]');
+        const label = box.querySelector('.somna-cdsum__label');
+        const open = window.somnaCdsum.open;
+        box.classList.toggle('is-open', open);
+        if (btn) btn.setAttribute('aria-expanded', String(open));
+        if (label) label.textContent = open ? label.dataset.openLabel : label.dataset.closedLabel;
+      });
+    };
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-somna-cdsum-toggle]');
+      if (!b) return;
+      window.somnaCdsum.open = !window.somnaCdsum.open;
+      apply();
+    });
+    new MutationObserver(() => {
+      const box = document.querySelector('[data-somna-cdsum]');
+      if (box && box.classList.contains('is-open') !== window.somnaCdsum.open) apply();
+    }).observe(document.documentElement, { childList: true, subtree: true });
+  }
+
   /* Somna "+1 bag" box (snippets/cart-progressbar, part 'nudge'): presses the + of that cart line, so the theme's own
      quantity update runs and re-renders the drawer. Delegated once, so it survives the drawer re-rendering. */
   if (!window.somnaNudge) {
@@ -699,17 +724,60 @@
     color: #000;
   }
 
+  /* ---------- Somna compact cross-sell + collapsible order summary (cart drawer only) ---------- */
+  #cart-drawer .hz-minicart-upsell { margin-block: 14px 0; padding: 22px var(--cart-drawer-padding, 16px) 34px; }
+  #cart-drawer .hz-minicart-upsell::before, #cart-drawer .hz-minicart-upsell::after { height: 22px; }
+  #cart-drawer .hz-minicart-upsell__eyebrow { margin: 4px 0 2px; }
+  #cart-drawer .hz-minicart-upsell .upsell_heading { margin: 0 0 2px; font-size: 1.125rem; line-height: 1.2; }
+  #cart-drawer .hz-minicart-upsell__text { margin: 0 0 10px; }
+  #cart-drawer .hz-minicart-upsell__list { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  /* card = one row: photo | rating, name, pack line, prices | ADD */
+  #cart-drawer .hz-minicart-upsell__card {
+    display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; column-gap: 10px; row-gap: 1px; align-items: center;
+    padding: 7px 8px; border-width: 2px; border-radius: 10px; box-shadow: 3px 3px 0 #98a3de;
+  }
+  #cart-drawer .hz-minicart-upsell__card :is(.hz-minicart-upsell__content, .hz-minicart-upsell__bottom, .hz-minicart-upsell__price-wrap) { display: contents; }
+  #cart-drawer .hz-minicart-upsell__media { grid-column: 1; grid-row: 1 / span 4; align-self: center; }
+  #cart-drawer .hz-minicart-upsell__card .hz-upsell-img { width: 64px; height: 64px; aspect-ratio: 1; border-radius: 6px; }
+  #cart-drawer .hz-minicart-upsell__rating { grid-column: 2; margin: 0; font-size: 0.5625rem; line-height: 1.3; }
+  #cart-drawer .hz-minicart-upsell__title { grid-column: 2; font-size: 0.875rem; line-height: 1.15; }
+  #cart-drawer .hz-minicart-upsell__variant { grid-column: 2; overflow: hidden; font-size: 0.5625rem; line-height: 1.3; white-space: nowrap; text-overflow: ellipsis; }
+  #cart-drawer .hz-minicart-upsell__prices { grid-column: 2; display: flex; align-items: baseline; justify-items: start; gap: 6px; }
+  #cart-drawer .hz-minicart-upsell__price { font-size: 0.8125rem; font-weight: 700; }
+  #cart-drawer .hz-minicart-upsell__compare { font-size: 0.625rem; }
+  #cart-drawer .hz-minicart-upsell__card .hz-upsell-form { grid-column: 3; grid-row: 1 / span 4; margin: 0; align-self: center; }
+  #cart-drawer .hz-minicart-upsell__card .hz-upsell-add-btn { width: auto; min-height: 34px; padding: 0 14px; font-size: 0.75rem; white-space: nowrap; }
+  #cart-drawer .hz-minicart-upsell__card .hz-save-badge { top: -9px; right: auto; left: 8px; padding: 2px 7px; font-size: 0.5625rem; }
+  @media screen and (max-width: 359px) {
+    #cart-drawer .hz-minicart-upsell__card { grid-template-columns: 52px minmax(0, 1fr) auto; column-gap: 8px; }
+    #cart-drawer .hz-minicart-upsell__card .hz-upsell-img { width: 52px; height: 52px; }
+    #cart-drawer .hz-minicart-upsell__card .hz-upsell-add-btn { padding: 0 10px; }
+  }
+
+  /* order summary: collapsed by default, checkout button right below */
+  #cart-drawer .somna-cdsum { display: grid; }
+  #cart-drawer .somna-cdsum__toggle {
+    display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 4px 0;
+    border: 0; background: none; color: #0b0f1d; font: inherit; font-size: 0.875rem; font-weight: 600; cursor: pointer;
+  }
+  #cart-drawer .somna-cdsum__toggle:hover .somna-cdsum__label { text-decoration: underline; text-underline-offset: 3px; }
+  #cart-drawer .somna-cdsum__chev { width: 12px; height: 8px; transition: transform 0.3s ease; }
+  #cart-drawer .somna-cdsum.is-open .somna-cdsum__chev { transform: rotate(180deg); }
+  #cart-drawer .somna-cdsum__panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease; }
+  #cart-drawer .somna-cdsum.is-open .somna-cdsum__panel { grid-template-rows: 1fr; }
+  #cart-drawer .somna-cdsum__inner { display: grid; gap: 8px; min-height: 0; overflow: hidden; visibility: hidden; transition: visibility 0s linear 0.3s; }
+  #cart-drawer .somna-cdsum.is-open .somna-cdsum__inner { visibility: visible; padding-top: 8px; transition: visibility 0s; }
+  @media (prefers-reduced-motion: reduce) { #cart-drawer .somna-cdsum__panel, #cart-drawer .somna-cdsum__chev { transition: none; } }
+
   .hz-upsell-add-btn:disabled {
     opacity: 0.6;
   }
 
   /* summary: Somna totals replace the theme's subtotal / discount rows in the drawer */
   /* Figma: totals and checkout follow the upsell in the scroll (not pinned over the items) */
-  /* checkout button straight under the cross-sell, savings and subtotal under the button */
-  #cart-drawer .cart-drawer__summary > .cart__ctas { order: -1; }
   #cart-drawer .cart-drawer__summary {
-    padding-top: 16px;
-    gap: 14px;
+    padding-top: 12px;
+    gap: 12px;
     position: static;
     padding-bottom: 0;
     background: #f3feee;
