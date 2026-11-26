@@ -284,7 +284,8 @@
       "foreground": "#000000",
       "color1": "#333333",
       "color2": "#DFDFDF"
-    }
+    },
+    "somna_once_discount": 60
   },
   "presets": {
     "Horizon": {
