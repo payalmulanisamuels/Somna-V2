@@ -1,0 +1,63 @@
+{%- doc -%}
+  Somna V2 — "fly to cart": when anything is added to the cart (product page, sticky bar, pair card, sale cards,
+  quiz, cards…), a small copy of that product's photo flies from the button into the header cart icon, which then
+  gives a short bounce. Listens to the theme's own add-to-cart event, so it works for every add button and only
+  plays after the item was really added. Off for people who prefer reduced motion. Not for adds inside the cart drawer.
+{%- enddoc -%}
+<style>
+  .somna-fly { position: fixed; z-index: 2147483000; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 12px;
+    background: #f3feee center / cover no-repeat; box-shadow: 0 6px 18px rgb(11 15 29 / 0.35); border: 2px solid #afbdf8; pointer-events: none; will-change: transform, opacity; }
+  .somna-fly--dot { width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; background: #afbdf8; border: 0; }
+  @keyframes somna-cart-bump { 0% { transform: scale(1); } 30% { transform: scale(1.28) rotate(-8deg); } 60% { transform: scale(0.92) rotate(4deg); } 100% { transform: scale(1); } }
+  .somna-cart-bump { animation: somna-cart-bump 0.5s ease; }
+</style>
+<script>
+  (function () {
+    if (window.somnaFlyToCart) return; window.somnaFlyToCart = true;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var cartIcon = function () {
+      var list = document.querySelectorAll('.header-actions__cart-icon, .header-actions__action.action__cart, a[href$="/cart"]');
+      for (var i = 0; i < list.length; i++) { var r = list[i].getBoundingClientRect(); if (r.width && r.height && r.bottom > 0) return list[i]; }
+      return null;
+    };
+    var photoFor = function (el) {
+      var scopes = ['.hz-minicart-upsell__card', '.somna-pdp-pair__card', '.somna-sale-card', '[class*="product-card"]', '.somna-ccard', '.somna-quiz', '.somna-pdp-hero', 'product-form', '.shopify-section'];
+      for (var i = 0; i < scopes.length; i++) {
+        var box = el.closest(scopes[i]); if (!box) continue;
+        var imgs = box.querySelectorAll('img');
+        for (var j = 0; j < imgs.length; j++) { var r = imgs[j].getBoundingClientRect(); if (r.width > 40 && r.height > 40) return imgs[j].currentSrc || imgs[j].src; }
+      }
+      return '';
+    };
+    var fly = function (from) {
+      var icon = cartIcon(); if (!icon) return;
+      var a = from.getBoundingClientRect(), b = icon.getBoundingClientRect();
+      if (!a.width) return;
+      var x0 = a.left + a.width / 2, y0 = a.top + a.height / 2, x1 = b.left + b.width / 2, y1 = b.top + b.height / 2;
+      var src = photoFor(from), dot = document.createElement('div');
+      dot.className = 'somna-fly' + (src ? '' : ' somna-fly--dot');
+      if (src) dot.style.backgroundImage = 'url("' + src + '")';
+      dot.style.left = x0 + 'px'; dot.style.top = y0 + 'px';
+      document.body.appendChild(dot);
+      var dx = x1 - x0, dy = y1 - y0, lift = Math.min(-80, dy * 0.4 - 60);
+      var anim = dot.animate([
+        { transform: 'translate(0,0) scale(1) rotate(0deg)', opacity: 1 },
+        { transform: 'translate(' + dx * 0.45 + 'px,' + (dy * 0.45 + lift) + 'px) scale(0.85) rotate(-180deg)', opacity: 1, offset: 0.45 },
+        { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(0.25) rotate(-360deg)', opacity: 0.6 }
+      ], { duration: 750, easing: 'cubic-bezier(0.45, 0, 0.25, 1)' });
+      anim.onfinish = function () {
+        dot.remove();
+        icon.classList.remove('somna-cart-bump'); void icon.offsetWidth; icon.classList.add('somna-cart-bump');
+        setTimeout(function () { icon.classList.remove('somna-cart-bump'); }, 550);
+      };
+    };
+    document.addEventListener('shopify:cart:lines-update', function (e) {
+      if (e.action !== 'add' || reduce.matches) return;
+      var from = e.target instanceof Element ? e.target : null;
+      if (!from || from.closest('#cart-drawer')) return;
+      var btn = from.matches('button, [type="submit"]') ? from : (from.querySelector('[type="submit"], button[name="add"], button') || from);
+      var go = function (res) { if (!(res && res.detail && res.detail.didError)) fly(btn); };
+      if (e.promise && e.promise.then) e.promise.then(go, function () {}); else go();
+    });
+  })();
+</script>
