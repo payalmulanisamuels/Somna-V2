@@ -413,6 +413,10 @@
   @media screen and (max-width: 989px) {
     .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer,
     .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button { opacity: 1 !important; }
+    /* before it opens: the button stays put at the bottom edge of the cut-off list (Judge.me makes it sticky, so it
+       slid up and down while scrolling and taps landed on the review cards behind it) */
+    .somna-reviews .jdgm-masonry-grid { position: relative; }
+    .somna-reviews:not(.somna-rv-open) .jdgm-masonry-grid__footer { position: absolute !important; left: 0 !important; right: 0 !important; bottom: 0 !important; top: auto !important; z-index: 4 !important; }
     .somna-reviews.somna-rv-open .jdgm-masonry-grid { max-height: none !important; }
     .somna-reviews.somna-rv-open .jdgm-masonry-grid__fade,
     .somna-reviews.somna-rv-open .jdgm-masonry-grid__peek { display: none !important; }
