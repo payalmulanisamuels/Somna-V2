@@ -420,6 +420,8 @@
     document.addEventListener('click', function (e) {
       var btn = e.target.closest && e.target.closest('.jdgm-masonry-grid__btn, .jdgm-masonry-grid__footer button');
       if (!btn) return;
+      /* phones: leave Judge.me's own one-column Show more alone (it reveals 3 more per tap, like the Redesign theme) */
+      if (window.matchMedia('(max-width: 749px)').matches) return;
       var grid = btn.closest('.jdgm-masonry-grid') || document.querySelector('.jdgm-masonry-grid'); if (!grid) return;
       var box = grid.querySelector('.jdgm-masonry-grid__container');
       /* phones: the first reviews are already loaded but cut off; show all of them on this tap (Judge.me only
