@@ -17,8 +17,15 @@
     if (window.somnaFlyToCart) return; window.somnaFlyToCart = true;
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
     var cartIcon = function () {
-      var list = document.querySelectorAll('.header-actions__cart-icon, .header-actions__action.action__cart, a[href$="/cart"]');
-      for (var i = 0; i < list.length; i++) { var r = list[i].getBoundingClientRect(); if (r.width && r.height) return list[i]; }
+      /* the header's cart icon first (the mobile menu has its own bag link, which must not be the target) */
+      var sels = ['.header-actions__cart-icon', '.header-actions__action.action__cart', 'a[href$="/cart"]'];
+      for (var s = 0; s < sels.length; s++) {
+        var list = document.querySelectorAll(sels[s]);
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].closest('.somna-md, header-drawer, .menu-drawer, dialog, #cart-drawer')) continue;
+          var r = list[i].getBoundingClientRect(); if (r.width && r.height) return list[i];
+        }
+      }
       return null;
     };
     var photoFor = function (el) {
