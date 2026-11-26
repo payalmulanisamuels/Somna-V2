@@ -461,7 +461,7 @@
       --somna-mark-size: 24px;
     }
 
-    /* PDP (Figma mobile): intro on the left, "somna. / VS / others" stacked */
+    /* PDP (mobile): intro on the left, "somna. VS others" on one line */
     main[data-template^='product'] .somna-compare__intro {
       text-align: left;
     }
@@ -474,9 +474,10 @@
     }
 
     main[data-template^='product'] .somna-compare__heading {
-      max-width: min-content;
-      font-size: 1.625rem;
+      max-width: none;
+      font-size: min(1.625rem, 8vw);
       line-height: 1.3;
+      white-space: nowrap;
     }
 
     main[data-template^='product'] .somna-compare__text {
