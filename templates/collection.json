@@ -173,7 +173,8 @@
         "padding_top": 16,
         "padding_bottom": 24,
         "first_handles": "nasal-strips, mouth-tape",
-        "hover_grow": "large"
+        "hover_grow": "large",
+        "pdp_photo": true
       }
     },
     "wave_singles_bundles": {
@@ -210,7 +211,8 @@
         "padding_bottom": 24,
         "first_handles": "sleep-bundle, the-colour-set, season-bundle",
         "hover_grow": "small",
-        "use_card_fields": true
+        "use_card_fields": true,
+        "pdp_photo": true
       }
     },
     "wave_bundles_chooser": {
@@ -245,7 +247,8 @@
         "accent_color": "#f3feee",
         "padding_top": 24,
         "padding_bottom": 44,
-        "pointer_motion": "draw_shake"
+        "pointer_motion": "draw_shake",
+        "pdp_photo": true
       },
       "blocks": {
         "blocked": {

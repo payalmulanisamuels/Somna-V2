@@ -11,12 +11,17 @@
   @param {string} price_format - "[price]" and "[compare]" placeholders
   @param {string} rating_format - "[rating]" and "[count]" placeholders
   @param {string} button - button label
+  @param {boolean} [pdp_photo] - use the product page's main photo (first product image) instead of the Card image field
   @param {boolean} [card_fields] - use the product's Card details (custom.card_details) and Card note (custom.card_note, for [note])
 {%- enddoc -%}
 {%- liquid
   assign p = product
   assign mf = p.metafields.custom
-  assign pic = image | default: mf.card_image.value | default: p.featured_image
+  if pdp_photo
+    assign pic = image | default: p.featured_image | default: mf.card_image.value
+  else
+    assign pic = image | default: mf.card_image.value | default: p.featured_image
+  endif
   assign name = title | default: p.title
 
   # lowest Subscribe & Save price (falls back to the lowest one-time price)
