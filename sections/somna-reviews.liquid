@@ -414,13 +414,17 @@
     var grow = function (grid) {
       var box = grid.querySelector('.jdgm-masonry-grid__container'); if (!box) return;
       var h = Math.ceil(box.getBoundingClientRect().height);
-      if (h > 0) grid.style.maxHeight = (h + 24) + 'px';
+      var cur = parseFloat(grid.style.maxHeight) || parseFloat(getComputedStyle(grid).maxHeight) || 0;
+      if (h > 0 && h + 24 > cur) grid.style.maxHeight = (h + 24) + 'px';
     };
     document.addEventListener('click', function (e) {
       var btn = e.target.closest && e.target.closest('.jdgm-masonry-grid__btn, .jdgm-masonry-grid__footer button');
       if (!btn) return;
       var grid = btn.closest('.jdgm-masonry-grid') || document.querySelector('.jdgm-masonry-grid'); if (!grid) return;
       var box = grid.querySelector('.jdgm-masonry-grid__container');
+      /* phones: the first reviews are already loaded but cut off; show all of them on this tap (Judge.me only
+         raises the cap part-way, which needed a second tap) */
+      setTimeout(function () { grow(grid); }, 60);
       var before = box ? box.getBoundingClientRect().height : 0, tries = 0;
       var wait = function () {
         tries++;
