@@ -3,6 +3,7 @@
 
   @param {string} [accelerated_checkout_buttons_layout] - { 'vertical' } Forced layout of the additional checkout buttons, instead of relying on platform's layout.
   @param {string} [section_id] - The section ID for cart discount component.
+  @param {boolean} [trust] - Drawer only: false = leave out the guarantee / payment icons (the drawer shows them in the scroll area).
 {%- enddoc -%}
 
 {% render 'text-component-shimmer-styles' %}
@@ -302,7 +303,7 @@
   {% endif %}
 </div>
 
-{%- if section_id == 'cart-drawer-section' -%}
+{%- if section_id == 'cart-drawer-section' and trust != false -%}
   {% render 'somna-cart-trust' %}
 {%- endif -%}
 
