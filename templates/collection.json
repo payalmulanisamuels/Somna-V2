@@ -458,7 +458,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Sleep Bundle comes in three colors — Breathe (Blue), Bold (Red), and Night (Black) — same price, same value, just pick your colour. The Colour Set includes all three colors of Strips only, no Tape. Season Bundle is a three-month supply in Black.</p>",
+                    "text": "<p>Sleep Bundle comes in three colors - Breathe (Blue), Bold (Red), and Night (Black) - same price, same value, just pick your colour. The Colour Set includes all three colors of Strips only, no Tape. Season Bundle is a three-month supply in Black.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -498,7 +498,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Yes — both are available as singles if you’d rather start with one.</p>",
+                    "text": "<p>Yes - both are available as singles if you’d rather start with one.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
