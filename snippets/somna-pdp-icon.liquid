@@ -1,6 +1,6 @@
 {%- doc -%}
   Somna V2 — line icons for the product page (24×24, drawn with currentColor), redrawn after the
-  Figma PDP icons: two leaves (Drug-free), crescent (Gentle on skin / Moon), lips, feather (Gentle
+  Figma PDP icons: air lines (Easier breathing), two leaves (Drug-free), crescent (Gentle on skin / Moon), lips, feather (Gentle
   adhesive), heart sticker (Easy peel), stacked layers (Layer).
   The names match the "Icon" choices of the PDP feature metaobject (case and spaces don't matter),
   so merchants pick an icon in admin and the theme draws it.
@@ -25,6 +25,9 @@
 {%- elsif variant == 'figma' and key == 'nose-lips' -%}
 {%- comment -%} Nose + lips (Sleep Bundle / Season Bundle): traced from the supplied 960px artwork (1 unit = 15px), same circle {%- endcomment -%}
 <svg class="somna-pdp-icon somna-pdp-icon--figma {{ class }}" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.87" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M31.9 15.7C32 20 30.5 22.5 28.8 25.2 27.3 27.6 26.3 29.4 26.3 31.6 26.3 33.6 27.6 35.1 30 35.1H34.6C36.6 35.1 37.9 33.6 38.2 31.7"/><path d="M20 43.2C21.6 41.4 23.6 39.8 26.6 39.8 28.7 39.8 30.6 40.2 32 40.7 33.4 40.2 35.3 39.8 37.4 39.8 40.4 39.8 42.4 41.4 44 43.2"/><path d="M20 43.2C22.6 46.2 26.3 48.2 32 48.2S41.4 46.2 44 43.2"/><path d="M20 43.2H44"/></svg>
+{%- elsif variant == 'figma' and key == 'easier-breathing' -%}
+{%- comment -%} Easier breathing: three flowing air lines {%- endcomment -%}
+<svg class="somna-pdp-icon somna-pdp-icon--figma {{ class }}" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 25h23a5.5 5.5 0 1 0-5.5-5.5"/><path d="M13 32h33a5 5 0 1 1-5 5"/><path d="M13 39h17a5 5 0 1 1-5 5"/></svg>
 {%- elsif variant == 'figma' and key == 'sits-outside' -%}
 {%- comment -%} Sits outside: a nose in profile with arrows pointing outward (supplied artwork, redrawn as strokes) {%- endcomment -%}
 <svg class="somna-pdp-icon somna-pdp-icon--figma {{ class }}" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><g transform="translate(32 30) scale(1.35) translate(-32 -30)"><path stroke-width="1.6" d="M32 18c0 7-3.5 11-5.2 14.5-1.8 3.5-2.2 6-1.2 7.7.8 1.2 2.4 1.7 4.9 1.7h6.8c2.3 0 4-1.5 4.6-3.7"/><path stroke-width="1.9" d="M20 25.7h-4.3M17.7 23.7l-2 2 2 2M44 25.7h4.3M46.3 23.7l2 2-2 2"/></g></svg>
@@ -39,6 +42,8 @@
       <path d="M19 14.5A7.5 7.5 0 1 1 9.5 5a6 6 0 0 0 9.5 9.5z"/>
     {%- when 'gentle-adhesive' -%}
       <path d="M20 4c-7 0-12 4-13.5 11L5 20"/><path d="M20 4c0 6-3.5 10.5-10 11.5M8 11.5h5.5M10.5 8h5"/>
+    {%- when 'easier-breathing' -%}
+      <path d="M3 9h9a2.3 2.3 0 1 0-2.3-2.3"/><path d="M3 12h13.5a2.2 2.2 0 1 1-2.2 2.2"/><path d="M3 15h7a2.2 2.2 0 1 1-2.2 2.2"/>
     {%- when 'sits-outside' -%}
       <circle cx="12" cy="12" r="8.5"/><path d="M12 16.5s-4-2.4-4-5.1A2.2 2.2 0 0 1 12 10a2.2 2.2 0 0 1 4 1.4c0 2.7-4 5.1-4 5.1z"/>
     {%- when 'made-for-lips' -%}
