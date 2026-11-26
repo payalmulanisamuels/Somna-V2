@@ -162,6 +162,8 @@
         if (added.status) throw new Error(added.description || added.message || 'Could not add to cart');
         var html = added.sections && ids[0] && added.sections[ids[0]];
         var shown = renderer.then(function (rs) { if (rs && rs.morphSection && html) return rs.morphSection(ids[0], html, { mode: 'hydration', injectStylesheet: wasEmpty }); }).catch(function () {}).then(function () {
+          /* phones: stay on the page (the cart icon count updates); the drawer opens only from the cart icon */
+          if (window.matchMedia('(max-width: 749px)').matches) return;
           if (td && typeof td.open === 'function') { if (!td.isOpen) td.open(); } else window.location.href = root + 'cart';
         });
         btn.textContent = {{ 'Added ✓' | json }};

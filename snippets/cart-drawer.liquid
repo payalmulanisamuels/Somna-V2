@@ -705,7 +705,11 @@
 
   /* summary: Somna totals replace the theme's subtotal / discount rows in the drawer */
   /* Figma: totals and checkout follow the upsell in the scroll (not pinned over the items) */
+  /* checkout button straight under the cross-sell, savings and subtotal under the button */
+  #cart-drawer .cart-drawer__summary > .cart__ctas { order: -1; }
   #cart-drawer .cart-drawer__summary {
+    padding-top: 16px;
+    gap: 14px;
     position: static;
     padding-bottom: 0;
     background: #f3feee;
