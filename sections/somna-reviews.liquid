@@ -407,6 +407,84 @@
 
 {%- render 'somna-photo-lightbox' -%}
 
+<style>
+  /* phones: reviews in 2 columns, and the theme runs "Show more" itself (Judge.me's own phone mode counts one
+     column, 3 reviews per tap, which went out of step with 2 columns). 2 rows first, 2 more rows per tap. */
+  @media screen and (max-width: 749px) {
+    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__container { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; height: auto !important; }
+    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item { position: static !important; width: auto !important; transform: none !important; opacity: 1 !important; }
+    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item-inner { height: 100%; padding: 0 !important; }
+    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item-inner > * { height: 100%; }
+    .somna-reviews .jdgm-masonry-grid { position: relative; max-height: var(--somna-rv-cap, 900px) !important; transition: max-height 0.35s ease !important; }
+    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer { position: absolute !important; left: 0 !important; right: 0 !important; bottom: 0 !important; top: auto !important; z-index: 4 !important; opacity: 1 !important; }
+    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button { opacity: 1 !important; }
+    .somna-reviews.somna-rv-all .jdgm-masonry-grid__fade,
+    .somna-reviews.somna-rv-all .jdgm-masonry-grid__peek { display: none !important; }
+    .somna-reviews.somna-rv-done .jdgm-masonry-grid__footer { display: none !important; }
+    .somna-reviews.somna-rv-loading .jdgm-masonry-grid__footer button { opacity: 0.6 !important; pointer-events: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .somna-reviews .jdgm-masonry-grid { transition: none !important; } }
+</style>
+<script>
+  (function () {
+    if (window.somnaRv2col) return; window.somnaRv2col = true;
+    var mq = window.matchMedia('(max-width: 749px)');
+    var STEP = 4, bypass = false, states = new WeakMap();
+    var grid = function (root) { return root.querySelector('.jdgm-masonry-grid'); };
+    var box = function (root) { var g = grid(root); return g && g.querySelector('.jdgm-masonry-grid__container'); };
+    var btnOf = function (root) { return root.querySelector('.jdgm-masonry-grid__btn, .jdgm-masonry-grid__footer button'); };
+    var st = function (root) { var s = states.get(root); if (!s) { s = { shown: STEP }; states.set(root, s); } return s; };
+    var layout = function (root) {
+      if (!mq.matches) return;
+      var g = grid(root), b = box(root); if (!g || !b) return;
+      var items = b.children, n = items.length; if (!n) return;
+      var s = st(root), shown = Math.min(s.shown, n), top = g.getBoundingClientRect().top, bottom = 0;
+      for (var i = 0; i < shown; i++) { var r = items[i].getBoundingClientRect(); if (r.bottom - top > bottom) bottom = r.bottom - top; }
+      var foot = g.querySelector('.jdgm-masonry-grid__footer');
+      var fh = foot && !root.classList.contains('somna-rv-done') ? foot.offsetHeight + 16 : 8;
+      g.style.setProperty('--somna-rv-cap', Math.ceil(bottom + fh) + 'px');
+      root.classList.toggle('somna-rv-all', shown >= n);
+    };
+    var loadMore = function (root) {
+      var before = box(root) ? box(root).children.length : 0, tries = 0;
+      root.classList.add('somna-rv-loading');
+      var step = function () {
+        var b = box(root), now = b ? b.children.length : 0;
+        if (now > before) { root.classList.remove('somna-rv-loading'); st(root).shown += STEP; layout(root); return; }
+        var btn = btnOf(root);
+        if (!btn || tries >= 16) { root.classList.remove('somna-rv-loading'); root.classList.add('somna-rv-done'); layout(root); return; }
+        tries++;
+        /* Judge.me fetches the next page once its own counter passes the loaded reviews: press its button for it */
+        bypass = true; btn.click(); bypass = false;
+        setTimeout(step, 250);
+      };
+      step();
+    };
+    document.addEventListener('click', function (e) {
+      if (bypass || !mq.matches || !e.target || !e.target.closest) return;
+      var btn = e.target.closest('.jdgm-masonry-grid__btn, .jdgm-masonry-grid__footer button'); if (!btn) return;
+      var root = btn.closest('.somna-reviews'); if (!root) return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      if (root.classList.contains('somna-rv-loading')) return;
+      var b = box(root), s = st(root);
+      if (b && s.shown < b.children.length) { s.shown += STEP; layout(root); } else { loadMore(root); }
+    }, true);
+    var watch = function (root) {
+      if (root.dataset.rv2) return;
+      var b = box(root); if (!b) return;
+      root.dataset.rv2 = '1';
+      var again = function () { requestAnimationFrame(function () { layout(root); }); };
+      if (window.ResizeObserver) new ResizeObserver(again).observe(b);
+      new MutationObserver(again).observe(grid(root), { childList: true, subtree: true });
+      root.addEventListener('load', again, true);
+      mq.addEventListener && mq.addEventListener('change', again);
+      layout(root);
+    };
+    var scan = function () { document.querySelectorAll('.somna-reviews').forEach(watch); };
+    new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scan); else scan();
+  })();
+</script>
 <script>
   /* Judge.me "Show more" loads the next reviews but keeps the list capped at its first height (max-height), so
      the new cards stay hidden. After a tap, grow the cap to fit everything loaded so far. */
@@ -420,7 +498,7 @@
     document.addEventListener('click', function (e) {
       var btn = e.target.closest && e.target.closest('.jdgm-masonry-grid__btn, .jdgm-masonry-grid__footer button');
       if (!btn) return;
-      /* phones: leave Judge.me's own one-column Show more alone (it reveals 3 more per tap, like the Redesign theme) */
+      /* phones: the theme's own 2-column Show more handles it (script above) */
       if (window.matchMedia('(max-width: 749px)').matches) return;
       var grid = btn.closest('.jdgm-masonry-grid') || document.querySelector('.jdgm-masonry-grid'); if (!grid) return;
       var box = grid.querySelector('.jdgm-masonry-grid__container');
@@ -1977,7 +2055,7 @@
   .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__fade { pointer-events: none !important; }
   .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button:focus-visible { outline: 2px solid var(--somna-rv-fg); outline-offset: 3px; }
   @media screen and (max-width: 749px) { .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button { width: 100%; } }
-  /* phones: Judge.me's own one-column layout (its Show more reveals 3 more per tap); smaller type */
+  /* phones: smaller type (2-column layout + Show more: see the <style>/<script> above the Judge.me script) */
   @media screen and (max-width: 749px) {
     .somna-reviews .jdgm-horizon-widget .somna-r--item .jdgm-review-card__title { font-size: 0.9375rem !important; line-height: 1.45 !important; }
     .somna-reviews .jdgm-horizon-widget .somna-r--item .jdgm-review-card__name { font-size: 0.75rem !important; }
