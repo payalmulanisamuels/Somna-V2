@@ -129,9 +129,9 @@
     "ur_season": "season-bundle",
     "ur_color": "the-colour-set",
     "ur1_a_product": "mouth-tape",
-    "ur1_b_product": "the-colour-set",
+    "ur1_b_product": "sleep-bundle",
     "ur2_a_product": "nasal-strips",
-    "ur2_b_product": "season-bundle",
+    "ur2_b_product": "sleep-bundle",
     "ur3_a_product": "season-bundle",
     "ur3_b_product": "the-colour-set",
     "ur4_a_product": "sleep-bundle",
@@ -274,7 +274,17 @@
       "nasal-strips",
       "mouth-tape"
     ],
-    "somna_first_box_off": "1 Bag = 8\n2 Bags = 15\n4 Bags = 22"
+    "somna_first_box_off": "1 Bag = 8\n2 Bags = 15\n4 Bags = 22",
+    "ur1_a_details": "1 pack · 30 nights · $0.50/night",
+    "ur1_b_variant": "1 Bag",
+    "ur1_b_title": "Sleep Bundle",
+    "ur1_b_details": "Strips + Tape · 30 nights · $1.00/night",
+    "ur1_b_badge": "Best value",
+    "ur2_a_details": "1 pack · 30 nights · $0.50/night",
+    "ur2_b_variant": "1 Bag",
+    "ur2_b_title": "Sleep Bundle",
+    "ur2_b_details": "Strips + Tape · 30 nights · $1.00/night",
+    "ur2_b_badge": "Best value"
   },
   "presets": {
     "Horizon": {
