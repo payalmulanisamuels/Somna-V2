@@ -8,11 +8,11 @@
   assign s = section.settings
   assign cd_id = 'somna-cd-' | append: section.id
 -%}
-{%- if s.end_at != blank -%}
+{%- if s.end_at != blank or s.timer_mode == 'session' -%}
 <somna-countdown
   class="somna-cd"
   id="{{ cd_id }}"
-  data-end="{{ s.end_at | escape }}"
+  data-end="{{ s.end_at | escape }}"{% if s.timer_mode == 'session' %} data-session="{{ s.session_minutes }}"{% endif %}
   data-moon-cycle="{{ s.moon_cycle | default: 10 }}"
   hidden
   style="--cd-bg: {{ s.bg_color }}; --cd-text: {{ s.text_color }}; --cd-accent: {{ s.accent_color }}; --cd-tile: {{ s.tile_color }}; --cd-muted: {{ s.muted_color }};"
@@ -30,7 +30,8 @@
       <span class="somna-cd__label-mob"><b class="somna-cd__mob-top">{{ s.label_mobile }}{% if s.date_mobile != blank %} <span>{{ s.date_mobile }}</span>{% endif %}</b>{% if s.offer != blank %}<strong class="somna-cd__offer">{{ s.offer }}</strong>{% endif %}</span>
     </p>
     <div class="somna-cd__clock">
-      {%- for unit in (1..4) -%}
+      {%- assign first_unit = 1 -%}{%- if s.timer_mode == 'session' -%}{%- assign first_unit = 2 -%}{%- endif -%}
+      {%- for unit in (first_unit..4) -%}
         {%- liquid
           case unit
             when 1
@@ -129,7 +130,16 @@
   if (!customElements.get('somna-countdown')) {
     customElements.define('somna-countdown', class extends HTMLElement {
       connectedCallback() {
-        this.end = Date.parse(this.dataset.end);
+        this.saleEnd = Date.parse(this.dataset.end);
+        this.session = Number(this.dataset.session) * 60000 || 0;
+        if (this.session) {
+          /* per-visitor timer: one countdown per visitor: starts on their first page and keeps running across pages, tabs and later visits (localStorage);
+             it starts over only when it runs out. Hidden after the real sale end. */
+          if (!isNaN(this.saleEnd) && Date.now() >= this.saleEnd) { this.hidden = true; return; }
+          let e = 0; try { e = Number(localStorage.getItem('somnaCdEnd')) || 0; } catch (err) {}
+          if (e <= Date.now() || e - Date.now() > this.session) { e = Date.now() + this.session; try { localStorage.setItem('somnaCdEnd', String(e)); } catch (err) {} }
+          this.end = e;
+        } else { this.end = this.saleEnd; }
         if (isNaN(this.end)) return;
         this.nums = {};
         this.querySelectorAll('[data-cd]').forEach((n) => { this.nums[n.dataset.cd] = n; });
@@ -218,9 +228,10 @@
       disconnectedCallback() { clearInterval(this.timer); cancelAnimationFrame(this.raf); if (this.ro) this.ro.disconnect(); document.body.style.removeProperty('--somna-cd-height'); }
       tick() {
         let left = Math.max(0, Math.floor((this.end - Date.now()) / 1000));
+        if (left <= 0 && this.session && !(Date.now() >= this.saleEnd)) { this.end = Date.now() + this.session; try { localStorage.setItem('somnaCdEnd', String(this.end)); } catch (err) {} left = Math.floor(this.session / 1000); }
         if (left <= 0) { this.hidden = true; clearInterval(this.timer); cancelAnimationFrame(this.raf); if (this.setHeight) this.setHeight(); return; }
         this.hidden = false;
-        const parts = { d: Math.floor(left / 86400), h: Math.floor(left / 3600) % 24, m: Math.floor(left / 60) % 60, s: left % 60 };
+        const parts = { d: Math.floor(left / 86400), h: this.session ? Math.floor(left / 3600) : Math.floor(left / 3600) % 24, m: Math.floor(left / 60) % 60, s: left % 60 };
         for (const k in parts) {
           const n = this.nums[k]; if (!n) continue;
           const v = String(parts[k]).padStart(2, '0');
@@ -392,6 +403,8 @@
       "info": "Date and time with time zone, e.g. 2026-12-02T23:59:00-08:00 (Wed 2 Dec, 11:59 PM PT). The bar hides itself after this time.",
       "default": "2026-12-02T23:59:00-08:00"
     },
+    { "type": "select", "id": "timer_mode", "label": "Timer counts down to", "options": [{ "value": "date", "label": "The sale end date" }, { "value": "session", "label": "A timer per visitor" }], "default": "date" },
+    { "type": "range", "id": "session_minutes", "label": "Visitor timer length", "min": 15, "max": 360, "step": 15, "unit": "min", "default": 120, "info": "One countdown per visitor: starts the first time they open the site and keeps running across pages, tabs and return visits; starts over when it runs out. Days are not shown. The bar still hides after the sale end date." },
     { "type": "text", "id": "label", "label": "Label (desktop)", "default": "Black Friday sale ends in" },
     { "type": "checkbox", "id": "pdp_land_scroll", "label": "Product pages: scroll to this bar on arrival", "default": true },
     { "type": "text", "id": "offer", "label": "Offer line under the label", "default": "70% OFF + FREE GIFTS" },

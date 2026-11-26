@@ -1,0 +1,222 @@
+{%- doc -%}
+  Somna V2 — "new buy box design" for the product page buy box (sections/somna-pdp-hero, setting "Use the new buy
+  box design"). Styles only + two small display helpers: the price inside the Add to cart button and the
+  Subscribe & Save "% OFF" pill. The buy box's own script still does everything else (packs, modes, plans, gifts, cart).
+{%- enddoc -%}
+<style>
+  .somna-pdp-hero--v3 {
+    --v3-ink: #f3feee; --v3-muted: #c3c9e8; --v3-lav: #afbdf8; --v3-mint: #f3feee; --v3-dark: #0b0f1d;
+    --v3-card: #1b1f33; --v3-line: rgba(243, 254, 238, 0.28); --v3-gold: #f2b544;
+  }
+  /* replaced by the offer header and the cards */
+  .somna-pdp-hero--v3 .somna-pdp-hero__price,
+  .somna-pdp-hero--v3 .somna-pdp-hero__offer,
+  .somna-pdp-hero--v3 .somna-pdp-hero__nocode,
+  .somna-pdp-hero--v3 [data-was-sub],
+  .somna-pdp-hero--v3 [data-was-once] { display: none !important; }
+
+  /* offer header */
+  .somna-v3-offer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 16px 0 4px; padding-top: 16px; border-top: 1px solid var(--v3-line); }
+  .somna-v3-offer__eyebrow { margin: 0 0 2px; font: 800 0.6875rem/1.2 var(--font-body--family); letter-spacing: 0.14em; text-transform: uppercase; color: var(--v3-lav); }
+  .somna-v3-offer__title { margin: 0; font-family: var(--font-heading--family); font-weight: 900; font-size: clamp(1.5rem, 2.2vw, 2rem); line-height: 1; text-transform: uppercase; color: var(--v3-ink);
+    -webkit-text-stroke: 1px var(--v3-dark); text-shadow: 2px 2px 0 var(--v3-dark), 3px 3px 0 var(--v3-lav); letter-spacing: 0.01em; }
+  .somna-v3-offer__badge { flex: 0 0 auto; max-width: 112px; margin: 0; padding: 7px 10px; border-radius: 7px; background: var(--v3-lav); color: var(--v3-dark);
+    font: 900 0.6875rem/1.25 var(--font-body--family); letter-spacing: 0.04em; text-align: center; text-transform: uppercase; transform: rotate(3deg); box-shadow: 0 4px 0 rgba(0, 0, 0, 0.35); }
+
+  /* numbered steps */
+  .somna-pdp-hero--v3 .somna-v3-step { display: flex !important; align-items: center; gap: 8px; width: 100%; margin: 18px 0 12px !important; padding: 0; float: none;
+    font: 800 0.9375rem/1.2 var(--font-body--family) !important; color: var(--v3-ink) !important; text-transform: none !important; letter-spacing: 0 !important; }
+  .somna-v3-step__n { display: grid; place-items: center; flex: 0 0 22px; width: 22px; height: 22px; border-radius: 50%; background: var(--v3-lav); color: var(--v3-dark); font-size: 0.75rem; font-weight: 900; }
+  .somna-v3-step__note { margin-left: auto; font-size: 0.75rem; font-weight: 500; color: var(--v3-muted); }
+
+  /* pack cards */
+  .somna-pdp-hero--v3 .somna-pdp-hero__packs .somna-buy__pack-list { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding-top: 10px; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__packs .somna-buy__pack {
+    position: relative; display: flex !important; flex-direction: column; align-items: center; gap: 2px; min-height: 0; margin: 0;
+    padding: 18px 8px 0 !important; border: 1.5px solid var(--v3-line) !important; border-radius: 10px !important; background: var(--v3-card) !important;
+    color: var(--v3-ink) !important; text-align: center; cursor: pointer; box-shadow: none !important; transform: none !important; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .somna-pdp-hero--v3 .somna-pdp-hero__packs .somna-buy__pack::after, .somna-pdp-hero--v3 .somna-pdp-hero__packs .somna-buy__pack::before { content: none !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__packs .somna-buy__pack.is-featured { background: var(--v3-mint) !important; color: var(--v3-dark) !important; border-color: var(--v3-lav) !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__packs .somna-buy__pack:has(input:checked) { border: 2px solid var(--v3-gold) !important; box-shadow: 0 0 0 3px rgba(242, 181, 68, 0.22) !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__packs .somna-buy__pack:has(input:focus-visible) { outline: 2px solid var(--v3-lav); outline-offset: 3px; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__packs .somna-buy__pack input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .somna-pdp-hero--v3 .somna-buy__pack-badge {
+    position: absolute !important; top: 0 !important; left: 50% !important; right: auto !important; transform: translate(-50%, -55%) !important; z-index: 1;
+    padding: 4px 10px !important; border-radius: 5px !important; background: var(--v3-lav) !important; color: var(--v3-dark) !important;
+    font: 900 0.625rem/1.2 var(--font-body--family) !important; letter-spacing: 0.08em !important; text-transform: uppercase; white-space: nowrap; box-shadow: none !important; rotate: 0deg !important;
+  }
+  .somna-pdp-hero--v3 .somna-buy__pack-badge--alt { background: #e3f6d6 !important; }
+  .somna-pdp-hero--v3 .somna-buy__pack-name { font: 900 1rem/1.1 var(--font-body--family) !important; text-transform: uppercase; letter-spacing: 0.02em; color: inherit !important; }
+  .somna-v3-pack-nights { font-size: 0.6875rem; line-height: 1.2; opacity: 0.75; }
+  .somna-pdp-hero--v3 .somna-buy__pack-price { margin-top: 8px; font: 900 1.625rem/1 var(--font-body--family) !important; color: inherit !important; }
+  .somna-pdp-hero--v3 .somna-buy__pack [data-pack-compare] { font-size: 0.6875rem !important; line-height: 1.3; color: inherit !important; opacity: 0.6; }
+  .somna-pdp-hero--v3 .somna-buy__pack [data-pack-compare]:empty { display: none; }
+  .somna-pdp-hero--v3 .somna-buy__pack .somna-buy__pack-night { display: block !important; margin-top: 2px; font: 800 0.75rem/1.2 var(--font-body--family) !important; color: inherit !important; opacity: 1 !important; }
+  .somna-v3-pack-foot { align-self: stretch; margin-top: 10px; padding: 9px 4px 10px; border-top: 1px solid currentColor; border-top-color: color-mix(in srgb, currentColor 22%, transparent);
+    font: 900 0.625rem/1.2 var(--font-body--family); letter-spacing: 0.08em; text-transform: uppercase; color: var(--v3-lav); }
+  .somna-buy__pack.is-featured .somna-v3-pack-foot { color: #3c4bb0; }
+
+  /* gift panel (the existing gift unlock bar) */
+  .somna-pdp-hero--v3 .somna-pdp-hero__giftbar { display: grid !important; grid-template-columns: auto 1fr; align-items: center; gap: 10px 10px; margin: 14px 0 0 !important;
+    padding: 12px !important; border: 1px solid rgba(175, 189, 248, 0.45) !important; border-radius: 12px !important; background: #1a1f3d !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__giftbar-icon { width: 18px; height: 18px; color: var(--v3-lav); }
+  .somna-pdp-hero--v3 .somna-pdp-hero__giftbar-body { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px 10px; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__giftbar-body p { margin: 0; font: 800 0.875rem/1.25 var(--font-body--family) !important; color: var(--v3-lav) !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__giftbar-track { grid-column: 1 / -1; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__giftbar.is-done .somna-pdp-hero__giftbar-track { display: none; }
+  .somna-v3-gifts__state { display: none; font: 800 0.6875rem/1 var(--font-body--family); letter-spacing: 0.06em; text-transform: uppercase; color: var(--v3-ink); white-space: nowrap; }
+  .somna-pdp-hero__giftbar.is-done .somna-v3-gifts__state { display: inline; }
+  .somna-v3-gifts { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .somna-v3-gifts__item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px; border: 1px dashed rgba(243, 254, 238, 0.35); border-radius: 8px; text-align: center;
+    color: var(--v3-ink); opacity: 0.5; filter: grayscale(0.6); transition: opacity 0.3s, filter 0.3s; }
+  .somna-pdp-hero__giftbar.is-done .somna-v3-gifts__item { opacity: 1; filter: none; }
+  .somna-v3-gifts__img { width: 44px; height: 44px; object-fit: contain; }
+  .somna-v3-gifts__icon { width: 20px; height: 20px; color: var(--v3-lav); }
+  .somna-v3-gifts__name { font: 700 0.6875rem/1.2 var(--font-body--family); }
+  .somna-v3-gifts__free { font: 900 0.625rem/1 var(--font-body--family); letter-spacing: 0.08em; text-transform: uppercase; color: var(--v3-lav); }
+
+  /* purchase type cards */
+  .somna-pdp-hero--v3 .somna-pdp-hero__modes { display: grid !important; gap: 10px !important; padding: 0 !important; border: 0 !important; background: none !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__mode-box,
+  .somna-pdp-hero--v3 .somna-pdp-hero__once { margin: 0 !important; padding: 14px 14px !important; border: 1.5px solid var(--v3-line) !important; border-radius: 12px !important;
+    background: var(--v3-card) !important; color: var(--v3-ink) !important; box-shadow: none !important; transition: background 0.2s, border-color 0.2s; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__mode-box.is-active,
+  .somna-pdp-hero--v3 .somna-pdp-hero__once:has(input:checked) { background: var(--v3-mint) !important; color: var(--v3-dark) !important; border-color: var(--v3-mint) !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__mode-box .somna-buy__mode { padding: 0 !important; margin: 0 !important; border: 0 !important; background: none !important; }
+  .somna-pdp-hero--v3 .somna-buy__mode { display: grid !important; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 10px; cursor: pointer; color: inherit !important; }
+  .somna-pdp-hero--v3 .somna-buy__mode input[type="radio"] { appearance: none; -webkit-appearance: none; width: 20px; height: 20px; margin: 0; border: 2px solid currentColor; border-radius: 50%; display: grid; place-items: center; opacity: 0.85; cursor: pointer; }
+  .somna-pdp-hero--v3 .somna-buy__mode input[type="radio"]:checked::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: currentColor; }
+  .somna-pdp-hero--v3 .somna-buy__mode input[type="radio"]:focus-visible { outline: 2px solid var(--v3-lav); outline-offset: 2px; }
+  .somna-pdp-hero--v3 .somna-buy__mode-label, .somna-pdp-hero--v3 .somna-buy__mode-label strong { font: 800 1rem/1.2 var(--font-body--family) !important; letter-spacing: 0.01em !important; text-transform: none !important; color: inherit !important; }
+  .somna-pdp-hero--v3 .somna-buy__mode-prices { display: flex !important; align-items: center; gap: 8px; }
+  .somna-pdp-hero--v3 .somna-buy__mode-price { font: 900 1.5rem/1 var(--font-body--family) !important; color: inherit !important; }
+  .somna-v3-pill { padding: 3px 6px; border-radius: 4px; background: var(--v3-lav); color: var(--v3-dark); font: 900 0.625rem/1 var(--font-body--family); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__sub-line { margin: 6px 0 0 30px !important; font: 500 0.8125rem/1.4 var(--font-body--family) !important; color: inherit !important; opacity: 0.85; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__sub-note { margin-top: 0 !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__plan { margin: 10px 0 0 30px !important; width: calc(100% - 30px) !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__mode-box:not(.is-active) .somna-pdp-hero__plan { display: none; }
+  .somna-v3-mode-note { grid-column: 2 / -1; margin-top: 4px; font: 500 0.8125rem/1.4 var(--font-body--family); opacity: 0.85; }
+
+  .somna-pdp-hero--v3 .somna-buy__mode.somna-pdp-hero__once { color: var(--v3-ink) !important; }
+  .somna-pdp-hero--v3 .somna-buy__mode.somna-pdp-hero__once:has(input:checked) { color: var(--v3-dark) !important; }
+  .somna-pdp-hero--v3 .somna-v3-mode-note, .somna-pdp-hero--v3 .somna-pdp-hero__sub-line { letter-spacing: 0 !important; text-transform: none !important; }
+  /* button + under it */
+  .somna-v3-add-price:not(:empty)::before { content: ' • '; }
+  .somna-v3-secure { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 10px 0 0; font: 500 0.75rem/1.3 var(--font-body--family); color: var(--v3-muted); text-align: center; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__trust { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--v3-line); }
+
+  /* round 2 */
+  .somna-v3-offer__title { -webkit-text-stroke: 0 !important; text-shadow: none !important; letter-spacing: 0 !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__packs .somna-buy__pack.is-featured { background: var(--v3-card) !important; color: var(--v3-ink) !important; border-color: var(--v3-line) !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__packs .somna-buy__pack:has(input:checked) { background: var(--v3-mint) !important; color: var(--v3-dark) !important; border: 2px solid var(--v3-lav) !important; box-shadow: 0 0 0 3px rgba(175, 189, 248, 0.25) !important; }
+  .somna-pdp-hero--v3 .somna-buy__pack .somna-v3-pack-foot { color: var(--v3-lav); }
+  .somna-pdp-hero--v3 .somna-buy__pack:has(input:checked) .somna-v3-pack-foot { color: #3c4bb0; }
+  .somna-v3-gifts__img { filter: brightness(0) invert(1); }
+  .somna-pdp-hero__giftbar:not(.is-done) .somna-v3-gifts { display: none; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__mode-box:not(:has([data-mode-input]:checked)) .somna-pdp-hero__plan { display: none !important; }
+  .somna-pdp-hero--v3 .somna-buy__mode input[type="radio"]:not(:checked) { border-color: var(--v3-mint) !important; background: transparent !important; opacity: 1; }
+  @media screen and (max-width: 749px) {
+    .somna-v3-offer__title { font-size: 1.5rem; }
+    .somna-pdp-hero--v3 .somna-pdp-hero__packs .somna-buy__pack-list { gap: 8px; }
+    .somna-pdp-hero--v3 .somna-buy__pack-price { font-size: 1.375rem !important; }
+    .somna-pdp-hero--v3 .somna-buy__pack-name { font-size: 0.875rem !important; }
+    .somna-pdp-hero--v3 .somna-buy__pack-badge { font-size: 0.5625rem !important; padding: 3px 7px !important; }
+    .somna-pdp-hero--v3 .somna-buy__mode-price { font-size: 1.3125rem !important; }
+    .somna-v3-step__note { font-size: 0.6875rem; }
+    .somna-pdp-hero--v3 .somna-buy__mode-label, .somna-pdp-hero--v3 .somna-buy__mode-label strong { font-size: 0.9375rem !important; white-space: nowrap; }
+    .somna-pdp-hero--v3 .somna-buy__mode { column-gap: 8px; }
+    .somna-pdp-hero--v3 .somna-buy__mode-prices { gap: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .somna-pdp-hero--v3 .somna-buy__pack, .somna-v3-gifts__item { transition: none; }
+  }
+  /* never wider than the panel (fieldsets grow to fit their content by default) */
+  .somna-pdp-hero--v3 .somna-pdp-hero__form, .somna-pdp-hero--v3 .somna-pdp-hero__modes, .somna-pdp-hero--v3 .somna-pdp-hero__packs { min-width: 0 !important; max-width: 100%; }
+  .somna-pdp-hero--v3 .somna-buy__mode { grid-template-columns: auto minmax(0, 1fr) auto !important; }
+  .somna-pdp-hero--v3 .somna-buy__mode-label { min-width: 0; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__add { max-width: 100%; }
+  @media screen and (max-width: 419px) {
+    .somna-pdp-hero--v3 .somna-buy__mode-label, .somna-pdp-hero--v3 .somna-buy__mode-label strong { white-space: normal !important; font-size: 0.875rem !important; }
+    .somna-pdp-hero--v3 .somna-buy__mode-prices { flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
+    .somna-pdp-hero--v3 .somna-buy__mode-price { font-size: 1.1875rem !important; }
+    .somna-pdp-hero--v3 .somna-pdp-hero__mode-box, .somna-pdp-hero--v3 .somna-pdp-hero__once { padding: 12px !important; }
+    .somna-pdp-hero--v3 .somna-pdp-hero__sub-line, .somna-pdp-hero--v3 .somna-pdp-hero__plan { margin-left: 28px !important; }
+    .somna-pdp-hero--v3 .somna-pdp-hero__plan { width: calc(100% - 28px) !important; }
+  }
+  .somna-v3-add-price { display: none !important; }
+  @media screen and (max-width: 749px) {
+    .somna-pdp-hero--v3 .somna-pdp-hero__giftbar { padding: 10px !important; gap: 8px !important; }
+    .somna-pdp-hero--v3 .somna-pdp-hero__giftbar-body p { font-size: 0.8125rem !important; }
+    .somna-v3-gifts__state { font-size: 0.625rem; }
+    .somna-v3-gifts { gap: 6px; }
+    .somna-v3-gifts__item { padding: 6px 3px; gap: 2px; }
+    .somna-v3-gifts__img { width: 30px; height: 30px; }
+    .somna-v3-gifts__name { font-size: 0.625rem; }
+    .somna-v3-gifts__free { font-size: 0.5625rem; }
+  }
+  /* compare-at price under each purchase-type price */
+  .somna-pdp-hero--v3 [data-was-sub], .somna-pdp-hero--v3 [data-was-once] { display: block !important; grid-area: was; justify-self: end; margin: 0; font: 600 0.8125rem/1.2 var(--font-body--family) !important; color: inherit !important; opacity: 0.6; text-decoration: line-through; }
+  .somna-pdp-hero--v3 [data-was-sub]:empty, .somna-pdp-hero--v3 [data-was-once]:empty { display: none !important; }
+  .somna-pdp-hero--v3 .somna-buy__mode-prices { display: grid !important; grid-template-columns: auto auto; grid-template-areas: "pill price" ". was"; align-items: center; column-gap: 8px; row-gap: 2px; }
+  .somna-pdp-hero--v3 .somna-buy__mode-prices .somna-v3-pill { grid-area: pill; }
+  .somna-pdp-hero--v3 .somna-buy__mode-prices .somna-buy__mode-price { grid-area: price; justify-self: end; }
+  /* tighter, even spacing in the purchase-type cards: the crossed-out price hangs under the price without making the row taller */
+  .somna-pdp-hero--v3 .somna-pdp-hero__mode-box, .somna-pdp-hero--v3 .somna-pdp-hero__once { padding: 14px 16px !important; }
+  .somna-pdp-hero--v3 .somna-buy__mode { align-items: center !important; row-gap: 0 !important; min-height: 0 !important; }
+  .somna-pdp-hero--v3 .somna-buy__mode-prices { display: flex !important; position: relative; align-items: center; gap: 8px; }
+  .somna-pdp-hero--v3 [data-was-sub], .somna-pdp-hero--v3 [data-was-once] { position: absolute; right: 0; top: 100%; margin-top: 1px; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__sub-line { margin: 4px 76px 0 30px !important; line-height: 1.35 !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__sub-line + .somna-pdp-hero__sub-line { margin-top: 2px !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__plan { margin-top: 10px !important; }
+  .somna-v3-mode-note { grid-column: 2 / 3 !important; margin-top: 4px !important; line-height: 1.35; }
+  .somna-pdp-hero--v3 .somna-buy__mode-label { line-height: 1.2 !important; }
+  @media screen and (max-width: 419px) {
+    .somna-pdp-hero--v3 .somna-pdp-hero__mode-box, .somna-pdp-hero--v3 .somna-pdp-hero__once { padding: 12px !important; }
+    .somna-pdp-hero--v3 .somna-pdp-hero__sub-line { margin: 4px 64px 0 28px !important; }
+  }
+  /* one-time card has no lines under its title: the crossed-out price sits inside the card, under the price */
+  .somna-pdp-hero--v3 .somna-pdp-hero__once .somna-buy__mode-prices { flex-direction: column; align-items: flex-end; gap: 1px; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__once [data-was-once] { position: static; margin-top: 0; order: 2; }
+  /* feature row (Easier breathing · Drug-free · Gentle on skin): larger lavender icons */
+  .somna-pdp-hero--v3 .somna-pdp-hero__features li { align-items: center; gap: 8px !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__feature-icon { display: inline-grid; place-items: center; width: 26px !important; height: 26px !important; flex: 0 0 26px; color: var(--v3-lav) !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__feature-icon svg { width: 26px !important; height: 26px !important; }
+  @media screen and (max-width: 749px) {
+    .somna-pdp-hero--v3 .somna-pdp-hero__feature-icon, .somna-pdp-hero--v3 .somna-pdp-hero__feature-icon svg { width: 22px !important; height: 22px !important; flex-basis: 22px; }
+  }
+</style>
+<script>
+  (function () {
+    /* the Add to cart button shows the price of what will be added; Subscribe & Save shows its "% OFF" pill */
+    var num = function (el) { var t = el ? el.textContent.replace(/[^0-9.,]/g, '').replace(/,(?=\d{3}\b)/g, '').replace(',', '.') : ''; return parseFloat(t) || 0; };
+    var init = function (root) {
+      if (root.dataset.v3Ready) return; root.dataset.v3Ready = '1';
+      var form = root.querySelector('[data-form]') || root;
+      var busy = false;
+      var update = function () {
+        if (busy) return; busy = true;
+        var mode = (root.querySelector('[data-mode-input]:checked') || {}).value || 'once';
+        var price = root.querySelector(mode === 'sub' ? '[data-price-sub]' : '[data-price-once]');
+        var add = root.querySelector('[data-v3-add-price]'), addBtn = root.querySelector('[data-add]');
+        var txt = price && addBtn && !addBtn.disabled ? price.textContent.trim() : '';
+        if (add && add.textContent !== txt) add.textContent = txt;
+        var pill = root.querySelector('[data-v3-sub-pct]');
+        if (pill) {
+          var now = num(root.querySelector('[data-price-sub]')), was = num(root.querySelector('[data-was-sub]'));
+          var pct = was > now && now > 0 ? Math.round((1 - now / was) * 100) : 0;
+          var p = pct ? pct + '% off' : '';
+          if (pill.textContent !== p) pill.textContent = p;
+          pill.hidden = !pct;
+        }
+        busy = false;
+      };
+      new MutationObserver(function () { requestAnimationFrame(update); }).observe(form, { subtree: true, childList: true, characterData: true });
+      root.addEventListener('change', function () { requestAnimationFrame(update); });
+      update();
+    };
+    var run = function () { document.querySelectorAll('.somna-pdp-hero--v3').forEach(init); };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+    document.addEventListener('shopify:section:load', run);
+  })();
+</script>
