@@ -123,8 +123,11 @@
                 </scroll-hint>
                 {% render 'cart-upsell' %}
 
-                <div class="cart-drawer__summary">
-                  {% render 'cart-summary', section_id: 'cart-drawer-section' %}
+                <div class="somna-cd-trust">{% render 'somna-cart-trust' %}</div>
+
+                {%- comment -%} pinned to the bottom of the drawer: order summary toggle + Secure Checkout {%- endcomment -%}
+                <div class="cart-drawer__summary somna-cd-footer">
+                  {% render 'cart-summary', section_id: 'cart-drawer-section', trust: false %}
                 </div>
               </scroll-hint>
             {%- endif -%}
@@ -775,15 +778,23 @@
 
   /* summary: Somna totals replace the theme's subtotal / discount rows in the drawer */
   /* Figma: totals and checkout follow the upsell in the scroll (not pinned over the items) */
-  #cart-drawer .cart-drawer__summary {
-    padding-top: 12px;
-    gap: 12px;
-    position: static;
-    padding-bottom: 0;
+  /* order summary + Secure Checkout pinned to the bottom of the drawer; items and cross-sell scroll above */
+  #cart-drawer .cart-drawer__summary.somna-cd-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    margin-top: auto;
+    padding: 10px var(--cart-drawer-padding, 16px) max(12px, env(safe-area-inset-bottom));
+    gap: 8px;
     background: #f3feee;
-    border-top: 0;
+    border-top: 1px solid rgb(11 15 29 / 0.1);
+    box-shadow: 0 -8px 18px rgb(11 15 29 / 0.08);
     mask-image: none;
   }
+  #cart-drawer .somna-cd-footer .cart__ctas { margin: 0; }
+  #cart-drawer .somna-cd-footer .somna-cdsum__inner { max-height: 38vh; overflow-y: auto; }
+  #cart-drawer .somna-cd-trust { padding: 16px var(--cart-drawer-padding, 16px) 14px; }
+  #cart-drawer .somna-cd-trust:empty { display: none; }
 
   #cart-drawer .cart-totals > :not(.cart-totals__container),
   #cart-drawer .cart-totals__container > :not(.cart-totals__tax-note),
