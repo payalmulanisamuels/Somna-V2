@@ -260,7 +260,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Sleep Bundle comes in three colors — Breathe (Blue), Bold (Red), and Night (Black) — same two products, Strips and Tape, same price either way. The Colour Set includes all three colors of Strips, without Tape. The Season Bundle is a 3-month supply of Black Strips and Black Tape.</p>",
+                    "text": "<p>Sleep Bundle comes in three colors - Breathe (Blue), Bold (Red), and Night (Black) - same two products, Strips and Tape, same price either way. The Colour Set includes all three colors of Strips, without Tape. The Season Bundle is a 3-month supply of Black Strips and Black Tape.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -290,7 +290,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Yes — both are available individually if you'd rather start with one.</p>",
+                    "text": "<p>Yes - both are available individually if you'd rather start with one.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -509,7 +509,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Yes — pausing and cancelling are both available anytime from your account, with no fees.</p>",
+                    "text": "<p>Yes - pausing and cancelling are both available anytime from your account, with no fees.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -915,7 +915,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Contact the shipping carrier to file a claim, and reach out to us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> — please keep all packaging and damaged goods until the claim is resolved.</p>",
+                    "text": "<p>Contact the shipping carrier to file a claim, and reach out to us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> - please keep all packaging and damaged goods until the claim is resolved.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -1203,7 +1203,7 @@
           "type": "question",
           "settings": {
             "question": "What's the difference between the bundles?",
-            "answer": "<p>Sleep Bundle comes in three colors — Breathe (Blue), Bold (Red), and Night (Black) — same two products, Strips and Tape, same price either way. The Colour Set includes all three colors of Strips, without Tape. The Season Bundle is a 3-month supply of Black Strips and Black Tape.</p>",
+            "answer": "<p>Sleep Bundle comes in three colors - Breathe (Blue), Bold (Red), and Night (Black) - same two products, Strips and Tape, same price either way. The Colour Set includes all three colors of Strips, without Tape. The Season Bundle is a 3-month supply of Black Strips and Black Tape.</p>",
             "open": false
           }
         },
@@ -1211,7 +1211,7 @@
           "type": "question",
           "settings": {
             "question": "Can I buy Strips or Tape on their own?",
-            "answer": "<p>Yes — both are available individually if you'd rather start with one.</p>",
+            "answer": "<p>Yes - both are available individually if you'd rather start with one.</p>",
             "open": false
           }
         },
@@ -1242,7 +1242,7 @@
           "type": "question",
           "settings": {
             "question": "Can I cancel anytime?",
-            "answer": "<p>Yes — pausing and cancelling are both available anytime from your account, with no fees.</p>",
+            "answer": "<p>Yes - pausing and cancelling are both available anytime from your account, with no fees.</p>",
             "open": false
           }
         },
@@ -1304,7 +1304,7 @@
           "type": "question",
           "settings": {
             "question": "What if my item arrives damaged?",
-            "answer": "<p>Contact the shipping carrier to file a claim, and reach out to us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> — please keep all packaging and damaged goods until the claim is resolved.</p>",
+            "answer": "<p>Contact the shipping carrier to file a claim, and reach out to us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> - please keep all packaging and damaged goods until the claim is resolved.</p>",
             "open": false
           }
         }
