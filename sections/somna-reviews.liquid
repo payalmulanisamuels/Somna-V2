@@ -1968,7 +1968,11 @@
     transition: translate 0.2s;
   }
   .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button * { color: #000; fill: currentColor; stroke: currentColor; }
-  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button:hover { translate: 0 -2px; }
+  @media (hover: hover) { .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button:hover { translate: 0 -2px; } }
+  /* the button sits above the fade (so it isn't dimmed) and reacts to the first tap on phones (no hover step, no double-tap-zoom wait) */
+  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer { z-index: 3; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button { position: relative; z-index: 3; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__fade { pointer-events: none !important; }
   .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button:focus-visible { outline: 2px solid var(--somna-rv-fg); outline-offset: 3px; }
   @media screen and (max-width: 749px) { .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button { width: 100%; } }
   /* phones: Judge.me's review cards in a simple 2-column grid (rows line up, no masonry), smaller type to fit */
