@@ -57,6 +57,11 @@
       };
       setTimeout(finish, 2000); /* safety: never hold the drawer back */
     };
+    var lastClick = { el: null, at: 0 };
+    document.addEventListener('click', function (e) {
+      var b = e.target instanceof Element ? e.target.closest('button, [type="submit"], a[role="button"]') : null;
+      if (b && !b.closest('#cart-drawer')) { lastClick.el = b; lastClick.at = Date.now(); }
+    }, true);
     /* capture phase on window: runs before the cart drawer's own listener (on document), so the drawer's
        auto-open can wait until the photo has landed in the cart icon, then the drawer opens as usual */
     window.addEventListener('shopify:cart:lines-update', function (e) {
@@ -65,7 +70,10 @@
       if (!from || from.closest('#cart-drawer') || from.closest('dialog:modal')) return;
       var dr = document.querySelector('#cart-drawer');
       if (dr && (dr.isOpen === true || dr.querySelector('dialog[open]'))) return;
-      var btn = from.matches('button, [type="submit"]') ? from : (from.querySelector('[type="submit"], button[name="add"], button') || from);
+      /* start from the button that was really clicked (the event may come from the whole product block) */
+      var btn = (lastClick.el && Date.now() - lastClick.at < 3000 && lastClick.el.isConnected) ? lastClick.el
+        : from.matches('button, [type="submit"]') ? from : (from.querySelector('[type="submit"], button[name="add"], button') || from);
+      lastClick.el = null;
       var comp = document.querySelector('cart-drawer-component[auto-open]');
       if (comp) comp.removeAttribute('auto-open');
       var landed = false, result = null, opened = false;
