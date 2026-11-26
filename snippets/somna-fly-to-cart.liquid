@@ -60,7 +60,7 @@
       if (!from || from.closest('#cart-drawer')) return;
       var btn = from.matches('button, [type="submit"]') ? from : (from.querySelector('[type="submit"], button[name="add"], button') || from);
       /* the cart drawer opening already shows the add (and sits above everything), so no flight then */
-      var drawerOpen = function () { var dr = document.querySelector('#cart-drawer'); return !!(dr && (dr.open || dr.matches(':modal'))); };
+      var drawerOpen = function () { var dr = document.querySelector('#cart-drawer'); return !!(dr && (dr.isOpen === true || dr.querySelector('dialog[open]'))); };
       var go = function (res) { if (!(res && res.detail && res.detail.didError) && !drawerOpen()) fly(btn); };
       if (e.promise && e.promise.then) e.promise.then(go, function () {}); else go();
     });
