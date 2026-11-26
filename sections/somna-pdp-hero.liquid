@@ -126,7 +126,7 @@
 -%}
 
 <somna-pdp-buy
-  class="somna-pdp-hero{% if gallery_below %} somna-pdp-hero--gallery-below{% endif %}{% if s.bf_layout %} somna-pdp-hero--bf{% endif %}"
+  class="somna-pdp-hero{% if gallery_below %} somna-pdp-hero--gallery-below{% endif %}{% if s.bf_layout %} somna-pdp-hero--bf{% endif %}{% if s.buy_v3 %} somna-pdp-hero--v3{% endif %}"
   data-interval="{{ product.selling_plan_groups.first.selling_plans.first.options.first.value | escape }}"
   data-currency="{{ cart.currency.iso_code }}"
   data-locale="{{ request.locale.iso_code }}"
@@ -405,6 +405,15 @@
         {%- if s.offer_pill != blank -%}<p class="somna-pdp-hero__nocode"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg>{{ s.offer_pill }}</p>{%- endif -%}
       {%- endif -%}
 
+      {%- if s.buy_v3 and s.v3_title != blank -%}
+        <div class="somna-v3-offer">
+          <div class="somna-v3-offer__copy">
+            {%- if s.v3_eyebrow != blank -%}<p class="somna-v3-offer__eyebrow">{{ s.v3_eyebrow }}</p>{%- endif -%}
+            <p class="somna-v3-offer__title">{{ s.v3_title }}</p>
+          </div>
+          {%- if s.v3_badge != blank and product.has_only_default_variant == false -%}<p class="somna-v3-offer__badge">{{ s.v3_badge }}</p>{%- endif -%}
+        </div>
+      {%- endif -%}
       <p class="somna-pdp-hero__price">
         {%- assign price_parts = price | money | split: '.' -%}
         <span class="somna-pdp-hero__price-now" data-price>{{ price_parts[0] }}{% if price_parts[1] %}<sup>{{ price_parts[1] }}</sup>{% endif %}</span>
@@ -476,7 +485,7 @@
         {%- endif -%}
 
         <fieldset class="somna-buy__packs somna-pdp-hero__packs"{% if product.has_only_default_variant %} hidden{% endif %}>
-          <legend>{{ s.packs_label }}</legend>
+          {%- if s.buy_v3 -%}<legend class="somna-v3-step"><span class="somna-v3-step__n" aria-hidden="true">1</span><span class="somna-v3-step__label">{{ s.packs_label }}</span>{%- if s.v3_packs_note != blank -%}<span class="somna-v3-step__note">{{ s.v3_packs_note }}</span>{%- endif -%}</legend>{%- else -%}<legend>{{ s.packs_label }}</legend>{%- endif -%}
           <div class="somna-buy__pack-list">
             {%- assign pack_n = 0 -%}
             {%- for v in product.variants -%}
@@ -499,7 +508,7 @@
                   assign bags = 1
                 endif
               -%}
-              <label class="somna-buy__pack{% unless v.available %} is-sold-out{% endunless %}">
+              <label class="somna-buy__pack{% unless v.available %} is-sold-out{% endunless %}{% if s.buy_v3 and pack_n == s.badge_position %} is-featured{% endif %}">
                 {%- liquid
                   assign pack_badge = ''
                   if pack_n == s.badge_position
@@ -510,14 +519,17 @@
                     assign pack_badge = s.badge_3_label
                   endif
                 -%}
-                {%- if pack_badge != blank -%}<span class="somna-buy__pack-badge">{{ pack_badge }}</span>{%- endif -%}
+                {%- if pack_badge != blank -%}<span class="somna-buy__pack-badge{% if s.buy_v3 and pack_n != s.badge_position %} somna-buy__pack-badge--alt{% endif %}">{{ pack_badge }}</span>{%- endif -%}
                 <input type="radio" name="{{ section.id }}-pack" value="{{ forloop.index0 }}" data-pack{% if color_option %} data-size="{{ v_name | escape }}"{% endif %}{% if v.id == current.id %} checked{% endif %}{% unless v.available %} disabled{% endunless %}>
-                <span class="somna-buy__pack-name">{{ v_name }}</span>
+                <span class="somna-buy__pack-name">{{ v_name }}</span>{%- if s.buy_v3 and s.nights_per_bag > 0 and s.v3_nights_label != blank -%}{%- assign v3_n = bags | times: s.nights_per_bag -%}<span class="somna-v3-pack-nights">{{ s.v3_nights_label | replace: '[nights]', v3_n }}</span>{%- endif -%}
                 <span class="somna-buy__pack-price" data-pack-price>{{ v_price | money }}</span>
                 {%- assign v_compare = v.compare_at_price | default: 0 -%}
                 {%- if v_price < v.price and v.price > v_compare -%}{%- assign v_compare = v.price -%}{%- endif -%}
                 <s data-pack-compare>{% if v_compare > v_price %}{{ v_compare | money_without_trailing_zeros }}{% endif %}</s>
-                {%- if bags >= s.gift_min_bags and s.gift_label != blank -%}
+                {%- if s.buy_v3 -%}
+                  {%- if s.nights_per_bag > 0 -%}<span class="somna-buy__pack-night" data-pack-night>{{ v_price | times: 1.0 | divided_by: bags | divided_by: s.nights_per_bag | round | money }}{{ s.night_label }}</span>{%- endif -%}
+                  <span class="somna-v3-pack-foot{% if bags >= s.gift_min_bags and s.gift_label != blank %} is-gift{% endif %}">{% if bags >= s.gift_min_bags and s.gift_label != blank %}{{ s.gift_label }}{% else %}{{ s.v3_starter }}{% endif %}</span>
+                {%- elsif bags >= s.gift_min_bags and s.gift_label != blank -%}
                   <span class="somna-pdp-hero__gift">{{ s.gift_label }}</span>
                 {%- elsif s.nights_per_bag > 0 -%}
                   <span class="somna-buy__pack-night" data-pack-night>{{ v_price | times: 1.0 | divided_by: bags | divided_by: s.nights_per_bag | round | money }}{{ s.night_label }}</span>
@@ -533,17 +545,43 @@
             <div class="somna-pdp-hero__giftbar-body">
               <p data-gift-text>{{ s.gift_todo | replace: '[n]', '1' | replace: '[bags]', 'bag' }}</p>
               <span class="somna-pdp-hero__giftbar-track" aria-hidden="true"><span></span></span>
+              {%- if s.buy_v3 and s.v3_unlocked != blank -%}<span class="somna-v3-gifts__state">{{ s.v3_unlocked }}</span>{%- endif -%}
             </div>
+            {%- if s.buy_v3 -%}
+              <ul class="somna-v3-gifts" role="list">
+                {%- for gi in (1..3) -%}
+                  {%- liquid
+                    case gi
+                      when 1
+                        assign g_img = s.v3_gift_1_image
+                        assign g_name = s.v3_gift_1_name
+                      when 2
+                        assign g_img = s.v3_gift_2_image
+                        assign g_name = s.v3_gift_2_name
+                      else
+                        assign g_img = s.v3_gift_3_image
+                        assign g_name = s.v3_gift_3_name
+                    endcase
+                  -%}
+                  <li class="somna-v3-gifts__item">
+                    {%- if g_img -%}{{ g_img | image_url: width: 160 | image_tag: loading: 'lazy', alt: '', width: 56, height: 56, class: 'somna-v3-gifts__img' }}{%- else -%}<svg class="somna-v3-gifts__icon" viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="2.5" y="7" width="15" height="4" rx="1"/><path d="M4 11v6.5h12V11M10 7v10.5M10 7c-1.2-2.8-4.8-3.3-4.8-1.2C5.2 7 8 7 10 7zm0 0c1.2-2.8 4.8-3.3 4.8-1.2C14.8 7 12 7 10 7z"/></svg>{%- endif -%}
+                    <span class="somna-v3-gifts__name">{{ g_name }}</span>
+                    {%- if s.v3_gift_free != blank -%}<span class="somna-v3-gifts__free">{{ s.v3_gift_free }}</span>{%- endif -%}
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
           </div>
         {%- endif -%}
 
         {%- unless product.has_only_default_variant -%}{{ box_markup }}{%- endunless -%}
 
+        {%- if s.buy_v3 and has_plans and s.v3_mode_heading != blank -%}<p class="somna-v3-step"><span class="somna-v3-step__n" aria-hidden="true">{% if product.has_only_default_variant %}1{% else %}2{% endif %}</span><span class="somna-v3-step__label">{{ s.v3_mode_heading }}</span></p>{%- endif -%}
         <fieldset class="somna-buy__modes somna-pdp-hero__modes">
           <legend class="visually-hidden">{{ s.mode_label }}</legend>
           {%- if has_plans -%}
             <div class="somna-pdp-hero__mode-box" data-mode-box="sub">
-              <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="sub" data-mode-input{% if mode == 'sub' %} checked{% endif %}> <span class="somna-buy__mode-label"><strong>{{ s.sub_label }}</strong><span data-sub-pct></span></span> <span class="somna-buy__mode-prices"><s class="somna-buy__mode-was" data-was-sub></s><span class="somna-buy__mode-price" data-price-sub>{% if alloc %}{{ alloc.price | money }}{% endif %}</span></span></label>
+              <label class="somna-buy__mode"><input type="radio" name="{{ section.id }}-mode" value="sub" data-mode-input{% if mode == 'sub' %} checked{% endif %}> <span class="somna-buy__mode-label"><strong>{{ s.sub_label }}</strong><span data-sub-pct></span></span> <span class="somna-buy__mode-prices">{% if s.buy_v3 %}<span class="somna-v3-pill" data-v3-sub-pct hidden></span>{% endif %}<s class="somna-buy__mode-was" data-was-sub></s><span class="somna-buy__mode-price" data-price-sub>{% if alloc %}{{ alloc.price | money }}{% endif %}</span></span></label>
               {%- if s.bf_layout and s.sub_line != blank -%}
                 {%- liquid
                   assign renew = 0
@@ -578,13 +616,14 @@
               {%- endif -%}
             </div>
           {%- endif -%}
-          <label class="somna-buy__mode somna-pdp-hero__once"><input type="radio" name="{{ section.id }}-mode" value="once" data-mode-input{% if mode == 'once' %} checked{% endif %}> <span class="somna-buy__mode-label">{{ s.once_label }}<span data-once-pct></span></span> <span class="somna-buy__mode-prices"><s class="somna-buy__mode-was" data-was-once></s><span class="somna-buy__mode-price" data-price-once>{{ current_once | money }}</span></span></label>
+          <label class="somna-buy__mode somna-pdp-hero__once"><input type="radio" name="{{ section.id }}-mode" value="once" data-mode-input{% if mode == 'once' %} checked{% endif %}> <span class="somna-buy__mode-label">{{ s.once_label }}<span data-once-pct></span></span> <span class="somna-buy__mode-prices"><s class="somna-buy__mode-was" data-was-once></s><span class="somna-buy__mode-price" data-price-once>{{ current_once | money }}</span></span>{%- if s.buy_v3 and s.v3_once_note != blank -%}<span class="somna-v3-mode-note">{{ s.v3_once_note }}</span>{%- endif -%}</label>
         </fieldset>
 
         <button type="submit" name="add" class="somna-buy__add somna-pdp-hero__add" data-add{% unless current.available %} disabled{% endunless %}>
-          <span data-add-label>{% if current.available %}{{ s.add_label }}{% else %}{{ s.sold_out_label }}{% endif %}</span>
+          <span data-add-label>{% if current.available %}{{ s.add_label }}{% else %}{{ s.sold_out_label }}{% endif %}</span>{%- if s.buy_v3 -%}<span class="somna-v3-add-price" data-v3-add-price></span>{%- endif -%}
         </button>
-        {%- if s.bf_layout and s.moon_text != blank -%}
+        {%- if s.buy_v3 and s.v3_secure != blank -%}<p class="somna-v3-secure"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg><span>{{ s.v3_secure }}</span></p>{%- endif -%}
+        {%- if s.bf_layout and s.moon_text != blank and s.buy_v3 == false -%}
           <div class="somna-pdp-hero__moon">{% render 'somna-moon-line', text: s.moon_text, date: 'auto' %}</div>
         {%- endif -%}
         <p class="somna-buy__status" role="status" data-status></p>
@@ -697,6 +736,7 @@
   <script type="application/ld+json">{{ product | structured_data }}</script>
   {%- comment -%} one-pack products (The Color Set, Season Bundle): no 2+ packs to choose, so hide "Choose 2+ packs" style links {%- endcomment -%}
   {%- if product.has_only_default_variant -%}<style>a[href*="#pack-"] { display: none !important; }</style>{%- endif -%}
+  {%- if s.buy_v3 -%}{% render 'somna-buy-v3' %}{%- endif -%}
 </somna-pdp-buy>
 {%- if section.settings.wave_color != blank -%}
   {%- render 'somna-wave', top: section.settings.background_color, bottom: section.settings.wave_color, shape: section.settings.wave_shape -%}
@@ -3905,6 +3945,25 @@
     { "type": "select", "id": "gallery_layout", "label": "Gallery layout", "options": [{ "value": "side", "label": "Thumbnails beside a portrait photo" }, { "value": "below", "label": "Thumbnails below a landscape photo" }, { "value": "auto", "label": "Automatic (by first photo)" }], "default": "side" },
     { "type": "header", "content": "Black Friday layout" },
     { "type": "checkbox", "id": "bf_layout", "label": "Use the Black Friday layout", "info": "Ticket sticker, benefit chips, offer line, gift unlock bar, moon countdown (date from the sale countdown bar) and reviews + guarantee under the button.", "default": false },
+    { "type": "header", "content": "New buy box design" },
+    { "type": "checkbox", "id": "buy_v3", "label": "Use the new buy box design", "info": "Offer header, numbered steps, pack cards with nights and per-night price, gift panel, price in the button and a secure checkout line. Works with the Black Friday layout.", "default": false },
+    { "type": "text", "id": "v3_eyebrow", "label": "Offer: small line", "default": "Limited time offer" },
+    { "type": "text", "id": "v3_title", "label": "Offer: heading", "default": "Black Friday deals" },
+    { "type": "text", "id": "v3_badge", "label": "Offer: sticker", "default": "3 free gifts on 2+ bags" },
+    { "type": "text", "id": "v3_packs_note", "label": "Step 1: note on the right", "default": "More bags, more value" },
+    { "type": "text", "id": "v3_starter", "label": "Pack footer when no gifts", "default": "Starter" },
+    { "type": "text", "id": "v3_nights_label", "label": "Pack nights", "info": "[nights] = bags × nights per bag.", "default": "[nights] nights" },
+    { "type": "text", "id": "v3_unlocked", "label": "Gift panel: unlocked tag", "default": "Unlocked ✓" },
+    { "type": "text", "id": "v3_gift_free", "label": "Gift panel: tag under each gift", "default": "Free" },
+    { "type": "image_picker", "id": "v3_gift_1_image", "label": "Gift 1 picture" },
+    { "type": "text", "id": "v3_gift_1_name", "label": "Gift 1 name", "default": "Gift 1" },
+    { "type": "image_picker", "id": "v3_gift_2_image", "label": "Gift 2 picture" },
+    { "type": "text", "id": "v3_gift_2_name", "label": "Gift 2 name", "default": "Gift 2" },
+    { "type": "image_picker", "id": "v3_gift_3_image", "label": "Gift 3 picture" },
+    { "type": "text", "id": "v3_gift_3_name", "label": "Gift 3 name", "default": "Gift 3" },
+    { "type": "text", "id": "v3_mode_heading", "label": "Step 2: heading", "default": "Choose your purchase type" },
+    { "type": "text", "id": "v3_once_note", "label": "One-time: note", "default": "Pay once. No recurring charges." },
+    { "type": "text", "id": "v3_secure", "label": "Under the button", "default": "Secure checkout · Arrives in 7 to 9 business days" },
     { "type": "text", "id": "offer_line", "label": "Offer line", "default": "70% off with Subscribe & Save" },
     { "type": "text", "id": "offer_pill", "label": "No-code note", "default": "Sale price applied · no code" },
     { "type": "text", "id": "ship_line", "label": "Shipping and gifts line", "default": "3 free gifts on 2+ packs" },
