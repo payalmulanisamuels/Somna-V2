@@ -408,21 +408,49 @@
 {%- render 'somna-photo-lightbox' -%}
 
 <style>
-  /* phones: Judge.me's "Show more" fully solid; once opened it sits under the list (not floating over the cards) */
-  @media screen and (max-width: 749px) {
-    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer { opacity: 1 !important; }
-    .somna-reviews .jdgm-masonry-grid.somna-rv-open .jdgm-masonry-grid__footer { position: static !important; inset: auto !important; transform: none !important; margin-top: 12px !important; background: transparent !important; }
+  /* phones and tablets: Judge.me's "Show more" is fully solid. One tap opens every loaded review: the open state
+     is kept on this section (Judge.me can redraw its own list), so the height cap, fade and floating button stay off */
+  @media screen and (max-width: 989px) {
+    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer,
     .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button { opacity: 1 !important; }
-    .somna-reviews .jdgm-masonry-grid.somna-rv-open .jdgm-masonry-grid__fade,
-    .somna-reviews .jdgm-masonry-grid.somna-rv-open .jdgm-masonry-grid__peek { display: none !important; }
+    .somna-reviews.somna-rv-open .jdgm-masonry-grid { max-height: none !important; }
+    .somna-reviews.somna-rv-open .jdgm-masonry-grid__fade,
+    .somna-reviews.somna-rv-open .jdgm-masonry-grid__peek { display: none !important; }
+    .somna-reviews.somna-rv-open .jdgm-masonry-grid__footer { position: static !important; inset: auto !important; transform: none !important; margin-top: 12px !important; background: transparent !important; }
   }
 </style>
+<script>
+  /* phones and tablets: open every loaded review on the first tap of Judge.me's "Show more". Reacts to the finger
+     lifting (pointerup / touchend) as well as the click, so it works even when the tap's click is lost; the open
+     state lives on this section and a watcher keeps Judge.me's height cap off if it redraws the list. */
+  (function () {
+    if (window.somnaRvTapOpen) return; window.somnaRvTapOpen = true;
+    var mq = window.matchMedia('(max-width: 989px)');
+    var openAll = function (root) {
+      if (!root || root.classList.contains('somna-rv-open')) return;
+      root.classList.add('somna-rv-open');
+      var keep = function () {
+        root.querySelectorAll('.jdgm-masonry-grid').forEach(function (g) {
+          if (g.style.maxHeight !== 'none') g.style.setProperty('max-height', 'none', 'important');
+        });
+      };
+      keep();
+      new MutationObserver(keep).observe(root, { subtree: true, attributes: true, attributeFilter: ['style'] });
+    };
+    var onTap = function (e) {
+      if (!mq.matches || !e.target || !e.target.closest) return;
+      var btn = e.target.closest('.jdgm-masonry-grid__btn, .jdgm-masonry-grid__footer button');
+      if (btn) openAll(btn.closest('.somna-reviews'));
+    };
+    ['pointerup', 'touchend', 'click'].forEach(function (type) { document.addEventListener(type, onTap, { capture: true, passive: true }); });
+  })();
+</script>
 <script>
   /* Judge.me "Show more" loads the next reviews but keeps the list capped at its first height (max-height), so
      the new cards stay hidden. After a tap, grow the cap to fit everything loaded so far. */
   (function () {
     var grow = function (grid) {
-      if (grid.classList.contains('somna-rv-open')) return;
+      if (grid.closest('.somna-rv-open')) return;
       var box = grid.querySelector('.jdgm-masonry-grid__container'); if (!box) return;
       var h = Math.ceil(box.getBoundingClientRect().height);
       var cur = parseFloat(grid.style.maxHeight) || parseFloat(getComputedStyle(grid).maxHeight) || 0;
@@ -432,11 +460,6 @@
       var btn = e.target.closest && e.target.closest('.jdgm-masonry-grid__btn, .jdgm-masonry-grid__footer button');
       if (!btn) return;
       var grid = btn.closest('.jdgm-masonry-grid') || document.querySelector('.jdgm-masonry-grid'); if (!grid) return;
-      /* phones: open the whole list on the first tap (no height cap, no fade); later taps still load more */
-      if (window.matchMedia('(max-width: 749px)').matches) {
-        var open = function () { grid.classList.add('somna-rv-open'); grid.style.setProperty('max-height', 'none', 'important'); };
-        open(); setTimeout(open, 0); setTimeout(open, 150); setTimeout(open, 800);
-      }
       var box = grid.querySelector('.jdgm-masonry-grid__container');
       /* phones: the first reviews are already loaded but cut off; show all of them on this tap (Judge.me only
          raises the cap part-way, which needed a second tap) */
