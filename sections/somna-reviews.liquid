@@ -407,54 +407,11 @@
 
 {%- render 'somna-photo-lightbox' -%}
 
-<style>
-  /* phones and tablets: Judge.me's "Show more" is fully solid. One tap opens every loaded review: the open state
-     is kept on this section (Judge.me can redraw its own list), so the height cap, fade and floating button stay off */
-  @media screen and (max-width: 989px) {
-    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer,
-    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button { opacity: 1 !important; }
-    /* before it opens: the button stays put at the bottom edge of the cut-off list (Judge.me makes it sticky, so it
-       slid up and down while scrolling and taps landed on the review cards behind it) */
-    .somna-reviews .jdgm-masonry-grid { position: relative; }
-    .somna-reviews:not(.somna-rv-open) .jdgm-masonry-grid__footer { position: absolute !important; left: 0 !important; right: 0 !important; bottom: 0 !important; top: auto !important; z-index: 4 !important; }
-    .somna-reviews.somna-rv-open .jdgm-masonry-grid { max-height: none !important; }
-    .somna-reviews.somna-rv-open .jdgm-masonry-grid__fade,
-    .somna-reviews.somna-rv-open .jdgm-masonry-grid__peek { display: none !important; }
-    .somna-reviews.somna-rv-open .jdgm-masonry-grid__footer { position: static !important; inset: auto !important; transform: none !important; margin-top: 12px !important; background: transparent !important; }
-  }
-</style>
-<script>
-  /* phones and tablets: open every loaded review on the first tap of Judge.me's "Show more". Reacts to the finger
-     lifting (pointerup / touchend) as well as the click, so it works even when the tap's click is lost; the open
-     state lives on this section and a watcher keeps Judge.me's height cap off if it redraws the list. */
-  (function () {
-    if (window.somnaRvTapOpen) return; window.somnaRvTapOpen = true;
-    var mq = window.matchMedia('(max-width: 989px)');
-    var openAll = function (root) {
-      if (!root || root.classList.contains('somna-rv-open')) return;
-      root.classList.add('somna-rv-open');
-      var keep = function () {
-        root.querySelectorAll('.jdgm-masonry-grid').forEach(function (g) {
-          if (g.style.maxHeight !== 'none') g.style.setProperty('max-height', 'none', 'important');
-        });
-      };
-      keep();
-      new MutationObserver(keep).observe(root, { subtree: true, attributes: true, attributeFilter: ['style'] });
-    };
-    var onTap = function (e) {
-      if (!mq.matches || !e.target || !e.target.closest) return;
-      var btn = e.target.closest('.jdgm-masonry-grid__btn, .jdgm-masonry-grid__footer button');
-      if (btn) openAll(btn.closest('.somna-reviews'));
-    };
-    ['pointerup', 'touchend', 'click'].forEach(function (type) { document.addEventListener(type, onTap, { capture: true, passive: true }); });
-  })();
-</script>
 <script>
   /* Judge.me "Show more" loads the next reviews but keeps the list capped at its first height (max-height), so
      the new cards stay hidden. After a tap, grow the cap to fit everything loaded so far. */
   (function () {
     var grow = function (grid) {
-      if (grid.closest('.somna-rv-open')) return;
       var box = grid.querySelector('.jdgm-masonry-grid__container'); if (!box) return;
       var h = Math.ceil(box.getBoundingClientRect().height);
       var cur = parseFloat(grid.style.maxHeight) || parseFloat(getComputedStyle(grid).maxHeight) || 0;
@@ -2018,12 +1975,8 @@
   .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__fade { pointer-events: none !important; }
   .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button:focus-visible { outline: 2px solid var(--somna-rv-fg); outline-offset: 3px; }
   @media screen and (max-width: 749px) { .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__footer button { width: 100%; } }
-  /* phones: Judge.me's review cards in a simple 2-column grid (rows line up, no masonry), smaller type to fit */
+  /* phones: Judge.me's own one-column layout (its Show more reveals 3 more per tap); smaller type */
   @media screen and (max-width: 749px) {
-    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__container { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; height: auto !important; }
-    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item { position: static !important; width: auto !important; transform: none !important; }
-    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item-inner { height: 100%; padding: 0 !important; }
-    .somna-reviews .jdgm-horizon-widget .jdgm-masonry-grid__masonry-item-inner > * { height: 100%; }
     .somna-reviews .jdgm-horizon-widget .somna-r--item .jdgm-review-card__title { font-size: 0.9375rem !important; line-height: 1.45 !important; }
     .somna-reviews .jdgm-horizon-widget .somna-r--item .jdgm-review-card__name { font-size: 0.75rem !important; }
     .somna-reviews .jdgm-horizon-widget .somna-r--item p:not(.jdgm-review-card__title):not(.jdgm-review-card__name) { font-size: 0.8125rem !important; line-height: 1.4 !important; }
