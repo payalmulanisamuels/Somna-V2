@@ -87,6 +87,11 @@
     "currency_code_enabled_product_pages": false,
     "currency_code_enabled_product_cards": false,
     "currency_code_enabled_cart_items": false,
+    "somna_first_box_products": [
+      "nasal-strips",
+      "mouth-tape"
+    ],
+    "somna_first_box_off": "1 Bag = 8\n2 Bags = 15\n4 Bags = 22",
     "quick_add_background": "{{ settings.color_palette.background }}",
     "quick_add_text": "{{ settings.color_palette.foreground }}",
     "product_corner_radius": 0,
@@ -129,9 +134,19 @@
     "ur_season": "season-bundle",
     "ur_color": "the-colour-set",
     "ur1_a_product": "mouth-tape",
+    "ur1_a_details": "1 pack · 30 nights · $0.50/night",
     "ur1_b_product": "sleep-bundle",
+    "ur1_b_variant": "1 Bag",
+    "ur1_b_title": "Sleep Bundle",
+    "ur1_b_details": "Strips + Tape · 30 nights · $1.00/night",
+    "ur1_b_badge": "Best value",
     "ur2_a_product": "nasal-strips",
+    "ur2_a_details": "1 pack · 30 nights · $0.50/night",
     "ur2_b_product": "sleep-bundle",
+    "ur2_b_variant": "1 Bag",
+    "ur2_b_title": "Sleep Bundle",
+    "ur2_b_details": "Strips + Tape · 30 nights · $1.00/night",
+    "ur2_b_badge": "Best value",
     "ur3_a_product": "season-bundle",
     "ur3_b_product": "the-colour-set",
     "ur4_a_product": "sleep-bundle",
@@ -163,6 +178,8 @@
       "season-bundle"
     ],
     "somna_drawer_all_link": "/collections/all",
+    "somna_drawer_sale_label": "SALE",
+    "somna_drawer_sale_url": "shopify://pages/black-friday-sale",
     "somna_drawer_link_1": "Learn",
     "somna_drawer_link_1_url": "/pages/how-to-use",
     "somna_drawer_link_2": "Contact",
@@ -173,8 +190,6 @@
     "somna_drawer_link_4_url": "/account",
     "somna_drawer_link_5": "Manage subscription",
     "somna_drawer_link_5_url": "/account",
-    "somna_drawer_sale_label": "SALE",
-    "somna_drawer_sale_url": "shopify://pages/black-friday-sale",
     "somna_drawer_show_account": false,
     "somna_mega_style": "somna",
     "somna_mega_layout": "columns",
@@ -200,7 +215,7 @@
           "discount_code": "WELCOME10",
           "shop_redirect": "/collections/all",
           "logo_text": "somna.",
-          "pill": "Pre Black Friday drop",
+          "pill": "Black Friday",
           "title_1": "What's in",
           "title_2": "the box?",
           "box_text": "Tap the box to unwrap your Pre Black Friday extra.",
@@ -269,22 +284,7 @@
       "foreground": "#000000",
       "color1": "#333333",
       "color2": "#DFDFDF"
-    },
-    "somna_first_box_products": [
-      "nasal-strips",
-      "mouth-tape"
-    ],
-    "somna_first_box_off": "1 Bag = 8\n2 Bags = 15\n4 Bags = 22",
-    "ur1_a_details": "1 pack · 30 nights · $0.50/night",
-    "ur1_b_variant": "1 Bag",
-    "ur1_b_title": "Sleep Bundle",
-    "ur1_b_details": "Strips + Tape · 30 nights · $1.00/night",
-    "ur1_b_badge": "Best value",
-    "ur2_a_details": "1 pack · 30 nights · $0.50/night",
-    "ur2_b_variant": "1 Bag",
-    "ur2_b_title": "Sleep Bundle",
-    "ur2_b_details": "Strips + Tape · 30 nights · $1.00/night",
-    "ur2_b_badge": "Best value"
+    }
   },
   "presets": {
     "Horizon": {
