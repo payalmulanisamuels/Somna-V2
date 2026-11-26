@@ -149,6 +149,11 @@
       if (ids.length) body.sections = ids.join(',');
       var drawer = document.querySelector('cart-drawer-component'), td = drawer && drawer.closest('theme-drawer');
       var wasEmpty = !!(drawer && drawer.querySelector('[data-cart-drawer-empty], .cart-drawer--empty'));
+      /* phones: the theme opens the drawer on every add (auto-open); switch that off for this add only */
+      var phone = window.matchMedia('(max-width: 749px)').matches;
+      var auto = phone ? document.querySelector('cart-drawer-component[auto-open]') : null;
+      if (auto) auto.removeAttribute('auto-open');
+      var restore = function () { if (auto) setTimeout(function () { auto.setAttribute('auto-open', ''); }, 300); };
       var label = btn.textContent; btn.setAttribute('aria-busy', 'true'); btn.textContent = {{ 'Adding…' | json }};
       if (err) err.hidden = true;
       var deferred = null, Ev = null;
@@ -163,16 +168,18 @@
         var html = added.sections && ids[0] && added.sections[ids[0]];
         var shown = renderer.then(function (rs) { if (rs && rs.morphSection && html) return rs.morphSection(ids[0], html, { mode: 'hydration', injectStylesheet: wasEmpty }); }).catch(function () {}).then(function () {
           /* phones: stay on the page (the cart icon count updates); the drawer opens only from the cart icon */
-          if (window.matchMedia('(max-width: 749px)').matches) return;
+          if (phone) return;
           if (td && typeof td.open === 'function') { if (!td.isOpen) td.open(); } else window.location.href = root + 'cart';
         });
         btn.textContent = {{ 'Added ✓' | json }};
         setTimeout(function () { btn.textContent = label; btn.removeAttribute('aria-busy'); }, 1800);
         return shown.then(function () { return fetch(root + 'cart.js'); }).then(function (r) { return r.json(); }).then(function (cart) {
           if (deferred) deferred.resolve({ cart: Ev.createCartFromAjaxResponse(cart), detail: { items: cart.items, source: 'somna-pdp-pair', itemCount: 1, productId: String(added.product_id || ''), sections: added.sections, didError: false } });
+          restore();
         });
       }).catch(function (x) {
         if (deferred) deferred.reject(x);
+        restore();
         btn.textContent = label; btn.removeAttribute('aria-busy');
         if (err) { err.textContent = (x && x.message) || 'Could not add to cart'; err.hidden = false; }
       });
