@@ -69,7 +69,7 @@
           {%- if b.selected -%}{%- assign shown = true -%}{%- elsif has_selected == false and forloop.first -%}{%- assign shown = true -%}{%- endif -%}
           <div class="somna-collection__pick" data-pick="{{ forloop.index0 }}"{% unless shown %} hidden{% endunless %}>
             {%- if p != blank -%}
-              {%- render 'somna-collection-card', product: p, style: 'pick', image: b.image, title: b.title, details: b.text, price_format: s.price_format, button: s.button_label, rating_format: s.rating_format -%}
+              {%- render 'somna-collection-card', product: p, style: 'pick', image: b.image, pdp_photo: s.pdp_photo, title: b.title, details: b.text, price_format: s.price_format, button: s.button_label, rating_format: s.rating_format -%}
             {%- endif -%}
           </div>
         {%- endfor -%}
@@ -102,7 +102,7 @@
               {%- assign p_group = p.metafields.custom.collection_group.value | default: '' | downcase -%}
               {%- if p_group == group -%}
                 <li class="somna-collection__item">
-                  {%- render 'somna-collection-card', product: p, style: s.layout, price_format: s.price_format, button: s.button_label, rating_format: s.rating_format, card_fields: s.use_card_fields -%}
+                  {%- render 'somna-collection-card', product: p, style: s.layout, price_format: s.price_format, button: s.button_label, rating_format: s.rating_format, pdp_photo: s.pdp_photo, card_fields: s.use_card_fields -%}
                 </li>
               {%- endif -%}
               {%- break -%}
@@ -888,6 +888,7 @@
     { "type": "text", "id": "rating_format", "label": "Rating line", "default": "[rating]/5 · [count] reviews", "info": "[rating] and [count] come from the product's rating field. Empty hides it." },
     { "type": "text", "id": "price_format", "label": "Price line", "default": "From [price] [compare] · Subscribe & Save", "info": "[price]: lowest Subscribe & Save price; [compare]: that variant's compare-at price (struck through)." },
     { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
+    { "type": "checkbox", "id": "pdp_photo", "label": "Show the product page's main photo", "default": false, "info": "Off uses the product's Card image field." },
     { "type": "checkbox", "id": "use_card_fields", "label": "Use the products' Card details and Card note fields", "default": false, "info": "Card details replaces the feature line; [note] in the price line shows Card note ([night] = per-night price). Put | in the price line to push the rest to the right." },
     { "type": "select", "id": "hover_grow", "label": "Hover (desktop)", "options": [{ "value": "none", "label": "Picture zoom only" }, { "value": "large", "label": "Card widens a lot" }, { "value": "small", "label": "Card widens a little" }], "default": "none" },
     { "type": "select", "id": "pointer_motion", "label": "Arrow motion (Chooser)", "options": [{ "value": "none", "label": "Still" }, { "value": "draw_shake", "label": "Arrow draws, card shakes" }], "default": "none" },
