@@ -56,6 +56,15 @@
   @media screen and (min-width: 750px) {
     .hero-wrapper:has(.somna-sale-hero-pill) img.hero__media { object-fit: contain !important; object-position: 100% 50% !important; -webkit-mask-image: linear-gradient(to right, transparent 49%, #000 66%), linear-gradient(to bottom, transparent 0%, #000 12%); -webkit-mask-composite: source-in; mask-image: linear-gradient(to right, transparent 49%, #000 66%), linear-gradient(to bottom, transparent 0%, #000 12%); mask-composite: intersect; }
   }
+  /* Cyber Monday page, desktop: same banner size, text column and photo box as the homepage banner (somna-bf25-hero) */
+  @media screen and (min-width: 990px) {
+    .hero-wrapper:has(.somna-sale-hero-pill) .hero__container { min-height: clamp(600px, min(63.75vw, 100svh), 1020px) !important; }
+    .hero-wrapper:has(.somna-sale-hero-pill) .hero__media-grid { inset: 0 max(var(--page-margin, 16px), calc((100% - 1360px) / 2)) 0 auto !important; width: calc(min(100% - var(--page-margin, 16px) * 2, 1360px) * 0.64); }
+    .hero-wrapper:has(.somna-sale-hero-pill) img.hero__media { object-fit: cover !important; object-position: 100% 70% !important; -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 30%, #000 90%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 10%, #000 86%, transparent 100%); mask-image: linear-gradient(to right, transparent 0%, #000 30%, #000 90%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 10%, #000 86%, transparent 100%); }
+    .hero-wrapper:has(.somna-sale-hero-pill) .hero__content-wrapper > * { width: clamp(430px, 38vw, 600px) !important; max-width: none !important; flex: none !important; }
+  }
+  @media screen and (min-width: 1200px) { .hero-wrapper:has(.somna-sale-hero-pill) .hero__content-wrapper > * { margin-left: clamp(24px, 4vw, 72px) !important; } }
+  @media screen and (min-width: 1600px) { .hero-wrapper:has(.somna-sale-hero-pill) .hero__content-wrapper > * { margin-left: clamp(72px, 8vw, 180px) !important; } }
   .somna-sale-hero-pill { display: inline-block; margin: 0 0 14px; padding: 7px 18px; border: 1.5px solid #afbdf8; border-radius: 999px; color: #c9d2fb; font-size: 15px; font-weight: 700; line-height: 1.2; }
   @media screen and (max-width: 749px) {
     /* hero: centred copy at the top, pouches photo lower down (Figma 5075:3845) */
