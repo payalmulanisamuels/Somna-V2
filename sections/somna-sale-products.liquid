@@ -391,10 +391,6 @@
     rotate: -10.7deg;
     pointer-events: none;
   }
-  /* longer sticker text (e.g. "Buy 3 get 1 free"): smaller, tighter lines so three lines sit inside the circle */
-  .somna-sale-card__sticker.somna-sale-card__sticker--long span { max-width: 80px; font-size: 18px; line-height: 1.05; }
-  @media screen and (max-width: 989px) { .somna-sale-card__sticker.somna-sale-card__sticker--long span { max-width: 70px; font-size: 15px; } }
-  @media screen and (max-width: 749px) { .somna-sale-card__sticker.somna-sale-card__sticker--long span { max-width: 60px; font-size: 13px; } }
   .somna-sale-card__sticker span {
     max-width: 84px;
     font-family: var(--font-accent--family);
@@ -641,6 +637,13 @@
     .somna-sale-card__text { font-size: 12.5px; }
   }
 {% endstylesheet %}
+<style>
+  /* longer sticker text (e.g. "Buy 3 get 1 free"): smaller, tighter lines so three lines sit inside the circle */
+  .somna-sale-card__sticker.somna-sale-card__sticker--long span { display: block; max-width: 84px; font-size: 16px; line-height: 1.4 !important; }
+  .somna-sale-card__sticker.somna-sale-card__sticker--long { line-height: 1.4; }
+  @media screen and (max-width: 989px) { .somna-sale-card__sticker.somna-sale-card__sticker--long span { max-width: 72px; font-size: 13.5px; } }
+  @media screen and (max-width: 749px) { .somna-sale-card__sticker.somna-sale-card__sticker--long span { max-width: 62px; font-size: 11.5px; } }
+</style>
 
 {% schema %}
 {

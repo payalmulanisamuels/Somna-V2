@@ -58,7 +58,8 @@
   }
   /* Cyber Monday page, desktop: same banner size, text column and photo box as the homepage banner (somna-bf25-hero) */
   @media screen and (min-width: 990px) {
-    .hero-wrapper:has(.somna-sale-hero-pill) .hero__container { min-height: clamp(600px, min(63.75vw, 100svh), 1020px) !important; }
+    .hero-wrapper:has(.somna-sale-hero-pill) .hero__container { min-height: clamp(460px, 36vw, 680px) !important; }
+    .hero-wrapper:has(.somna-sale-hero-pill) .hero__container { padding-block: 32px !important; }
     .hero-wrapper:has(.somna-sale-hero-pill) .hero__media-grid { inset: 0 max(var(--page-margin, 16px), calc((100% - 1360px) / 2)) 0 auto !important; width: calc(min(100% - var(--page-margin, 16px) * 2, 1360px) * 0.64); }
     .hero-wrapper:has(.somna-sale-hero-pill) img.hero__media { object-fit: cover !important; object-position: 100% 70% !important; -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 30%, #000 90%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 10%, #000 86%, transparent 100%); mask-image: linear-gradient(to right, transparent 0%, #000 30%, #000 90%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 10%, #000 86%, transparent 100%); }
     .hero-wrapper:has(.somna-sale-hero-pill) .hero__content-wrapper > * { width: clamp(430px, 38vw, 600px) !important; max-width: none !important; flex: none !important; }
