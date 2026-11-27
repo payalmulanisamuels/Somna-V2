@@ -122,7 +122,7 @@
     endif
     if f_pick
       assign f_title = f_pick.title
-      assign f_text = f_pick.body | strip_html | split: '(Review #' | first | strip
+      assign f_text = f_pick.body | strip_html | split: '(Review #' | first | strip | replace: ' — ', ' - ' | replace: '— ', ' - ' | replace: ' —', ' - ' | replace: '—', ' - '
       assign f_parts = f_pick.reviewer_name | strip | split: ' '
       assign f_name = f_parts | first
       if f_parts.size > 1
@@ -199,7 +199,7 @@
         style="{% if s.featured_bg != blank %}--somna-rv-card: {{ s.featured_bg }};{% endif %}{% if s.featured_fg != blank %} --somna-rv-card-fg: {{ s.featured_fg }};{% endif %}"
       >
         {%- if f_title != blank -%}<h3 class="somna-reviews__title somna-reviews__title--lg">“{{ f_title | strip_html }}”</h3>{%- endif -%}
-        {%- if f_text != blank -%}<p class="somna-reviews__text">“{{ f_text | strip_html }}”</p>{%- endif -%}
+        {%- if f_text != blank -%}<p class="somna-reviews__text">“{{ f_text | strip_html | replace: " — ", " - " | replace: "— ", " - " | replace: "—", " - " }}”</p>{%- endif -%}
         <div class="somna-reviews__byline">
           {%- if f_avatar != blank -%}
             {{ f_avatar | image_url: width: 120, height: 120, crop: 'center' | image_tag: class: 'somna-reviews__avatar somna-reviews__avatar--lg', alt: f_name, loading: 'lazy', width: 56, height: 56, widths: '60, 120', sizes: '56px' }}
