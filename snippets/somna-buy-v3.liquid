@@ -185,6 +185,14 @@
   @media screen and (max-width: 749px) {
     .somna-pdp-hero--v3 .somna-pdp-hero__feature-icon, .somna-pdp-hero--v3 .somna-pdp-hero__feature-icon svg { width: 22px !important; height: 22px !important; flex-basis: 22px; }
   }
+  /* deal pack (e.g. 4 Bags = Buy 3, Get 1 Free): lime outline, lime badge, lime sub line and footer */
+  .somna-pdp-hero--v3 .somna-pdp-hero__packs .somna-buy__pack.is-deal { border: 2px solid #e1f36b !important; }
+  .somna-pdp-hero--v3 .somna-pdp-hero__packs .somna-buy__pack.is-deal:has(input:checked) { border-color: #e1f36b !important; box-shadow: 0 0 0 3px rgba(225, 243, 107, 0.3) !important; }
+  .somna-pdp-hero--v3 .somna-buy__pack-badge.somna-buy__pack-badge--deal { background: #e1f36b !important; color: #0b0f1d !important; }
+  .somna-pdp-hero--v3 .somna-buy__pack.is-deal .somna-v3-pack-nights { color: #e1f36b; font-weight: 800; opacity: 1; }
+  .somna-pdp-hero--v3 .somna-buy__pack.is-deal .somna-v3-pack-foot { color: #e1f36b; }
+  .somna-pdp-hero--v3 .somna-buy__pack.is-deal:has(input:checked) .somna-v3-pack-nights,
+  .somna-pdp-hero--v3 .somna-buy__pack.is-deal:has(input:checked) .somna-v3-pack-foot { color: #4f5c00; }
 </style>
 <script>
   (function () {

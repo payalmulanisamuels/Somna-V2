@@ -508,7 +508,8 @@
                   assign bags = 1
                 endif
               -%}
-              <label class="somna-buy__pack{% unless v.available %} is-sold-out{% endunless %}{% if s.buy_v3 and pack_n == s.badge_position %} is-featured{% endif %}">
+              {%- assign is_deal = false -%}{%- if s.buy_v3 and s.v3_deal_position > 0 and pack_n == s.v3_deal_position -%}{%- for dp in s.v3_deal_products -%}{%- if dp.id == product.id -%}{%- assign is_deal = true -%}{%- endif -%}{%- endfor -%}{%- endif -%}
+              <label class="somna-buy__pack{% unless v.available %} is-sold-out{% endunless %}{% if s.buy_v3 and pack_n == s.badge_position %} is-featured{% endif %}{% if is_deal %} is-deal{% endif %}">
                 {%- liquid
                   assign pack_badge = ''
                   if pack_n == s.badge_position
@@ -519,16 +520,16 @@
                     assign pack_badge = s.badge_3_label
                   endif
                 -%}
-                {%- if pack_badge != blank -%}<span class="somna-buy__pack-badge{% if s.buy_v3 and pack_n != s.badge_position %} somna-buy__pack-badge--alt{% endif %}">{{ pack_badge }}</span>{%- endif -%}
+                {%- if is_deal and s.v3_deal_badge != blank -%}{%- assign pack_badge = s.v3_deal_badge -%}{%- endif -%}{%- if pack_badge != blank -%}<span class="somna-buy__pack-badge{% if s.buy_v3 and pack_n != s.badge_position %} somna-buy__pack-badge--alt{% endif %}{% if is_deal %} somna-buy__pack-badge--deal{% endif %}">{{ pack_badge }}</span>{%- endif -%}
                 <input type="radio" name="{{ section.id }}-pack" value="{{ forloop.index0 }}" data-pack{% if color_option %} data-size="{{ v_name | escape }}"{% endif %}{% if v.id == current.id %} checked{% endif %}{% unless v.available %} disabled{% endunless %}>
-                <span class="somna-buy__pack-name">{{ v_name }}</span>{%- if s.buy_v3 and s.nights_per_bag > 0 and s.v3_nights_label != blank -%}{%- assign v3_n = bags | times: s.nights_per_bag -%}<span class="somna-v3-pack-nights">{{ s.v3_nights_label | replace: '[nights]', v3_n }}</span>{%- endif -%}
+                <span class="somna-buy__pack-name">{{ v_name }}</span>{%- if s.buy_v3 and s.nights_per_bag > 0 and s.v3_nights_label != blank -%}{%- assign v3_n = bags | times: s.nights_per_bag -%}<span class="somna-v3-pack-nights">{% if is_deal and s.v3_deal_nights != blank %}{{ s.v3_deal_nights | replace: '[nights]', v3_n }}{% else %}{{ s.v3_nights_label | replace: '[nights]', v3_n }}{% endif %}</span>{%- endif -%}
                 <span class="somna-buy__pack-price" data-pack-price>{{ v_price | money }}</span>
                 {%- assign v_compare = v.compare_at_price | default: 0 -%}
                 {%- if v_price < v.price and v.price > v_compare -%}{%- assign v_compare = v.price -%}{%- endif -%}
                 <s data-pack-compare>{% if v_compare > v_price %}{{ v_compare | money_without_trailing_zeros }}{% endif %}</s>
                 {%- if s.buy_v3 -%}
                   {%- if s.nights_per_bag > 0 -%}<span class="somna-buy__pack-night" data-pack-night>{{ v_price | times: 1.0 | divided_by: bags | divided_by: s.nights_per_bag | round | money }}{{ s.night_label }}</span>{%- endif -%}
-                  <span class="somna-v3-pack-foot{% if bags >= s.gift_min_bags and s.gift_label != blank %} is-gift{% endif %}">{% if bags >= s.gift_min_bags and s.gift_label != blank %}{{ s.gift_label }}{% else %}{{ s.v3_starter }}{% endif %}</span>
+                  <span class="somna-v3-pack-foot{% if bags >= s.gift_min_bags and s.gift_label != blank %} is-gift{% endif %}">{% if is_deal and s.v3_deal_foot != blank %}{{ s.v3_deal_foot }}{% elsif bags >= s.gift_min_bags and s.gift_label != blank %}{{ s.gift_label }}{% else %}{{ s.v3_starter }}{% endif %}</span>
                 {%- elsif bags >= s.gift_min_bags and s.gift_label != blank -%}
                   <span class="somna-pdp-hero__gift">{{ s.gift_label }}</span>
                 {%- elsif s.nights_per_bag > 0 -%}
@@ -3953,6 +3954,11 @@
     { "type": "text", "id": "v3_packs_note", "label": "Step 1: note on the right", "default": "More bags, more value" },
     { "type": "text", "id": "v3_starter", "label": "Pack footer when no gifts", "default": "Starter" },
     { "type": "text", "id": "v3_nights_label", "label": "Pack nights", "info": "[nights] = bags × nights per bag.", "default": "[nights] nights" },
+    { "type": "range", "id": "v3_deal_position", "label": "Deal pack (lime outline)", "min": 0, "max": 6, "step": 1, "default": 0 },
+    { "type": "product_list", "id": "v3_deal_products", "label": "Deal pack: only on these products" },
+    { "type": "text", "id": "v3_deal_badge", "label": "Deal pack: badge", "default": "Buy 3, get 1 free" },
+    { "type": "text", "id": "v3_deal_nights", "label": "Deal pack: line under the name", "info": "[nights] = bags × nights per bag.", "default": "3 + 1 free · [nights] nights" },
+    { "type": "text", "id": "v3_deal_foot", "label": "Deal pack: footer", "default": "4th bag free + 3 gifts" },
     { "type": "text", "id": "v3_unlocked", "label": "Gift panel: unlocked tag", "default": "Unlocked ✓" },
     { "type": "text", "id": "v3_gift_free", "label": "Gift panel: tag under each gift", "default": "Free" },
     { "type": "image_picker", "id": "v3_gift_1_image", "label": "Gift 1 picture" },
