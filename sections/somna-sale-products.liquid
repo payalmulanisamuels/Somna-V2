@@ -82,7 +82,7 @@
           <li class="somna-sale-products__item" data-cat="{{ b.filter }}" {{ block.shopify_attributes }}>
             <article class="somna-sale-card" data-sale-card>
               {%- assign sticker = b.sticker | default: s.sticker -%}
-              {%- if sticker != blank and sticker != '-' -%}<p class="somna-sale-card__sticker"><span>{{ sticker | escape }}</span></p>{%- endif -%}
+              {%- if sticker != blank and sticker != '-' -%}<p class="somna-sale-card__sticker{% if sticker.size > 10 %} somna-sale-card__sticker--long{% endif %}"><span>{{ sticker | escape }}</span></p>{%- endif -%}
               <a class="somna-sale-card__media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
                 {%- if pic != blank -%}
                   {{ pic | image_url: width: 900 | image_tag: widths: '380, 600, 760, 900', sizes: '(min-width: 1300px) 377px, (min-width: 990px) 30vw, (min-width: 750px) 45vw, 92vw', loading: 'lazy', alt: p.title }}
@@ -391,6 +391,10 @@
     rotate: -10.7deg;
     pointer-events: none;
   }
+  /* longer sticker text (e.g. "Buy 3 get 1 free"): smaller, tighter lines so three lines sit inside the circle */
+  .somna-sale-card__sticker.somna-sale-card__sticker--long span { max-width: 80px; font-size: 18px; line-height: 1.05; }
+  @media screen and (max-width: 989px) { .somna-sale-card__sticker.somna-sale-card__sticker--long span { max-width: 70px; font-size: 15px; } }
+  @media screen and (max-width: 749px) { .somna-sale-card__sticker.somna-sale-card__sticker--long span { max-width: 60px; font-size: 13px; } }
   .somna-sale-card__sticker span {
     max-width: 84px;
     font-family: var(--font-accent--family);
