@@ -1,0 +1,44 @@
+{%- comment -%}
+  Essential Free Gifts (app) cart box restyled to match the theme's cart nudge card:
+  lavender card, thin black outline, hard black shadow, bold body type, black progress bar on mint.
+  Only CSS: the app still renders the box and its text.
+{%- endcomment -%}
+<style>
+  .essential-free-gift-cart { margin: 18px 20px 8px !important; }
+  .essential-free-gift-cart .efg-widget-block {
+    padding: 14px 16px !important;
+    border: 1.6px solid #000 !important;
+    border-radius: 12px !important;
+    background: #afbdf8 !important;
+    box-shadow: 4px 5px 0 #000 !important;
+    color: #0b0f1d !important;
+    font-family: var(--font-body--family, Inter, sans-serif) !important;
+  }
+  .essential-free-gift-cart .efg-widget-content-col p {
+    margin: 0 !important;
+    color: #000 !important;
+    font: 800 15px/1.3 var(--font-body--family, Inter, sans-serif) !important;
+    letter-spacing: -0.01em;
+  }
+  .essential-free-gift-cart .efg-widget-progress-section { margin-top: 10px !important; }
+  .essential-free-gift-cart .efg-widget-progress-track {
+    height: 10px !important;
+    border: 1.5px solid #000 !important;
+    border-radius: 999px !important;
+    background-color: #f3feee !important;
+    box-sizing: content-box;
+  }
+  .essential-free-gift-cart .efg-widget-progress-labels { margin-top: 7px !important; }
+  .essential-free-gift-cart .efg-widget-progress-labels span {
+    color: #0b0f1d !important;
+    font: 800 11px/1.2 var(--font-body--family, Inter, sans-serif) !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase;
+  }
+  .essential-free-gift-cart .efg-widget-progress-labels span:last-child { color: #1d2fa8 !important; }
+  @media screen and (max-width: 749px) {
+    .essential-free-gift-cart { margin-inline: 16px !important; }
+    .essential-free-gift-cart .efg-widget-content-col p { font-size: 14px !important; }
+    .essential-free-gift-cart .efg-widget-progress-labels span { font-size: 10px !important; }
+  }
+</style>
