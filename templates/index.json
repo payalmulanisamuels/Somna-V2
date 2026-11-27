@@ -25,7 +25,7 @@
         "price_suffix": "a bag",
         "benefits": "Drug-free\n30-Nights guarantee\n3 Free gifts",
         "button_label": "Get 4 for 3",
-        "button_link": "shopify://pages/black-friday-sale",
+        "button_link": "shopify://pages/cyber-monday-sale",
         "review_products": [
           "nasal-strips",
           "sleep-bundle",
@@ -47,7 +47,7 @@
         "offer_price": "$74.85",
         "offer_mobile_only": true,
         "button2_label": "Subscribe & Save 70%",
-        "button2_link": "shopify://pages/black-friday-sale"
+        "button2_link": "shopify://pages/cyber-monday-sale"
       }
     },
     "recently_viewed": {
