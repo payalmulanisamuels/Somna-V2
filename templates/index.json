@@ -12,19 +12,19 @@
     "bf25_hero": {
       "type": "somna-bf25-hero",
       "settings": {
-        "image": "shopify://shop_images/somna-bf25-hero-desktop.png",
-        "image_mobile": "shopify://shop_images/somna-bf25-hero-mobile.png",
+        "image": "shopify://shop_images/somna-cm25-hero-desktop.jpg",
+        "image_mobile": "shopify://shop_images/somna-cm25-hero-mobile.png",
         "title_image": "shopify://shop_images/somna-bf25-title-desktop.png",
         "title_image_mobile": "shopify://shop_images/somna-bf25-title-mobile.png",
-        "title_alt": "Black Friday — 70% off",
-        "subheading": "With Subscribe & Save",
-        "tagline": "<p>Small change, softer nights. Strips for your nose and tape for your lips.</p>",
+        "title_alt": "Cyber Monday - Buy 3, get 1 free",
+        "subheading": "Plus 70% off with Subscribe & Save",
+        "tagline": "<p><strong>Stock up once</strong>, or save every month. Both deals end Wed 2 Dec.</p>",
         "price_product": "nasal-strips",
         "first_box_off": 8,
-        "price_line": "From [price]",
+        "price_line": "",
         "price_suffix": "a bag",
-        "benefits": "Drug-free\n30-Night guarantee\n3 Free gifts",
-        "button_label": "Claim 70% Off",
+        "benefits": "Drug-free\n30-Nights guarantee\n3 Free gifts",
+        "button_label": "Get 4 for 3",
         "button_link": "shopify://pages/black-friday-sale",
         "review_products": [
           "nasal-strips",
@@ -37,7 +37,17 @@
         "quote_name": "Sarah M.",
         "quote_badge": "Verified Buyer",
         "reviews_line": "[rating], Join 1,000+ people sleeping with SOMNA.",
-        "background_color": "#0b0f1d"
+        "background_color": "#0b0f1d",
+        "sticker_image": "shopify://shop_images/somna-cm25-sticker.png",
+        "sticker_line1": "70% off.",
+        "sticker_line2": "Applied · No code",
+        "heading_line1": "Buy 3,",
+        "heading_line2": "Get 1 free",
+        "offer_line": "4 bags for",
+        "offer_price": "$74.85",
+        "offer_mobile_only": true,
+        "button2_label": "Subscribe & Save 70%",
+        "button2_link": "shopify://pages/black-friday-sale"
       }
     },
     "recently_viewed": {

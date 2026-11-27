@@ -74,9 +74,22 @@
 
   <div class="somna-bf25__inner somna-container">
     <div class="somna-bf25__copy">
-      <h1 class="somna-bf25__title">
+      {%- if s.sticker_line1 != blank or s.sticker_line2 != blank -%}
+        <div class="somna-bf25__sticker{% if s.sticker_image == blank %} somna-bf25__sticker--plain{% endif %}"{% if s.sticker_image != blank %} style="--st-img: url('{{ s.sticker_image | image_url: width: 760 }}');"{% endif %}>
+          <p class="somna-bf25__sticker-txt">
+            {%- if s.sticker_line1 != blank -%}<b>{{ s.sticker_line1 }}</b>{%- endif -%}
+            {%- if s.sticker_line2 != blank -%}<small>{{ s.sticker_line2 }}</small>{%- endif -%}
+          </p>
+        </div>
+      {%- endif -%}
+      {%- assign has_text_title = false -%}
+      {%- if s.heading_line1 != blank or s.heading_line2 != blank -%}{%- assign has_text_title = true -%}{%- endif -%}
+      <h1 class="somna-bf25__title{% if has_text_title %} somna-bf25__title--text{% endif %}">
         {%- assign t_mob = s.title_image_mobile | default: s.title_image -%}
-        {%- if s.title_image != blank -%}
+        {%- if has_text_title -%}
+          {%- if s.heading_line1 != blank -%}<span class="somna-bf25__h-a">{{ s.heading_line1 }}</span>{%- endif -%}
+          {%- if s.heading_line2 != blank %} <span class="somna-bf25__h-b">{{ s.heading_line2 }}</span>{%- endif -%}
+        {%- elsif s.title_image != blank -%}
           <picture>
             {%- if t_mob != blank -%}<source media="(max-width: 989px)" srcset="{{ t_mob | image_url: width: 760 }} 2x, {{ t_mob | image_url: width: 380 }} 1x">{%- endif -%}
             {{ s.title_image | image_url: width: 1040 | image_tag: class: 'somna-bf25__title-img', loading: 'eager', fetchpriority: 'high', widths: '520, 1040', sizes: '(min-width: 990px) 520px, 95vw', alt: s.title_alt }}
@@ -90,6 +103,9 @@
       {%- if s.price_line != blank and sub -%}
         {%- capture sub_html -%}<b>{{ sub | money }}{% if s.price_suffix != blank %} {{ s.price_suffix | strip }}{% endif %}</b>{%- endcapture -%}
         <p class="somna-bf25__price">{{ s.price_line | replace: '[price]', sub_html }}</p>
+      {%- endif -%}
+      {%- if s.offer_line != blank or s.offer_price != blank -%}
+        <p class="somna-bf25__price somna-bf25__offer{% if s.offer_mobile_only %} somna-bf25__offer--mob{% endif %}">{{ s.offer_line }}{% if s.offer_price != blank %} <b>{{ s.offer_price }}</b>{% endif %}</p>
       {%- endif -%}
 
       {%- if s.benefits != blank -%}
@@ -113,8 +129,15 @@
         </ul>
       {%- endif -%}
 
-      {%- if s.button_label != blank -%}
-        <a class="somna-bf25__btn" href="{{ s.button_link | default: '/pages/black-friday-sale' }}">{{ s.button_label }} <svg viewBox="0 0 24 20" aria-hidden="true" fill="none"><path d="M2 10h19M13 2.5L21 10l-8 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      {%- if s.button_label != blank or s.button2_label != blank -%}
+        <div class="somna-bf25__btns">
+          {%- if s.button_label != blank -%}
+            <a class="somna-bf25__btn" href="{{ s.button_link | default: '/pages/black-friday-sale' }}">{{ s.button_label }} <svg viewBox="0 0 24 20" aria-hidden="true" fill="none"><path d="M2 10h19M13 2.5L21 10l-8 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          {%- endif -%}
+          {%- if s.button2_label != blank -%}
+            <a class="somna-bf25__btn somna-bf25__btn--alt" href="{{ s.button2_link | default: '/pages/black-friday-sale' }}">{{ s.button2_label }}</a>
+          {%- endif -%}
+        </div>
       {%- endif -%}
 
       {%- if s.image_mobile != blank -%}
@@ -241,6 +264,49 @@
   }
 </style>
 
+
+<style>
+  /* Cyber Monday additions: tilted sticker, two-colour text heading, second button, phone-only offer line */
+  .somna-bf25__sticker { position: relative; display: grid; place-items: center; width: clamp(170px, 14.2vw, 210px); aspect-ratio: 252 / 109; margin: 0 0 clamp(2px, 0.4vw, 8px) calc(clamp(170px, 14.2vw, 210px) * -0.16); }
+  /* the sticker artwork is exported on black: lighten drops the black so only the mint ticket shows */
+  .somna-bf25__sticker::before { content: ""; position: absolute; inset: 0; background: var(--st-img) center / contain no-repeat; mix-blend-mode: lighten; }
+  .somna-bf25 .somna-bf25__copy > .somna-bf25__sticker { z-index: auto; }
+  .somna-bf25__sticker-txt { position: relative; }
+  .somna-bf25__sticker--plain { background: #f3feee; transform: rotate(-5deg); }
+  .somna-bf25__sticker-txt { display: flex; flex-direction: column; align-items: center; margin: 0; transform: rotate(-5.5deg) translateY(4%); line-height: 1; text-align: center; }
+  .somna-bf25__sticker-txt b { color: #0b0f1d; font: 700 clamp(1.75rem, 2.35vw, 2.25rem)/0.92 var(--bf25-cond); letter-spacing: -0.01em; text-transform: uppercase; }
+  .somna-bf25__sticker-txt small { margin-top: 2px; color: #98a3de; font: 800 clamp(0.75rem, 0.98vw, 0.9375rem)/1.1 var(--font-body--family, sans-serif); text-transform: uppercase; white-space: nowrap; }
+  .somna-bf25__title--text { color: #f3feee; font: 700 clamp(3.5rem, 6.2vw, 6rem)/0.9 var(--bf25-cond); font-size: clamp(3.5rem, 6.2vw, 6rem); line-height: 0.9; letter-spacing: -0.01em; text-transform: uppercase; }
+  .somna-bf25__title--text span { display: block; line-height: 0.92; }
+  .somna-bf25__h-a { color: #afbdf8; }
+  .somna-bf25 .somna-bf25__title--text ~ .somna-bf25__sub { margin-top: clamp(6px, 0.8vw, 12px); font-size: clamp(1.5rem, 2.3vw, 2.2rem); }
+  .somna-bf25__tagline strong, .somna-bf25__tagline b { color: #afbdf8; }
+  .somna-bf25__offer--mob { display: none; }
+  .somna-bf25__btns { display: flex; flex-wrap: wrap; gap: clamp(10px, 1vw, 14px); margin-top: clamp(22px, 2.6vw, 40px); }
+  .somna-bf25 .somna-bf25__btns .somna-bf25__btn { margin-top: 0; }
+  .somna-bf25__btn--alt { min-width: 0; border: 2px solid #98a3de; background: #f3feee; }
+  .somna-bf25__btn--alt:hover { background: #fff; }
+  @media screen and (min-width: 1200px) { .somna-bf25__btns { flex-wrap: nowrap; width: max-content; } }
+  @media screen and (min-width: 990px) and (max-width: 1199px) {
+    .somna-bf25__btn { min-width: 0; padding-inline: 18px; font-size: 1.0625rem; }
+  }
+  @media screen and (max-width: 989px) {
+    .somna-bf25__sticker { width: 182px; margin: 0 0 6px; }
+    .somna-bf25__sticker-txt b { font-size: 31px; }
+    .somna-bf25__sticker-txt small { font-size: 13px; }
+    .somna-bf25__title--text { font-size: clamp(3.5rem, 17.5vw, 5.5rem); line-height: 0.92; }
+    /* the home mobile stylesheet gives every h1 1.35 line spacing; this heading is a tight two-line stack */
+    main .somna-bf25 .somna-bf25__title--text, main .somna-bf25 .somna-bf25__title--text span { line-height: 0.95 !important; }
+    .somna-bf25 .somna-bf25__title--text ~ .somna-bf25__sub { max-width: 330px; margin-top: 8px; font-size: clamp(1.875rem, 8.6vw, 2.5rem); line-height: 0.95; white-space: normal; }
+    .somna-bf25__tagline { margin-top: 8px; }
+    .somna-bf25__offer--mob { display: block; margin-top: 6px; font-size: 19px; }
+    .somna-bf25__btns { position: relative; z-index: 2; flex-direction: column; align-items: center; gap: 9px; margin-top: 22px; }
+    .somna-bf25__btn--alt { min-width: 195px; padding-inline: 14px; font-size: 14px; }
+  }
+  @media screen and (min-width: 600px) and (max-width: 989px) {
+    .somna-bf25__btn--alt { min-width: 240px; font-size: 16px; }
+  }
+</style>
 {% schema %}
 {
   "name": "Somna BF hero 2026",
@@ -252,6 +318,17 @@
     { "type": "image_picker", "id": "title_image", "label": "Black Friday lettering (desktop)" },
     { "type": "image_picker", "id": "title_image_mobile", "label": "Black Friday lettering (phones)" },
     { "type": "text", "id": "title_alt", "label": "Heading text (for search engines and screen readers)", "default": "Black Friday — 70% off" },
+    { "type": "header", "content": "Sticker" },
+    { "type": "image_picker", "id": "sticker_image", "label": "Sticker shape", "info": "Leave empty for a plain mint tag." },
+    { "type": "text", "id": "sticker_line1", "label": "Sticker big text" },
+    { "type": "text", "id": "sticker_line2", "label": "Sticker small text" },
+    { "type": "header", "content": "Text heading" },
+    { "type": "text", "id": "heading_line1", "label": "Heading line 1 (lavender)", "info": "Fill a line to show a text heading instead of the lettering images." },
+    { "type": "text", "id": "heading_line2", "label": "Heading line 2 (mint)" },
+    { "type": "header", "content": "Offer line" },
+    { "type": "text", "id": "offer_line", "label": "Offer text", "info": "e.g. 4 bags for" },
+    { "type": "text", "id": "offer_price", "label": "Offer price (lavender)", "info": "Typed in, not read from the product." },
+    { "type": "checkbox", "id": "offer_mobile_only", "label": "Show the offer line on phones only", "default": true },
     { "type": "text", "id": "subheading", "label": "Subheading", "default": "With Subscribe & Save" },
     { "type": "richtext", "id": "tagline", "label": "Tagline", "default": "<p>Small change, softer nights. Strips for your nose and tape for your lips.</p>" },
     { "type": "product", "id": "price_product", "label": "Price from this product", "info": "[price] = its lowest Subscribe & Save price." },
@@ -261,6 +338,8 @@
     { "type": "textarea", "id": "benefits", "label": "Icons", "info": "One per line. \"gift\" → gift icon, \"night\"/\"guarantee\" → shield, anything else → leaf.", "default": "Drug-free\n30-Nights guarantee\n3 Free gifts" },
     { "type": "text", "id": "button_label", "label": "Button", "default": "Shop now" },
     { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "text", "id": "button2_label", "label": "Second button" },
+    { "type": "url", "id": "button2_link", "label": "Second button link" },
     { "type": "product_list", "id": "review_products", "label": "Review numbers and customer photos from these products", "info": "[rating] = average, [count] = total reviews." },
     { "type": "text", "id": "quote", "label": "Quote", "default": "\"Easy to put on and it stays on all night.\"" },
     { "type": "text", "id": "quote_name", "label": "Quote name", "default": "Sarah M." },
