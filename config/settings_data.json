@@ -234,7 +234,7 @@
           "claim_2": "yours.",
           "claim_text": "Enter your email to claim it.",
           "email_label": "Email address",
-          "email_placeholder": "you@example.com",
+          "email_placeholder": "Your email address",
           "submit_label": "Unlock my 10% off",
           "consent": "By signing up you agree to receive marketing emails from somna. unsubscribe anytime.",
           "decline": "No thanks",
@@ -277,11 +277,6 @@
       "1877152918344802950": {
         "type": "shopify://apps/intelligems-a-b-testing/blocks/intelligems-script/fa83b64c-0c77-4c0c-b4b2-b94b42f5ef19",
         "disabled": true,
-        "settings": {}
-      },
-      "8146928938815853587": {
-        "type": "shopify://apps/essential-free-gifts/blocks/app-embed/019dad42-b5e4-708e-b27c-0dd45d7a0eb5",
-        "disabled": false,
         "settings": {}
       }
     },
