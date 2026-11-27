@@ -539,7 +539,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Visit <a href=\"/pages/manage-subscriptions\">Manage my subscription →</a> from your account, or contact us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> if your order hasn't shipped yet.</p>",
+                    "text": "<p>Visit <a href=\"/pages/manage-subscriptions\">Manage my subscription →</a> from your account, or contact us at <a href=\"mailto:support@somnainc.com\">support@somnainc.com</a> if your order hasn't shipped yet.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -915,7 +915,7 @@
                 "answer": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Contact the shipping carrier to file a claim, and reach out to us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> - please keep all packaging and damaged goods until the claim is resolved.</p>",
+                    "text": "<p>Contact the shipping carrier to file a claim, and reach out to us at <a href=\"mailto:support@somnainc.com\">support@somnainc.com</a> - please keep all packaging and damaged goods until the claim is resolved.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -1250,7 +1250,7 @@
           "type": "question",
           "settings": {
             "question": "How do I change my order before it ships?",
-            "answer": "<p>Visit <a href=\"/pages/manage-subscriptions\">Manage my subscription →</a> from your account, or contact us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> if your order hasn't shipped yet.</p>",
+            "answer": "<p>Visit <a href=\"/pages/manage-subscriptions\">Manage my subscription →</a> from your account, or contact us at <a href=\"mailto:support@somnainc.com\">support@somnainc.com</a> if your order hasn't shipped yet.</p>",
             "open": false
           }
         },
@@ -1304,7 +1304,7 @@
           "type": "question",
           "settings": {
             "question": "What if my item arrives damaged?",
-            "answer": "<p>Contact the shipping carrier to file a claim, and reach out to us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> - please keep all packaging and damaged goods until the claim is resolved.</p>",
+            "answer": "<p>Contact the shipping carrier to file a claim, and reach out to us at <a href=\"mailto:support@somnainc.com\">support@somnainc.com</a> - please keep all packaging and damaged goods until the claim is resolved.</p>",
             "open": false
           }
         }
