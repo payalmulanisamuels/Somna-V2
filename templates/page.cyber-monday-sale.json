@@ -7,9 +7,6 @@
  * made to this file may be overwritten.
  * ------------------------------------------------------------
  */
-/*
- * Cyber Monday sale page: copy of the Black Friday page with the Buy 3, Get 1 Free offer. Assign it to a page with the "cyber-monday-sale" template.
- */
 {
   "sections": {
     "hero": {
@@ -196,12 +193,28 @@
       "settings": {
         "top_color": "#0b0f1d",
         "bottom_color": "#afbdf8",
-        "shape": "drip-6"
+        "shape": "drip-6",
+        "overlap": false,
+        "flip": false,
+        "mobile_full": false,
+        "drops": true,
+        "animate": true,
+        "roll": 8,
+        "height": 140,
+        "height_mobile": 48
       }
     },
     "offers": {
       "type": "somna-sale-offers",
       "blocks": {
+        "b3g1": {
+          "type": "offer",
+          "settings": {
+            "offer": "Buy 3 get 1",
+            "title": "Cyber Week only",
+            "text": "1 Bag Strips & Tape, one-time. Mix and match, no code needed."
+          }
+        },
         "o1": {
           "type": "offer",
           "settings": {
@@ -216,14 +229,6 @@
             "offer": "3 free gifts",
             "title": "On 2+ packs or bags",
             "text": "2 sleep guides + a 30-Night Sleep Tracker."
-          }
-        },
-        "b3g1": {
-          "type": "offer",
-          "settings": {
-            "offer": "Buy 3 get 1",
-            "title": "Buy 3, get 1 free",
-            "text": "1 Bag Strips & Tape, one-time. Mix and match, no code needed."
           }
         }
       },
@@ -245,7 +250,15 @@
       "settings": {
         "top_color": "#afbdf8",
         "bottom_color": "#f3feee",
-        "shape": "drip-8"
+        "shape": "drip-8",
+        "overlap": false,
+        "flip": false,
+        "mobile_full": false,
+        "drops": true,
+        "animate": true,
+        "roll": 8,
+        "height": 140,
+        "height_mobile": 48
       }
     },
     "shop": {
@@ -258,7 +271,8 @@
             "filter": "strips",
             "title": "Nasal Strips",
             "text": "For a blocked nose. Sits outside, drug-free.",
-            "button_label": "Shop strips →"
+            "button_label": "Shop strips →",
+            "sticker": ""
           }
         },
         "p2": {
@@ -268,7 +282,8 @@
             "filter": "tape",
             "title": "Mouth Tape",
             "text": "For mouth breathing. Gentle, easy peel-off.",
-            "button_label": "Shop tape →"
+            "button_label": "Shop tape →",
+            "sticker": ""
           }
         },
         "p3": {
@@ -278,7 +293,8 @@
             "filter": "bundles",
             "title": "The Sleep Bundle",
             "text": "Strips + Tape · Blue, Red or Black",
-            "button_label": "Shop the bundle →"
+            "button_label": "Shop the bundle →",
+            "sticker": ""
           }
         },
         "p4": {
@@ -288,7 +304,8 @@
             "filter": "strips",
             "title": "The Color Set",
             "text": "All three colors · Strips only",
-            "button_label": "Shop the set →"
+            "button_label": "Shop the set →",
+            "sticker": ""
           }
         },
         "p5": {
@@ -298,19 +315,20 @@
             "filter": "bundles",
             "title": "The Season Bundle",
             "text": "3 months of Strips + Tape",
-            "button_label": "Shop the bundle →"
+            "button_label": "Shop the bundle →",
+            "sticker": ""
           }
         },
         "quiz": {
           "type": "quiz",
           "settings": {
+            "tiles": "QUIZ",
             "image": "shopify://shop_images/somna-bf-quiz-tiles.png",
             "eyebrow": "Not sure which?",
             "heading": "<p>Take the <em>60-second</em> sleep quiz.</p>",
             "text": "Tell us what keeps you up. We'll pick for you.",
             "button_label": "Take the quiz →",
-            "button_link": "shopify://pages/quiz",
-            "tiles": "QUIZ"
+            "button_link": "shopify://pages/quiz"
           }
         }
       },
@@ -324,17 +342,34 @@
       ],
       "settings": {
         "background_color": "#f3feee",
+        "anchor": "shop-everything",
         "badge": "Cyber Monday sale",
         "heading": "<p>Shop everything</p>",
         "show_filters": true,
-        "padding_top": 48,
-        "padding_bottom": 72,
+        "filters_label": "Filter products",
+        "all_label": "All",
+        "strips_label": "Strips",
+        "tape_label": "Tape",
+        "bundles_label": "Bundles",
+        "plan_label": "Choose a plan",
+        "default_plan": "once",
+        "sub_label": "Subscribe & Save",
         "first_box_products": [
           "nasal-strips",
           "mouth-tape"
         ],
         "first_box_off": "1 Bag = 8\n2 Bags = 15\n4 Bags = 22",
-        "sticker": "70% off"
+        "once_label": "One-time:",
+        "size_label": "Choose a size",
+        "sticker": "70% off",
+        "gifts_note": "3 gifts on 2+",
+        "button_label": "Shop now →",
+        "add_to_cart": true,
+        "adding_label": "Adding…",
+        "added_label": "Added ✓",
+        "error_label": "Could not add to cart. Please try again.",
+        "padding_top": 48,
+        "padding_bottom": 72
       }
     },
     "wave_shop_gifts": {
@@ -342,7 +377,15 @@
       "settings": {
         "top_color": "#f3feee",
         "bottom_color": "#000000",
-        "shape": "drip-10"
+        "shape": "drip-10",
+        "overlap": false,
+        "flip": false,
+        "mobile_full": false,
+        "drops": true,
+        "animate": true,
+        "roll": 8,
+        "height": 140,
+        "height_mobile": 48
       }
     },
     "gifts": {
@@ -896,7 +939,15 @@
       "settings": {
         "top_color": "#000000",
         "bottom_color": "#f4fef3",
-        "shape": "drip-7"
+        "shape": "drip-7",
+        "overlap": false,
+        "flip": false,
+        "mobile_full": false,
+        "drops": true,
+        "animate": true,
+        "roll": 8,
+        "height": 140,
+        "height_mobile": 48
       }
     },
     "table": {
@@ -925,16 +976,25 @@
         "background_color": "#f4fef3",
         "eyebrow": "Stock up",
         "heading": "<p>More nights, same 70%</p>",
+        "col_product": "Product",
+        "col_size": "Size",
         "col_sub": "Subscribe & Save (70% off)",
-        "padding_top": 40,
-        "padding_bottom": 72,
+        "col_once": "One-time (50% off)",
+        "col_gifts": "Gifts",
+        "single_size": "1 box · [nights] nights",
+        "gifts_note": "3 gifts on 2+",
+        "gift_min": 2,
+        "no_gifts_label": "No gifts",
         "first_box_products": [
           "nasal-strips",
           "mouth-tape"
         ],
         "first_box_off": "1 Bag = 8\n2 Bags = 15\n4 Bags = 22",
         "then_label": "then [price]",
-        "footnote": "Delivered in 7–9 business days · 30-Night Money-Back Guarantee"
+        "once_short": "one-time",
+        "footnote": "Delivered in 7–9 business days · 30-Night Money-Back Guarantee",
+        "padding_top": 40,
+        "padding_bottom": 72
       }
     },
     "wave_table_faq": {
@@ -943,7 +1003,14 @@
         "top_color": "#f4fef3",
         "bottom_color": "#afbdf8",
         "shape": "soft-1",
-        "mobile_full": true
+        "overlap": false,
+        "flip": false,
+        "mobile_full": true,
+        "drops": true,
+        "animate": true,
+        "roll": 8,
+        "height": 140,
+        "height_mobile": 48
       }
     },
     "faq": {
@@ -990,6 +1057,32 @@
             "padding-inline-end": 0
           },
           "blocks": {
+            "eyebrow": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Good to know</p>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "loose",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#000000",
+                "accent_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
             "heading": {
               "type": "text",
               "settings": {
@@ -1028,32 +1121,6 @@
                 "font_size": "1rem",
                 "line_height": "normal",
                 "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "text_color": "#000000",
-                "accent_color": "",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "eyebrow": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Good to know</p>",
-                "width": "100%",
-                "max_width": "none",
-                "alignment": "left",
-                "type_preset": "custom",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "loose",
                 "case": "none",
                 "wrap": "pretty",
                 "text_color": "#000000",
@@ -1108,6 +1175,46 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Buy 3, Get 1 Free runs from Mon 30 Nov, 12:00 AM ET to Wed 2 Dec, 11:59 PM PT. 70% off Subscribe &amp; Save ends at the same time. After that, prices go back to normal.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#000000",
+                    "accent_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "answer"
+              ]
+            },
+            "row_b3g1": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "How does Buy 3, Get 1 Free work?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "answer": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Add 4 single bags (1 Bag) of Nasal Strips or Mouth Tape to your cart, in any mix, and the 4th bag is free. The discount applies automatically at checkout, no code needed. 8 bags gets 2 free. It is for one-time purchases only, so it does not apply to subscriptions, the 2 Bags and 4 Bags options, or bundles.</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -1334,46 +1441,6 @@
               "block_order": [
                 "answer"
               ]
-            },
-            "row_b3g1": {
-              "type": "_accordion-row",
-              "settings": {
-                "heading": "How does Buy 3, Get 1 Free work?",
-                "open_by_default": false,
-                "icon": "none",
-                "width": 20
-              },
-              "blocks": {
-                "answer": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p>Add 4 single bags (1 Bag) of Nasal Strips or Mouth Tape to your cart, in any mix, and the 4th bag is free. The discount applies automatically at checkout, no code needed. 8 bags gets 2 free. It is for one-time purchases only, so it does not apply to subscriptions, the 2 Bags and 4 Bags options, or bundles.</p>",
-                    "width": "100%",
-                    "max_width": "none",
-                    "alignment": "left",
-                    "type_preset": "custom",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "wrap": "pretty",
-                    "text_color": "#000000",
-                    "accent_color": "",
-                    "background": false,
-                    "background_color": "#00000026",
-                    "corner_radius": 0,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "answer"
-              ]
             }
           },
           "block_order": [
@@ -1425,7 +1492,15 @@
       "settings": {
         "top_color": "#afbdf8",
         "bottom_color": "#f3feee",
-        "shape": "drip-11"
+        "shape": "drip-11",
+        "overlap": false,
+        "flip": false,
+        "mobile_full": false,
+        "drops": true,
+        "animate": true,
+        "roll": 8,
+        "height": 140,
+        "height_mobile": 48
       }
     }
   },
