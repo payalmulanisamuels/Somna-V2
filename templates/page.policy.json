@@ -184,7 +184,7 @@
           "type": "item",
           "settings": {
             "heading": "Contact",
-            "text": "<p>Should you have any questions about our privacy practices or this Privacy Policy, or if you would like to exercise any of the rights available to you, please call or email us at hello@somnasleep.com or contact us at Somna Sleep Co., 3959 Fairlands Drive, Pleasanton CA 94588. For the purpose of applicable data protection laws, we are the data controller of your personal information.</p>"
+            "text": "<p>Should you have any questions about our privacy practices or this Privacy Policy, or if you would like to exercise any of the rights available to you, please call or email us at support@somnainc.com or contact us at Somna Sleep Co., 3959 Fairlands Drive, Pleasanton CA 94588. For the purpose of applicable data protection laws, we are the data controller of your personal information.</p>"
           }
         }
       },
@@ -231,7 +231,7 @@
         "size": "band",
         "eyebrow": "",
         "heading": "Still have a question?",
-        "text": "<p>Email us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> or send us a message.</p>",
+        "text": "<p>Email us at <a href=\"mailto:support@somnainc.com\">support@somnainc.com</a> or send us a message.</p>",
         "button_label": "CONTACT US →",
         "button_link": "/pages/contact",
         "pills_label": "Policies",
