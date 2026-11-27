@@ -311,10 +311,9 @@
                     },
                     "connect_2": {
                       "type": "_somna-link",
-                      "disabled": true,
                       "settings": {
                         "label": "TikTok",
-                        "link": "",
+                        "link": "https://www.tiktok.com/@usesomna.com",
                         "icon": "tiktok"
                       },
                       "blocks": {}
