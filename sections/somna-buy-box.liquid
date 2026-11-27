@@ -33,6 +33,7 @@
         null
       ],
       "nights": {{ block.settings.nights_per_bag | default: 0 }},
+      "deal": { "i": {{ block.settings.deal_position | default: 0 | minus: 1 }}, "badge": {{ block.settings.deal_badge | json }}, "line": {{ block.settings.deal_line | json }}, "foot": {{ block.settings.deal_foot | json }} },
       "media": [
         {%- assign imgs = p.media | where: 'media_type', 'image' -%}
         {%- for m in imgs limit: 5 -%}
@@ -175,9 +176,13 @@
           const pr = this.price(x);
           const night = p.nights > 0 ? `<span class="somna-buy__pack-night">${this.money(Math.round(pr.price / (this.bags(x) * p.nights)))}${this.esc(this.labels.night)}</span>` : '';
           const b = p.badges.find((x) => x && x.i === i);
-          const badge = b ? `<span class="somna-buy__pack-badge">${this.esc(b.label)}</span>` : '';
-          return `<label class="somna-buy__pack${x.available ? '' : ' is-sold-out'}">${badge}<input type="radio" name="${this.id || 'buy'}-pack-${this.p}" value="${i}" data-pack${i === this.v[this.p] ? ' checked' : ''}${x.available ? '' : ' disabled'}>
-            <span class="somna-buy__pack-name">${this.esc(x.title)}</span><span class="somna-buy__pack-price">${this.money(pr.price)}</span>${pr.compare ? `<s>${this.money(pr.compare)}</s>` : ''}${night}</label>`;
+          const deal = p.deal && p.deal.i === i;
+          const bLabel = deal && p.deal.badge ? p.deal.badge : (b ? b.label : '');
+          const badge = bLabel ? `<span class="somna-buy__pack-badge">${this.esc(bLabel)}</span>` : '';
+          const dLine = deal && p.deal.line ? `<span class="somna-buy__deal-line">${this.esc(p.deal.line.replace('[nights]', this.bags(x) * p.nights))}</span>` : '';
+          const dFoot = deal && p.deal.foot ? `<span class="somna-buy__deal-foot">${this.esc(p.deal.foot)}</span>` : '';
+          return `<label class="somna-buy__pack${x.available ? '' : ' is-sold-out'}${deal ? ' is-deal' : ''}">${badge}<input type="radio" name="${this.id || 'buy'}-pack-${this.p}" value="${i}" data-pack${i === this.v[this.p] ? ' checked' : ''}${x.available ? '' : ' disabled'}>
+            <span class="somna-buy__pack-name">${this.esc(x.title)}</span>${dLine}<span class="somna-buy__pack-price">${this.money(pr.price)}</span>${pr.compare ? `<s>${this.money(pr.compare)}</s>` : ''}${night}${dFoot}</label>`;
         }).join('');
         this.querySelectorAll('[data-mode-input]').forEach((r) => { r.checked = r.value === this.mode; r.disabled = r.value === 'sub' && v.plan == null; });
         const subP = v.plan != null ? this.price(v, 'sub') : null;
@@ -850,6 +855,19 @@
     }
   }
 {% endstylesheet %}
+<style>
+  /* deal pack (e.g. 4 Bags = Buy 3, Get 1 Free): lime outline, lime badge, lime line under the name and footer */
+  .somna-buy__pack.is-deal { border: 2px solid #e1f36b !important; }
+  .somna-buy__pack.is-deal:has(input:checked) { box-shadow: 0 0 0 3px rgba(225, 243, 107, 0.3); }
+  .somna-buy__pack.is-deal .somna-buy__pack-badge { background: #e1f36b !important; color: #0b0f1d !important; }
+  .somna-buy__deal-line { display: block; margin-top: 2px; color: #e1f36b; font-size: 0.75rem; font-weight: 800; line-height: 1.2; }
+  .somna-buy__deal-foot { display: block; align-self: stretch; margin-top: 8px; padding-top: 7px; border-top: 1px solid rgb(225 243 107 / 0.35); color: #e1f36b; font-size: 0.625rem; font-weight: 900; letter-spacing: 0.08em; line-height: 1.2; text-transform: uppercase; }
+  .somna-buy__pack.is-deal:has(input:checked) :is(.somna-buy__deal-line, .somna-buy__deal-foot) { color: #4f5c00; border-top-color: rgb(79 92 0 / 0.3); }
+  @media screen and (max-width: 749px) {
+    .somna-buy__deal-line { font-size: 0.6875rem; }
+    .somna-buy__deal-foot { font-size: 0.5625rem; letter-spacing: 0.05em; }
+  }
+</style>
 
 {% schema %}
 {
@@ -915,7 +933,11 @@
         { "type": "text", "id": "badge_2_label", "label": "Second badge", "default": "Most popular" },
         { "type": "range", "id": "badge_3_position", "label": "Third badge (position)", "min": 1, "max": 6, "step": 1, "default": 3 },
         { "type": "text", "id": "badge_3_label", "label": "Third badge", "default": "Best value" },
-        { "type": "number", "id": "nights_per_bag", "label": "Nights per bag", "info": "Used for the per-night price. Leave empty to hide it.", "default": 30 }
+        { "type": "number", "id": "nights_per_bag", "label": "Nights per bag", "info": "Used for the per-night price. Leave empty to hide it.", "default": 30 },
+        { "type": "range", "id": "deal_position", "label": "Deal pack (lime outline), 0 = none", "min": 0, "max": 6, "step": 1, "default": 0 },
+        { "type": "text", "id": "deal_badge", "label": "Deal pack: badge", "default": "Buy 3, get 1 free" },
+        { "type": "text", "id": "deal_line", "label": "Deal pack: line under the name", "info": "[nights] = bags × nights per bag.", "default": "3 + 1 free · [nights] nights" },
+        { "type": "text", "id": "deal_foot", "label": "Deal pack: footer", "default": "4th bag free + 3 gifts" }
       ]
     },
     {

@@ -1877,7 +1877,11 @@
             "badge_2_label": "Starter",
             "badge_3_position": 3,
             "badge_3_label": "Best value",
-            "nights_per_bag": 30
+            "nights_per_bag": 30,
+            "deal_position": 3,
+            "deal_badge": "Buy 3, get 1 free",
+            "deal_line": "3 + 1 free · [nights] nights",
+            "deal_foot": "4th bag free + 3 gifts"
           }
         },
         "tape": {
@@ -1895,7 +1899,11 @@
             "badge_2_label": "Starter",
             "badge_3_position": 3,
             "badge_3_label": "Best value",
-            "nights_per_bag": 30
+            "nights_per_bag": 30,
+            "deal_position": 3,
+            "deal_badge": "Buy 3, get 1 free",
+            "deal_line": "3 + 1 free · [nights] nights",
+            "deal_foot": "4th bag free + 3 gifts"
           }
         },
         "q1": {
