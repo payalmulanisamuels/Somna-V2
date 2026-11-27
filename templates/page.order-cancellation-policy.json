@@ -100,7 +100,7 @@
           "type": "item",
           "settings": {
             "heading": "2. How to Request a Cancellation",
-            "text": "<p>To request a cancellation, email us at hello@somnasleep.com with the subject line \"ORDER CANCELLATION - [Your Order Number]\".</p>"
+            "text": "<p>To request a cancellation, email us at support@somnainc.com with the subject line \"ORDER CANCELLATION - [Your Order Number]\".</p>"
           }
         },
         "item_3": {
@@ -183,7 +183,7 @@
         "size": "band",
         "eyebrow": "",
         "heading": "Still have a question?",
-        "text": "<p>Email us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> or send us a message.</p>",
+        "text": "<p>Email us at <a href=\"mailto:support@somnainc.com\">support@somnainc.com</a> or send us a message.</p>",
         "button_label": "CONTACT US →",
         "button_link": "/pages/contact",
         "pills_label": "Policies",
