@@ -13,7 +13,7 @@
       "type": "somna-bf25-hero",
       "settings": {
         "image": "shopify://shop_images/somna-cm25-hero-desktop.jpg",
-        "image_mobile": "shopify://shop_images/somna-cm25-hero-mobile.png",
+        "image_mobile": "shopify://shop_images/somna-cm25-hero-desktop.jpg",
         "title_image": "shopify://shop_images/somna-bf25-title-desktop.png",
         "title_image_mobile": "shopify://shop_images/somna-bf25-title-mobile.png",
         "title_alt": "Cyber Monday - Buy 3, get 1 free",
