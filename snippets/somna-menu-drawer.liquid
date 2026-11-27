@@ -41,7 +41,7 @@
 
     {%- if st.somna_drawer_sale_label != blank -%}
       {%- comment -%} SALE: bold link to the sale page, above Bestsellers {%- endcomment -%}
-      <a class="somna-md__sale menu-drawer__animated-element" href="{{ st.somna_drawer_sale_url | default: '/pages/black-friday-sale' }}" style="--menu-drawer-animation-index: {{ idx }};">
+      <a class="somna-md__sale menu-drawer__animated-element" href="{{ st.somna_drawer_sale_url | default: '/pages/cyber-monday-sale' }}" style="--menu-drawer-animation-index: {{ idx }};">
         {%- assign idx = idx | plus: 1 -%}
         <span>{{ st.somna_drawer_sale_label | escape }}</span><span class="somna-md__link-arrow" aria-hidden="true">→</span>
       </a>

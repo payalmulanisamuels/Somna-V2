@@ -80,7 +80,7 @@
           "type": "_header-menu",
           "static": true,
           "settings": {
-            "menu": "somna-v2-header",
+            "menu": "somna-v2-header-cyber-monday",
             "active_link_style": "underline",
             "active_link_underline_color": "#98a3de",
             "background_color": "{{ settings.color_palette.background }}",
