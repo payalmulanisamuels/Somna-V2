@@ -17,7 +17,7 @@
         "announcement_BxgCk9": {
           "type": "_announcement",
           "settings": {
-            "text": "Black Friday · 70% off with Subscribe & Save<em> · Free gifts · Ends Wed 2nd Dec</em>",
+            "text": "Cyber Monday · 70% off with Subscribe & Save<em> · Free gifts · Ends Wed 2nd Dec</em>",
             "link": "",
             "font": "var(--font-body--family)",
             "font_size": "0.875rem",
@@ -156,12 +156,12 @@
         "timer_mode": "session",
         "session_minutes": 360,
         "end_at": "2026-12-02T23:59:00-08:00",
-        "label": "Black Friday sale",
+        "label": "Cyber Monday sale",
         "pdp_land_scroll": true,
         "offer": "70% OFF + 3 FREE GIFTS",
         "moon_cycle": 10,
         "date_text": "",
-        "label_mobile": "Black Friday sale",
+        "label_mobile": "Cyber Monday sale",
         "date_mobile": "",
         "bg_color": "#141832",
         "text_color": "#f3feee",
