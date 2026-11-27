@@ -1,0 +1,172 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+/*
+ * Black Friday / Cyber Week sale conditions page. Assign it to a page with the "sale-conditions" template.
+ */
+{
+  "sections": {
+    "policy_top": {
+      "type": "somna-policy-band",
+      "blocks": {
+        "link_1": {
+          "type": "link",
+          "settings": {
+            "label": "Shipping",
+            "link": "/pages/shipping-policy"
+          }
+        },
+        "link_2": {
+          "type": "link",
+          "settings": {
+            "label": "Returns & refunds",
+            "link": "/pages/return-refund-policy"
+          }
+        },
+        "link_3": {
+          "type": "link",
+          "settings": {
+            "label": "Subscriptions",
+            "link": "/pages/subscription-policy"
+          }
+        },
+        "link_4": {
+          "type": "link",
+          "settings": {
+            "label": "Order cancellation",
+            "link": "/pages/order-cancellation-policy"
+          }
+        },
+        "link_5": {
+          "type": "link",
+          "settings": {
+            "label": "Terms of service",
+            "link": "/pages/terms-of-service"
+          }
+        },
+        "link_6": {
+          "type": "link",
+          "settings": {
+            "label": "Privacy",
+            "link": "/pages/privacy-policy"
+          }
+        }
+      },
+      "block_order": [
+        "link_1",
+        "link_2",
+        "link_3",
+        "link_4",
+        "link_5",
+        "link_6"
+      ],
+      "settings": {
+        "size": "title",
+        "eyebrow": "Somna policies",
+        "heading": "",
+        "pills_label": "Policies",
+        "background": "#0b0f1d",
+        "text_color": "#f3feee",
+        "accent": "#afbdf8"
+      }
+    },
+    "wave_top": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#0b0f1d",
+        "bottom_color": "#afbdf8",
+        "shape": "drip-1",
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "policy": {
+      "type": "somna-policy",
+      "blocks": {
+        "item_1": {
+          "type": "item",
+          "settings": {
+            "heading": "1. 70% off Subscribe & Save",
+            "text": "<ul><li><strong>When:</strong> Fri 27 Nov 2026, 12:00 AM ET to Wed 2 Dec 2026, 11:59 PM PT.</li><li><strong>What:</strong> 70% off Subscribe &amp; Save orders, site wide.</li><li><strong>Nasal Strips and Mouth Tape:</strong> the 70% discount applies to your first delivery. Later deliveries renew at the regular Subscribe &amp; Save price of $22.95 per bag.</li><li><strong>Sleep Bundle, The Color Set and Season Bundle:</strong> your sale price stays the same on every delivery.</li><li><strong>Not included:</strong> one-time purchases, which are 50% off during the sale.</li><li>Subscriptions renew automatically at the delivery interval you choose. Skip, pause or cancel anytime.</li></ul>"
+          }
+        },
+        "item_2": {
+          "type": "item",
+          "settings": {
+            "heading": "2. Buy 3, Get 1 FREE",
+            "text": "<ul><li><strong>When:</strong> Mon 30 Nov 2026, 12:00 AM ET to Wed 2 Dec 2026, 11:59 PM PT.</li><li><strong>What:</strong> one-time purchases of 1 Bag Nasal Strips and 1 Bag Mouth Tape. Mix and match.</li><li><strong>How it applies:</strong> add 4 bags to your cart and the 4th bag is free. The discount applies automatically at checkout, with no code needed.</li><li><strong>Not included:</strong> subscriptions, the 2 Bags and 4 Bags options, and bundles.</li></ul>"
+          }
+        }
+      },
+      "block_order": [
+        "item_1",
+        "item_2"
+      ],
+      "settings": {
+        "show_toc": true,
+        "toc_label": "On this page",
+        "background": "#afbdf8",
+        "card": "#f3feee",
+        "accent": "#1d2fa8"
+      }
+    },
+    "wave_bottom": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#afbdf8",
+        "bottom_color": "#000000",
+        "shape": "drip-10",
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    },
+    "policy_contact": {
+      "type": "somna-policy-band",
+      "settings": {
+        "size": "band",
+        "eyebrow": "",
+        "heading": "Still have a question?",
+        "text": "<p>Email us at <a href=\"mailto:hello@somnasleep.com\">hello@somnasleep.com</a> or send us a message.</p>",
+        "button_label": "CONTACT US →",
+        "button_link": "/pages/contact",
+        "pills_label": "Policies",
+        "background": "#000000",
+        "text_color": "#f3feee",
+        "accent": "#afbdf8"
+      }
+    },
+    "wave_footer": {
+      "type": "somna-wave",
+      "settings": {
+        "top_color": "#000000",
+        "bottom_color": "#f3feee",
+        "shape": "drip-11",
+        "flip": false,
+        "drops": true,
+        "animate": true,
+        "height": 140,
+        "height_mobile": 48
+      }
+    }
+  },
+  "order": [
+    "policy_top",
+    "wave_top",
+    "policy",
+    "wave_bottom",
+    "policy_contact",
+    "wave_footer"
+  ]
+}
