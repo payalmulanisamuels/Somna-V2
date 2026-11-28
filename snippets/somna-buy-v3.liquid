@@ -194,6 +194,33 @@
   .somna-pdp-hero--v3 .somna-buy__pack.is-deal:has(input:checked) .somna-v3-pack-nights,
   .somna-pdp-hero--v3 .somna-buy__pack.is-deal:has(input:checked) .somna-v3-pack-foot { color: #4f5c00; }
 </style>
+<style>
+  /* very small phones (320–374px wide): the buy box was sized for 390px+, so prices, badges and labels spilled out of the pack cards */
+  @media screen and (max-width: 374px) {
+    .somna-pdp-hero--v3 .somna-pdp-hero__panel { padding-inline: 14px !important; }
+    .somna-v3-offer { gap: 8px !important; }
+    .somna-v3-offer__title { font-size: 1.25rem !important; line-height: 1.05 !important; }
+    .somna-v3-offer__badge { max-width: 92px !important; font-size: 0.625rem !important; padding: 6px 8px !important; }
+    .somna-v3-step__label { font-size: 0.9375rem !important; }
+    .somna-v3-step__note { font-size: 0.625rem !important; }
+    .somna-pdp-hero--v3 .somna-pdp-hero__packs .somna-buy__pack-list { gap: 6px !important; }
+    .somna-pdp-hero--v3 .somna-pdp-hero__packs .somna-buy__pack { min-width: 0 !important; padding: 16px 3px 0 !important; }
+    .somna-pdp-hero--v3 .somna-buy__pack-badge { font-size: 0.5rem !important; padding: 2px 5px !important; letter-spacing: 0.03em !important; }
+    .somna-pdp-hero--v3 .somna-buy__pack-name { font-size: 0.75rem !important; }
+    .somna-pdp-hero--v3 .somna-v3-pack-nights { font-size: 0.5625rem; }
+    .somna-pdp-hero--v3 .somna-buy__pack-price { margin-top: 6px; font-size: 1.0625rem !important; letter-spacing: -0.02em; }
+    .somna-pdp-hero--v3 .somna-buy__pack [data-pack-compare] { font-size: 0.5625rem !important; }
+    .somna-pdp-hero--v3 .somna-buy__pack .somna-buy__pack-night { font-size: 0.625rem !important; }
+    .somna-pdp-hero--v3 .somna-v3-pack-foot { margin-top: 8px; padding: 7px 2px 8px; font-size: 0.5rem; letter-spacing: 0.03em; }
+    .somna-pdp-hero--v3 .somna-buy__mode-label, .somna-pdp-hero--v3 .somna-buy__mode-label strong { font-size: 0.8125rem !important; }
+    .somna-pdp-hero--v3 .somna-buy__mode-price { font-size: 1.0625rem !important; }
+    .somna-pdp-hero--v3 .somna-pdp-hero__sub-line { margin-right: 56px !important; font-size: 0.75rem !important; }
+    .somna-pdp-hero--v3 .somna-pdp-hero__mode-box, .somna-pdp-hero--v3 .somna-pdp-hero__once { padding: 10px !important; }
+    .somna-pdp-hero--v3 .somna-pdp-hero__giftbar-body p { font-size: 0.75rem !important; }
+    .somna-pdp-hero--v3 .somna-v3-gifts__name { font-size: 0.5625rem; }
+    .somna-pdp-hero--v3 .somna-buy__pack-badge--deal { font-size: 0.5rem !important; }
+  }
+</style>
 <script>
   (function () {
     /* the Add to cart button shows the price of what will be added; Subscribe & Save shows its "% OFF" pill */
